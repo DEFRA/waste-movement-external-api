@@ -1,0 +1,13 @@
+.DS_Store
+.npm/
+.vscode
+.idea
+.server
+node_modules
+npm-debug.log
+coverage
+.cache
+.eslintcache
+
+# @shelf/jest-mongodb generated file
+globalConfig.json
