@@ -1,4 +1,6 @@
 import Hapi from '@hapi/hapi'
+import Inert from '@hapi/inert'
+import Vision from '@hapi/vision'
 
 import { config } from './config.js'
 import { router } from './plugins/router.js'
@@ -9,6 +11,7 @@ import { secureContext } from './common/helpers/secure-context/index.js'
 import { pulse } from './common/helpers/pulse.js'
 import { requestTracing } from './common/helpers/request-tracing.js'
 import { setupProxy } from './common/helpers/proxy/setup-proxy.js'
+import { swagger } from './plugins/swagger.js'
 
 async function createServer() {
   setupProxy()
@@ -38,20 +41,29 @@ async function createServer() {
     }
   })
 
-  // Hapi Plugins:
-  // requestLogger  - automatically logs incoming requests
-  // requestTracing - trace header logging and propagation
-  // secureContext  - loads CA certificates from environment config
-  // pulse          - provides shutdown handlers
-  // mongoDb        - sets up mongo connection pool and attaches to `server` and `request` objects
-  // router         - routes used in the app
+  // Register Vision and Inert first as they are required by Swagger
+  await server.register([
+    {
+      plugin: Inert
+    },
+    {
+      plugin: Vision
+    }
+  ])
+
+  // Register Swagger before routes
+  await server.register(swagger)
+
+  // Register routes
+  await server.register(router)
+
+  // Register remaining plugins
   await server.register([
     requestLogger,
     requestTracing,
     secureContext,
     pulse,
-    mongoDb,
-    router
+    mongoDb
   ])
 
   return server

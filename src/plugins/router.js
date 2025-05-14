@@ -1,11 +1,15 @@
 import { health } from '../routes/health.js'
-import { example } from '../routes/example.js'
+import { movement } from '../routes/movement.js'
 
 const router = {
   plugin: {
     name: 'router',
-    register: (server, _options) => {
-      server.route([health].concat(example))
+    register: async (server, _options) => {
+      // Register all routes
+      const routes = [health, ...movement]
+
+      // Register routes directly
+      server.route(routes)
     }
   }
 }
