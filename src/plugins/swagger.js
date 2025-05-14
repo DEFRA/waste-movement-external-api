@@ -25,7 +25,6 @@ const swaggerOptions = {
   sortEndpoints: 'alpha',
   swaggerUI: true,
   documentationPage: true,
-  documentationRouteTags: ['movements'],
   deReference: true,
   pathPrefixSize: 2,
   basePath: '/',

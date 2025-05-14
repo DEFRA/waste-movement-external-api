@@ -51,11 +51,11 @@ async function createServer() {
     }
   ])
 
-  // Register routes first
-  await server.register(router)
-
-  // Register Swagger after routes
+  // Register Swagger before routes
   await server.register(swagger)
+
+  // Register routes
+  await server.register(router)
 
   // Register remaining plugins
   await server.register([
