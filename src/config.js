@@ -86,7 +86,7 @@ const config = convict({
     databaseName: {
       doc: 'Database name for mongodb',
       format: String,
-      default: 'waste-movement-backend',
+      default: 'waste-movement-external-api',
       env: 'MONGO_DATABASE'
     }
   },
