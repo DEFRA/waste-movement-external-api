@@ -10,8 +10,11 @@ const swaggerOptions = {
   documentationPath: '/',
   swaggerUIPath: '/swaggerui',
   jsonPath: '/swagger.json',
-  schemes: ['http'],
-  host: `${config.get('host')}:${config.get('port')}`,
+  schemes: ['https'],
+  host:
+    config.get('cdpEnvironment') === 'local'
+      ? `${config.get('host')}:${config.get('port')}`
+      : `waste-movement-external-api.${config.get('cdpEnvironment')}.cdp-int.defra.cloud`,
   grouping: 'tags',
   tags: [
     {
