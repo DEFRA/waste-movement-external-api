@@ -7,7 +7,7 @@ const swaggerOptions = {
     version: '1.0',
     description: 'API for managing waste movements and receipts'
   },
-  documentationPath: '/documentation',
+  documentationPath: '/',
   swaggerUIPath: '/swaggerui',
   jsonPath: '/swagger.json',
   schemes: ['http'],
