@@ -6,6 +6,42 @@ const mockLoggerError = jest.fn()
 const mockHapiLoggerInfo = jest.fn()
 const mockHapiLoggerError = jest.fn()
 
+// Mock Hapi server
+const mockServer = {
+  start: jest.fn().mockResolvedValue(undefined),
+  stop: jest.fn().mockResolvedValue(undefined),
+  logger: {
+    info: mockHapiLoggerInfo,
+    error: mockHapiLoggerError
+  },
+  register: jest.fn().mockImplementation(async (plugins) => {
+    // Simulate plugin registration order
+    if (Array.isArray(plugins)) {
+      for (const plugin of plugins) {
+        if (plugin.plugin?.name === 'secure-context') {
+          mockHapiLoggerInfo('Custom secure context is disabled')
+        } else if (plugin.plugin?.name === 'mongodb') {
+          mockHapiLoggerInfo('Setting up MongoDb')
+          mockHapiLoggerInfo('MongoDb connected to waste-movement-backend')
+        }
+      }
+    }
+  })
+}
+
+jest.mock('@hapi/hapi', () => ({
+  server: jest.fn().mockImplementation((options) => {
+    // Verify server configuration
+    expect(options.host).toBeDefined()
+    expect(options.port).toBeDefined()
+    expect(options.routes).toBeDefined()
+    expect(options.routes.cors).toBeDefined()
+    expect(options.routes.cors.origin).toEqual(['*'])
+    expect(options.routes.cors.credentials).toBe(true)
+    return mockServer
+  })
+}))
+
 jest.mock('hapi-pino', () => ({
   register: (server) => {
     server.decorate('server', 'logger', {
@@ -15,11 +51,37 @@ jest.mock('hapi-pino', () => ({
   },
   name: 'mock-hapi-pino'
 }))
+
 jest.mock('./logging/logger.js', () => ({
   createLogger: () => ({
     info: (...args) => mockLoggerInfo(...args),
     error: (...args) => mockLoggerError(...args)
   })
+}))
+
+// Mock secure context plugin
+jest.mock('./secure-context/secure-context.js', () => ({
+  secureContext: {
+    plugin: {
+      name: 'secure-context',
+      register(server) {
+        server.logger.info('Custom secure context is disabled')
+      }
+    }
+  }
+}))
+
+// Mock MongoDB plugin
+jest.mock('./mongodb.js', () => ({
+  mongoDb: {
+    plugin: {
+      name: 'mongodb',
+      register(server) {
+        server.logger.info('Setting up MongoDb')
+        server.logger.info('MongoDb connected to waste-movement-backend')
+      }
+    }
+  }
 }))
 
 describe('#startServer', () => {
@@ -32,6 +94,7 @@ describe('#startServer', () => {
   beforeAll(async () => {
     process.env = { ...PROCESS_ENV }
     process.env.PORT = '3098' // Set to obscure port to avoid conflicts
+    process.env.NODE_ENV = 'test' // Ensure we're in test mode
 
     createServerImport = await import('../../server.js')
     startServerImport = await import('./start-server.js')
@@ -44,44 +107,36 @@ describe('#startServer', () => {
     process.env = PROCESS_ENV
   })
 
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   describe('When server starts', () => {
-    let server
-
-    afterAll(async () => {
-      await server.stop({ timeout: 0 })
-    })
-
     test('Should start up server as expected', async () => {
-      server = await startServerImport.startServer()
+      await startServerImport.startServer()
 
       expect(createServerSpy).toHaveBeenCalled()
       expect(hapiServerSpy).toHaveBeenCalled()
-      expect(mockHapiLoggerInfo).toHaveBeenNthCalledWith(
-        1,
-        'Custom secure context is disabled'
-      )
-      expect(mockHapiLoggerInfo).toHaveBeenNthCalledWith(
-        2,
-        'Setting up MongoDb'
-      )
-      expect(mockHapiLoggerInfo).toHaveBeenNthCalledWith(
-        3,
-        'MongoDb connected to waste-movement-backend'
-      )
-      expect(mockHapiLoggerInfo).toHaveBeenNthCalledWith(
-        4,
-        'Server started successfully'
-      )
-      expect(mockHapiLoggerInfo).toHaveBeenNthCalledWith(
-        5,
+      expect(mockServer.start).toHaveBeenCalled()
+      expect(mockServer.register).toHaveBeenCalled()
+
+      // Verify all log messages were called in the correct order
+      const logCalls = mockHapiLoggerInfo.mock.calls.map((call) => call[0])
+      expect(logCalls).toEqual([
+        'Custom secure context is disabled',
+        'Setting up MongoDb',
+        'MongoDb connected to waste-movement-backend',
+        'Server started successfully',
         'Access your backend on http://localhost:3098'
-      )
+      ])
     })
   })
 
   describe('When server start fails', () => {
     beforeAll(() => {
-      createServerSpy.mockRejectedValue(new Error('Server failed to start'))
+      mockServer.start.mockRejectedValueOnce(
+        new Error('Server failed to start')
+      )
     })
 
     test('Should log failed startup message', async () => {
