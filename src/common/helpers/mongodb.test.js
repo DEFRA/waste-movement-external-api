@@ -23,11 +23,11 @@ describe('#mongoDb', () => {
     })
 
     test('MongoDb should have expected database name', () => {
-      expect(server.db.databaseName).toBe('waste-movement-backend')
+      expect(server.db.databaseName).toBe('waste-movement-external-api')
     })
 
     test('MongoDb should have expected namespace', () => {
-      expect(server.db.namespace).toBe('waste-movement-backend')
+      expect(server.db.namespace).toBe('waste-movement-external-api')
     })
   })
 
