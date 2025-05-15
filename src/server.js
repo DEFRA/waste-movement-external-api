@@ -34,6 +34,24 @@ async function createServer() {
         xss: 'enabled',
         noSniff: true,
         xframe: true
+      },
+      cors: {
+        origin: ['*'],
+        additionalHeaders: [
+          'accept',
+          'authorization',
+          'content-type',
+          'x-requested-with',
+          'x-api-key'
+        ],
+        additionalExposedHeaders: [
+          'accept',
+          'authorization',
+          'content-type',
+          'x-requested-with',
+          'x-api-key'
+        ],
+        credentials: true
       }
     },
     router: {
