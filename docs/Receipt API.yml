@@ -20,8 +20,9 @@ paths:
                 properties:
                   carrierMovementId:
                     type: string
-                    description: An identifier of the movement, unique for the carrier only.
-                                 This field will only be returned if the carrier is known to the service and should be provided to the carrier by the receiver.
+                    description:
+                      An identifier of the movement, unique for the carrier only.
+                      This field will only be returned if the carrier is known to the service and should be provided to the carrier by the receiver.
                   globalMovementId:
                     type: string
                     format: uuid
@@ -62,12 +63,13 @@ paths:
           $ref: '#/components/responses/400'
         '404':
           description: Carrier or movement not found.
-                       The details will still be stored in the Waste Tracking Service, the response is to inform the receiver that the carrier has provided incorrect details.
-  
+            The details will still be stored in the Waste Tracking Service, the response is to inform the receiver that the carrier has provided incorrect details.
+
   /movements/{movementId}:
     patch:
-      description: Endpoint to be used by the reciever to correct details of a movement which has already been created/received.
-                   This endpoint should not be used when waste is received.
+      description:
+        Endpoint to be used by the reciever to correct details of a movement which has already been created/received.
+        This endpoint should not be used when waste is received.
       parameters:
         - name: movementId
           in: path
@@ -171,7 +173,7 @@ paths:
           $ref: '#/components/responses/400'
         '404':
           description: Movement not found. The details will not be stored in the Waste Tracking Service.
-          
+
 components:
   requestBodies:
     'createMovementRequest':
@@ -219,7 +221,7 @@ components:
                     type: string
                   meansOfTransport:
                     type: string
-                    enum: [Road, Rail, Air, Sea, Waterway, Other]                  
+                    enum: [Road, Rail, Air, Sea, Waterway, Other]
               acceptance:
                 type: object
                 properties:

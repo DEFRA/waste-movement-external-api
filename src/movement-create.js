@@ -1,5 +1,6 @@
-export async function createMovement(db, movement) {
-  const collection = db.collection('movements')
-  const result = await collection.insertOne(movement)
-  return { ...movement, _id: result.insertedId }
+export async function createWasteInput(db, wasteInput) {
+  wasteInput._id = wasteInput.wasteTrackingId
+  const collection = db.collection('waste-inputs')
+  const result = await collection.insertOne(wasteInput)
+  return { ...wasteInput, _id: result.insertedId }
 }
