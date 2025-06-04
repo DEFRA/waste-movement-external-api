@@ -1,6 +1,5 @@
 import { receiptMovementSchema } from '../schemas/receipt.js'
-import { WasteInput } from '../domain/wasteInput.js'
-import { httpClients } from '../common/helpers/http-client.js'
+import { handleCreateReceiptMovement } from '../handlers/create-receipt-movement.js'
 import Joi from 'joi'
 
 const createReceiptMovement = {
@@ -41,40 +40,7 @@ const createReceiptMovement = {
       }
     }
   },
-  handler: async (request, h) => {
-    const wasteInput = new WasteInput()
-    wasteInput.receipt = request.payload
-    try {
-      wasteInput.wasteTrackingId = await httpClients.wasteTracking.get('/next')
-      console.log('Waste Tracking ID:', wasteInput.wasteTrackingId)
-      await httpClients.wasteMovement.post(
-        `/movements/${wasteInput.wasteTrackingId}/receive`,
-        {
-          movement: {
-            receivingSiteId: request.payload.movement.receivingSiteId,
-            receiverReference: request.payload.movement.receiverReference,
-            specialHandlingRequirements:
-              request.payload.movement.specialHandlingRequirements,
-            waste: request.payload.movement.waste,
-            carrier: request.payload.movement.carrier
-          }
-        }
-      )
-    } catch (error) {
-      console.error('Error creating waste movement:', error)
-      return h
-        .response({
-          statusCode: 500,
-          error: 'Internal Server Error',
-          message: 'Failed to create waste movement'
-        })
-        .code(500)
-    }
-    return h.response({
-      statusCode: 200,
-      globalMovementId: wasteInput.wasteTrackingId
-    })
-  }
+  handler: handleCreateReceiptMovement
 }
 
 export { createReceiptMovement }

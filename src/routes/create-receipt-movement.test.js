@@ -72,9 +72,7 @@ describe('Movement Route', () => {
       // Verify waste movement was created
       expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
         `/movements/${mockWasteTrackingId}/receive`,
-        {
-          movement: validPayload.movement
-        }
+        validPayload
       )
     })
 
