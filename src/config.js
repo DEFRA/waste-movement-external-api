@@ -116,6 +116,20 @@ const config = convict({
       default: 'x-cdp-request-id',
       env: 'TRACING_HEADER'
     }
+  },
+  services: {
+    wasteTracking: {
+      doc: 'Waste Tracking Service URL',
+      format: String,
+      default: 'https://waste-tracking-id-backend.dev.cdp-int.defra.cloud',
+      env: 'WASTE_TRACKING_SERVICE_URL'
+    },
+    wasteMovement: {
+      doc: 'Waste Movement Service URL',
+      format: String,
+      default: 'https://waste-movement-backend.dev.cdp-int.defra.cloud',
+      env: 'WASTE_MOVEMENT_SERVICE_URL'
+    }
   }
 })
 

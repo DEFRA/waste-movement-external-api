@@ -71,19 +71,6 @@ jest.mock('./secure-context/secure-context.js', () => ({
   }
 }))
 
-// Mock MongoDB plugin
-jest.mock('./mongodb.js', () => ({
-  mongoDb: {
-    plugin: {
-      name: 'mongodb',
-      register(server) {
-        server.logger.info('Setting up MongoDb')
-        server.logger.info('MongoDb connected to waste-movement-backend')
-      }
-    }
-  }
-}))
-
 describe('#startServer', () => {
   const PROCESS_ENV = process.env
   let createServerSpy
@@ -124,8 +111,6 @@ describe('#startServer', () => {
       const logCalls = mockHapiLoggerInfo.mock.calls.map((call) => call[0])
       expect(logCalls).toEqual([
         'Custom secure context is disabled',
-        'Setting up MongoDb',
-        'MongoDb connected to waste-movement-backend',
         'Server started successfully',
         'Access your backend on http://localhost:3098'
       ])
