@@ -34,6 +34,7 @@
     "@hapi/hapi": "21.3.12",
     "@hapi/inert": "7.1.0",
     "@hapi/vision": "7.0.3",
+    "@hapi/wreck": "18.0.0",
     "aws-embedded-metrics": "4.2.0",
     "aws4": "1.13.2",
     "convict": "6.2.4",

@@ -2,14 +2,15 @@ openapi: '3.0.3'
 info:
   title: Digital Waste Tracking Receipt API
   version: '1.0'
+  description: <h1>This API specification is currently draft and subject to change.</h1>
 servers:
   - url: https://api.server.test/v1
 paths:
-  /movements:
+  /movements/receive:
     post:
       description: Endpoint to be used when waste is received but the carrier has not already recorded the waste movement so has no id.
       requestBody:
-        $ref: '#/components/requestBodies/createMovementRequest'
+        $ref: '#/components/requestBodies/receiveMovementRequest'
       responses:
         '200':
           description: The waste movement has been stored.  If we have any async processing to do upon receipt (such as verifying permits etc) this should change to a 202.
@@ -18,81 +19,37 @@ paths:
               schema:
                 type: object
                 properties:
-                  carrierMovementId:
+                  wasteTrackingId:
                     type: string
-                    description: An identifier of the movement, unique for the carrier only.
-                                 This field will only be returned if the carrier is known to the service and should be provided to the carrier by the receiver.
-                  globalMovementId:
-                    type: string
-                    format: uuid
                     description: Globally unique identifier of the movement. This id should be stored and used for any subsequent updates of the movement.
         '400':
           $ref: '#/components/responses/400'
-  /carriers/{carrierId}/movements/{carrierMovementId}/receive:
-    post:
+  /movements/{wasteTrackingId}/receive:
+    put:
       description: Endpoint to be used when waste is recieved and the carrier has a waste tracking id.
       parameters:
-        - name: carrierId
+        - name: wasteTrackingId
           in: path
-          required: true
-          description: The identifier of the carrier.  Will this be an ID from the service, a permit id or something else?
-          schema:
-            type: string
-        - name: carrierMovementId
-          in: path
-          required: true
-          description: An identifier of the movement, unique for the carrier only.
-          schema:
-            type: string
-      requestBody:
-        $ref: '#/components/requestBodies/createMovementRequest'
-      responses:
-        '200':
-          description: The waste movement receipt has been processed. If we have any async processing to do upon receipt (such as verifying permits etc) this should change to a 202.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  globalMovementId:
-                    type: string
-                    format: uuid
-                    description: Globally unique identifier of the movement.
-        '400':
-          $ref: '#/components/responses/400'
-        '404':
-          description: Carrier or movement not found.
-                       The details will still be stored in the Waste Tracking Service, the response is to inform the receiver that the carrier has provided incorrect details.
-  
-  /movements/{movementId}:
-    patch:
-      description: Endpoint to be used by the reciever to correct details of a movement which has already been created/received.
-                   This endpoint should not be used when waste is received.
-      parameters:
-        - name: movementId
-          in: path
-          required: true
           description: The globally unique id of the movement.
           schema:
             type: string
-            format: uuid
       requestBody:
-        $ref: '#/components/requestBodies/createMovementRequest'
+        $ref: '#/components/requestBodies/receiveMovementRequest'
       responses:
         '200':
-          description: OK
+          description: The waste movement receipt has been processed. If we have any async processing to do upon receipt (such as verifying permits etc) this should change to a 202.
         '400':
           $ref: '#/components/responses/400'
         '404':
-          description: Movement not found. The details will not be stored in the Waste Tracking Service.
-
-  /movements/{movementId}/hazardous:
+          description: Movement not found.
+                       The details will still be stored in the Waste Tracking Service, the response is to inform the receiver that the carrier has provided incorrect details.
+  
+  /movements/{wasteTrackingId}/hazardous:
     put:
       description: Endpoint used to provide hazardous waste details for a waste movement
       parameters:
-        - name: movementId
+        - name: wasteTrackingId
           in: path
-          required: true
           description: The globally unique id of the movement.
           schema:
             type: string
@@ -124,13 +81,12 @@ paths:
         '404':
           description: Movement not found. The details will not be stored in the Waste Tracking Service.
 
-  /movements/{movementId}/pops:
+  /movements/{wasteTrackingId}/pops:
     put:
       description: Endpoint used to provide pops details for a waste movement
       parameters:
-        - name: movementId
+        - name: wasteTrackingId
           in: path
-          required: true
           description: The globally unique id of the movement.
           schema:
             type: string
@@ -153,13 +109,12 @@ paths:
         '404':
           description: Movement not found. The details will not be stored in the Waste Tracking Service.
 
-  /movements/{movementId}/pepr:
+  /movements/{wasteTrackingId}/pepr:
     put:
       description: Endpoint used to provide additional details required for pEPR
       parameters:
-        - name: movementId
+        - name: wasteTrackingId
           in: path
-          required: true
           description: The globally unique id of the movement.
           schema:
             type: string
@@ -174,7 +129,7 @@ paths:
           
 components:
   requestBodies:
-    'createMovementRequest':
+    'receiveMovementRequest':
       description: Details of the waste movement to be created
       required: true
       content:
@@ -182,24 +137,30 @@ components:
           schema:
             type: object
             properties:
+              receivingSiteId:
+                type: string
+                format: uuid
+                description: This is the unique identifier of the receiving site, found within the Waste Companies service. This might be best as a header?
               receiverReference:
                 type: string
               specialHandlingRequirements:
                 type: string
               waste:
-                type: object
-                properties:
-                  ewcCode:
-                    type: string
-                  description:
-                    type: string
-                  form:
-                    type: string
-                    enum: [Gas, Liquid, Solid, Powder, Sludge, Mixed]
-                  containers:
-                    type: string
-                  quantity:
-                    $ref: '#/components/schemas/quantity'
+                type: array
+                items:
+                  type: object
+                  properties:
+                    ewcCode:
+                      type: string
+                    description:
+                      type: string
+                    form:
+                      type: string
+                      enum: [Gas, Liquid, Solid, Powder, Sludge, Mixed]
+                    containers:
+                      type: string
+                    quantity:
+                      $ref: '#/components/schemas/quantity'
               carrier:
                 type: object
                 properties:
