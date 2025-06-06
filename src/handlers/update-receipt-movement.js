@@ -1,5 +1,6 @@
 import Boom from '@hapi/boom'
 import { httpClients } from '../config.js'
+import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
 
 /**
  * Handler for updating a receipt movement
@@ -21,7 +22,7 @@ export const handleUpdateReceiptMovement = async (request, h) => {
       .response({
         message: 'Receipt movement updated successfully'
       })
-      .code(200)
+      .code(HTTP_STATUS.OK)
   } catch (error) {
     if (error.name === 'NotFoundError') {
       throw Boom.notFound('Movement not found')
