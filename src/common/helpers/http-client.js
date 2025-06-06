@@ -15,15 +15,15 @@ const defaultConfig = {
 
 /**
  * Creates a Wreck client with the given configuration
- * @param {Object} config - Client configuration
+ * @param {Object} clientConfig - Client configuration
  * @returns {Object} Configured Wreck client
  */
-function createClient(config = {}) {
+function createClient(clientConfig = {}) {
   return Wreck.defaults({
-    timeout: config.timeout || defaultConfig.timeout,
+    timeout: clientConfig.timeout || defaultConfig.timeout,
     headers: {
       ...defaultConfig.headers,
-      ...config.headers
+      ...clientConfig.headers
     },
     redirects: 3,
     maxBytes: 10485760, // 10MB
