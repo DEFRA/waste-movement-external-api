@@ -15,15 +15,15 @@ const defaultConfig = {
 
 /**
  * Creates a Wreck client with the given configuration
- * @param {Object} config - Client configuration
+ * @param {Object} clientConfig - Client configuration
  * @returns {Object} Configured Wreck client
  */
-function createClient(config = {}) {
+function createClient(clientConfig = {}) {
   return Wreck.defaults({
-    timeout: config.timeout || defaultConfig.timeout,
+    timeout: clientConfig.timeout || defaultConfig.timeout,
     headers: {
       ...defaultConfig.headers,
-      ...config.headers
+      ...clientConfig.headers
     },
     redirects: 3,
     maxBytes: 10485760, // 10MB
@@ -34,11 +34,12 @@ function createClient(config = {}) {
 /**
  * Makes an HTTP request with retry logic
  * @param {Object} options - Request options
+ * @param httpClient - httpClient to make requests
  * @returns {Promise<Object>} Response object
  */
-async function makeRequest(options) {
+async function makeRequest(options, httpClient) {
   const { url, method, payload, headers = {}, retryCount = 0 } = options
-  const client = createClient({ headers })
+  const client = httpClient || createClient({ headers })
 
   try {
     const { res, payload: responsePayload } = await client.request(
@@ -59,7 +60,7 @@ async function makeRequest(options) {
       await new Promise((resolve) =>
         setTimeout(resolve, defaultConfig.retryDelay)
       )
-      return makeRequest({ ...options, retryCount: retryCount + 1 })
+      return makeRequest({ ...options, retryCount: retryCount + 1 }, httpClient)
     }
     throw error
   }
@@ -68,9 +69,10 @@ async function makeRequest(options) {
 /**
  * Creates a service-specific client
  * @param {string} baseUrl - Base URL for the service
+ * @param httpClient - used for mocking in tests
  * @returns {Object} Service client
  */
-function createServiceClient(baseUrl) {
+function createServiceClient(baseUrl, httpClient) {
   return {
     /**
      * Make a GET request
@@ -79,11 +81,14 @@ function createServiceClient(baseUrl) {
      * @returns {Promise<Object>} Response object
      */
     async get(path, headers = {}) {
-      return makeRequest({
-        url: `${baseUrl}${path}`,
-        method: 'GET',
-        headers
-      })
+      return makeRequest(
+        {
+          url: `${baseUrl}${path}`,
+          method: 'GET',
+          headers
+        },
+        httpClient
+      )
     },
 
     /**
@@ -94,12 +99,15 @@ function createServiceClient(baseUrl) {
      * @returns {Promise<Object>} Response object
      */
     async post(path, payload, headers = {}) {
-      return makeRequest({
-        url: `${baseUrl}${path}`,
-        method: 'POST',
-        payload,
-        headers
-      })
+      return makeRequest(
+        {
+          url: `${baseUrl}${path}`,
+          method: 'POST',
+          payload,
+          headers
+        },
+        httpClient
+      )
     },
 
     /**
@@ -110,26 +118,15 @@ function createServiceClient(baseUrl) {
      * @returns {Promise<Object>} Response object
      */
     async put(path, payload, headers = {}) {
-      return makeRequest({
-        url: `${baseUrl}${path}`,
-        method: 'PUT',
-        payload,
-        headers
-      })
-    },
-
-    /**
-     * Make a DELETE request
-     * @param {string} path - API path
-     * @param {Object} [headers] - Request headers
-     * @returns {Promise<Object>} Response object
-     */
-    async delete(path, headers = {}) {
-      return makeRequest({
-        url: `${baseUrl}${path}`,
-        method: 'DELETE',
-        headers
-      })
+      return makeRequest(
+        {
+          url: `${baseUrl}${path}`,
+          method: 'PUT',
+          payload,
+          headers
+        },
+        httpClient
+      )
     }
   }
 }
@@ -139,15 +136,7 @@ function createServiceClient(baseUrl) {
  */
 const httpClients = {
   wasteTracking: createServiceClient(config.get('services.wasteTracking')),
-  wasteMovement: createServiceClient(config.get('services.wasteMovement')),
-
-  /**
-   * Configure the HTTP clients
-   * @param {Object} newConfig - New configuration
-   */
-  configure(newConfig) {
-    Object.assign(defaultConfig, newConfig)
-  }
+  wasteMovement: createServiceClient(config.get('services.wasteMovement'))
 }
 
-export { httpClients }
+export { httpClients, makeRequest, createServiceClient }
