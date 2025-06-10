@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
 import { httpClients } from '../config.js'
 import Boom from '@hapi/boom'
 
@@ -15,7 +16,7 @@ export const handleUpdateHazardousWaste = async (request, h) => {
       .response({
         message: 'Hazardous waste details updated successfully'
       })
-      .code(200)
+      .code(HTTP_STATUS.OK)
   } catch (error) {
     if (error.name === 'NotFoundError') {
       throw Boom.notFound('Movement not found')
