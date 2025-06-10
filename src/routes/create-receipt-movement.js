@@ -1,6 +1,7 @@
 import { receiptMovementSchema } from '../schemas/receipt.js'
 import { handleCreateReceiptMovement } from '../handlers/create-receipt-movement.js'
 import Joi from 'joi'
+import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
 
 const createReceiptMovement = {
   method: 'POST',
@@ -15,7 +16,7 @@ const createReceiptMovement = {
     plugins: {
       'hapi-swagger': {
         responses: {
-          200: {
+          [HTTP_STATUS.OK]: {
             description: 'The waste movement has been stored',
             schema: Joi.object({
               carrierMovementId: Joi.string().description(
@@ -28,10 +29,10 @@ const createReceiptMovement = {
                 )
             })
           },
-          400: {
+          [HTTP_STATUS.BAD_REQUEST]: {
             description: 'Bad Request',
             schema: Joi.object({
-              statusCode: Joi.number().valid(400),
+              statusCode: Joi.number().valid(HTTP_STATUS.BAD_REQUEST),
               error: Joi.string(),
               message: Joi.string()
             }).label('BadRequestResponse')
