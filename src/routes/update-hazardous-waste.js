@@ -1,6 +1,7 @@
 import { hazardousWasteSchema } from '../schemas/receipt.js'
 import { handleUpdateHazardousWaste } from '../handlers/update-hazardous-waste.js'
 import Joi from 'joi'
+import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
 
 const updateHazardousWaste = {
   method: 'PUT',
@@ -21,24 +22,24 @@ const updateHazardousWaste = {
     plugins: {
       'hapi-swagger': {
         responses: {
-          200: {
+          [HTTP_STATUS.OK]: {
             description: 'OK',
             schema: Joi.object({
               message: Joi.string().description('Success message')
             })
           },
-          400: {
+          [HTTP_STATUS.BAD_REQUEST]: {
             description: 'Bad Request',
             schema: Joi.object({
-              statusCode: Joi.number().valid(400),
+              statusCode: Joi.number().valid(HTTP_STATUS.BAD_REQUEST),
               error: Joi.string(),
               message: Joi.string()
             }).label('BadRequestResponse')
           },
-          404: {
+          [HTTP_STATUS.NOT_FOUND]: {
             description: 'Movement not found',
             schema: Joi.object({
-              statusCode: Joi.number().valid(404),
+              statusCode: Joi.number().valid(HTTP_STATUS.NOT_FOUND),
               error: Joi.string(),
               message: Joi.string()
             }).label('NotFoundResponse')
