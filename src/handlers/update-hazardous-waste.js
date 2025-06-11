@@ -8,7 +8,7 @@ export const handleUpdateHazardousWaste = async (request, h) => {
     const payload = request.payload
 
     await httpClients.wasteMovement.put(
-      `/movements/${wasteTrackingId}/hazardous`,
+      `/movements/${wasteTrackingId}/receive/hazardous`,
       payload
     )
 

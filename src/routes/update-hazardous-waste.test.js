@@ -15,7 +15,7 @@ describe('updateHazardousWaste route', () => {
   it('should have correct route configuration', () => {
     expect(updateHazardousWaste.method).toBe('PUT')
     expect(updateHazardousWaste.path).toBe(
-      '/movements/{wasteTrackingId}/hazardous'
+      '/movements/{wasteTrackingId}/receive/hazardous'
     )
     expect(updateHazardousWaste.handler).toBe(handleUpdateHazardousWaste)
   })
@@ -66,7 +66,7 @@ describe('handleUpdateHazardousWaste', () => {
     await handleUpdateHazardousWaste(mockRequest, mockH)
 
     expect(httpClients.wasteMovement.put).toHaveBeenCalledWith(
-      `/movements/${mockRequest.params.wasteTrackingId}/hazardous`,
+      `/movements/${mockRequest.params.wasteTrackingId}/receive/hazardous`,
       mockRequest.payload
     )
     expect(mockH.response).toHaveBeenCalledWith({

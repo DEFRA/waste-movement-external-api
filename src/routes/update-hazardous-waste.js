@@ -5,7 +5,7 @@ import { commonSwaggerResponses } from '../schemas/common-schemas.js'
 
 const updateHazardousWaste = {
   method: 'PUT',
-  path: '/movements/{wasteTrackingId}/hazardous',
+  path: '/movements/{wasteTrackingId}/receive/hazardous',
   options: {
     tags: ['movements'],
     description:
