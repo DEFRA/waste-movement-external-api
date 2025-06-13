@@ -74,3 +74,37 @@ const movementSchema = Joi.object({
 export const receiptMovementSchema = Joi.object({
   movement: movementSchema.required()
 }).label('ReceiptMovement')
+
+const hazardousComponentSchema = Joi.object({
+  component: Joi.string().required(),
+  concentration: Joi.number().required(),
+  hazCode: Joi.string().required()
+}).label('HazardousComponent')
+
+export const hazardousWasteSchema = Joi.object({
+  isHazerdousWaste: Joi.boolean().required(),
+  components: Joi.array()
+    .items(hazardousComponentSchema)
+    .when('isHazerdousWaste', {
+      is: true,
+      then: Joi.required(),
+      otherwise: Joi.forbidden()
+    })
+}).label('HazardousWaste')
+
+const popsComponentSchema = Joi.object({
+  component: Joi.string().required(),
+  concentration: Joi.number().required(),
+  popsCode: Joi.string().required()
+}).label('PopsComponent')
+
+export const popsWasteSchema = Joi.object({
+  isPopsWaste: Joi.boolean().required(),
+  components: Joi.array()
+    .items(popsComponentSchema)
+    .when('isPopsWaste', {
+      is: true,
+      then: Joi.required(),
+      otherwise: Joi.forbidden()
+    })
+}).label('PopsWaste')
