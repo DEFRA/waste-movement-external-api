@@ -1,10 +1,9 @@
-import { jest } from '@jest/globals'
-import { httpClients } from '../common/helpers/http-client.js'
-import { updatePopsWaste } from './update-pops-waste.js'
+import { httpClients } from '../config.js'
+import { handleUpdateHazardousWaste } from '../handlers/update-hazardous-waste.js'
+import { updateHazardousWaste } from './update-hazardous-waste.js'
 import Boom from '@hapi/boom'
 
-// Mock the httpClients
-jest.mock('../common/helpers/http-client.js', () => ({
+jest.mock('../config.js', () => ({
   httpClients: {
     wasteMovement: {
       put: jest.fn()
@@ -12,38 +11,41 @@ jest.mock('../common/helpers/http-client.js', () => ({
   }
 }))
 
-describe('updatePopsWaste route', () => {
+describe('updateHazardousWaste route', () => {
   it('should have correct route configuration', () => {
-    expect(updatePopsWaste.method).toBe('PUT')
-    expect(updatePopsWaste.path).toBe('/movements/{wasteTrackingId}/pops')
+    expect(updateHazardousWaste.method).toBe('PUT')
+    expect(updateHazardousWaste.path).toBe(
+      '/movements/{wasteTrackingId}/receive/hazardous'
+    )
+    expect(updateHazardousWaste.handler).toBe(handleUpdateHazardousWaste)
   })
 
   it('should have correct validation configuration', () => {
-    const { validate } = updatePopsWaste.options
+    const { validate } = updateHazardousWaste.options
     expect(validate.params).toBeDefined()
     expect(validate.payload).toBeDefined()
   })
 
   it('should have correct swagger documentation', () => {
-    const { responses } = updatePopsWaste.options.plugins['hapi-swagger']
+    const { responses } = updateHazardousWaste.options.plugins['hapi-swagger']
     expect(responses['200']).toBeDefined()
     expect(responses['400']).toBeDefined()
     expect(responses['404']).toBeDefined()
   })
 })
 
-describe('handleUpdatePopsWaste', () => {
+describe('handleUpdateHazardousWaste', () => {
   const mockRequest = {
     params: {
       wasteTrackingId: '123e4567-e89b-12d3-a456-426614174000'
     },
     payload: {
-      isPopsWaste: true,
+      isHazerdousWaste: true,
       components: [
         {
           component: 'Test Component',
           concentration: 0.5,
-          popsCode: 'P001'
+          hazCode: 'H200'
         }
       ]
     }
@@ -58,17 +60,17 @@ describe('handleUpdatePopsWaste', () => {
     jest.clearAllMocks()
   })
 
-  it('should successfully update POPs waste details', async () => {
+  it('should successfully update hazardous waste details', async () => {
     httpClients.wasteMovement.put.mockResolvedValueOnce({})
 
-    await updatePopsWaste.handler(mockRequest, mockH)
+    await handleUpdateHazardousWaste(mockRequest, mockH)
 
     expect(httpClients.wasteMovement.put).toHaveBeenCalledWith(
-      `/movements/${mockRequest.params.wasteTrackingId}/pops`,
+      `/movements/${mockRequest.params.wasteTrackingId}/receive/hazardous`,
       mockRequest.payload
     )
     expect(mockH.response).toHaveBeenCalledWith({
-      message: 'POPs waste details updated successfully'
+      message: 'Hazardous waste details updated successfully'
     })
     expect(mockH.code).toHaveBeenCalledWith(200)
   })
@@ -78,17 +80,17 @@ describe('handleUpdatePopsWaste', () => {
     notFoundError.name = 'NotFoundError'
     httpClients.wasteMovement.put.mockRejectedValueOnce(notFoundError)
 
-    await expect(updatePopsWaste.handler(mockRequest, mockH)).rejects.toThrow(
-      Boom.notFound('Movement not found')
-    )
+    await expect(
+      handleUpdateHazardousWaste(mockRequest, mockH)
+    ).rejects.toThrow(Boom.notFound('Movement not found'))
   })
 
   it('should handle bad request error', async () => {
     const badRequestError = new Error('Invalid input')
     httpClients.wasteMovement.put.mockRejectedValueOnce(badRequestError)
 
-    await expect(updatePopsWaste.handler(mockRequest, mockH)).rejects.toThrow(
-      Boom.badRequest('Invalid input')
-    )
+    await expect(
+      handleUpdateHazardousWaste(mockRequest, mockH)
+    ).rejects.toThrow(Boom.badRequest('Invalid input'))
   })
 })

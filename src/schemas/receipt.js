@@ -100,11 +100,9 @@ const popsComponentSchema = Joi.object({
 
 export const popsWasteSchema = Joi.object({
   isPopsWaste: Joi.boolean().required(),
-  components: Joi.array()
-    .items(popsComponentSchema)
-    .when('isPopsWaste', {
-      is: true,
-      then: Joi.required(),
-      otherwise: Joi.forbidden()
-    })
+  components: Joi.array().items(popsComponentSchema).when('isPopsWaste', {
+    is: true,
+    then: Joi.required(),
+    otherwise: Joi.forbidden()
+  })
 }).label('PopsWaste')

@@ -1,15 +1,15 @@
-import { popsWasteSchema } from '../schemas/receipt.js'
-import { handleUpdatePopsWaste } from '../handlers/update-pops-waste.js'
+import { hazardousWasteSchema } from '../schemas/receipt.js'
+import { handleUpdateHazardousWaste } from '../handlers/update-hazardous-waste.js'
 import Joi from 'joi'
 import { commonSwaggerResponses } from '../schemas/common-schemas.js'
 
-const updatePopsWaste = {
+const updateHazardousWaste = {
   method: 'PUT',
-  path: '/movements/{wasteTrackingId}/pops',
+  path: '/movements/{wasteTrackingId}/receive/hazardous',
   options: {
     tags: ['movements'],
     description:
-      'Endpoint used to provide POPs waste details for a waste movement',
+      'Endpoint used to provide hazardous waste details for a waste movement',
     validate: {
       params: Joi.object({
         wasteTrackingId: Joi.string()
@@ -17,7 +17,7 @@ const updatePopsWaste = {
           .required()
           .description('The globally unique id of the movement.')
       }),
-      payload: popsWasteSchema
+      payload: hazardousWasteSchema
     },
     plugins: {
       'hapi-swagger': {
@@ -25,7 +25,7 @@ const updatePopsWaste = {
       }
     }
   },
-  handler: handleUpdatePopsWaste
+  handler: handleUpdateHazardousWaste
 }
 
-export { updatePopsWaste }
+export { updateHazardousWaste }
