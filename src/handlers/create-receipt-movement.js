@@ -4,7 +4,8 @@ import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
 export const handleCreateReceiptMovement = async (request, h) => {
   let wasteTrackingId
   try {
-    wasteTrackingId = await httpClients.wasteTracking.get('/next')
+    wasteTrackingId = (await httpClients.wasteTracking.get('/next')).payload
+      .wasteTrackingId
     console.log('Waste Tracking ID:', wasteTrackingId)
     await httpClients.wasteMovement.post(
       `/movements/${wasteTrackingId}/receive`,
