@@ -22,8 +22,12 @@ describe('Create Receipt Movement Handler', () => {
     jest.clearAllMocks()
 
     // Mock waste tracking ID
-    mockWasteTrackingId = '123e4567-e89b-12d3-a456-426614174000'
-    httpClients.wasteTracking.get.mockResolvedValue(mockWasteTrackingId)
+    mockWasteTrackingId = '2578ZCY8'
+    httpClients.wasteTracking.get.mockResolvedValue({
+      payload: {
+        wasteTrackingId: mockWasteTrackingId
+      }
+    })
   })
 
   const validPayload = {

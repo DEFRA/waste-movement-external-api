@@ -42,17 +42,15 @@ async function makeRequest(options, httpClient) {
   const client = httpClient || createClient({ headers })
 
   try {
-    const { res, payload: responsePayload } = await client.request(
-      method,
-      url,
-      {
-        payload: payload ? JSON.stringify(payload) : undefined
-      }
-    )
+    const response = await client.request(method, url, {
+      payload: payload ? JSON.stringify(payload) : undefined
+    })
+
+    const responsePayload = await Wreck.read(response, { json: true })
 
     return {
-      statusCode: res.statusCode,
-      headers: res.headers,
+      statusCode: response.statusCode,
+      headers: response.headers,
       payload: responsePayload
     }
   } catch (error) {
