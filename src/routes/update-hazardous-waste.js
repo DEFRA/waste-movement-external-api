@@ -12,10 +12,7 @@ const updateHazardousWaste = {
       'Endpoint used to provide hazardous waste details for a waste movement',
     validate: {
       params: Joi.object({
-        wasteTrackingId: Joi.string()
-          .uuid()
-          .required()
-          .description('The globally unique id of the movement.')
+        wasteTrackingId: Joi.string().required()
       }),
       payload: hazardousWasteSchema
     },
