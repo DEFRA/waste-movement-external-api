@@ -1,9 +1,9 @@
-import { httpClients } from '../config.js'
+import { httpClients } from '../common/helpers/http-client.js'
 import { handleUpdateReceiptMovement } from '../handlers/update-receipt-movement.js'
 import { updateReceiptMovement } from './update-receipt-movement.js'
 import Boom from '@hapi/boom'
 
-jest.mock('../config.js', () => ({
+jest.mock('../common/helpers/http-client.js', () => ({
   httpClients: {
     wasteMovement: {
       put: jest.fn()

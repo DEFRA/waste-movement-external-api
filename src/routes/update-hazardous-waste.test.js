@@ -1,9 +1,9 @@
-import { httpClients } from '../config.js'
+import { httpClients } from '../common/helpers/http-client.js'
 import { handleUpdateHazardousWaste } from '../handlers/update-hazardous-waste.js'
 import { updateHazardousWaste } from './update-hazardous-waste.js'
 import Boom from '@hapi/boom'
 
-jest.mock('../config.js', () => ({
+jest.mock('../common/helpers/http-client.js', () => ({
   httpClients: {
     wasteMovement: {
       put: jest.fn()

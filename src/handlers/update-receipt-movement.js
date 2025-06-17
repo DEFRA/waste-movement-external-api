@@ -1,5 +1,5 @@
 import Boom from '@hapi/boom'
-import { httpClients } from '../config.js'
+import { httpClients } from '../common/helpers/http-client.js'
 import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
 
 /**
