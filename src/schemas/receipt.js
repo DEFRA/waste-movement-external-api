@@ -91,3 +91,18 @@ export const hazardousWasteSchema = Joi.object({
       otherwise: Joi.forbidden()
     })
 }).label('HazardousWaste')
+
+const popsComponentSchema = Joi.object({
+  component: Joi.string().required(),
+  concentration: Joi.number().required(),
+  popsCode: Joi.string().required()
+}).label('PopsComponent')
+
+export const popsWasteSchema = Joi.object({
+  isPopsWaste: Joi.boolean().required(),
+  components: Joi.array().items(popsComponentSchema).when('isPopsWaste', {
+    is: true,
+    then: Joi.required(),
+    otherwise: Joi.forbidden()
+  })
+}).label('PopsWaste')
