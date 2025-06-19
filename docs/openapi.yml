@@ -1,0 +1,189 @@
+basePath: /
+info:
+  title: Digital Waste Tracking Receipt API
+  version: '1.0'
+  description: API for managing waste movements and receipts
+schemes:
+  - https
+host: 0.0.0.0:3001
+tags:
+  - name: movements
+    description: Waste movement operations
+swagger: '2.0'
+paths:
+  /movements/receive:
+    post:
+      summary: Endpoint to be used when waste is received but the carrier has not already recorded the waste movement so has no id.
+      operationId: postMovementsReceive
+      parameters:
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              movement:
+                type: string
+                enum:
+                  - ref:
+                      path:
+                        - blah
+      tags:
+        - movements
+      responses:
+        '200':
+          schema:
+            type: object
+            properties:
+              carrierMovementId:
+                type: string
+                description: An identifier of the movement, unique for the carrier only. This field will only be returned if the carrier is known to the service and should be provided to the carrier by the receiver.
+              globalMovementId:
+                type: string
+                description: Globally unique identifier of the movement. This id should be stored and used for any subsequent updates of the movement.
+                x-format:
+                  guid: true
+          description: The waste movement has been stored
+        '400':
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: number
+                enum:
+                  - 400
+              error:
+                type: string
+              message:
+                type: string
+          description: Bad Request
+  /movements/{wasteTrackingId}/receive:
+    put:
+      summary: Endpoint to be used when waste is received and the carrier has a waste tracking id.
+      operationId: putMovementsWastetrackingidReceive
+      parameters:
+        - type: string
+          description: The globally unique id of the movement.
+          x-format:
+            guid: true
+          name: wasteTrackingId
+          in: path
+          required: true
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              movement:
+                type: string
+                enum:
+                  - ref:
+                      path:
+                        - blah
+      tags:
+        - movements
+      responses:
+        '200':
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Success message
+          description: The waste movement receipt has been processed
+        '400':
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: number
+                enum:
+                  - 400
+              error:
+                type: string
+              message:
+                type: string
+          description: Bad Request
+        '404':
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: number
+                enum:
+                  - 404
+              error:
+                type: string
+              message:
+                type: string
+          description: Movement not found
+  /movements/{wasteTrackingId}/receive/hazardous:
+    put:
+      summary: Endpoint used to provide hazardous waste details for a waste movement
+      operationId: putMovementsWastetrackingidReceiveHazardous
+      parameters:
+        - type: string
+          name: wasteTrackingId
+          in: path
+          required: true
+        - in: body
+          name: body
+          schema:
+            type: object
+            properties:
+              isHazerdousWaste:
+                type: boolean
+              components:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    component:
+                      type: string
+                    concentration:
+                      type: number
+                    hazCode:
+                      type: string
+                  required:
+                    - component
+                    - concentration
+                    - hazCode
+            required:
+              - isHazerdousWaste
+              - components
+      tags:
+        - movements
+      responses:
+        '200':
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Success message
+          description: OK
+        '400':
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: number
+                enum:
+                  - 400
+              error:
+                type: string
+              message:
+                type: string
+          description: Bad Request
+        '404':
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: number
+                enum:
+                  - 404
+              error:
+                type: string
+              message:
+                type: string
+          description: Not Found
