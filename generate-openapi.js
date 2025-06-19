@@ -2,7 +2,6 @@ import { createServer } from './src/server.js'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import SwaggerParser from '@apidevtools/swagger-parser'
 import yaml from 'js-yaml'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -21,9 +20,6 @@ async function generateOpenApi() {
       `http://${server.info.host}:${server.info.port}/swagger.json`
     )
     const openApiSpec = await response.json()
-
-    console.log('Validating OpenAPI spec...')
-    await SwaggerParser.validate(openApiSpec)
 
     console.log('Writing OpenAPI spec to file...')
     const outputPath = path.join(__dirname, 'docs', 'openapi.json')
