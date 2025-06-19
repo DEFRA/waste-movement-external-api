@@ -83,6 +83,24 @@ To view them in your command line run:
 npm run
 ```
 
+#### OpenAPI Diff
+
+To compare OpenAPI specifications and generate a report of the differences, use the `openapi:diff` script:
+
+```bash
+# Compare two OpenAPI specifications
+npm run openapi:diff -- OLD_SPEC_PATH NEW_SPEC_PATH
+
+# Example: Compare a previous version with the current version
+npm run openapi:diff -- old-api-spec.yml docs/Receipt\ API.yml
+
+# Generate a Markdown report of the differences
+npm run openapi:diff -- --markdown report.md OLD_SPEC_PATH NEW_SPEC_PATH
+
+# Example with Markdown report
+npm run openapi:diff -- --markdown api-changes.md old-api-spec.yml docs/Receipt\ API.yml
+```
+
 ### Update dependencies
 
 To update dependencies use [npm-check-updates](https://github.com/raineorshine/npm-check-updates):
