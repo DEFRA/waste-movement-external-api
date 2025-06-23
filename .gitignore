@@ -11,3 +11,4 @@ coverage
 
 # @shelf/jest-mongodb generated file
 globalConfig.json
+docs/diff-report.json
