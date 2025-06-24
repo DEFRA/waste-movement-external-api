@@ -7,10 +7,20 @@ export const handleUpdateHazardousWaste = async (request, h) => {
     const { wasteTrackingId } = request.params
     const payload = request.payload
 
-    await httpClients.wasteMovement.put(
+    const response = await httpClients.wasteMovement.put(
       `/movements/${wasteTrackingId}/receive/hazardous`,
-      payload
+      { hazardousWaste: payload }
     )
+
+    if (response.statusCode >= 400 && response.statusCode < 500) {
+      return h
+        .response({
+          statusCode: response.statusCode,
+          error: response.error,
+          message: response.message
+        })
+        .code(response.statusCode)
+    }
 
     return h
       .response({

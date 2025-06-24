@@ -67,7 +67,7 @@ describe('handleUpdateHazardousWaste', () => {
 
     expect(httpClients.wasteMovement.put).toHaveBeenCalledWith(
       `/movements/${mockRequest.params.wasteTrackingId}/receive/hazardous`,
-      mockRequest.payload
+      { hazardousWaste: mockRequest.payload }
     )
     expect(mockH.response).toHaveBeenCalledWith({
       message: 'Hazardous waste details updated successfully'
