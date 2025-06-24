@@ -13,7 +13,6 @@ const updateReceiptMovement = {
     validate: {
       params: Joi.object({
         wasteTrackingId: Joi.string()
-          .uuid()
           .required()
           .description('The globally unique id of the movement.')
       }),

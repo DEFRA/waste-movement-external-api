@@ -12,7 +12,10 @@ export const handleUpdateHazardousWaste = async (request, h) => {
       { hazardousWaste: payload }
     )
 
-    if (response.statusCode >= 400 && response.statusCode < 500) {
+    if (
+      response.statusCode >= HTTP_STATUS.BAD_REQUEST &&
+      response.statusCode < HTTP_STATUS.INTERNAL_SERVER_ERROR
+    ) {
       return h
         .response({
           statusCode: response.statusCode,
