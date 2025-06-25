@@ -129,6 +129,33 @@ const config = convict({
       format: String,
       default: 'https://waste-movement-backend.dev.cdp-int.defra.cloud',
       env: 'WASTE_MOVEMENT_SERVICE_URL'
+    },
+    gateway: {
+      doc: 'Gateway Service URL',
+      format: String,
+      default:
+        'https://waste-movement-external-api.api.dev.cdp-int.defra.cloud',
+      env: 'GATEWAY_SERVICE_URL'
+    },
+    cognito: {
+      serviceUrl: {
+        doc: 'Cognito Service URL',
+        format: String,
+        default: 'https://cognito-idp.eu-west-2.amazonaws.com',
+        env: 'COGNITO_SERVICE_URL'
+      },
+      clientId: {
+        doc: 'Cognito Client ID',
+        format: String,
+        default: '2lteusehsq9vne7dp1h3vmte0',
+        env: 'COGNITO_CLIENT_ID'
+      },
+      clientSecret: {
+        doc: 'Cognito Client Secret',
+        format: String,
+        default: '12lt7tiea8|paou1fdr28rfn8jqgm7gdjdc49p5843n4pac0iot9',
+        env: 'COGNITO_CLIENT_SECRET'
+      }
     }
   }
 })
