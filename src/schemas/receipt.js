@@ -82,10 +82,10 @@ const hazardousComponentSchema = Joi.object({
 }).label('HazardousComponent')
 
 export const hazardousWasteSchema = Joi.object({
-  isHazerdousWaste: Joi.boolean().required(),
+  isHazardousWaste: Joi.boolean().required(),
   components: Joi.array()
     .items(hazardousComponentSchema)
-    .when('isHazerdousWaste', {
+    .when('isHazardousWaste', {
       is: true,
       then: Joi.required(),
       otherwise: Joi.forbidden()

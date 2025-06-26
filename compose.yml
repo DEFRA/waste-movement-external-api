@@ -66,9 +66,8 @@ services:
   #     - cdp-tenant
 
   waste-movement-backend:
-    build:
-      context: .
-      target: development
+#    image: local-build
+    image: defradigital/waste-movement-backend:latest
     ports:
       - '3001:3001'
     links:
@@ -88,9 +87,9 @@ services:
       MONGO_URI: mongodb://mongodb:27017/
     networks:
       - cdp-tenant
-    volumes:
-      - ./src:/home/node/src
-      - ./package.json:/home/node/package.json
+#    volumes:
+#      - ./src:/home/node/src
+#      - ./package.json:/home/node/package.json
 
 ################################################################################
 
