@@ -1,6 +1,6 @@
 import Boom from '@hapi/boom'
 import { httpClients } from '../common/helpers/http-client.js'
-import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
+import { handleBackendResponse } from './handle-backend-response.js'
 
 /**
  * Handler for updating a receipt movement
@@ -13,16 +13,14 @@ export const handleUpdateReceiptMovement = async (request, h) => {
     const { wasteTrackingId } = request.params
     const movement = request.payload
 
-    await httpClients.wasteMovement.put(
+    const response = await httpClients.wasteMovement.put(
       `/movements/${wasteTrackingId}/receive`,
       movement
     )
 
-    return h
-      .response({
-        message: 'Receipt movement updated successfully'
-      })
-      .code(HTTP_STATUS.OK)
+    return handleBackendResponse(response, h, () => ({
+      message: 'Receipt movement updated successfully'
+    }))
   } catch (error) {
     if (error.name === 'NotFoundError') {
       throw Boom.notFound('Movement not found')

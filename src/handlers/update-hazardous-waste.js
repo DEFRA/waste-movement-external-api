@@ -1,6 +1,6 @@
-import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
 import { httpClients } from '../common/helpers/http-client.js'
 import Boom from '@hapi/boom'
+import { handleBackendResponse } from './handle-backend-response.js'
 
 export const handleUpdateHazardousWaste = async (request, h) => {
   try {
@@ -11,25 +11,9 @@ export const handleUpdateHazardousWaste = async (request, h) => {
       `/movements/${wasteTrackingId}/receive/hazardous`,
       { hazardousWaste: payload }
     )
-
-    if (
-      response.statusCode >= HTTP_STATUS.BAD_REQUEST &&
-      response.statusCode < HTTP_STATUS.INTERNAL_SERVER_ERROR
-    ) {
-      return h
-        .response({
-          statusCode: response.statusCode,
-          error: response.error,
-          message: response.message
-        })
-        .code(response.statusCode)
-    }
-
-    return h
-      .response({
-        message: 'Hazardous waste details updated successfully'
-      })
-      .code(HTTP_STATUS.OK)
+    return handleBackendResponse(response, h, () => ({
+      message: 'Hazardous waste details updated successfully'
+    }))
   } catch (error) {
     if (error.name === 'NotFoundError') {
       throw Boom.notFound('Movement not found')
