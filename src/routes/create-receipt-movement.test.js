@@ -53,7 +53,9 @@ describe('Movement Route', () => {
 
     it('should successfully create a waste movement', async () => {
       // Mock successful waste movement creation
-      httpClients.wasteMovement.post.mockResolvedValue({})
+      httpClients.wasteMovement.post.mockResolvedValue({
+        statusCode: 200
+      })
 
       const request = {
         payload: validPayload

@@ -61,7 +61,9 @@ describe('handleUpdateHazardousWaste', () => {
   })
 
   it('should successfully update hazardous waste details', async () => {
-    httpClients.wasteMovement.put.mockResolvedValueOnce({})
+    httpClients.wasteMovement.put.mockResolvedValueOnce({
+      statusCode: 200
+    })
 
     await handleUpdateHazardousWaste(mockRequest, mockH)
 
