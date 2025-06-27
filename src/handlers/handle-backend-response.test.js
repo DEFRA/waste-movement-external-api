@@ -29,6 +29,40 @@ describe('handleBackendResponse', () => {
     expect(mockH.code).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST)
   })
 
+  it('should handle 450 error response', () => {
+    const response = {
+      statusCode: 450,
+      error: 'Custom Error',
+      message: 'Custom error message'
+    }
+
+    handleBackendResponse(response, mockH)
+
+    expect(mockH.response).toHaveBeenCalledWith({
+      statusCode: 450,
+      error: 'Custom Error',
+      message: 'Custom error message'
+    })
+    expect(mockH.code).toHaveBeenCalledWith(450)
+  })
+
+  it('should handle INTERNAL_SERVER_ERROR response', () => {
+    const response = {
+      statusCode: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+      error: 'Internal Server Error',
+      message: 'Server error occurred'
+    }
+
+    handleBackendResponse(response, mockH)
+
+    expect(mockH.response).toHaveBeenCalledWith({
+      statusCode: HTTP_STATUS.INTERNAL_SERVER_ERROR,
+      error: 'Internal Server Error',
+      message: 'Server error occurred'
+    })
+    expect(mockH.code).toHaveBeenCalledWith(HTTP_STATUS.INTERNAL_SERVER_ERROR)
+  })
+
   it('should return response with body when responseBodyFn is provided', () => {
     const response = {
       statusCode: HTTP_STATUS.OK
