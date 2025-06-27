@@ -59,7 +59,9 @@ describe('handleUpdatePopsWaste', () => {
   })
 
   it('should successfully update POPs waste details', async () => {
-    httpClients.wasteMovement.put.mockResolvedValueOnce({})
+    httpClients.wasteMovement.put.mockResolvedValueOnce({
+      statusCode: 200
+    })
 
     await updatePopsWaste.handler(mockRequest, mockH)
 
