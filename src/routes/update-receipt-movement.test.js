@@ -67,7 +67,9 @@ describe('handleUpdateReceiptMovement', () => {
   })
 
   it('should successfully update a receipt movement', async () => {
-    httpClients.wasteMovement.put.mockResolvedValueOnce({})
+    httpClients.wasteMovement.put.mockResolvedValueOnce({
+      statusCode: 200
+    })
 
     await handleUpdateReceiptMovement(mockRequest, mockH)
 
