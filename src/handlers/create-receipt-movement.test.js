@@ -31,21 +31,19 @@ describe('Create Receipt Movement Handler', () => {
   })
 
   const validPayload = {
-    movement: {
-      receivingSiteId: 'site123',
-      receiverReference: 'ref123',
-      specialHandlingRequirements: 'Handle with care',
-      waste: {
-        wasteCode: '123456',
-        description: 'Test waste'
-      },
-      carrier: {
-        name: 'Test Carrier',
-        address: {
-          street: '123 Test St',
-          city: 'Test City',
-          postcode: 'TE1 1ST'
-        }
+    receivingSiteId: 'site123',
+    receiverReference: 'ref123',
+    specialHandlingRequirements: 'Handle with care',
+    waste: {
+      wasteCode: '123456',
+      description: 'Test waste'
+    },
+    carrier: {
+      name: 'Test Carrier',
+      address: {
+        street: '123 Test St',
+        city: 'Test City',
+        postcode: 'TE1 1ST'
       }
     }
   }
@@ -78,7 +76,7 @@ describe('Create Receipt Movement Handler', () => {
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
       `/movements/${mockWasteTrackingId}/receive`,
       {
-        movement: validPayload.movement
+        movement: validPayload
       }
     )
   })

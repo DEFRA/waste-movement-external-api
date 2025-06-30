@@ -60,7 +60,7 @@ const receiptSchema = Joi.object({
   disposalOrRecoveryCode: disposalOrRecoveryCodeSchema
 }).label('Receipt')
 
-const movementSchema = Joi.object({
+export const movementSchema = Joi.object({
   receivingSiteId: Joi.string().required(),
   receiverReference: Joi.string().required(),
   specialHandlingRequirements: Joi.string(),
@@ -70,10 +70,6 @@ const movementSchema = Joi.object({
   receiver: receiverSchema.required(),
   receipt: receiptSchema.required()
 }).label('Movement')
-
-export const receiptMovementSchema = Joi.object({
-  movement: movementSchema.required()
-}).label('ReceiptMovement')
 
 const hazardousComponentSchema = Joi.object({
   component: Joi.string().required(),

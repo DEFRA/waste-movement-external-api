@@ -75,7 +75,7 @@ describe('handleUpdateReceiptMovement', () => {
 
     expect(httpClients.wasteMovement.put).toHaveBeenCalledWith(
       `/movements/${mockRequest.params.wasteTrackingId}/receive`,
-      mockRequest.payload
+      { movement: mockRequest.payload }
     )
     expect(mockH.response).toHaveBeenCalledWith({
       message: 'Receipt movement updated successfully'

@@ -1,4 +1,4 @@
-import { receiptMovementSchema } from '../schemas/receipt.js'
+import { movementSchema } from '../schemas/receipt.js'
 import { handleUpdateReceiptMovement } from '../handlers/update-receipt-movement.js'
 import Joi from 'joi'
 import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
@@ -16,7 +16,7 @@ const updateReceiptMovement = {
           .required()
           .description('The globally unique id of the movement.')
       }),
-      payload: receiptMovementSchema
+      payload: movementSchema
     },
     plugins: {
       'hapi-swagger': {
