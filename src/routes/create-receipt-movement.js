@@ -1,4 +1,4 @@
-import { movementSchema } from '../schemas/receipt.js'
+import { receiveMovementRequestSchema } from '../schemas/receipt.js'
 import { handleCreateReceiptMovement } from '../handlers/create-receipt-movement.js'
 import Joi from 'joi'
 import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
@@ -11,7 +11,7 @@ const createReceiptMovement = {
     description:
       'Endpoint to be used when waste is received but the carrier has not already recorded the waste movement so has no id.',
     validate: {
-      payload: movementSchema
+      payload: receiveMovementRequestSchema
     },
     plugins: {
       'hapi-swagger': {
