@@ -111,23 +111,6 @@ export const receiveMovementRequestSchema = Joi.object({
   receipt: receiptSchema
 }).label('Movement')
 
-const hazardousComponentSchema = Joi.object({
-  component: Joi.string().required(),
-  concentration: Joi.number().required(),
-  hazCode: Joi.string().required()
-}).label('HazardousComponent')
-
-export const hazardousWasteSchema = Joi.object({
-  isHazardousWaste: Joi.boolean().required(),
-  components: Joi.array()
-    .items(hazardousComponentSchema)
-    .when('isHazardousWaste', {
-      is: true,
-      then: Joi.required(),
-      otherwise: Joi.forbidden()
-    })
-}).label('HazardousWaste')
-
 const popsComponentSchema = Joi.object({
   component: Joi.string().required(),
   concentration: Joi.number().required(),
