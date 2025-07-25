@@ -11,7 +11,7 @@ const popsSchema = Joi.object({
   pops: Joi.array().items(
     Joi.object({
       name: Joi.string(),
-      concentrationValue: Joi.number()
+      concentration: Joi.number()
     }).label('PopsItem')
   )
 }).label('Pops')
@@ -19,7 +19,7 @@ const popsSchema = Joi.object({
 const hazardousSchema = Joi.object({
   components: Joi.array().items(
     Joi.object({
-      component: Joi.string(),
+      name: Joi.string(),
       concentration: Joi.number()
     }).label('ComponentItem')
   )
