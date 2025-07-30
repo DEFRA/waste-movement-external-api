@@ -1,14 +1,3 @@
-/**
- * European Waste Catalogue (EWC) codes
- * This file contains a list of valid EWC codes for validation purposes.
- *
- * The codes are stored without spaces, but the validation will accept codes
- * with or without spaces (e.g., both "010101" and "01 01 01" are valid).
- *
- * This is the complete list of EWC codes from the List of Wastes (England) Regulations 2005
- * https://www.legislation.gov.uk/uksi/2005/895/schedule/1/made
- */
-
 export const validEwcCodes = [
   // Chapter 01: Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals
   '010101', // wastes from mineral excavation
@@ -899,7 +888,9 @@ export const validEwcCodes = [
  * @returns {boolean} - True if the code is valid, false otherwise
  */
 export const isValidEwcCode = (code) => {
-  if (!code) return false
+  if (!code) {
+    return false
+  }
 
   // Remove spaces from the code
   const normalizedCode = code.replace(/\s/g, '')

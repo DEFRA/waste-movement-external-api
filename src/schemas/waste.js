@@ -2,6 +2,8 @@ import Joi from 'joi'
 import { isValidEwcCode } from '../common/constants/ewc-codes.js'
 import { quantitySchema } from './quantity.js'
 
+const MAX_EWC_CODES_COUNT = 5
+
 const popsSchema = Joi.object({
   containsPops: Joi.boolean(),
   pops: Joi.array().items(
@@ -46,7 +48,7 @@ export const wasteSchema = Joi.object({
       })
     )
     .required()
-    .max(5)
+    .max(MAX_EWC_CODES_COUNT)
     .messages({
       'array.max': '{{#label}} must contain no more than 5 EWC codes'
     }),
