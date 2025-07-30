@@ -43,7 +43,7 @@ describe('handleUpdateReceiptMovement', () => {
       receivingSiteId: '123e4567-e89b-12d3-a456-426614174001',
       waste: [
         {
-          ewcCode: ['01 01 01'],
+          ewcCodes: ['01 01 01'],
           description: 'Test waste',
           form: 'Solid',
           containers: 'Bulk',

@@ -8,7 +8,7 @@ describe('Receipt Schema Validation', () => {
         receivingSiteId: 'site123',
         waste: [
           {
-            ewcCode: ewcCodeArray,
+            ewcCodes: ewcCodeArray,
             wasteDescription: 'Test waste',
             form: 'Solid',
             quantity: {
@@ -40,7 +40,7 @@ describe('Receipt Schema Validation', () => {
 
       expect(result1.error).toBeDefined()
       expect(result1.error.message).toContain(
-        '"waste[0].ewcCode[0]" must be a valid 6-digit numeric code'
+        '"waste[0].ewcCodes[0]" must be a valid 6-digit numeric code'
       )
     })
 
@@ -94,7 +94,7 @@ describe('Receipt Schema Validation', () => {
 
       expect(result.error).toBeDefined()
       expect(result.error.message).toContain(
-        '"waste[0].ewcCode[0]" must be a valid EWC code from the official list'
+        '"waste[0].ewcCodes[0]" must be a valid EWC code from the official list'
       )
     })
 
@@ -118,7 +118,7 @@ describe('Receipt Schema Validation', () => {
       const result = receiveMovementRequestSchema.validate(payload)
 
       expect(result.error).toBeDefined()
-      expect(result.error.message).toContain('"waste[0].ewcCode" is required')
+      expect(result.error.message).toContain('"waste[0].ewcCodes" is required')
     })
   })
 })
