@@ -1,4 +1,5 @@
 import Joi from 'joi'
+import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
 
 const quantitySchema = Joi.object({
   metric: Joi.string().valid('Tonnes').required(),
@@ -81,9 +82,11 @@ const receiverSchema = Joi.object({
 }).label('Receiver')
 
 const disposalOrRecoveryCodeSchema = Joi.object({
-  code: Joi.string(),
-  quantity: quantitySchema
-})
+  code: Joi.string()
+    .valid(...DISPOSAL_OR_RECOVERY_CODES)
+    .required(),
+  quantity: quantitySchema.required()
+}).label('DisposalOrRecoveryCode')
 
 const receiptSchema = Joi.object({
   dateTimeReceived: Joi.date().iso(),
