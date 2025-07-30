@@ -1,4 +1,5 @@
 import Joi from 'joi'
+import { isValidEwcCode } from '../common/constants/ewc-codes.js'
 
 const quantitySchema = Joi.object({
   metric: Joi.string().valid('Tonnes').required(),
@@ -26,7 +27,29 @@ const hazardousSchema = Joi.object({
 })
 
 const wasteSchema = Joi.object({
-  ewcCode: Joi.string().required(),
+  ewcCode: Joi.string()
+    .required()
+    .custom((value, helpers) => {
+      // Remove spaces for validation
+      const normalizedCode = value.replace(/\s/g, '')
+
+      // Check if it's a 6-digit numeric code
+      if (!/^\d{6}$/.test(normalizedCode)) {
+        return helpers.error('string.ewcCodeFormat', { value })
+      }
+
+      // Check if it's in the list of valid EWC codes
+      if (!isValidEwcCode(value)) {
+        return helpers.error('string.ewcCodeInvalid', { value })
+      }
+
+      return value
+    }, 'EWC code validation')
+    .messages({
+      'string.ewcCodeFormat': '{{#label}} must be a 6-digit numeric code',
+      'string.ewcCodeInvalid':
+        '{{#label}} must be a valid EWC code from the official list'
+    }),
   wasteDescription: Joi.string().required(),
   form: Joi.string()
     .valid('Gas', 'Liquid', 'Solid', 'Powder', 'Sludge', 'Mixed')
