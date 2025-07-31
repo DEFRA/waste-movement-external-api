@@ -1,42 +1,6 @@
 import Joi from 'joi'
-
-const quantitySchema = Joi.object({
-  metric: Joi.string().valid('Tonnes').required(),
-  amount: Joi.number().required(),
-  isEstimate: Joi.bool().required()
-}).label('Quantity')
-
-const popsSchema = Joi.object({
-  containsPops: Joi.boolean(),
-  pops: Joi.array().items(
-    Joi.object({
-      name: Joi.string(),
-      concentration: Joi.number()
-    }).label('PopsItem')
-  )
-}).label('Pops')
-
-const hazardousSchema = Joi.object({
-  components: Joi.array().items(
-    Joi.object({
-      name: Joi.string(),
-      concentration: Joi.number()
-    }).label('ComponentItem')
-  )
-})
-
-const wasteSchema = Joi.object({
-  ewcCode: Joi.string().required(),
-  wasteDescription: Joi.string().required(),
-  form: Joi.string()
-    .valid('Gas', 'Liquid', 'Solid', 'Powder', 'Sludge', 'Mixed')
-    .required(),
-  numberOfContainers: Joi.number(),
-  typeOfContainers: Joi.string(),
-  quantity: quantitySchema,
-  pops: popsSchema,
-  hazardous: hazardousSchema
-}).label('Waste')
+import { wasteSchema } from './waste.js'
+import { quantitySchema } from './quantity.js'
 
 const carrierSchema = Joi.object({
   registrationNumber: Joi.string(),
