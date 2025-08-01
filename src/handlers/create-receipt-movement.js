@@ -1,6 +1,7 @@
 import { httpClients } from '../common/helpers/http-client.js'
 import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
 import { handleBackendResponse } from './handle-backend-response.js'
+import { generateAllValidationWarnings } from '../common/helpers/validation-warnings.js'
 
 export const handleCreateReceiptMovement = async (request, h) => {
   let wasteTrackingId
@@ -13,10 +14,22 @@ export const handleCreateReceiptMovement = async (request, h) => {
       { movement: request.payload }
     )
 
-    return handleBackendResponse(response, h, () => ({
+    // Generate validation warnings
+    const warnings = generateAllValidationWarnings(request.payload)
+
+    const responseData = {
       statusCode: HTTP_STATUS.OK,
       globalMovementId: wasteTrackingId
-    }))
+    }
+
+    // Only include validation object if there are warnings
+    if (warnings.length > 0) {
+      responseData.validation = {
+        warnings
+      }
+    }
+
+    return handleBackendResponse(response, h, () => responseData)
   } catch (error) {
     console.error('Error creating waste movement:', error)
     return h

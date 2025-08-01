@@ -1,6 +1,7 @@
 import Boom from '@hapi/boom'
 import { httpClients } from '../common/helpers/http-client.js'
 import { handleBackendResponse } from './handle-backend-response.js'
+import { generateAllValidationWarnings } from '../common/helpers/validation-warnings.js'
 
 /**
  * Handler for updating a receipt movement
@@ -20,9 +21,21 @@ export const handleUpdateReceiptMovement = async (request, h) => {
       }
     )
 
-    return handleBackendResponse(response, h, () => ({
+    // Generate validation warnings
+    const warnings = generateAllValidationWarnings(movement)
+
+    const responseData = {
       message: 'Receipt movement updated successfully'
-    }))
+    }
+
+    // Only include validation object if there are warnings
+    if (warnings.length > 0) {
+      responseData.validation = {
+        warnings
+      }
+    }
+
+    return handleBackendResponse(response, h, () => responseData)
   } catch (error) {
     if (error.name === 'NotFoundError') {
       throw Boom.notFound('Movement not found')
