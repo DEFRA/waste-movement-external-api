@@ -7,6 +7,13 @@ export const VALIDATION_ERROR_TYPES = {
 }
 
 /**
+ * Validation warning keys
+ */
+export const VALIDATION_KEYS = {
+  RECEIPT_DISPOSAL_RECOVERY_CODES: 'receipt.disposalOrRecoveryCodes'
+}
+
+/**
  * Generate validation warnings for disposal/recovery codes
  * @param {Object} payload - The request payload
  * @returns {Array} Array of validation warnings
@@ -17,7 +24,7 @@ export const generateDisposalRecoveryWarnings = (payload) => {
   // Check if receipt section exists
   if (!payload.receipt) {
     warnings.push({
-      key: 'receipt.disposalOrRecoveryCodes',
+      key: VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message:
         'Disposal or Recovery codes are required for proper waste tracking and compliance'
@@ -28,7 +35,7 @@ export const generateDisposalRecoveryWarnings = (payload) => {
   // Check if disposalOrRecoveryCodes array exists
   if (!payload.receipt.disposalOrRecoveryCodes) {
     warnings.push({
-      key: 'receipt.disposalOrRecoveryCodes',
+      key: VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message:
         'Disposal or Recovery codes are required for proper waste tracking and compliance'
@@ -39,7 +46,7 @@ export const generateDisposalRecoveryWarnings = (payload) => {
   // Check if disposalOrRecoveryCodes array is empty
   if (payload.receipt.disposalOrRecoveryCodes.length === 0) {
     warnings.push({
-      key: 'receipt.disposalOrRecoveryCodes',
+      key: VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message:
         'At least one Disposal or Recovery code must be specified with associated quantity'
@@ -55,7 +62,7 @@ export const generateDisposalRecoveryWarnings = (payload) => {
     // Check if code is missing (this should be caught by schema validation)
     if (!codeEntry.code) {
       warnings.push({
-        key: `receipt.disposalOrRecoveryCodes[${index}].code`,
+        key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].code`,
         errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
         message: 'Disposal or Recovery code is required for each entry'
       })
@@ -64,7 +71,7 @@ export const generateDisposalRecoveryWarnings = (payload) => {
     // Check if quantity is missing (this should be caught by schema validation)
     if (!codeEntry.quantity) {
       warnings.push({
-        key: `receipt.disposalOrRecoveryCodes[${index}].quantity`,
+        key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].quantity`,
         errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
         message: `Quantity is required for Disposal/Recovery code: ${codeEntry.code || 'UNKNOWN'}`
       })
@@ -72,7 +79,7 @@ export const generateDisposalRecoveryWarnings = (payload) => {
       // Check if quantity has required fields (these should be caught by schema validation)
       if (!codeEntry.quantity.metric) {
         warnings.push({
-          key: `receipt.disposalOrRecoveryCodes[${index}].quantity.metric`,
+          key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].quantity.metric`,
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message: 'Quantity metric is required'
         })
@@ -83,7 +90,7 @@ export const generateDisposalRecoveryWarnings = (payload) => {
         codeEntry.quantity.amount === null
       ) {
         warnings.push({
-          key: `receipt.disposalOrRecoveryCodes[${index}].quantity.amount`,
+          key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].quantity.amount`,
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message: 'Quantity amount is required'
         })
@@ -94,7 +101,7 @@ export const generateDisposalRecoveryWarnings = (payload) => {
         codeEntry.quantity.isEstimate === null
       ) {
         warnings.push({
-          key: `receipt.disposalOrRecoveryCodes[${index}].quantity.isEstimate`,
+          key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].quantity.isEstimate`,
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message: 'Quantity estimate flag is required'
         })
