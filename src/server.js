@@ -11,6 +11,7 @@ import { pulse } from './common/helpers/pulse.js'
 import { requestTracing } from './common/helpers/request-tracing.js'
 import { setupProxy } from './common/helpers/proxy/setup-proxy.js'
 import { swagger } from './plugins/swagger.js'
+import { errorHandler } from './plugins/error-handler.js'
 
 async function createServer() {
   setupProxy()
@@ -75,7 +76,13 @@ async function createServer() {
   await server.register(router)
 
   // Register remaining plugins
-  await server.register([requestLogger, requestTracing, secureContext, pulse])
+  await server.register([
+    requestLogger,
+    requestTracing,
+    secureContext,
+    pulse,
+    errorHandler
+  ])
 
   return server
 }

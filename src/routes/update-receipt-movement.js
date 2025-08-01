@@ -2,6 +2,7 @@ import { receiveMovementRequestSchema } from '../schemas/receipt.js'
 import { handleUpdateReceiptMovement } from '../handlers/update-receipt-movement.js'
 import Joi from 'joi'
 import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
+import { badRequestResponseSchema } from '../schemas/bad-request-response-schema.js'
 
 const updateReceiptMovement = {
   method: 'PUT',
@@ -28,12 +29,8 @@ const updateReceiptMovement = {
             })
           },
           [HTTP_STATUS.BAD_REQUEST]: {
-            description: 'Bad Request',
-            schema: Joi.object({
-              statusCode: Joi.number().valid(HTTP_STATUS.BAD_REQUEST),
-              error: Joi.string(),
-              message: Joi.string()
-            }).label('BadRequestResponse')
+            description: 'Input was not in the correct format.',
+            schema: badRequestResponseSchema
           },
           [HTTP_STATUS.NOT_FOUND]: {
             description: 'Movement not found',
