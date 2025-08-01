@@ -1,6 +1,71 @@
 import { receiveMovementRequestSchema } from './receipt.js'
 
 describe('Receipt Schema Validation', () => {
+  describe('POPs Indicator Validation', () => {
+    // Helper function to validate a payload with POPs indicator
+    const validatePopsIndicator = (containsPops) => {
+      const payload = {
+        receivingSiteId: 'site123',
+        waste: [
+          {
+            ewcCodes: ['010101'],
+            wasteDescription: 'Test waste',
+            form: 'Solid',
+            pops: containsPops !== undefined ? { containsPops } : undefined,
+            quantity: {
+              metric: 'Tonnes',
+              amount: 1,
+              isEstimate: false
+            }
+          }
+        ]
+      }
+
+      return receiveMovementRequestSchema.validate(payload)
+    }
+
+    it('should accept valid POPs indicator (true)', () => {
+      const result = validatePopsIndicator(true)
+      expect(result.error).toBeUndefined()
+    })
+
+    it('should accept valid POPs indicator (false)', () => {
+      const result = validatePopsIndicator(false)
+      expect(result.error).toBeUndefined()
+    })
+
+    it('should accept missing POPs section', () => {
+      const result = validatePopsIndicator(undefined)
+      expect(result.error).toBeUndefined()
+    })
+
+    it('should reject missing containsPops field', () => {
+      // Create a payload with pops object but missing containsPops
+      const payload = {
+        receivingSiteId: 'site123',
+        waste: [
+          {
+            ewcCodes: ['010101'],
+            wasteDescription: 'Test waste',
+            form: 'Solid',
+            pops: {}, // Empty pops object without containsPops
+            quantity: {
+              metric: 'Tonnes',
+              amount: 1,
+              isEstimate: false
+            }
+          }
+        ]
+      }
+
+      const result = receiveMovementRequestSchema.validate(payload)
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toContain(
+        'Does the waste contain persistent organic pollutants (POPs)? is required'
+      )
+    })
+  })
+
   describe('EWC Code Validation', () => {
     // Helper function to validate a payload with a specific EWC code
     const validateEwcCode = (ewcCodeArray) => {
@@ -11,6 +76,9 @@ describe('Receipt Schema Validation', () => {
             ewcCodes: ewcCodeArray,
             wasteDescription: 'Test waste',
             form: 'Solid',
+            pops: {
+              containsPops: false
+            },
             quantity: {
               metric: 'Tonnes',
               amount: 1,
