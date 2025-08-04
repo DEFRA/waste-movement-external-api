@@ -1,6 +1,11 @@
 import Joi from 'joi'
 import { isValidEwcCode } from '../common/constants/ewc-codes.js'
-import { quantitySchema } from './quantity.js'
+
+export const quantitySchema = Joi.object({
+  metric: Joi.string().valid('Tonnes').required(),
+  amount: Joi.number().required(),
+  isEstimate: Joi.boolean().strict().required()
+}).label('Quantity')
 
 const MAX_EWC_CODES_COUNT = 5
 
