@@ -1,6 +1,6 @@
 import Joi from 'joi'
-import { wasteSchema } from './waste.js'
-import { quantitySchema } from './quantity.js'
+import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
+import { wasteSchema, quantitySchema } from './waste.js'
 
 const carrierSchema = Joi.object({
   registrationNumber: Joi.string(),
@@ -45,9 +45,11 @@ const receiverSchema = Joi.object({
 }).label('Receiver')
 
 const disposalOrRecoveryCodeSchema = Joi.object({
-  code: Joi.string(),
-  quantity: quantitySchema
-})
+  code: Joi.string()
+    .valid(...DISPOSAL_OR_RECOVERY_CODES)
+    .required(),
+  quantity: quantitySchema.required()
+}).label('DisposalOrRecoveryCode')
 
 const receiptSchema = Joi.object({
   dateTimeReceived: Joi.date().iso(),
