@@ -5,7 +5,10 @@ import { quantitySchema } from './quantity.js'
 const MAX_EWC_CODES_COUNT = 5
 
 const popsSchema = Joi.object({
-  containsPops: Joi.boolean(),
+  containsPops: Joi.boolean().required().messages({
+    'any.required':
+      'Does the waste contain persistent organic pollutants (POPs)? is required'
+  }),
   pops: Joi.array().items(
     Joi.object({
       name: Joi.string(),
