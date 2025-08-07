@@ -1,5 +1,6 @@
 import Joi from 'joi'
 import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
+import { MEANS_OF_TRANSPORT } from '../common/constants/means-of-transport.js'
 import { wasteSchema } from './waste.js'
 import { quantitySchema } from './quantity.js'
 
@@ -11,15 +12,7 @@ const carrierSchema = Joi.object({
   emailAddress: Joi.string().email(),
   phoneNumber: Joi.string(),
   vehicleRegistration: Joi.string(),
-  meansOfTransport: Joi.string().valid(
-    'Road',
-    'Rail',
-    'Air',
-    'Sea',
-    'Waterway',
-    'Pipe',
-    'Other'
-  ),
+  meansOfTransport: Joi.string().valid(...MEANS_OF_TRANSPORT),
   otherMeansOfTransport: Joi.string()
 }).label('Carrier')
 
