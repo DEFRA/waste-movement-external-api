@@ -45,6 +45,18 @@ describe('Create Receipt Movement Handler', () => {
         city: 'Test City',
         postcode: 'TE1 1ST'
       }
+    },
+    receipt: {
+      disposalOrRecoveryCodes: [
+        {
+          code: 'R1',
+          quantity: {
+            metric: 'Tonnes',
+            amount: 10,
+            isEstimate: false
+          }
+        }
+      ]
     }
   }
 
