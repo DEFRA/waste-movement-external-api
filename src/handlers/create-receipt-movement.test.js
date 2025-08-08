@@ -14,7 +14,7 @@ jest.mock('../common/helpers/http-client.js', () => ({
   }
 }))
 
-describe('Movement Route', () => {
+describe('Create Receipt Movement Handler', () => {
   let mockWasteTrackingId
 
   beforeEach(() => {
@@ -30,110 +30,110 @@ describe('Movement Route', () => {
     })
   })
 
-  describe('POST /movements/receive', () => {
-    const validPayload = {
-      receivingSiteId: 'site123',
-      receiverReference: 'ref123',
-      specialHandlingRequirements: 'Handle with care',
-      waste: {
-        wasteCode: '123456',
-        description: 'Test waste'
-      },
-      carrier: {
-        name: 'Test Carrier',
-        address: {
-          street: '123 Test St',
-          city: 'Test City',
-          postcode: 'TE1 1ST'
-        }
-      },
-      receipt: {
-        disposalOrRecoveryCodes: [
-          {
-            code: 'R1',
-            quantity: {
-              metric: 'Tonnes',
-              amount: 10,
-              isEstimate: false
-            }
-          }
-        ]
+  const validPayload = {
+    receivingSiteId: 'site123',
+    receiverReference: 'ref123',
+    specialHandlingRequirements: 'Handle with care',
+    waste: {
+      wasteCode: '123456',
+      description: 'Test waste'
+    },
+    carrier: {
+      name: 'Test Carrier',
+      address: {
+        street: '123 Test St',
+        city: 'Test City',
+        postcode: 'TE1 1ST'
       }
+    },
+    receipt: {
+      disposalOrRecoveryCodes: [
+        {
+          code: 'R1',
+          quantity: {
+            metric: 'Tonnes',
+            amount: 10,
+            isEstimate: false
+          }
+        }
+      ]
+    }
+  }
+
+  it('should successfully create a waste movement', async () => {
+    // Mock successful waste movement creation
+    httpClients.wasteMovement.post.mockResolvedValue({
+      statusCode: 200
+    })
+
+    const request = {
+      payload: validPayload
+    }
+    const h = {
+      response: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis()
     }
 
-    it('should successfully create a waste movement', async () => {
-      // Mock successful waste movement creation
-      httpClients.wasteMovement.post.mockResolvedValue({
-        statusCode: 200
-      })
+    await handleCreateReceiptMovement(request, h)
 
-      const request = {
-        payload: validPayload
-      }
-      const h = {
-        response: jest.fn().mockReturnThis(),
-        code: jest.fn().mockReturnThis()
-      }
-
-      await handleCreateReceiptMovement(request, h)
-
-      expect(h.response).toHaveBeenCalledWith({
-        statusCode: 200,
-        globalMovementId: mockWasteTrackingId
-      })
-
-      // Verify waste tracking ID was requested
-      expect(httpClients.wasteTracking.get).toHaveBeenCalledWith('/next')
-
-      // Verify waste movement was created
-      expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
-        `/movements/${mockWasteTrackingId}/receive`,
-        { movement: validPayload }
-      )
+    expect(h.response).toHaveBeenCalledWith({
+      statusCode: 200,
+      globalMovementId: mockWasteTrackingId
     })
 
-    it('should return 500 when waste movement creation fails', async () => {
-      // Mock waste movement creation failure
-      httpClients.wasteMovement.post.mockRejectedValue(new Error('API Error'))
+    // Verify waste tracking ID was requested
+    expect(httpClients.wasteTracking.get).toHaveBeenCalledWith('/next')
 
-      const request = {
-        payload: validPayload
+    // Verify waste movement was created
+    expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
+      `/movements/${mockWasteTrackingId}/receive`,
+      {
+        movement: validPayload
       }
-      const h = {
-        response: jest.fn().mockReturnThis(),
-        code: jest.fn().mockReturnThis()
-      }
+    )
+  })
 
-      await handleCreateReceiptMovement(request, h)
+  it('should return 500 when waste movement creation fails', async () => {
+    // Mock waste movement creation failure
+    httpClients.wasteMovement.post.mockRejectedValue(new Error('API Error'))
 
-      expect(h.response).toHaveBeenCalledWith({
-        statusCode: 500,
-        error: 'Internal Server Error',
-        message: 'Failed to create waste movement'
-      })
-      expect(h.code).toHaveBeenCalledWith(500)
+    const request = {
+      payload: validPayload
+    }
+    const h = {
+      response: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis()
+    }
+
+    await handleCreateReceiptMovement(request, h)
+
+    expect(h.response).toHaveBeenCalledWith({
+      statusCode: 500,
+      error: 'Internal Server Error',
+      message: 'Failed to create waste movement'
     })
+    expect(h.code).toHaveBeenCalledWith(500)
+  })
 
-    it('should return 500 when waste tracking ID request fails', async () => {
-      // Mock waste tracking ID request failure
-      httpClients.wasteTracking.get.mockRejectedValue(new Error('API Error'))
+  it('should return 500 when waste tracking ID request fails', async () => {
+    // Mock waste tracking ID request failure
+    httpClients.wasteTracking.get.mockRejectedValue(new Error('API Error'))
 
-      const request = {
-        payload: validPayload
-      }
-      const h = {
-        response: jest.fn().mockReturnThis(),
-        code: jest.fn().mockReturnThis()
-      }
+    const request = {
+      payload: validPayload
+    }
+    const h = {
+      response: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis()
+    }
 
-      await handleCreateReceiptMovement(request, h)
+    await handleCreateReceiptMovement(request, h)
 
-      expect(h.response).toHaveBeenCalledWith({
-        statusCode: 500,
-        error: 'Internal Server Error',
-        message: 'Failed to create waste movement'
-      })
-      expect(h.code).toHaveBeenCalledWith(500)
+    expect(h.response).toHaveBeenCalledWith({
+      statusCode: 500,
+      error: 'Internal Server Error',
+      message: 'Failed to create waste movement'
     })
+    expect(h.code).toHaveBeenCalledWith(500)
   })
 })
