@@ -18,6 +18,14 @@ const popsSchema = Joi.object({
 }).label('Pops')
 
 const hazardousSchema = Joi.object({
+  containsHazardous: Joi.boolean()
+    .required()
+    .messages({
+      'any.required':
+        'Hazardous waste is any waste that is potentially harmful to human health or the environment.'
+    })
+    .label('ContainsHazardous'),
+  hazCodes: Joi.array().items(Joi.number()).label('HazCodeItem'),
   components: Joi.array().items(
     Joi.object({
       name: Joi.string(),
