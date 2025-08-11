@@ -74,7 +74,13 @@ async function createServer() {
   await server.register(swagger)
 
   // Register JWT authentication before routes
-  await server.register(jwtAuth)
+  if (config.get('cdpEnvironment') === 'local') {
+    console.log(
+      'WARNING: Local environment detected. JWT authentication is disabled.'
+    )
+  } else {
+    await server.register(jwtAuth)
+  }
 
   // Register routes
   await server.register(router)

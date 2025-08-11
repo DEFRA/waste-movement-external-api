@@ -61,15 +61,21 @@ describe('Movement Route', () => {
       }
     }
 
+    const request = {
+      auth: {
+        credentials: {
+          clientId: 'test-client-id'
+        }
+      },
+      payload: validPayload
+    }
+
     it('should successfully create a waste movement', async () => {
       // Mock successful waste movement creation
       httpClients.wasteMovement.post.mockResolvedValue({
         statusCode: 200
       })
 
-      const request = {
-        payload: validPayload
-      }
       const h = {
         response: jest.fn().mockReturnThis(),
         code: jest.fn().mockReturnThis()
@@ -96,9 +102,6 @@ describe('Movement Route', () => {
       // Mock waste movement creation failure
       httpClients.wasteMovement.post.mockRejectedValue(new Error('API Error'))
 
-      const request = {
-        payload: validPayload
-      }
       const h = {
         response: jest.fn().mockReturnThis(),
         code: jest.fn().mockReturnThis()
@@ -118,9 +121,6 @@ describe('Movement Route', () => {
       // Mock waste tracking ID request failure
       httpClients.wasteTracking.get.mockRejectedValue(new Error('API Error'))
 
-      const request = {
-        payload: validPayload
-      }
       const h = {
         response: jest.fn().mockReturnThis(),
         code: jest.fn().mockReturnThis()
