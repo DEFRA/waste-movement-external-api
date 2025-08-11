@@ -133,6 +133,15 @@ const config = convict({
   }
 })
 
+const overrideConfig = {
+  services: {
+    wasteTracking: `https://waste-tracking-id-backend.${config.get('cdpEnvironment')}.cdp-int.defra.cloud`,
+    wasteMovement: `https://waste-movement-backend.${config.get('cdpEnvironment')}.cdp-int.defra.cloud`
+  }
+}
+
+config.load(overrideConfig)
+
 config.validate({ allowed: 'strict' })
 
 export { config }
