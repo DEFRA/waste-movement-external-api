@@ -4,6 +4,7 @@ const health = {
   method: 'GET',
   path: '/health',
   options: {
+    auth: false, // Disable authentication for health check
     tags: ['health'],
     description: 'Health check endpoint',
     notes: 'Returns the health status of the API',
