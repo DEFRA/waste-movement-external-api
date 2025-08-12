@@ -77,11 +77,13 @@ describe('#startServer', () => {
   let hapiServerSpy
   let startServerImport
   let createServerImport
+  let config
 
   beforeAll(async () => {
     process.env = { ...PROCESS_ENV }
     process.env.PORT = '3098' // Set to obscure port to avoid conflicts
     process.env.NODE_ENV = 'test' // Ensure we're in test mode
+    config = (await import('../../config.js')).config
 
     createServerImport = await import('../../server.js')
     startServerImport = await import('./start-server.js')
@@ -114,6 +116,42 @@ describe('#startServer', () => {
         'Server started successfully',
         'Access your backend on http://localhost:3098'
       ])
+    })
+
+    test('Should start with jwt auth disabled in local environment', async () => {
+      // process.env.ENVIRONMENT = 'local' // Ensure we're in local mode
+      config.load({
+        cdpEnvironment: 'local'
+      })
+      await startServerImport.startServer()
+
+      expect(mockServer.register).toHaveBeenCalledWith(expect.any(Array))
+      expect(mockServer.register).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          plugin: {
+            name: 'jwt-auth',
+            register: expect.any(Function)
+          }
+        })
+      )
+    })
+
+    test('Should start with jwt auth enabled in non-local environment', async () => {
+      // process.env.ENVIRONMENT = 'prod' // Ensure we're in non-local mode
+      config.load({
+        cdpEnvironment: 'prod'
+      })
+      await startServerImport.startServer()
+
+      expect(mockServer.register).toHaveBeenCalledWith(expect.any(Array))
+      expect(mockServer.register).toHaveBeenCalledWith(
+        expect.objectContaining({
+          plugin: {
+            name: 'jwt-auth',
+            register: expect.any(Function)
+          }
+        })
+      )
     })
   })
 
