@@ -1,7 +1,6 @@
 import Joi from 'joi'
 import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
-import { wasteSchema } from './waste.js'
-import { quantitySchema } from './quantity.js'
+import { wasteSchema, quantitySchema } from './waste.js'
 
 const carrierSchema = Joi.object({
   registrationNumber: Joi.string(),
