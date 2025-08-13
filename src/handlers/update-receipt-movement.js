@@ -13,6 +13,8 @@ export const handleUpdateReceiptMovement = async (request, h) => {
   try {
     const { wasteTrackingId } = request.params
     const movement = request.payload
+    const { clientId } = request.auth.credentials
+    console.debug('Client id:', clientId)
 
     const response = await httpClients.wasteMovement.put(
       `/movements/${wasteTrackingId}/receive`,

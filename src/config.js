@@ -17,6 +17,36 @@ const config = convict({
     default: null,
     env: 'SERVICE_VERSION'
   },
+  jwt: {
+    jwksUri: {
+      doc: 'The URI of the JWKS endpoint',
+      format: String,
+      default: `https://cognito-idp.eu-west-2.amazonaws.com/eu-west-2_yxW9beJCW/.well-known/jwks.json`,
+      env: 'JWT_JWKS_URI'
+    },
+    cognitoUserPoolId: {
+      doc: 'The Cognito User Pool ID',
+      format: String,
+      default: 'eu-west-2_yxW9beJCW', // dev cognito user pool
+      env: 'JWT_COGNITO_USER_POOL_ID'
+    },
+    options: {
+      doc: 'JWT validation options',
+      format: Object,
+      default: {
+        verify: {
+          aud: false,
+          iss: false,
+          sub: false,
+          maxAgeSec: 14400 // 4 hours
+        },
+        validate: {
+          isValid: true,
+          credentials: true
+        }
+      }
+    }
+  },
   host: {
     doc: 'The IP address to bind',
     format: 'ipaddress',
@@ -137,6 +167,23 @@ const overrideConfig = {
   services: {
     wasteTracking: `https://waste-tracking-id-backend.${config.get('cdpEnvironment')}.cdp-int.defra.cloud`,
     wasteMovement: `https://waste-movement-backend.${config.get('cdpEnvironment')}.cdp-int.defra.cloud`
+  },
+  jwt: {
+    jwksUri: `https://cognito-idp.eu-west-2.amazonaws.com/${config.get('jwt.cognitoUserPoolId')}/.well-known/jwks.json`,
+    options: {
+      verify: {
+        aud: false,
+        iss: [
+          `https://cognito-idp.eu-west-2.amazonaws.com/${config.get('jwt.cognitoUserPoolId')}`
+        ],
+        sub: false,
+        maxAgeSec: 14400 // 4 hours
+      },
+      validate: {
+        isValid: true,
+        credentials: true
+      }
+    }
   }
 }
 

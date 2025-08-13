@@ -104,13 +104,18 @@ If you are having issues with formatting of line breaks on Windows update your g
 git config --global core.autocrlf false
 ```
 
+## Authentication
+
+For detailed instructions on testing JWT authentication, see [JWT_AUTHENTICATION_TESTING.md](./JWT_AUTHENTICATION_TESTING.md).
+
 ## API endpoints
 
-| Endpoint             | Description                    |
-| :------------------- | :----------------------------- |
-| `GET: /health`       | Health                         |
-| `GET: /example    `  | Example API (remove as needed) |
-| `GET: /example/<id>` | Example API (remove as needed) |
+| Endpoint                                    | Description                                         | Authentication |
+| :------------------------------------------ | :-------------------------------------------------- | :------------- |
+| `GET: /health`                              | Health check                                        | No             |
+| `GET: /auth/test`                           | Test JWT authentication (only available in non-prod | Yes            |
+| `POST: /movements/receive`                  | Create a receipt movement                           | Yes            |
+| `PUT: /movements/{wasteTrackingId}/receive` | Update a receipt movement with a waste tracking ID  | Yes            |
 
 ## Development helpers
 

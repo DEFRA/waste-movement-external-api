@@ -12,6 +12,7 @@ import { requestTracing } from './common/helpers/request-tracing.js'
 import { setupProxy } from './common/helpers/proxy/setup-proxy.js'
 import { swagger } from './plugins/swagger.js'
 import { errorHandler } from './plugins/error-handler.js'
+import { jwtAuth } from './plugins/jwt-auth.js'
 
 async function createServer() {
   setupProxy()
@@ -71,6 +72,15 @@ async function createServer() {
 
   // Register Swagger before routes
   await server.register(swagger)
+
+  // Register JWT authentication before routes
+  if (config.get('cdpEnvironment') === 'local') {
+    console.log(
+      'WARNING: Local environment detected. JWT authentication is disabled.'
+    )
+  } else {
+    await server.register(jwtAuth)
+  }
 
   // Register routes
   await server.register(router)

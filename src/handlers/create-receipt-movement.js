@@ -6,6 +6,9 @@ import { generateAllValidationWarnings } from '../common/helpers/validation-warn
 export const handleCreateReceiptMovement = async (request, h) => {
   let wasteTrackingId
   try {
+    const { clientId } = request.auth.credentials
+    console.debug('Client id:', clientId)
+
     wasteTrackingId = (await httpClients.wasteTracking.get('/next')).payload
       .wasteTrackingId
     console.log('Waste Tracking ID:', wasteTrackingId)

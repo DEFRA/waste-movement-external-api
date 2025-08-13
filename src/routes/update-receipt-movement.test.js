@@ -36,6 +36,11 @@ describe('updateReceiptMovement route', () => {
 
 describe('handleUpdateReceiptMovement', () => {
   const mockRequest = {
+    auth: {
+      credentials: {
+        clientId: 'test-client-id'
+      }
+    },
     params: {
       wasteTrackingId: '123e4567-e89b-12d3-a456-426614174000'
     },

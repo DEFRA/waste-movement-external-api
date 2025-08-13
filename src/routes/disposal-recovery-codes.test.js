@@ -207,11 +207,19 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
           }
         }
 
+        const request = {
+          auth: {
+            credentials: {
+              clientId: 'test-client-id'
+            }
+          },
+          payload: validPayload
+        }
+
         httpClients.wasteMovement.post.mockResolvedValue({
           statusCode: 200
         })
 
-        const request = { payload: validPayload }
         const h = {
           response: jest.fn().mockReturnThis(),
           code: jest.fn().mockReturnThis()
@@ -256,11 +264,19 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
           }
         }
 
+        const request = {
+          auth: {
+            credentials: {
+              clientId: 'test-client-id'
+            }
+          },
+          payload: validPayload
+        }
+
         httpClients.wasteMovement.post.mockResolvedValue({
           statusCode: 200
         })
 
-        const request = { payload: validPayload }
         const h = {
           response: jest.fn().mockReturnThis(),
           code: jest.fn().mockReturnThis()
