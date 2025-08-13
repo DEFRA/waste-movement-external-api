@@ -3,6 +3,8 @@ import { isValidEwcCode } from '../common/constants/ewc-codes.js'
 import { quantitySchema } from './quantity.js'
 
 const MAX_EWC_CODES_COUNT = 5
+const MIN_HAZARD_CODE = 1
+const MAX_HAZARD_CODE = 15
 
 const popsSchema = Joi.object({
   containsPops: Joi.boolean().required().messages({
@@ -24,12 +26,16 @@ const hazardousSchema = Joi.object({
   }),
   hazCodes: Joi.array()
     .items(
-      Joi.number().integer().min(1).max(15).messages({
-        'number.base': 'Hazard code must be a number',
-        'number.integer': 'Hazard code must be an integer',
-        'number.min': 'Hazard code must be between 1 and 15 (HP1-HP15)',
-        'number.max': 'Hazard code must be between 1 and 15 (HP1-HP15)'
-      })
+      Joi.number()
+        .integer()
+        .min(MIN_HAZARD_CODE)
+        .max(MAX_HAZARD_CODE)
+        .messages({
+          'number.base': 'Hazard code must be a number',
+          'number.integer': 'Hazard code must be an integer',
+          'number.min': 'Hazard code must be between 1 and 15 (HP1-HP15)',
+          'number.max': 'Hazard code must be between 1 and 15 (HP1-HP15)'
+        })
     )
     .optional()
     .label('HazardCodes'),
