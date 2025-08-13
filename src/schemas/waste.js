@@ -18,21 +18,28 @@ const popsSchema = Joi.object({
 }).label('Pops')
 
 const hazardousSchema = Joi.object({
-  containsHazardous: Joi.boolean()
-    .required()
-    .messages({
-      'any.required':
-        'Hazardous waste is any waste that is potentially harmful to human health or the environment.'
-    })
-    .label('ContainsHazardous'),
-  hazCodes: Joi.array().items(Joi.number()).label('HazCodeItem'),
+  containsHazardous: Joi.boolean().required().messages({
+    'any.required':
+      'Hazardous waste is any waste that is potentially harmful to human health or the environment.'
+  }),
+  hazCodes: Joi.array()
+    .items(
+      Joi.number().integer().min(1).max(15).messages({
+        'number.base': 'Hazard code must be a number',
+        'number.integer': 'Hazard code must be an integer',
+        'number.min': 'Hazard code must be between 1 and 15 (HP1-HP15)',
+        'number.max': 'Hazard code must be between 1 and 15 (HP1-HP15)'
+      })
+    )
+    .optional()
+    .label('HazardCodes'),
   components: Joi.array().items(
     Joi.object({
       name: Joi.string(),
       concentration: Joi.number()
     }).label('ComponentItem')
   )
-})
+}).label('Hazardous')
 
 function validateEwcCode(value, helpers) {
   // Check if it's a 6-digit numeric code
