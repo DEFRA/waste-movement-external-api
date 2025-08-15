@@ -280,9 +280,8 @@ describe('Vehicle Registration Validation', () => {
       'Rail',
       'Air',
       'Sea',
-      'Waterway',
-      'Pipe',
-      'Other'
+      'Inland Waterway',
+      'Piped'
     ]
 
     nonRoadTransportModes.forEach((transportMode) => {
