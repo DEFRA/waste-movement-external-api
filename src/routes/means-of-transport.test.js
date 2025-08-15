@@ -39,7 +39,11 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
             receivingSiteId: 'site123',
             carrier: {
               organisationName: 'Test Carrier',
-              meansOfTransport: meansOfTransport
+              meansOfTransport: meansOfTransport,
+              // Add vehicle registration for Road transport
+              ...(meansOfTransport === 'Road' && {
+                vehicleRegistration: 'AB12CDE'
+              })
             }
           }
 
@@ -99,7 +103,8 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
           receivingSiteId: 'site123',
           carrier: {
             organisationName: 'Test Carrier',
-            meansOfTransport: 'Road'
+            meansOfTransport: 'Road',
+            vehicleRegistration: 'AB12CDE'
           }
         }
 
