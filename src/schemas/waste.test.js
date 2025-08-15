@@ -312,12 +312,37 @@ describe('Receipt Schema Validation', () => {
         expect(result.error).toBeUndefined()
       })
 
-      it('should accept duplicate HP codes', () => {
+      it('should reject duplicate HP codes', () => {
         const result = validateHazardous({
           containsHazardous: true,
           hazCodes: [1, 1, 1]
         })
-        expect(result.error).toBeUndefined()
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Duplicate HP codes are not allowed. Each hazard code must be unique.'
+        )
+      })
+
+      it('should reject duplicate HP codes with different values', () => {
+        const result = validateHazardous({
+          containsHazardous: true,
+          hazCodes: [1, 5, 1, 10]
+        })
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Duplicate HP codes are not allowed. Each hazard code must be unique.'
+        )
+      })
+
+      it('should reject duplicate HP codes even with valid range', () => {
+        const result = validateHazardous({
+          containsHazardous: true,
+          hazCodes: [15, 3, 15]
+        })
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Duplicate HP codes are not allowed. Each hazard code must be unique.'
+        )
       })
 
       it('should reject mix of valid and invalid HP codes', () => {

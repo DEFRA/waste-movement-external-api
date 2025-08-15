@@ -37,7 +37,12 @@ const hazardousSchema = Joi.object({
           'number.max': 'Hazard code must be between 1 and 15 (HP1-HP15)'
         })
     )
+    .unique()
     .optional()
+    .messages({
+      'array.unique':
+        'Duplicate HP codes are not allowed. Each hazard code must be unique.'
+    })
     .label('HazardCodes'),
   components: Joi.array().items(
     Joi.object({
