@@ -107,7 +107,14 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
           statusCode: 200
         })
 
-        const request = { payload: validPayload }
+        const request = {
+          auth: {
+            credentials: {
+              clientId: 'test-client-id'
+            }
+          },
+          payload: validPayload
+        }
         const h = {
           response: jest.fn().mockReturnThis(),
           code: jest.fn().mockReturnThis()
@@ -149,7 +156,14 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
           statusCode: 200
         })
 
-        const request = { payload: validPayload }
+        const request = {
+          auth: {
+            credentials: {
+              clientId: 'test-client-id'
+            }
+          },
+          payload: validPayload
+        }
         const h = {
           response: jest.fn().mockReturnThis(),
           code: jest.fn().mockReturnThis()
@@ -186,7 +200,14 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
           statusCode: 200
         })
 
-        const request = { payload: validPayload }
+        const request = {
+          auth: {
+            credentials: {
+              clientId: 'test-client-id'
+            }
+          },
+          payload: validPayload
+        }
         const h = {
           response: jest.fn().mockReturnThis(),
           code: jest.fn().mockReturnThis()

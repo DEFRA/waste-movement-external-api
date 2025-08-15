@@ -67,6 +67,11 @@ describe('Create Receipt Movement Route', () => {
     })
 
     const request = {
+      auth: {
+        credentials: {
+          clientId: 'test-client-id'
+        }
+      },
       payload: validPayload
     }
     const h = {
@@ -98,6 +103,11 @@ describe('Create Receipt Movement Route', () => {
     httpClients.wasteMovement.post.mockRejectedValue(new Error('API Error'))
 
     const request = {
+      auth: {
+        credentials: {
+          clientId: 'test-client-id'
+        }
+      },
       payload: validPayload
     }
     const h = {
@@ -120,6 +130,11 @@ describe('Create Receipt Movement Route', () => {
     httpClients.wasteTracking.get.mockRejectedValue(new Error('API Error'))
 
     const request = {
+      auth: {
+        credentials: {
+          clientId: 'test-client-id'
+        }
+      },
       payload: validPayload
     }
     const h = {
