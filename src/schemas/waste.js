@@ -5,6 +5,7 @@ import { quantitySchema } from './quantity.js'
 const MAX_EWC_CODES_COUNT = 5
 const MIN_HAZARD_CODE = 1
 const MAX_HAZARD_CODE = 15
+const CUSTOM_ERROR_TYPE = 'any.custom'
 
 const popsSchema = Joi.object({
   containsPops: Joi.boolean().required().messages({
@@ -48,11 +49,62 @@ const hazardousSchema = Joi.object({
     .label('HazardCodes'),
   components: Joi.array().items(
     Joi.object({
-      name: Joi.string(),
-      concentration: Joi.number()
+      name: Joi.string().required().messages({
+        'any.required': 'Chemical or Biological Component name is required'
+      }),
+      concentration: Joi.custom((value, helpers) => {
+        // Check if it's a valid number
+        if (typeof value === 'number') {
+          if (value < 0) {
+            return helpers.error('number.min')
+          }
+          return value
+        }
+
+        // Check if it's a valid string
+        if (typeof value === 'string') {
+          if (value === 'Not Supplied') {
+            return value
+          }
+          if (value === '') {
+            return value
+          }
+          // Any other string is invalid
+          return helpers.error(CUSTOM_ERROR_TYPE)
+        }
+
+        // Any other type is invalid
+        return helpers.error(CUSTOM_ERROR_TYPE)
+      })
+        .required()
+        .messages({
+          'any.required':
+            'Chemical or Biological concentration is required when hazardous properties are present',
+          'number.min':
+            'Chemical or Biological concentration cannot be negative',
+          'any.custom':
+            'Chemical or Biological concentration must be a valid number or "Not Supplied"'
+        })
     }).label('ComponentItem')
   )
-}).label('Hazardous')
+})
+  .custom((value, helpers) => {
+    // Custom validation to check if components are provided when containsHazardous is false
+    if (
+      value &&
+      value.containsHazardous === false &&
+      value.components &&
+      value.components.length > 0
+    ) {
+      return helpers.error(CUSTOM_ERROR_TYPE)
+    }
+    return value
+  })
+  .messages({
+    'any.custom':
+      'Chemical or Biological concentration cannot be provided when hazardous properties are not present'
+  })
+  .label('Hazardous')
 
 function validateEwcCode(value, helpers) {
   // Check if it's a 6-digit numeric code

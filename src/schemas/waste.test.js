@@ -485,4 +485,206 @@ describe('Receipt Schema Validation', () => {
       expect(result.error.message).toContain('"waste[0].ewcCodes" is required')
     })
   })
+
+  describe('Chemical/Biological Concentration Validation', () => {
+    // Helper function to validate a payload with hazardous waste and components
+    const validateHazardousWithComponents = (containsHazardous, components) => {
+      const payload = {
+        receivingSiteId: 'site123',
+        waste: [
+          {
+            ewcCodes: ['010101'],
+            wasteDescription: 'Test waste',
+            form: 'Solid',
+            hazardous: {
+              containsHazardous,
+              ...(components && { components })
+            },
+            quantity: {
+              metric: 'Tonnes',
+              amount: 1,
+              isEstimate: false
+            }
+          }
+        ]
+      }
+
+      return receiveMovementRequestSchema.validate(payload)
+    }
+
+    describe('When waste contains hazardous properties', () => {
+      it('should accept valid numerical concentration values', () => {
+        const testCases = [
+          { concentration: 12.5, description: 'decimal value' },
+          { concentration: 500, description: 'whole number' },
+          { concentration: 0, description: 'zero value' }
+        ]
+
+        testCases.forEach(({ concentration, description }) => {
+          const result = validateHazardousWithComponents(true, [
+            {
+              name: 'Mercury',
+              concentration
+            }
+          ])
+          expect(result.error).toBeUndefined()
+        })
+      })
+
+      it('should accept "Not Supplied" as concentration value', () => {
+        const result = validateHazardousWithComponents(true, [
+          {
+            name: 'Lead',
+            concentration: 'Not Supplied'
+          }
+        ])
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should accept blank concentration value with warning', () => {
+        const result = validateHazardousWithComponents(true, [
+          {
+            name: 'Cadmium',
+            concentration: ''
+          }
+        ])
+        expect(result.error).toBeUndefined()
+        // Note: Warning generation would be handled by validation warnings helper
+      })
+
+      it('should reject negative concentration values', () => {
+        const result = validateHazardousWithComponents(true, [
+          {
+            name: 'Mercury',
+            concentration: -5
+          }
+        ])
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Chemical or Biological concentration cannot be negative'
+        )
+      })
+
+      it('should reject invalid concentration values', () => {
+        const result = validateHazardousWithComponents(true, [
+          {
+            name: 'Mercury',
+            concentration: 'Invalid'
+          }
+        ])
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Chemical or Biological concentration must be a valid number or "Not Supplied"'
+        )
+      })
+
+      it('should require component name when concentration is provided', () => {
+        const result = validateHazardousWithComponents(true, [
+          {
+            concentration: 25
+          }
+        ])
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Chemical or Biological Component name is required'
+        )
+      })
+
+      it('should require concentration when component name is provided', () => {
+        const result = validateHazardousWithComponents(true, [
+          {
+            name: 'Mercury'
+            // concentration is missing
+          }
+        ])
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Chemical or Biological concentration is required when hazardous properties are present'
+        )
+      })
+    })
+
+    describe('When waste does not contain hazardous properties', () => {
+      it('should accept submission without chemical/bio concentration', () => {
+        const result = validateHazardousWithComponents(false)
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should reject when chemical/bio concentration is provided', () => {
+        const result = validateHazardousWithComponents(false, [
+          {
+            name: 'Mercury',
+            concentration: 25
+          }
+        ])
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Chemical or Biological concentration cannot be provided when hazardous properties are not present'
+        )
+      })
+
+      it('should reject when "Not Supplied" concentration is provided', () => {
+        const result = validateHazardousWithComponents(false, [
+          {
+            name: 'Lead',
+            concentration: 'Not Supplied'
+          }
+        ])
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Chemical or Biological concentration cannot be provided when hazardous properties are not present'
+        )
+      })
+
+      it('should reject when blank concentration is provided', () => {
+        const result = validateHazardousWithComponents(false, [
+          {
+            name: 'Cadmium',
+            concentration: ''
+          }
+        ])
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Chemical or Biological concentration cannot be provided when hazardous properties are not present'
+        )
+      })
+    })
+
+    describe('Multiple components validation', () => {
+      it('should accept multiple components with valid concentrations', () => {
+        const result = validateHazardousWithComponents(true, [
+          {
+            name: 'Mercury',
+            concentration: 12.5
+          },
+          {
+            name: 'Lead',
+            concentration: 'Not Supplied'
+          },
+          {
+            name: 'Cadmium',
+            concentration: 0
+          }
+        ])
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should reject when any component has invalid concentration', () => {
+        const result = validateHazardousWithComponents(true, [
+          {
+            name: 'Mercury',
+            concentration: 12.5
+          },
+          {
+            name: 'Lead',
+            concentration: -5 // Invalid negative value
+          }
+        ])
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Chemical or Biological concentration cannot be negative'
+        )
+      })
+    })
+  })
 })
