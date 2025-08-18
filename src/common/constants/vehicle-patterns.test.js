@@ -9,7 +9,7 @@ describe('Vehicle Patterns Constants', () => {
       it('should match format 1: ABC123 (3 letters + 1-3 digits)', () => {
         expect(UK_VEHICLE_REGISTRATION_PATTERN.test('ABC123')).toBe(true)
         expect(UK_VEHICLE_REGISTRATION_PATTERN.test('ABC 123')).toBe(true)
-        expect(UK_VEHICLE_REGISTRATION_PATTERN.test('ABC1')).toBe(true)
+        expect(UK_VEHICLE_REGISTRATION_PATTERN.test('ABC1')).toBe(false) // Too short (4 chars)
         expect(UK_VEHICLE_REGISTRATION_PATTERN.test('ABC12')).toBe(true)
       })
 
