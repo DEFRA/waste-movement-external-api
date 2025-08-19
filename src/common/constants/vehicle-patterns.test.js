@@ -1,9 +1,9 @@
 import {
   UK_VEHICLE_REGISTRATION_PATTERN,
-  UK_VEHICLE_REGISTRATION_EXAMPLES
+  isVehicleRegistrationValid
 } from './vehicle-patterns.js'
 
-describe('Vehicle Patterns Constants', () => {
+describe('Vehicle Registration Validation', () => {
   describe('UK_VEHICLE_REGISTRATION_PATTERN', () => {
     describe('Valid UK Vehicle Registration Formats', () => {
       it('should match format 1: ABC123 (3 letters + 1-3 digits)', () => {
@@ -49,9 +49,54 @@ describe('Vehicle Patterns Constants', () => {
     })
   })
 
-  describe('UK_VEHICLE_REGISTRATION_EXAMPLES', () => {
-    it('should contain the expected format examples', () => {
-      expect(UK_VEHICLE_REGISTRATION_EXAMPLES).toBe('ABC123, A123BCD, AB12CDE')
+  describe('isVehicleRegistrationValid function', () => {
+    describe('Valid vehicle registrations', () => {
+      it('should return true for valid UK vehicle registration formats', () => {
+        expect(isVehicleRegistrationValid('ABC123')).toBe(true)
+        expect(isVehicleRegistrationValid('ABC 123')).toBe(true)
+        expect(isVehicleRegistrationValid('A123BCD')).toBe(true)
+        expect(isVehicleRegistrationValid('A 123 BCD')).toBe(true)
+        expect(isVehicleRegistrationValid('AB12CDE')).toBe(true)
+        expect(isVehicleRegistrationValid('AB 12 CDE')).toBe(true)
+        expect(isVehicleRegistrationValid('AB1CDE')).toBe(true)
+        expect(isVehicleRegistrationValid('AB12CDE')).toBe(true)
+        expect(isVehicleRegistrationValid('AB123CDE')).toBe(true)
+      })
+    })
+
+    describe('Invalid vehicle registrations', () => {
+      it('should return false for invalid formats', () => {
+        expect(isVehicleRegistrationValid('abc123')).toBe(false)
+        expect(isVehicleRegistrationValid('AB@12CD')).toBe(false)
+        expect(isVehicleRegistrationValid('AB1')).toBe(false)
+        expect(isVehicleRegistrationValid('INVALID123')).toBe(false)
+      })
+
+      it('should return false for non-string inputs', () => {
+        expect(isVehicleRegistrationValid(null)).toBe(false)
+        expect(isVehicleRegistrationValid(undefined)).toBe(false)
+        expect(isVehicleRegistrationValid(123)).toBe(false)
+        expect(isVehicleRegistrationValid({})).toBe(false)
+        expect(isVehicleRegistrationValid([])).toBe(false)
+      })
+
+      it('should return false for empty or whitespace-only strings', () => {
+        expect(isVehicleRegistrationValid('')).toBe(false)
+        expect(isVehicleRegistrationValid('   ')).toBe(false)
+      })
+    })
+
+    describe('Edge cases', () => {
+      it('should handle minimum length requirement', () => {
+        expect(isVehicleRegistrationValid('ABC1')).toBe(false) // 4 chars - too short
+        expect(isVehicleRegistrationValid('ABC12')).toBe(true) // 5 chars - valid
+      })
+
+      it('should handle spaces correctly', () => {
+        expect(isVehicleRegistrationValid('ABC 123')).toBe(true)
+        expect(isVehicleRegistrationValid('A 123 BCD')).toBe(true)
+        expect(isVehicleRegistrationValid('AB 12 CDE')).toBe(true)
+      })
     })
   })
 })

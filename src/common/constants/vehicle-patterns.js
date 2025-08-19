@@ -15,7 +15,13 @@ export const UK_VEHICLE_REGISTRATION_PATTERN =
   /^(?=.{5,})[A-Z]{1,3}\s?\d{1,3}\s?[A-Z]{0,3}$/
 
 /**
- * UK Vehicle Registration Format Examples
- * Used in error messages to help users understand the expected format
+ * Validates if a vehicle registration number is in a valid UK format
+ * @param {string} registration - The vehicle registration to validate
+ * @returns {boolean} - True if valid, false otherwise
  */
-export const UK_VEHICLE_REGISTRATION_EXAMPLES = 'ABC123, A123BCD, AB12CDE'
+export const isVehicleRegistrationValid = (registration) => {
+  if (typeof registration !== 'string') {
+    return false
+  }
+  return UK_VEHICLE_REGISTRATION_PATTERN.test(registration)
+}

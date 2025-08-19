@@ -11,131 +11,43 @@ describe('Vehicle Registration Validation', () => {
 
   describe('Road Transport - Vehicle Registration Required', () => {
     describe('Valid Vehicle Registration for Road Transport', () => {
-      it('should accept valid UK vehicle registration format 1 (ABC123) for Road transport', () => {
-        const payload = {
-          ...basePayload,
-          carrier: {
-            ...basePayload.carrier,
-            meansOfTransport: 'Road',
-            vehicleRegistration: 'ABC123'
+      const validVehicleRegistrations = [
+        { registration: 'ABC123', description: 'format 1 (ABC123)' },
+        {
+          registration: 'ABC 123',
+          description: 'format 1 with spaces (ABC 123)'
+        },
+        { registration: 'A123BCD', description: 'format 2 (A123BCD)' },
+        {
+          registration: 'A 123 BCD',
+          description: 'format 2 with spaces (A 123 BCD)'
+        },
+        { registration: 'AB12CDE', description: 'format 3 (AB12CDE)' },
+        {
+          registration: 'AB 12 CDE',
+          description: 'format 3 with spaces (AB 12 CDE)'
+        },
+        { registration: 'AB1CDE', description: 'single digit (AB1CDE)' },
+        { registration: 'AB12CDE', description: 'double digit (AB12CDE)' },
+        { registration: 'AB123CDE', description: 'triple digit (AB123CDE)' }
+      ]
+
+      test.each(validVehicleRegistrations)(
+        'should accept valid UK vehicle registration $description for Road transport',
+        ({ registration }) => {
+          const payload = {
+            ...basePayload,
+            carrier: {
+              ...basePayload.carrier,
+              meansOfTransport: 'Road',
+              vehicleRegistration: registration
+            }
           }
+
+          const { error } = receiveMovementRequestSchema.validate(payload)
+          expect(error).toBeUndefined()
         }
-
-        const { error } = receiveMovementRequestSchema.validate(payload)
-        expect(error).toBeUndefined()
-      })
-
-      it('should accept valid UK vehicle registration format 1 with spaces (ABC 123) for Road transport', () => {
-        const payload = {
-          ...basePayload,
-          carrier: {
-            ...basePayload.carrier,
-            meansOfTransport: 'Road',
-            vehicleRegistration: 'ABC 123'
-          }
-        }
-
-        const { error } = receiveMovementRequestSchema.validate(payload)
-        expect(error).toBeUndefined()
-      })
-
-      it('should accept valid UK vehicle registration format 2 (A123BCD) for Road transport', () => {
-        const payload = {
-          ...basePayload,
-          carrier: {
-            ...basePayload.carrier,
-            meansOfTransport: 'Road',
-            vehicleRegistration: 'A123BCD'
-          }
-        }
-
-        const { error } = receiveMovementRequestSchema.validate(payload)
-        expect(error).toBeUndefined()
-      })
-
-      it('should accept valid UK vehicle registration format 2 with spaces (A 123 BCD) for Road transport', () => {
-        const payload = {
-          ...basePayload,
-          carrier: {
-            ...basePayload.carrier,
-            meansOfTransport: 'Road',
-            vehicleRegistration: 'A 123 BCD'
-          }
-        }
-
-        const { error } = receiveMovementRequestSchema.validate(payload)
-        expect(error).toBeUndefined()
-      })
-
-      it('should accept valid UK vehicle registration format 3 (AB12CDE) for Road transport', () => {
-        const payload = {
-          ...basePayload,
-          carrier: {
-            ...basePayload.carrier,
-            meansOfTransport: 'Road',
-            vehicleRegistration: 'AB12CDE'
-          }
-        }
-
-        const { error } = receiveMovementRequestSchema.validate(payload)
-        expect(error).toBeUndefined()
-      })
-
-      it('should accept valid UK vehicle registration format 3 with spaces (AB 12 CDE) for Road transport', () => {
-        const payload = {
-          ...basePayload,
-          carrier: {
-            ...basePayload.carrier,
-            meansOfTransport: 'Road',
-            vehicleRegistration: 'AB 12 CDE'
-          }
-        }
-
-        const { error } = receiveMovementRequestSchema.validate(payload)
-        expect(error).toBeUndefined()
-      })
-
-      it('should accept valid UK vehicle registration with single digit (AB1CDE) for Road transport', () => {
-        const payload = {
-          ...basePayload,
-          carrier: {
-            ...basePayload.carrier,
-            meansOfTransport: 'Road',
-            vehicleRegistration: 'AB1CDE'
-          }
-        }
-
-        const { error } = receiveMovementRequestSchema.validate(payload)
-        expect(error).toBeUndefined()
-      })
-
-      it('should accept valid UK vehicle registration with double digit (AB12CDE) for Road transport', () => {
-        const payload = {
-          ...basePayload,
-          carrier: {
-            ...basePayload.carrier,
-            meansOfTransport: 'Road',
-            vehicleRegistration: 'AB12CDE'
-          }
-        }
-
-        const { error } = receiveMovementRequestSchema.validate(payload)
-        expect(error).toBeUndefined()
-      })
-
-      it('should accept valid UK vehicle registration with triple digit (AB123CDE) for Road transport', () => {
-        const payload = {
-          ...basePayload,
-          carrier: {
-            ...basePayload.carrier,
-            meansOfTransport: 'Road',
-            vehicleRegistration: 'AB123CDE'
-          }
-        }
-
-        const { error } = receiveMovementRequestSchema.validate(payload)
-        expect(error).toBeUndefined()
-      })
+      )
     })
 
     describe('Missing Vehicle Registration for Road Transport', () => {
@@ -156,122 +68,62 @@ describe('Vehicle Registration Validation', () => {
         )
       })
 
-      it('should reject when vehicle registration is empty string for Road transport', () => {
-        const payload = {
-          ...basePayload,
-          carrier: {
-            ...basePayload.carrier,
-            meansOfTransport: 'Road',
-            vehicleRegistration: ''
-          }
+      const invalidVehicleRegistrations = [
+        {
+          registration: '',
+          description: 'empty string',
+          expectedMessage:
+            'Vehicle registration cannot be empty when means of transport is Road'
+        },
+        {
+          registration: null,
+          description: 'null value',
+          expectedMessage: 'must be a string'
+        },
+        {
+          registration: 'INVALID123',
+          description: 'invalid format',
+          expectedMessage: 'Vehicle registration must be in a valid UK format'
+        },
+        {
+          registration: 'abc123',
+          description: 'lowercase letters',
+          expectedMessage: 'Vehicle registration must be in a valid UK format'
+        },
+        {
+          registration: 'AB@12CD',
+          description: 'special characters',
+          expectedMessage: 'Vehicle registration must be in a valid UK format'
+        },
+        {
+          registration: 'AB1',
+          description: 'too short',
+          expectedMessage: 'Vehicle registration must be in a valid UK format'
+        },
+        {
+          registration: 'AB12345CDE',
+          description: 'too long',
+          expectedMessage: 'Vehicle registration must be in a valid UK format'
         }
+      ]
 
-        const { error } = receiveMovementRequestSchema.validate(payload)
-        expect(error).toBeDefined()
-        expect(error.details[0].message).toContain(
-          'Vehicle registration cannot be empty when means of transport is Road'
-        )
-      })
-
-      it('should reject when vehicle registration is null for Road transport', () => {
-        const payload = {
-          ...basePayload,
-          carrier: {
-            ...basePayload.carrier,
-            meansOfTransport: 'Road',
-            vehicleRegistration: null
+      test.each(invalidVehicleRegistrations)(
+        'should reject vehicle registration with $description for Road transport',
+        ({ registration, expectedMessage }) => {
+          const payload = {
+            ...basePayload,
+            carrier: {
+              ...basePayload.carrier,
+              meansOfTransport: 'Road',
+              vehicleRegistration: registration
+            }
           }
+
+          const { error } = receiveMovementRequestSchema.validate(payload)
+          expect(error).toBeDefined()
+          expect(error.details[0].message).toContain(expectedMessage)
         }
-
-        const { error } = receiveMovementRequestSchema.validate(payload)
-        expect(error).toBeDefined()
-        expect(error.details[0].message).toContain('must be a string')
-      })
-
-      it('should reject invalid vehicle registration format for Road transport', () => {
-        const payload = {
-          ...basePayload,
-          carrier: {
-            ...basePayload.carrier,
-            meansOfTransport: 'Road',
-            vehicleRegistration: 'INVALID123'
-          }
-        }
-
-        const { error } = receiveMovementRequestSchema.validate(payload)
-        expect(error).toBeDefined()
-        expect(error.details[0].message).toContain(
-          'Vehicle registration must be in a valid UK format'
-        )
-      })
-
-      it('should reject vehicle registration with lowercase letters for Road transport', () => {
-        const payload = {
-          ...basePayload,
-          carrier: {
-            ...basePayload.carrier,
-            meansOfTransport: 'Road',
-            vehicleRegistration: 'abc123'
-          }
-        }
-
-        const { error } = receiveMovementRequestSchema.validate(payload)
-        expect(error).toBeDefined()
-        expect(error.details[0].message).toContain(
-          'Vehicle registration must be in a valid UK format'
-        )
-      })
-
-      it('should reject vehicle registration with special characters for Road transport', () => {
-        const payload = {
-          ...basePayload,
-          carrier: {
-            ...basePayload.carrier,
-            meansOfTransport: 'Road',
-            vehicleRegistration: 'AB@12CD'
-          }
-        }
-
-        const { error } = receiveMovementRequestSchema.validate(payload)
-        expect(error).toBeDefined()
-        expect(error.details[0].message).toContain(
-          'Vehicle registration must be in a valid UK format'
-        )
-      })
-
-      it('should reject vehicle registration that is too short for Road transport', () => {
-        const payload = {
-          ...basePayload,
-          carrier: {
-            ...basePayload.carrier,
-            meansOfTransport: 'Road',
-            vehicleRegistration: 'AB1'
-          }
-        }
-
-        const { error } = receiveMovementRequestSchema.validate(payload)
-        expect(error).toBeDefined()
-        expect(error.details[0].message).toContain(
-          'Vehicle registration must be in a valid UK format'
-        )
-      })
-
-      it('should reject vehicle registration that is too long for Road transport', () => {
-        const payload = {
-          ...basePayload,
-          carrier: {
-            ...basePayload.carrier,
-            meansOfTransport: 'Road',
-            vehicleRegistration: 'AB12345CDE'
-          }
-        }
-
-        const { error } = receiveMovementRequestSchema.validate(payload)
-        expect(error).toBeDefined()
-        expect(error.details[0].message).toContain(
-          'Vehicle registration must be in a valid UK format'
-        )
-      })
+      )
     })
   })
 
