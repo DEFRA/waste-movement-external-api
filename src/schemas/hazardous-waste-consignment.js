@@ -34,9 +34,7 @@ export const hazardousWasteConsignmentCodeSchema = Joi.custom(
       !helpers.state.ancestors[0].reasonForNoConsignmentCode &&
       helpers.state.ancestors[0].hazardousWasteConsignmentCode !== ''
     ) {
-      if (!value) {
-        return helpers.error('hazardousWasteConsignmentCode.required')
-      }
+      return helpers.error('hazardousWasteConsignmentCode.required')
     }
     if (value) {
       const valid =
