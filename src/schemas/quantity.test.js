@@ -59,6 +59,7 @@ describe('Quantity Schema Validation', () => {
 
         const { error } = quantitySchema.validate(invalidPayload)
         expect(error).toBeDefined()
+        expect(error.details[0].path).toEqual(['isEstimate'])
         expect(error.details[0].message).toContain(
           'must be either true or false'
         )
@@ -73,6 +74,7 @@ describe('Quantity Schema Validation', () => {
 
         const { error } = quantitySchema.validate(invalidPayload)
         expect(error).toBeDefined()
+        expect(error.details[0].path).toEqual(['isEstimate'])
         expect(error.details[0].message).toContain(
           'must be either true or false'
         )
@@ -87,6 +89,7 @@ describe('Quantity Schema Validation', () => {
 
         const { error } = quantitySchema.validate(invalidPayload)
         expect(error).toBeDefined()
+        expect(error.details[0].path).toEqual(['isEstimate'])
         expect(error.details[0].message).toContain(
           'must be either true or false'
         )
@@ -101,6 +104,7 @@ describe('Quantity Schema Validation', () => {
 
         const { error } = quantitySchema.validate(invalidPayload)
         expect(error).toBeDefined()
+        expect(error.details[0].path).toEqual(['isEstimate'])
         expect(error.details[0].message).toContain(
           'must be either true or false'
         )
@@ -115,6 +119,7 @@ describe('Quantity Schema Validation', () => {
 
         const { error } = quantitySchema.validate(invalidPayload)
         expect(error).toBeDefined()
+        expect(error.details[0].path).toEqual(['isEstimate'])
         expect(error.details[0].message).toContain(
           'must be either true or false'
         )
@@ -129,6 +134,7 @@ describe('Quantity Schema Validation', () => {
 
         const { error } = quantitySchema.validate(invalidPayload)
         expect(error).toBeDefined()
+        expect(error.details[0].path).toEqual(['isEstimate'])
         expect(error.details[0].message).toContain('is required')
       })
 
@@ -141,6 +147,7 @@ describe('Quantity Schema Validation', () => {
 
         const { error } = quantitySchema.validate(invalidPayload)
         expect(error).toBeDefined()
+        expect(error.details[0].path).toEqual(['isEstimate'])
         expect(error.details[0].message).toContain(
           'must be either true or false'
         )
@@ -155,6 +162,7 @@ describe('Quantity Schema Validation', () => {
 
         const { error } = quantitySchema.validate(invalidPayload)
         expect(error).toBeDefined()
+        expect(error.details[0].path).toEqual(['isEstimate'])
         expect(error.details[0].message).toContain(
           'must be either true or false'
         )
@@ -169,6 +177,7 @@ describe('Quantity Schema Validation', () => {
 
         const { error } = quantitySchema.validate(invalidPayload)
         expect(error).toBeDefined()
+        expect(error.details[0].path).toEqual(['isEstimate'])
         expect(error.details[0].message).toContain(
           'must be either true or false'
         )
