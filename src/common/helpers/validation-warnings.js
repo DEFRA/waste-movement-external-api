@@ -136,18 +136,14 @@ export const generateHazardousConsignmentWarnings = (payload) => {
   const code = payload.hazardousWasteConsignmentCode
   const reason = payload.reasonForNoConsignmentCode
 
-  const isBlank = (v) => v === undefined || v === null || v === ''
-
   // If consignment code is blank, reason must be provided
-  if (isBlank(code) || code === '') {
-    if (isBlank(reason)) {
-      warnings.push({
-        key: VALIDATION_KEYS.REASON_NO_CONSIGNMENT_CODE,
-        errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-        message:
-          'Reason for no Consignment Note Code is required when hazardous EWC codes are present'
-      })
-    }
+  if (!code && !reason) {
+    warnings.push({
+      key: VALIDATION_KEYS.REASON_NO_CONSIGNMENT_CODE,
+      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      message:
+        'Reason for no Consignment Note Code is required when hazardous EWC codes are present'
+    })
   }
 
   return warnings

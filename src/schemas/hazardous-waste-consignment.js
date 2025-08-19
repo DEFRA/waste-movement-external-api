@@ -59,11 +59,10 @@ export const reasonForNoConsignmentCodeSchema = Joi.custom((value, helpers) => {
   if (
     hasHazardous &&
     !helpers.state.ancestors[0].hazardousWasteConsignmentCode &&
-    helpers.state.ancestors[0].reasonForNoConsignmentCode !== ''
+    helpers.state.ancestors[0].reasonForNoConsignmentCode !== '' &&
+    !NO_CONSIGNMENT_REASONS.includes(value)
   ) {
-    if (!NO_CONSIGNMENT_REASONS.includes(value)) {
-      return helpers.error('any.only')
-    }
+    return helpers.error('any.only')
   }
   return value
 }).messages({
