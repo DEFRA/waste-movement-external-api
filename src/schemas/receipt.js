@@ -1,7 +1,7 @@
 import Joi from 'joi'
 import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
 import { MEANS_OF_TRANSPORT } from '../common/constants/means-of-transport.js'
-import { wasteSchema } from './waste.js'
+import { wasteItemsSchema } from './waste.js'
 import { quantitySchema } from './quantity.js'
 
 const carrierSchema = Joi.object({
@@ -63,7 +63,7 @@ export const receiveMovementRequestSchema = Joi.object({
   yourUniqueReference: Joi.string(),
   otherReferencesForMovement: Joi.string(),
   specialHandlingRequirements: Joi.string(),
-  waste: Joi.array().items(wasteSchema),
+  wasteItems: Joi.array().items(wasteItemsSchema),
   carrier: carrierSchema,
   brokerOrDealer: brokerOrDealerSchema,
   acceptance: acceptanceSchema,

@@ -34,7 +34,7 @@ describe('Create Receipt Movement Route', () => {
     receivingSiteId: 'site123',
     receiverReference: 'ref123',
     specialHandlingRequirements: 'Handle with care',
-    waste: {
+    wasteItems: {
       wasteCode: '123456',
       description: 'Test waste'
     },
