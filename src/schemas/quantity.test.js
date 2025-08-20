@@ -50,137 +50,65 @@ describe('Quantity Schema Validation', () => {
     })
 
     describe('Invalid isEstimate Values', () => {
-      it('should reject isEstimate: 1 (number)', () => {
-        const invalidPayload = {
+      const cases = [
+        {
+          name: 'should reject isEstimate: 1 (number)',
+          isEstimate: 1,
+          expectedMessage: 'must be either true or false'
+        },
+        {
+          name: 'should reject isEstimate: 0 (number)',
+          isEstimate: 0,
+          expectedMessage: 'must be either true or false'
+        },
+        {
+          name: 'should reject isEstimate: "yes" (string)',
+          isEstimate: 'yes',
+          expectedMessage: 'must be either true or false'
+        },
+        {
+          name: 'should reject isEstimate: "no" (string)',
+          isEstimate: 'no',
+          expectedMessage: 'must be either true or false'
+        },
+        {
+          name: 'should reject isEstimate: null',
+          isEstimate: null,
+          expectedMessage: 'must be either true or false'
+        },
+        {
+          name: 'should reject isEstimate: undefined',
+          isEstimate: undefined,
+          expectedMessage: 'is required'
+        },
+        {
+          name: 'should reject isEstimate: {} (object)',
+          isEstimate: {},
+          expectedMessage: 'must be either true or false'
+        },
+        {
+          name: 'should reject isEstimate: [] (array)',
+          isEstimate: [],
+          expectedMessage: 'must be either true or false'
+        },
+        {
+          name: 'should reject isEstimate: "maybe" (string)',
+          isEstimate: 'maybe',
+          expectedMessage: 'must be either true or false'
+        }
+      ]
+
+      test.each(cases)('$name', ({ isEstimate, expectedMessage }) => {
+        const payload = {
           metric: 'Tonnes',
           amount: 10,
-          isEstimate: 1
+          ...(isEstimate !== undefined && { isEstimate })
         }
 
-        const { error } = quantitySchema.validate(invalidPayload)
+        const { error } = quantitySchema.validate(payload)
         expect(error).toBeDefined()
         expect(error.details[0].path).toEqual(['isEstimate'])
-        expect(error.details[0].message).toContain(
-          'must be either true or false'
-        )
-      })
-
-      it('should reject isEstimate: 0 (number)', () => {
-        const invalidPayload = {
-          metric: 'Tonnes',
-          amount: 10,
-          isEstimate: 0
-        }
-
-        const { error } = quantitySchema.validate(invalidPayload)
-        expect(error).toBeDefined()
-        expect(error.details[0].path).toEqual(['isEstimate'])
-        expect(error.details[0].message).toContain(
-          'must be either true or false'
-        )
-      })
-
-      it('should reject isEstimate: "yes" (string)', () => {
-        const invalidPayload = {
-          metric: 'Tonnes',
-          amount: 10,
-          isEstimate: 'yes'
-        }
-
-        const { error } = quantitySchema.validate(invalidPayload)
-        expect(error).toBeDefined()
-        expect(error.details[0].path).toEqual(['isEstimate'])
-        expect(error.details[0].message).toContain(
-          'must be either true or false'
-        )
-      })
-
-      it('should reject isEstimate: "no" (string)', () => {
-        const invalidPayload = {
-          metric: 'Tonnes',
-          amount: 10,
-          isEstimate: 'no'
-        }
-
-        const { error } = quantitySchema.validate(invalidPayload)
-        expect(error).toBeDefined()
-        expect(error.details[0].path).toEqual(['isEstimate'])
-        expect(error.details[0].message).toContain(
-          'must be either true or false'
-        )
-      })
-
-      it('should reject isEstimate: null', () => {
-        const invalidPayload = {
-          metric: 'Tonnes',
-          amount: 10,
-          isEstimate: null
-        }
-
-        const { error } = quantitySchema.validate(invalidPayload)
-        expect(error).toBeDefined()
-        expect(error.details[0].path).toEqual(['isEstimate'])
-        expect(error.details[0].message).toContain(
-          'must be either true or false'
-        )
-      })
-
-      it('should reject isEstimate: undefined', () => {
-        const invalidPayload = {
-          metric: 'Tonnes',
-          amount: 10
-          // isEstimate is missing
-        }
-
-        const { error } = quantitySchema.validate(invalidPayload)
-        expect(error).toBeDefined()
-        expect(error.details[0].path).toEqual(['isEstimate'])
-        expect(error.details[0].message).toContain('is required')
-      })
-
-      it('should reject isEstimate: {} (object)', () => {
-        const invalidPayload = {
-          metric: 'Tonnes',
-          amount: 10,
-          isEstimate: {}
-        }
-
-        const { error } = quantitySchema.validate(invalidPayload)
-        expect(error).toBeDefined()
-        expect(error.details[0].path).toEqual(['isEstimate'])
-        expect(error.details[0].message).toContain(
-          'must be either true or false'
-        )
-      })
-
-      it('should reject isEstimate: [] (array)', () => {
-        const invalidPayload = {
-          metric: 'Tonnes',
-          amount: 10,
-          isEstimate: []
-        }
-
-        const { error } = quantitySchema.validate(invalidPayload)
-        expect(error).toBeDefined()
-        expect(error.details[0].path).toEqual(['isEstimate'])
-        expect(error.details[0].message).toContain(
-          'must be either true or false'
-        )
-      })
-
-      it('should reject isEstimate: "maybe" (string)', () => {
-        const invalidPayload = {
-          metric: 'Tonnes',
-          amount: 10,
-          isEstimate: 'maybe'
-        }
-
-        const { error } = quantitySchema.validate(invalidPayload)
-        expect(error).toBeDefined()
-        expect(error.details[0].path).toEqual(['isEstimate'])
-        expect(error.details[0].message).toContain(
-          'must be either true or false'
-        )
+        expect(error.details[0].message).toContain(expectedMessage)
       })
     })
 
