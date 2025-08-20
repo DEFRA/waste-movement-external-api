@@ -97,13 +97,18 @@ const hazardousSchema = Joi.object({
       if (!value.components || value.components.length === 0) {
         return helpers.error('any.required')
       }
-    } else if (value && value.containsHazardous === false) {
+      return value
+    } else if (
+      value?.containsHazardous === false &&
+      value.components?.length > 0
+    ) {
       // When not hazardous, components should not be provided
-      if (value.components && value.components.length > 0) {
-        return helpers.error('any.invalid')
-      }
+      return helpers.error('any.invalid')
+    } else {
+      // No validation needed when containsHazardous is undefined or null
+      // Let the containsHazardous required validation handle it
+      return value
     }
-    return value
   })
   .messages({
     'any.required':
