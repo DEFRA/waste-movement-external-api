@@ -15,7 +15,7 @@ const NIEA_PATTERN = /^D[ABC]\d{7}$/
 export function hasHazardousEwcCodes(payload) {
   // Access root payload to inspect waste EWC codes
   const root = payload
-  const wasteArray = Array.isArray(root.waste) ? root.waste : []
+  const wasteArray = Array.isArray(root.wasteItems) ? root.wasteItems : []
   const allEwcCodes = wasteArray
     .flatMap((w) => (Array.isArray(w.ewcCodes) ? w.ewcCodes : []))
     .filter(Boolean)

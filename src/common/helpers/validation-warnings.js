@@ -125,7 +125,7 @@ export const generateDisposalRecoveryWarnings = (payload) => {
 export const generateHazardousConsignmentWarnings = (payload) => {
   const warnings = []
 
-  if (!Array.isArray(payload?.waste)) {
+  if (!Array.isArray(payload?.wasteItems)) {
     return warnings
   }
 
