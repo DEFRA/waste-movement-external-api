@@ -6,7 +6,7 @@ describe('Receipt Schema Validation', () => {
     const validatePopsIndicator = (containsPops) => {
       const payload = {
         receivingSiteId: 'site123',
-        waste: [
+        wasteItems: [
           {
             ewcCodes: ['010101'],
             wasteDescription: 'Test waste',
@@ -43,7 +43,7 @@ describe('Receipt Schema Validation', () => {
       // Create a payload with pops object but missing containsPops
       const payload = {
         receivingSiteId: 'site123',
-        waste: [
+        wasteItems: [
           {
             ewcCodes: ['010101'],
             wasteDescription: 'Test waste',
@@ -71,7 +71,7 @@ describe('Receipt Schema Validation', () => {
     const validateHazardous = (hazardous) => {
       const payload = {
         receivingSiteId: 'site123',
-        waste: [
+        wasteItems: [
           {
             ewcCodes: ['010101'],
             wasteDescription: 'Test waste',
@@ -318,7 +318,7 @@ describe('Receipt Schema Validation', () => {
           hazCodes: [1, 1, 1]
         })
         expect(result.error).toBeUndefined()
-        expect(result.value.waste[0].hazardous.hazCodes).toEqual([1])
+        expect(result.value.wasteItems[0].hazardous.hazCodes).toEqual([1])
       })
 
       it('should deduplicate HP codes with different values', () => {
@@ -327,7 +327,9 @@ describe('Receipt Schema Validation', () => {
           hazCodes: [1, 5, 1, 10]
         })
         expect(result.error).toBeUndefined()
-        expect(result.value.waste[0].hazardous.hazCodes).toEqual([1, 5, 10])
+        expect(result.value.wasteItems[0].hazardous.hazCodes).toEqual([
+          1, 5, 10
+        ])
       })
 
       it('should deduplicate HP codes even with valid range', () => {
@@ -336,7 +338,7 @@ describe('Receipt Schema Validation', () => {
           hazCodes: [15, 3, 15]
         })
         expect(result.error).toBeUndefined()
-        expect(result.value.waste[0].hazardous.hazCodes).toEqual([15, 3])
+        expect(result.value.wasteItems[0].hazardous.hazCodes).toEqual([15, 3])
       })
 
       it('should deduplicate complex HP codes array', () => {
@@ -346,7 +348,9 @@ describe('Receipt Schema Validation', () => {
         })
         expect(result.error).toBeUndefined()
         // The Set preserves insertion order for unique values
-        expect(result.value.waste[0].hazardous.hazCodes).toEqual([1, 4, 2, 3])
+        expect(result.value.wasteItems[0].hazardous.hazCodes).toEqual([
+          1, 4, 2, 3
+        ])
       })
 
       it('should reject mix of valid and invalid HP codes', () => {
@@ -367,7 +371,7 @@ describe('Receipt Schema Validation', () => {
     const validateEwcCode = (ewcCodeArray) => {
       const payload = {
         receivingSiteId: 'site123',
-        waste: [
+        wasteItems: [
           {
             ewcCodes: ewcCodeArray,
             wasteDescription: 'Test waste',
@@ -404,7 +408,7 @@ describe('Receipt Schema Validation', () => {
 
       expect(result1.error).toBeDefined()
       expect(result1.error.message).toContain(
-        '"waste[0].ewcCodes[0]" must be a valid 6-digit numeric code'
+        '"wasteItems[0].ewcCodes[0]" must be a valid 6-digit numeric code'
       )
     })
 
@@ -458,7 +462,7 @@ describe('Receipt Schema Validation', () => {
 
       expect(result.error).toBeDefined()
       expect(result.error.message).toContain(
-        '"waste[0].ewcCodes[0]" must be a valid EWC code from the official list'
+        '"wasteItems[0].ewcCodes[0]" must be a valid EWC code from the official list'
       )
     })
 
@@ -466,7 +470,7 @@ describe('Receipt Schema Validation', () => {
       // Test with missing EWC code
       const payload = {
         receivingSiteId: 'site123',
-        waste: [
+        wasteItems: [
           {
             wasteDescription: 'Test waste',
             form: 'Solid',
@@ -482,7 +486,9 @@ describe('Receipt Schema Validation', () => {
       const result = receiveMovementRequestSchema.validate(payload)
 
       expect(result.error).toBeDefined()
-      expect(result.error.message).toContain('"waste[0].ewcCodes" is required')
+      expect(result.error.message).toContain(
+        '"wasteItems[0].ewcCodes" is required'
+      )
     })
   })
 })

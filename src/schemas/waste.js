@@ -68,7 +68,7 @@ function validateEwcCode(value, helpers) {
   return value
 }
 
-export const wasteSchema = Joi.object({
+export const wasteItemsSchema = Joi.object({
   ewcCodes: Joi.array()
     .items(
       Joi.string().custom(validateEwcCode, 'EWC code validation').messages({
