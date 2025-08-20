@@ -1,6 +1,7 @@
 import Joi from 'joi'
 import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
 import { MEANS_OF_TRANSPORT } from '../common/constants/means-of-transport.js'
+import { isVehicleRegistrationValid } from '../common/constants/vehicle-patterns.js'
 import { wasteSchema } from './waste.js'
 import { quantitySchema } from './quantity.js'
 
@@ -11,7 +12,32 @@ const carrierSchema = Joi.object({
   address: Joi.string(),
   emailAddress: Joi.string().email(),
   phoneNumber: Joi.string(),
-  vehicleRegistration: Joi.string(),
+  vehicleRegistration: Joi.when('meansOfTransport', {
+    is: 'Road',
+    then: Joi.string()
+      .required()
+      .custom((value, helpers) => {
+        if (!isVehicleRegistrationValid(value)) {
+          return helpers.error('any.invalid', {
+            message:
+              'Vehicle registration must be in a valid UK format (e.g., ABC123, A123BCD, AB12CDE)'
+          })
+        }
+        return value
+      })
+      .messages({
+        'any.required':
+          'Vehicle registration is required when means of transport is Road',
+        'string.empty':
+          'Vehicle registration cannot be empty when means of transport is Road',
+        'any.invalid':
+          'Vehicle registration must be in a valid UK format (e.g., ABC123, A123BCD, AB12CDE)'
+      }),
+    otherwise: Joi.forbidden().messages({
+      'any.unknown':
+        'Vehicle registration cannot be provided for non-Road transport'
+    })
+  }),
   meansOfTransport: Joi.string().valid(...MEANS_OF_TRANSPORT),
   otherMeansOfTransport: Joi.string()
 }).label('Carrier')
