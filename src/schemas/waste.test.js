@@ -1,4 +1,5 @@
 import { receiveMovementRequestSchema } from './receipt.js'
+import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 
 describe('Receipt Schema Validation', () => {
   describe('POPs Indicator Validation', () => {
@@ -10,7 +11,7 @@ describe('Receipt Schema Validation', () => {
           {
             ewcCodes: ['010101'],
             wasteDescription: 'Test waste',
-            form: 'Solid',
+            physicalForm: 'Solid',
             pops: containsPops !== undefined ? { containsPops } : undefined,
             quantity: {
               metric: 'Tonnes',
@@ -47,7 +48,7 @@ describe('Receipt Schema Validation', () => {
           {
             ewcCodes: ['010101'],
             wasteDescription: 'Test waste',
-            form: 'Solid',
+            physicalForm: 'Solid',
             pops: {}, // Empty pops object without containsPops
             quantity: {
               metric: 'Tonnes',
@@ -75,7 +76,7 @@ describe('Receipt Schema Validation', () => {
           {
             ewcCodes: ['010101'],
             wasteDescription: 'Test waste',
-            form: 'Solid',
+            physicalForm: 'Solid',
             hazardous,
             quantity: {
               metric: 'Tonnes',
@@ -375,7 +376,7 @@ describe('Receipt Schema Validation', () => {
           {
             ewcCodes: ewcCodeArray,
             wasteDescription: 'Test waste',
-            form: 'Solid',
+            physicalForm: 'Solid',
             pops: {
               containsPops: false
             },
@@ -473,7 +474,7 @@ describe('Receipt Schema Validation', () => {
         wasteItems: [
           {
             wasteDescription: 'Test waste',
-            form: 'Solid',
+            physicalForm: 'Solid',
             quantity: {
               metric: 'Tonnes',
               amount: 1,
@@ -501,7 +502,7 @@ describe('Receipt Schema Validation', () => {
           {
             ewcCodes: ['010101'],
             wasteDescription: 'Test waste',
-            form: 'Solid',
+            physicalForm: 'Solid',
             hazardous: {
               containsHazardous,
               ...(components && { components })
@@ -691,6 +692,71 @@ describe('Receipt Schema Validation', () => {
           'Chemical or Biological concentration cannot be negative'
         )
       })
+    })
+  })
+
+  describe('Physical Form Validation', () => {
+    it('should accept valid physical form', () => {
+      const payload = createMovementRequest({
+        wasteItems: [
+          {
+            ewcCodes: ['010101'],
+            wasteDescription: 'Test waste',
+            physicalForm: 'Solid',
+            quantity: {
+              metric: 'Tonnes',
+              amount: 1,
+              isEstimate: false
+            }
+          }
+        ]
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
+      expect(result.error).toBeUndefined()
+    })
+
+    it('should reject invalid physical form', () => {
+      const payload = createMovementRequest({
+        wasteItems: [
+          {
+            ewcCodes: ['010101'],
+            wasteDescription: 'Test waste',
+            physicalForm: 'Invalid',
+            quantity: {
+              metric: 'Tonnes',
+              amount: 1,
+              isEstimate: false
+            }
+          }
+        ]
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toContain(
+        '"wasteItems[0].physicalForm" must be one of [Gas, Liquid, Solid, Powder, Sludge, Mixed]'
+      )
+    })
+
+    it('should reject empty physical form', () => {
+      const payload = createMovementRequest({
+        wasteItems: [
+          {
+            ewcCodes: ['010101'],
+            wasteDescription: 'Test waste',
+            // physicalForm missing,
+            quantity: {
+              metric: 'Tonnes',
+              amount: 1,
+              isEstimate: false
+            }
+          }
+        ]
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toContain(
+        '"wasteItems[0].physicalForm" is required'
+      )
     })
   })
 })

@@ -50,7 +50,7 @@ describe('handleUpdateReceiptMovement', () => {
         {
           ewcCodes: ['01 01 01'],
           description: 'Test waste',
-          form: 'Solid',
+          physicalForm: 'Solid',
           containers: 'Bulk',
           quantity: {
             metric: 'Tonnes',
