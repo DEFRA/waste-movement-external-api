@@ -497,7 +497,7 @@ describe('Receipt Schema Validation', () => {
     const validateHazardousWithComponents = (containsHazardous, components) => {
       const payload = {
         receivingSiteId: 'site123',
-        waste: [
+        wasteItems: [
           {
             ewcCodes: ['010101'],
             wasteDescription: 'Test waste',
