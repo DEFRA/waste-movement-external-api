@@ -13,7 +13,7 @@ describe('Receipt Schema Validation', () => {
             wasteDescription: 'Test waste',
             physicalForm: 'Solid',
             pops: containsPops !== undefined ? { containsPops } : undefined,
-            quantity: {
+            weight: {
               metric: 'Tonnes',
               amount: 1,
               isEstimate: false
@@ -50,7 +50,7 @@ describe('Receipt Schema Validation', () => {
             wasteDescription: 'Test waste',
             physicalForm: 'Solid',
             pops: {}, // Empty pops object without containsPops
-            quantity: {
+            weight: {
               metric: 'Tonnes',
               amount: 1,
               isEstimate: false
@@ -78,7 +78,7 @@ describe('Receipt Schema Validation', () => {
             wasteDescription: 'Test waste',
             physicalForm: 'Solid',
             hazardous,
-            quantity: {
+            weight: {
               metric: 'Tonnes',
               amount: 1,
               isEstimate: false
@@ -380,7 +380,7 @@ describe('Receipt Schema Validation', () => {
             pops: {
               containsPops: false
             },
-            quantity: {
+            weight: {
               metric: 'Tonnes',
               amount: 1,
               isEstimate: false
@@ -475,7 +475,7 @@ describe('Receipt Schema Validation', () => {
           {
             wasteDescription: 'Test waste',
             physicalForm: 'Solid',
-            quantity: {
+            weight: {
               metric: 'Tonnes',
               amount: 1,
               isEstimate: false
@@ -507,7 +507,7 @@ describe('Receipt Schema Validation', () => {
               containsHazardous,
               ...(components && { components })
             },
-            quantity: {
+            weight: {
               metric: 'Tonnes',
               amount: 1,
               isEstimate: false
@@ -703,7 +703,7 @@ describe('Receipt Schema Validation', () => {
             ewcCodes: ['010101'],
             wasteDescription: 'Test waste',
             physicalForm: 'Solid',
-            quantity: {
+            weight: {
               metric: 'Tonnes',
               amount: 1,
               isEstimate: false
@@ -722,7 +722,7 @@ describe('Receipt Schema Validation', () => {
             ewcCodes: ['010101'],
             wasteDescription: 'Test waste',
             physicalForm: 'Invalid',
-            quantity: {
+            weight: {
               metric: 'Tonnes',
               amount: 1,
               isEstimate: false
@@ -744,7 +744,7 @@ describe('Receipt Schema Validation', () => {
             ewcCodes: ['010101'],
             wasteDescription: 'Test waste',
             // physicalForm missing,
-            quantity: {
+            weight: {
               metric: 'Tonnes',
               amount: 1,
               isEstimate: false

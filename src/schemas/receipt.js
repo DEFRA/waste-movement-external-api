@@ -2,7 +2,7 @@ import Joi from 'joi'
 import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
 import { MEANS_OF_TRANSPORT } from '../common/constants/means-of-transport.js'
 import { wasteItemsSchema } from './waste.js'
-import { quantitySchema } from './quantity.js'
+import { weightSchema } from './quantity.js'
 import {
   hazardousWasteConsignmentCodeSchema,
   reasonForNoConsignmentCodeSchema
@@ -32,7 +32,7 @@ const disposalOrRecoveryCodeSchema = Joi.object({
   code: Joi.string()
     .valid(...DISPOSAL_OR_RECOVERY_CODES)
     .required(),
-  quantity: quantitySchema.required()
+  weight: weightSchema.required()
 }).label('DisposalOrRecoveryCode')
 
 const receiptSchema = Joi.object({

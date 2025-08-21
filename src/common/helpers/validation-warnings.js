@@ -72,7 +72,7 @@ export const generateDisposalRecoveryWarnings = (payload) => {
     }
 
     // Check if quantity is missing (this should be caught by schema validation)
-    if (!codeEntry.quantity) {
+    if (!codeEntry.weight) {
       warnings.push({
         key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].quantity`,
         errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
@@ -80,7 +80,7 @@ export const generateDisposalRecoveryWarnings = (payload) => {
       })
     } else {
       // Check if quantity has required fields (these should be caught by schema validation)
-      if (!codeEntry.quantity.metric) {
+      if (!codeEntry.weight.metric) {
         warnings.push({
           key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].quantity.metric`,
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
@@ -89,8 +89,8 @@ export const generateDisposalRecoveryWarnings = (payload) => {
       }
 
       if (
-        codeEntry.quantity.amount === undefined ||
-        codeEntry.quantity.amount === null
+        codeEntry.weight.amount === undefined ||
+        codeEntry.weight.amount === null
       ) {
         warnings.push({
           key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].quantity.amount`,
@@ -100,8 +100,8 @@ export const generateDisposalRecoveryWarnings = (payload) => {
       }
 
       if (
-        codeEntry.quantity.isEstimate === undefined ||
-        codeEntry.quantity.isEstimate === null
+        codeEntry.weight.isEstimate === undefined ||
+        codeEntry.weight.isEstimate === null
       ) {
         warnings.push({
           key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].quantity.isEstimate`,
