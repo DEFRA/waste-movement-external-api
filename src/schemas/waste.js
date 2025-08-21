@@ -136,7 +136,7 @@ export const wasteItemsSchema = Joi.object({
       'array.max': '{{#label}} must contain no more than 5 EWC codes'
     }),
   wasteDescription: Joi.string().required(),
-  form: Joi.string()
+  physicalForm: Joi.string()
     .valid('Gas', 'Liquid', 'Solid', 'Powder', 'Sludge', 'Mixed')
     .required(),
   numberOfContainers: Joi.number(),
