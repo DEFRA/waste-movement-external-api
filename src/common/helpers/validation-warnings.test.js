@@ -19,7 +19,7 @@ describe('Validation Warnings', () => {
           disposalOrRecoveryCodes: [
             {
               code: 'R1',
-              quantity: {
+              weight: {
                 metric: 'Tonnes',
                 amount: 10,
                 isEstimate: false
@@ -92,7 +92,7 @@ describe('Validation Warnings', () => {
           disposalOrRecoveryCodes: [
             {
               // Missing code
-              quantity: {
+              weight: {
                 metric: 'Tonnes',
                 amount: 10,
                 isEstimate: false
@@ -167,7 +167,7 @@ describe('Validation Warnings', () => {
           disposalOrRecoveryCodes: [
             {
               code: 'R1',
-              quantity: {
+              weight: {
                 // Missing metric
                 amount: 10,
                 isEstimate: false
@@ -193,7 +193,7 @@ describe('Validation Warnings', () => {
           disposalOrRecoveryCodes: [
             {
               code: 'R1',
-              quantity: {
+              weight: {
                 metric: 'Tonnes',
                 amount: undefined,
                 isEstimate: false
@@ -219,7 +219,7 @@ describe('Validation Warnings', () => {
           disposalOrRecoveryCodes: [
             {
               code: 'R1',
-              quantity: {
+              weight: {
                 metric: 'Tonnes',
                 amount: null,
                 isEstimate: false
@@ -245,7 +245,7 @@ describe('Validation Warnings', () => {
           disposalOrRecoveryCodes: [
             {
               code: 'R1',
-              quantity: {
+              weight: {
                 metric: 'Tonnes',
                 amount: 10,
                 isEstimate: undefined
@@ -271,7 +271,7 @@ describe('Validation Warnings', () => {
           disposalOrRecoveryCodes: [
             {
               code: 'R1',
-              quantity: {
+              weight: {
                 metric: 'Tonnes',
                 amount: 10,
                 isEstimate: null
@@ -297,7 +297,7 @@ describe('Validation Warnings', () => {
           disposalOrRecoveryCodes: [
             {
               code: 'R1',
-              quantity: {
+              weight: {
                 metric: 'Tonnes',
                 amount: 10,
                 isEstimate: false
@@ -308,7 +308,7 @@ describe('Validation Warnings', () => {
             },
             {
               code: 'D1',
-              quantity: {
+              weight: {
                 metric: 'Tonnes',
                 amount: undefined,
                 isEstimate: true
@@ -344,7 +344,7 @@ describe('Validation Warnings', () => {
           disposalOrRecoveryCodes: [
             {
               code: 'R1',
-              quantity: {
+              weight: {
                 // Missing metric, amount, and isEstimate
               }
             }
@@ -380,7 +380,7 @@ describe('Validation Warnings', () => {
           disposalOrRecoveryCodes: [
             {
               code: 'R1',
-              quantity: {
+              weight: {
                 metric: 'Tonnes',
                 amount: 10,
                 isEstimate: false

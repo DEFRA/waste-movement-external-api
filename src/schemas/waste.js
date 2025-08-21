@@ -1,6 +1,6 @@
 import Joi from 'joi'
 import { isValidEwcCode } from '../common/constants/ewc-codes.js'
-import { quantitySchema } from './quantity.js'
+import { weightSchema } from './quantity.js'
 
 const MAX_EWC_CODES_COUNT = 5
 const MIN_HAZARD_CODE = 1
@@ -153,7 +153,7 @@ export const wasteItemsSchema = Joi.object({
     .required(),
   numberOfContainers: Joi.number(),
   typeOfContainers: Joi.string(),
-  quantity: quantitySchema,
+  weight: weightSchema,
   pops: popsSchema,
   hazardous: hazardousSchema
 }).label('Waste')

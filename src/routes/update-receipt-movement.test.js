@@ -52,7 +52,7 @@ describe('handleUpdateReceiptMovement', () => {
           description: 'Test waste',
           physicalForm: 'Solid',
           containers: 'Bulk',
-          quantity: {
+          weight: {
             metric: 'Tonnes',
             amount: 1,
             isEstimate: false
@@ -63,7 +63,7 @@ describe('handleUpdateReceiptMovement', () => {
         disposalOrRecoveryCodes: [
           {
             code: 'R1',
-            quantity: {
+            weight: {
               metric: 'Tonnes',
               amount: 10,
               isEstimate: false
