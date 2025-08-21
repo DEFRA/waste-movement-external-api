@@ -50,7 +50,7 @@ describe('Create Receipt Movement Handler', () => {
       disposalOrRecoveryCodes: [
         {
           code: 'R1',
-          quantity: {
+          weight: {
             metric: 'Tonnes',
             amount: 10,
             isEstimate: false
