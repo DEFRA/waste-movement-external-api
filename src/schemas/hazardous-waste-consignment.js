@@ -7,7 +7,10 @@ export const NO_CONSIGNMENT_REASONS = [
   'Household Waste Recycling Centre Receipt'
 ]
 
-// Consignment note code formats
+// Consignment note code formats, e.g.
+// CJTILE/A0001
+// SA1234567
+// DA1234567
 const EA_NRW_PATTERN = /^[A-Za-z]{2,}\/[A-Za-z0-9]{5}[A-Za-z]?$/
 const SEPA_PATTERN = /^S[ABC]\d{7}$/
 const NIEA_PATTERN = /^D[ABC]\d{7}$/
