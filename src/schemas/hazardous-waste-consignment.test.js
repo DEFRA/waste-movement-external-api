@@ -11,7 +11,7 @@ const buildBasePayload = () => ({
     {
       ewcCodes: ['010101'], // non-hazardous by default
       wasteDescription: 'Test waste',
-      form: 'Solid',
+      physicalForm: 'Solid',
       quantity: {
         metric: 'Tonnes',
         amount: 1,
