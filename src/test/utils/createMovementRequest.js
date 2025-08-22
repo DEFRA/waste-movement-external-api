@@ -10,9 +10,6 @@ export function createMovementRequest(overrides) {
       vehicleRegistration: 'MK12 F89',
       meansOfTransport: 'Road'
     },
-    acceptance: {
-      acceptingAll: true
-    },
     receiver: {
       authorisations: [
         {

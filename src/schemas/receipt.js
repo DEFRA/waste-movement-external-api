@@ -20,20 +20,6 @@ const carrierSchema = Joi.object({
   otherMeansOfTransport: Joi.string()
 }).label('Carrier')
 
-const acceptanceSchema = Joi.object({
-  acceptingAll: Joi.boolean().required(),
-  quantityNotAccepted: Joi.when('acceptingAll', {
-    is: false,
-    then: quantitySchema.required(),
-    otherwise: Joi.forbidden()
-  }),
-  rejectionReason: Joi.when('acceptingAll', {
-    is: false,
-    then: Joi.string().required(),
-    otherwise: Joi.forbidden()
-  })
-}).label('Acceptance')
-
 const receiverSchema = Joi.object({
   authorisations: Joi.array().items({
     authorisationType: Joi.string(),
@@ -70,7 +56,6 @@ export const receiveMovementRequestSchema = Joi.object({
   wasteItems: Joi.array().items(wasteItemsSchema),
   carrier: carrierSchema,
   brokerOrDealer: brokerOrDealerSchema,
-  acceptance: acceptanceSchema,
   receiver: receiverSchema,
   receipt: receiptSchema
 }).label('Movement')
