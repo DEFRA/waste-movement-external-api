@@ -46,11 +46,11 @@ describe('handleUpdateReceiptMovement', () => {
     },
     payload: {
       receivingSiteId: '123e4567-e89b-12d3-a456-426614174001',
-      waste: [
+      wasteItems: [
         {
           ewcCodes: ['01 01 01'],
           description: 'Test waste',
-          form: 'Solid',
+          physicalForm: 'Solid',
           containers: 'Bulk',
           quantity: {
             metric: 'Tonnes',

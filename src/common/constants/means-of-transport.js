@@ -5,7 +5,8 @@ const MEANS_OF_TRANSPORT = [
   'Air',
   'Sea',
   'Inland Waterway',
-  'Piped'
+  'Piped',
+  'Other'
 ]
 
 export { MEANS_OF_TRANSPORT }

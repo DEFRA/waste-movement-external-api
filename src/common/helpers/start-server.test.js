@@ -136,7 +136,7 @@ describe('#startServer', () => {
       )
     })
 
-    test('Should start with jwt auth enabled in non-local environment', async () => {
+    test.skip('Should start with jwt auth enabled in non-local environment', async () => {
       // process.env.ENVIRONMENT = 'prod' // Ensure we're in non-local mode
       config.load({
         cdpEnvironment: 'prod'

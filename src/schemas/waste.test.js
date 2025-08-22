@@ -1,4 +1,5 @@
 import { receiveMovementRequestSchema } from './receipt.js'
+import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 
 describe('Receipt Schema Validation', () => {
   describe('POPs Indicator Validation', () => {
@@ -6,11 +7,11 @@ describe('Receipt Schema Validation', () => {
     const validatePopsIndicator = (containsPops) => {
       const payload = {
         receivingSiteId: 'site123',
-        waste: [
+        wasteItems: [
           {
             ewcCodes: ['010101'],
             wasteDescription: 'Test waste',
-            form: 'Solid',
+            physicalForm: 'Solid',
             pops: containsPops !== undefined ? { containsPops } : undefined,
             quantity: {
               metric: 'Tonnes',
@@ -43,11 +44,11 @@ describe('Receipt Schema Validation', () => {
       // Create a payload with pops object but missing containsPops
       const payload = {
         receivingSiteId: 'site123',
-        waste: [
+        wasteItems: [
           {
             ewcCodes: ['010101'],
             wasteDescription: 'Test waste',
-            form: 'Solid',
+            physicalForm: 'Solid',
             pops: {}, // Empty pops object without containsPops
             quantity: {
               metric: 'Tonnes',
@@ -71,11 +72,11 @@ describe('Receipt Schema Validation', () => {
     const validateHazardous = (hazardous) => {
       const payload = {
         receivingSiteId: 'site123',
-        waste: [
+        wasteItems: [
           {
             ewcCodes: ['010101'],
             wasteDescription: 'Test waste',
-            form: 'Solid',
+            physicalForm: 'Solid',
             hazardous,
             quantity: {
               metric: 'Tonnes',
@@ -318,7 +319,7 @@ describe('Receipt Schema Validation', () => {
           hazCodes: [1, 1, 1]
         })
         expect(result.error).toBeUndefined()
-        expect(result.value.waste[0].hazardous.hazCodes).toEqual([1])
+        expect(result.value.wasteItems[0].hazardous.hazCodes).toEqual([1])
       })
 
       it('should deduplicate HP codes with different values', () => {
@@ -327,7 +328,9 @@ describe('Receipt Schema Validation', () => {
           hazCodes: [1, 5, 1, 10]
         })
         expect(result.error).toBeUndefined()
-        expect(result.value.waste[0].hazardous.hazCodes).toEqual([1, 5, 10])
+        expect(result.value.wasteItems[0].hazardous.hazCodes).toEqual([
+          1, 5, 10
+        ])
       })
 
       it('should deduplicate HP codes even with valid range', () => {
@@ -336,7 +339,7 @@ describe('Receipt Schema Validation', () => {
           hazCodes: [15, 3, 15]
         })
         expect(result.error).toBeUndefined()
-        expect(result.value.waste[0].hazardous.hazCodes).toEqual([15, 3])
+        expect(result.value.wasteItems[0].hazardous.hazCodes).toEqual([15, 3])
       })
 
       it('should deduplicate complex HP codes array', () => {
@@ -346,7 +349,9 @@ describe('Receipt Schema Validation', () => {
         })
         expect(result.error).toBeUndefined()
         // The Set preserves insertion order for unique values
-        expect(result.value.waste[0].hazardous.hazCodes).toEqual([1, 4, 2, 3])
+        expect(result.value.wasteItems[0].hazardous.hazCodes).toEqual([
+          1, 4, 2, 3
+        ])
       })
 
       it('should reject mix of valid and invalid HP codes', () => {
@@ -367,11 +372,11 @@ describe('Receipt Schema Validation', () => {
     const validateEwcCode = (ewcCodeArray) => {
       const payload = {
         receivingSiteId: 'site123',
-        waste: [
+        wasteItems: [
           {
             ewcCodes: ewcCodeArray,
             wasteDescription: 'Test waste',
-            form: 'Solid',
+            physicalForm: 'Solid',
             pops: {
               containsPops: false
             },
@@ -404,7 +409,7 @@ describe('Receipt Schema Validation', () => {
 
       expect(result1.error).toBeDefined()
       expect(result1.error.message).toContain(
-        '"waste[0].ewcCodes[0]" must be a valid 6-digit numeric code'
+        '"wasteItems[0].ewcCodes[0]" must be a valid 6-digit numeric code'
       )
     })
 
@@ -458,7 +463,7 @@ describe('Receipt Schema Validation', () => {
 
       expect(result.error).toBeDefined()
       expect(result.error.message).toContain(
-        '"waste[0].ewcCodes[0]" must be a valid EWC code from the official list'
+        '"wasteItems[0].ewcCodes[0]" must be a valid EWC code from the official list'
       )
     })
 
@@ -466,10 +471,10 @@ describe('Receipt Schema Validation', () => {
       // Test with missing EWC code
       const payload = {
         receivingSiteId: 'site123',
-        waste: [
+        wasteItems: [
           {
             wasteDescription: 'Test waste',
-            form: 'Solid',
+            physicalForm: 'Solid',
             quantity: {
               metric: 'Tonnes',
               amount: 1,
@@ -482,7 +487,276 @@ describe('Receipt Schema Validation', () => {
       const result = receiveMovementRequestSchema.validate(payload)
 
       expect(result.error).toBeDefined()
-      expect(result.error.message).toContain('"waste[0].ewcCodes" is required')
+      expect(result.error.message).toContain(
+        '"wasteItems[0].ewcCodes" is required'
+      )
+    })
+  })
+
+  describe('Chemical/Biological Concentration Validation', () => {
+    // Helper function to validate a payload with hazardous waste and components
+    const validateHazardousWithComponents = (containsHazardous, components) => {
+      const payload = {
+        receivingSiteId: 'site123',
+        wasteItems: [
+          {
+            ewcCodes: ['010101'],
+            wasteDescription: 'Test waste',
+            physicalForm: 'Solid',
+            hazardous: {
+              containsHazardous,
+              ...(components && { components })
+            },
+            quantity: {
+              metric: 'Tonnes',
+              amount: 1,
+              isEstimate: false
+            }
+          }
+        ]
+      }
+
+      return receiveMovementRequestSchema.validate(payload)
+    }
+
+    describe('When waste contains hazardous properties', () => {
+      it('should accept valid numerical concentration values', () => {
+        const testCases = [
+          { concentration: 12.5, description: 'decimal value' },
+          { concentration: 500, description: 'whole number' },
+          { concentration: 0, description: 'zero value' }
+        ]
+
+        testCases.forEach(({ concentration, description }) => {
+          const result = validateHazardousWithComponents(true, [
+            {
+              name: 'Mercury',
+              concentration
+            }
+          ])
+          expect(result.error).toBeUndefined()
+        })
+      })
+
+      it('should accept "Not Supplied" as concentration value', () => {
+        const result = validateHazardousWithComponents(true, [
+          {
+            name: 'Lead',
+            concentration: 'Not Supplied'
+          }
+        ])
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should accept blank concentration value with warning', () => {
+        const result = validateHazardousWithComponents(true, [
+          {
+            name: 'Cadmium',
+            concentration: ''
+          }
+        ])
+        expect(result.error).toBeUndefined()
+        // Note: Warning generation would be handled by validation warnings helper
+      })
+
+      it('should reject negative concentration values', () => {
+        const result = validateHazardousWithComponents(true, [
+          {
+            name: 'Mercury',
+            concentration: -5
+          }
+        ])
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Chemical or Biological concentration cannot be negative'
+        )
+      })
+
+      it('should reject invalid concentration values', () => {
+        const result = validateHazardousWithComponents(true, [
+          {
+            name: 'Mercury',
+            concentration: 'Invalid'
+          }
+        ])
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Chemical or Biological concentration must be a valid number or "Not Supplied"'
+        )
+      })
+
+      it('should require component name when concentration is provided', () => {
+        const result = validateHazardousWithComponents(true, [
+          {
+            concentration: 25
+          }
+        ])
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Chemical or Biological Component name is required'
+        )
+      })
+
+      it('should require concentration when component name is provided', () => {
+        const result = validateHazardousWithComponents(true, [
+          {
+            name: 'Mercury'
+            // concentration is missing
+          }
+        ])
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Chemical or Biological concentration is required when hazardous properties are present'
+        )
+      })
+    })
+
+    describe('When waste does not contain hazardous properties', () => {
+      it('should accept submission without chemical/bio concentration', () => {
+        const result = validateHazardousWithComponents(false)
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should reject when chemical/bio concentration is provided', () => {
+        const result = validateHazardousWithComponents(false, [
+          {
+            name: 'Mercury',
+            concentration: 25
+          }
+        ])
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Chemical or Biological concentration cannot be provided when hazardous properties are not present'
+        )
+      })
+
+      it('should reject when "Not Supplied" concentration is provided', () => {
+        const result = validateHazardousWithComponents(false, [
+          {
+            name: 'Lead',
+            concentration: 'Not Supplied'
+          }
+        ])
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Chemical or Biological concentration cannot be provided when hazardous properties are not present'
+        )
+      })
+
+      it('should reject when blank concentration is provided', () => {
+        const result = validateHazardousWithComponents(false, [
+          {
+            name: 'Cadmium',
+            concentration: ''
+          }
+        ])
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Chemical or Biological concentration cannot be provided when hazardous properties are not present'
+        )
+      })
+    })
+
+    describe('Multiple components validation', () => {
+      it('should accept multiple components with valid concentrations', () => {
+        const result = validateHazardousWithComponents(true, [
+          {
+            name: 'Mercury',
+            concentration: 12.5
+          },
+          {
+            name: 'Lead',
+            concentration: 'Not Supplied'
+          },
+          {
+            name: 'Cadmium',
+            concentration: 0
+          }
+        ])
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should reject when any component has invalid concentration', () => {
+        const result = validateHazardousWithComponents(true, [
+          {
+            name: 'Mercury',
+            concentration: 12.5
+          },
+          {
+            name: 'Lead',
+            concentration: -5 // Invalid negative value
+          }
+        ])
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Chemical or Biological concentration cannot be negative'
+        )
+      })
+    })
+  })
+
+  describe('Physical Form Validation', () => {
+    it('should accept valid physical form', () => {
+      const payload = createMovementRequest({
+        wasteItems: [
+          {
+            ewcCodes: ['010101'],
+            wasteDescription: 'Test waste',
+            physicalForm: 'Solid',
+            quantity: {
+              metric: 'Tonnes',
+              amount: 1,
+              isEstimate: false
+            }
+          }
+        ]
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
+      expect(result.error).toBeUndefined()
+    })
+
+    it('should reject invalid physical form', () => {
+      const payload = createMovementRequest({
+        wasteItems: [
+          {
+            ewcCodes: ['010101'],
+            wasteDescription: 'Test waste',
+            physicalForm: 'Invalid',
+            quantity: {
+              metric: 'Tonnes',
+              amount: 1,
+              isEstimate: false
+            }
+          }
+        ]
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toContain(
+        '"wasteItems[0].physicalForm" must be one of [Gas, Liquid, Solid, Powder, Sludge, Mixed]'
+      )
+    })
+
+    it('should reject empty physical form', () => {
+      const payload = createMovementRequest({
+        wasteItems: [
+          {
+            ewcCodes: ['010101'],
+            wasteDescription: 'Test waste',
+            // physicalForm missing,
+            quantity: {
+              metric: 'Tonnes',
+              amount: 1,
+              isEstimate: false
+            }
+          }
+        ]
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toContain(
+        '"wasteItems[0].physicalForm" is required'
+      )
     })
   })
 })
