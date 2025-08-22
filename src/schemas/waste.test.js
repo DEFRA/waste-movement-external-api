@@ -90,87 +90,84 @@ describe('Receipt Schema Validation', () => {
       return receiveMovementRequestSchema.validate(payload)
     }
 
-    it('should reject valid hazardous indicator (true) without components', () => {
-      const result = validateHazardous({
-        containsHazardous: true
-      })
-      expect(result.error).toBeDefined()
-      expect(result.error.message).toContain(
-        'Chemical or Biological component name must be specified when hazardous properties are present'
-      )
-    })
-
-    it('should accept valid hazardous indicator (false)', () => {
-      const result = validateHazardous({
-        containsHazardous: false
-      })
-      expect(result.error).toBeUndefined()
-    })
-
-    it('should reject hazardous with only hazCodes array (no components)', () => {
-      const result = validateHazardous({
-        containsHazardous: true,
-        hazCodes: [1, 2, 3]
-      })
-      expect(result.error).toBeDefined()
-      expect(result.error.message).toContain(
-        'Chemical or Biological component name must be specified when hazardous properties are present'
-      )
-    })
-
-    it('should accept hazardous with components array', () => {
-      const result = validateHazardous({
-        containsHazardous: true,
-        components: [
-          {
-            name: 'Mercury',
-            concentration: 30
+    describe('Hazardous validation scenarios', () => {
+      const testCases = [
+        {
+          description:
+            'should reject valid hazardous indicator (true) without components',
+          input: { containsHazardous: true },
+          expectError: true,
+          errorMessage:
+            'Chemical or Biological component name must be specified when hazardous properties are present'
+        },
+        {
+          description: 'should accept valid hazardous indicator (false)',
+          input: { containsHazardous: false },
+          expectError: false
+        },
+        {
+          description:
+            'should reject hazardous with only hazCodes array (no components)',
+          input: { containsHazardous: true, hazCodes: [1, 2, 3] },
+          expectError: true,
+          errorMessage:
+            'Chemical or Biological component name must be specified when hazardous properties are present'
+        },
+        {
+          description: 'should accept hazardous with components array',
+          input: {
+            containsHazardous: true,
+            components: [
+              { name: 'Mercury', concentration: 30 },
+              { name: 'Lead', concentration: 15 }
+            ]
           },
-          {
-            name: 'Lead',
-            concentration: 15
+          expectError: false
+        },
+        {
+          description:
+            'should accept hazardous with both hazCodes and components',
+          input: {
+            containsHazardous: true,
+            hazCodes: [1, 2],
+            components: [{ name: 'Mercury', concentration: 30 }]
+          },
+          expectError: false
+        },
+        {
+          description: 'should accept missing hazardous section',
+          input: undefined,
+          expectError: false
+        },
+        {
+          description:
+            'should reject missing containsHazardous field when hazardous object exists',
+          input: { hazCodes: [1, 2, 3] },
+          expectError: true,
+          errorMessage:
+            'Hazardous waste is any waste that is potentially harmful to human health or the environment.'
+        },
+        {
+          description: 'should reject invalid hazCodes types',
+          input: { containsHazardous: true, hazCodes: ['not', 'numbers'] },
+          expectError: true,
+          errorMessage: 'must be a number'
+        }
+      ]
+
+      it.each(testCases)(
+        '$description',
+        ({ input, expectError, errorMessage }) => {
+          const result = validateHazardous(input)
+
+          if (expectError) {
+            expect(result.error).toBeDefined()
+            expect(result.error.message).toContain(errorMessage)
+          } else {
+            expect(result.error).toBeUndefined()
           }
-        ]
-      })
-      expect(result.error).toBeUndefined()
-    })
-
-    it('should accept hazardous with both hazCodes and components', () => {
-      const result = validateHazardous({
-        containsHazardous: true,
-        hazCodes: [1, 2],
-        components: [
-          {
-            name: 'Mercury',
-            concentration: 30
-          }
-        ]
-      })
-      expect(result.error).toBeUndefined()
-    })
-
-    it('should accept missing hazardous section', () => {
-      const result = validateHazardous(undefined)
-      expect(result.error).toBeUndefined()
-    })
-
-    it('should reject missing containsHazardous field when hazardous object exists', () => {
-      const result = validateHazardous({
-        hazCodes: [1, 2, 3]
-      })
-      expect(result.error).toBeDefined()
-      expect(result.error.message).toContain(
-        'Hazardous waste is any waste that is potentially harmful to human health or the environment.'
+        }
       )
-    })
-
-    it('should reject invalid hazCodes types', () => {
-      const result = validateHazardous({
-        containsHazardous: true,
-        hazCodes: ['not', 'numbers']
-      })
-      expect(result.error).toBeDefined()
-      expect(result.error.message).toContain('must be a number')
     })
 
     // Test scenarios from user story
@@ -552,7 +549,7 @@ describe('Receipt Schema Validation', () => {
           { concentration: 0, description: 'zero value' }
         ]
 
-        testCases.forEach(({ concentration, description }) => {
+        testCases.forEach(({ concentration }) => {
           const result = validateHazardousWithComponents(true, [
             {
               name: 'Mercury',
