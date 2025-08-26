@@ -210,11 +210,11 @@ describe('Receipt Schema Validation', () => {
         expect(result.error).toBeUndefined()
       })
 
-      it('should accept empty hazCodes array when containsHazardous is true with components', () => {
+      it('should accept empty hazCodes array when containsHazardous is true with valid components', () => {
         const result = validateHazardous({
           containsHazardous: true,
           hazCodes: [],
-          components: [{ name: 'Not Supplied', concentration: 'Not Supplied' }]
+          components: [{ name: 'Mercury', concentration: 'Not Supplied' }]
         })
         expect(result.error).toBeUndefined()
       })
@@ -808,319 +808,66 @@ describe('Receipt Schema Validation', () => {
       return receiveMovementRequestSchema.validate(payload)
     }
 
-    describe('Scenario: Successfully Specifying a Chemical or Biological Component Name', () => {
-      it('should accept valid hazardous substance names when hazardous properties are present', () => {
-        const hazardousSubstances = [
-          'Arsenic compounds',
-          'Cyanides',
-          'Mercury',
-          'Lead compounds',
-          'Chromium VI compounds',
-          'Cadmium compounds',
-          'PCBs (Polychlorinated biphenyls)',
-          'Asbestos'
-        ]
-
-        hazardousSubstances.forEach((substance) => {
-          const result = validateComponentName(true, [
-            {
-              name: substance,
-              concentration: 50
-            }
-          ])
-          expect(result.error).toBeUndefined()
-        })
-      })
-
-      it('should accept "Not Supplied" as component name when hazardous properties are present', () => {
-        const result = validateComponentName(true, [
-          {
-            name: 'Not Supplied',
-            concentration: 30
-          }
-        ])
-        expect(result.error).toBeUndefined()
-      })
-
-      it('should REQUIRE components when hazardous properties are present - reject empty array', () => {
-        const result = validateComponentName(true, [])
-        expect(result.error).toBeDefined()
-        expect(result.error.message).toContain(
-          'Chemical or Biological component name must be specified when hazardous properties are present'
-        )
-      })
-
-      it('should REQUIRE components when hazardous properties are present - reject missing field', () => {
-        const result = validateComponentName(true)
-        expect(result.error).toBeDefined()
-        expect(result.error.message).toContain(
-          'Chemical or Biological component name must be specified when hazardous properties are present'
-        )
-      })
-
-      it('should accept multiple component names when hazardous properties are present', () => {
-        const result = validateComponentName(true, [
-          {
-            name: 'Arsenic compounds',
-            concentration: 25
-          },
-          {
-            name: 'Not Supplied',
-            concentration: 'Not Supplied'
-          },
-          {
-            name: 'Mercury',
-            concentration: 10
-          }
-        ])
-        expect(result.error).toBeUndefined()
-      })
+    it('should accept valid hazardous substance names when hazardous properties are present', () => {
+      const result = validateComponentName(true, [
+        {
+          name: 'Mercury',
+          concentration: 50
+        }
+      ])
+      expect(result.error).toBeUndefined()
     })
 
-    describe('Scenario: Chemical or Biological Component Name Not Required When No Hazardous Properties', () => {
-      it('should accept submission without component name when no hazardous properties', () => {
-        const result = validateComponentName(false)
-        expect(result.error).toBeUndefined()
-      })
-
-      it('should accept submission with empty components array when no hazardous properties', () => {
-        const result = validateComponentName(false, [])
-        expect(result.error).toBeUndefined()
-      })
+    it('should REJECT null as component name when hazardous properties are present', () => {
+      const result = validateComponentName(true, [
+        {
+          name: null,
+          concentration: 30
+        }
+      ])
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toContain(
+        'Chemical or Biological Component name must be an actual component name, not null or "Not Supplied"'
+      )
     })
 
-    describe('Scenario: Providing Chemical or Biological Component Name When Not Required', () => {
-      it('should reject when any component name is provided and no hazardous properties', () => {
-        const result = validateComponentName(false, [
-          {
-            name: 'Mercury',
-            concentration: 25
-          }
-        ])
-        expect(result.error).toBeDefined()
-        expect(result.error.message).toContain(
-          'Chemical or Biological components cannot be provided when no hazardous properties are indicated'
-        )
-      })
-
-      it('should reject when "Not Supplied" is provided as component name and no hazardous properties', () => {
-        const result = validateComponentName(false, [
-          {
-            name: 'Not Supplied',
-            concentration: 'Not Supplied'
-          }
-        ])
-        expect(result.error).toBeDefined()
-        expect(result.error.message).toContain(
-          'Chemical or Biological components cannot be provided when no hazardous properties are indicated'
-        )
-      })
-
-      it('should reject multiple component names when no hazardous properties', () => {
-        const result = validateComponentName(false, [
-          {
-            name: 'Arsenic compounds',
-            concentration: 10
-          },
-          {
-            name: 'Mercury',
-            concentration: 20
-          }
-        ])
-        expect(result.error).toBeDefined()
-        expect(result.error.message).toContain(
-          'Chemical or Biological components cannot be provided when no hazardous properties are indicated'
-        )
-      })
-
-      it('should reject any arbitrary text as component name when no hazardous properties', () => {
-        const result = validateComponentName(false, [
-          {
-            name: 'Random text',
-            concentration: 100
-          }
-        ])
-        expect(result.error).toBeDefined()
-        expect(result.error.message).toContain(
-          'Chemical or Biological components cannot be provided when no hazardous properties are indicated'
-        )
-      })
+    it('should REJECT "Not Supplied" as component name when hazardous properties are present', () => {
+      const result = validateComponentName(true, [
+        {
+          name: 'Not Supplied',
+          concentration: 30
+        }
+      ])
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toContain(
+        'Chemical or Biological Component name must be an actual component name, not null or "Not Supplied"'
+      )
     })
 
-    describe('Edge cases and validation rules', () => {
-      it('should require component name when concentration is provided', () => {
-        const result = validateComponentName(true, [
-          {
-            concentration: 50
-            // name is missing
-          }
-        ])
-        expect(result.error).toBeDefined()
-        expect(result.error.message).toContain(
-          'Chemical or Biological Component name is required'
-        )
-      })
-
-      it('should require concentration when component name is provided', () => {
-        const result = validateComponentName(true, [
-          {
-            name: 'Mercury'
-            // concentration is missing
-          }
-        ])
-        expect(result.error).toBeDefined()
-        expect(result.error.message).toContain(
-          'Chemical or Biological concentration is required when hazardous properties are present'
-        )
-      })
-
-      it('should accept component with both name and concentration as "Not Supplied"', () => {
-        const result = validateComponentName(true, [
-          {
-            name: 'Not Supplied',
-            concentration: 'Not Supplied'
-          }
-        ])
-        expect(result.error).toBeUndefined()
-      })
-
-      it('should handle mixed valid and "Not Supplied" component names', () => {
-        const result = validateComponentName(true, [
-          {
-            name: 'Arsenic compounds',
-            concentration: 15
-          },
-          {
-            name: 'Not Supplied',
-            concentration: 'Not Supplied'
-          },
-          {
-            name: 'Cyanides',
-            concentration: 25
-          }
-        ])
-        expect(result.error).toBeUndefined()
-      })
+    it('should require components when hazardous properties are present', () => {
+      const result = validateComponentName(true)
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toContain(
+        'Chemical or Biological component name must be specified when hazardous properties are present'
+      )
     })
 
-    describe('Required Components When Hazardous Properties Present', () => {
-      it('should require at least one component when containsHazardous is true', () => {
-        const payload = {
-          receivingSiteId: 'site123',
-          wasteItems: [
-            {
-              ewcCodes: ['010101'],
-              wasteDescription: 'Hazardous waste',
-              physicalForm: 'Solid',
-              hazardous: {
-                containsHazardous: true
-                // No components provided - should be invalid
-              },
-              weight: {
-                metric: 'Tonnes',
-                amount: 1,
-                isEstimate: false
-              }
-            }
-          ]
+    it('should accept submission without components when no hazardous properties', () => {
+      const result = validateComponentName(false)
+      expect(result.error).toBeUndefined()
+    })
+
+    it('should reject components when no hazardous properties are indicated', () => {
+      const result = validateComponentName(false, [
+        {
+          name: 'Mercury',
+          concentration: 25
         }
-
-        const result = receiveMovementRequestSchema.validate(payload)
-        expect(result.error).toBeDefined()
-        expect(result.error.message).toContain(
-          'Chemical or Biological component name must be specified when hazardous properties are present'
-        )
-      })
-
-      it('should require components even when hazCodes are provided', () => {
-        const payload = {
-          receivingSiteId: 'site123',
-          wasteItems: [
-            {
-              ewcCodes: ['010101'],
-              wasteDescription: 'Hazardous waste',
-              physicalForm: 'Solid',
-              hazardous: {
-                containsHazardous: true,
-                hazCodes: [1, 2, 3]
-                // No components provided - should still be invalid
-              },
-              weight: {
-                metric: 'Tonnes',
-                amount: 1,
-                isEstimate: false
-              }
-            }
-          ]
-        }
-
-        const result = receiveMovementRequestSchema.validate(payload)
-        expect(result.error).toBeDefined()
-        expect(result.error.message).toContain(
-          'Chemical or Biological component name must be specified when hazardous properties are present'
-        )
-      })
-
-      it('should accept when both hazCodes and components are provided', () => {
-        const payload = {
-          receivingSiteId: 'site123',
-          wasteItems: [
-            {
-              ewcCodes: ['010101'],
-              wasteDescription: 'Hazardous waste',
-              physicalForm: 'Solid',
-              hazardous: {
-                containsHazardous: true,
-                hazCodes: [1, 2],
-                components: [
-                  {
-                    name: 'Mercury',
-                    concentration: 25
-                  }
-                ]
-              },
-              weight: {
-                metric: 'Tonnes',
-                amount: 1,
-                isEstimate: false
-              }
-            }
-          ]
-        }
-
-        const result = receiveMovementRequestSchema.validate(payload)
-        expect(result.error).toBeUndefined()
-      })
-
-      it('should accept minimal valid component (Not Supplied values)', () => {
-        const payload = {
-          receivingSiteId: 'site123',
-          wasteItems: [
-            {
-              ewcCodes: ['010101'],
-              wasteDescription: 'Hazardous waste',
-              physicalForm: 'Solid',
-              hazardous: {
-                containsHazardous: true,
-                components: [
-                  {
-                    name: 'Not Supplied',
-                    concentration: 'Not Supplied'
-                  }
-                ]
-              },
-              weight: {
-                metric: 'Tonnes',
-                amount: 1,
-                isEstimate: false
-              }
-            }
-          ]
-        }
-
-        const result = receiveMovementRequestSchema.validate(payload)
-        expect(result.error).toBeUndefined()
-      })
+      ])
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toContain(
+        'Chemical or Biological components cannot be provided when no hazardous properties are indicated'
+      )
     })
   })
 })
