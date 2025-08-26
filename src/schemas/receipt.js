@@ -8,9 +8,18 @@ import {
   reasonForNoConsignmentCodeSchema
 } from './hazardous-waste-consignment.js'
 
+// RegEx per Gov UK recommendation: https://assets.publishing.service.gov.uk/media/5a7f3ff4ed915d74e33f5438/Bulk_Data_Transfer_-_additional_validation_valid_from_12_November_2015.pdf
+// BEGIN-NOSCAN
+const UK_POSTCODE_REGEX =
+  /^((GIR 0A{2})|((([A-Z]\d{1,2})|(([A-Z][A-HJ-Y]\d{1,2})|(([A-Z]\d[A-Z])|([A-Z][A-HJ-Y]\d?[A-Z])))) \d[A-Z]{2}))$/i // NOSONAR
+// END-NOSCAN
+
 const addressSchema = Joi.object({
   fullAddress: Joi.string(),
-  postCode: Joi.string().required()
+  postCode: Joi.string()
+    .pattern(UK_POSTCODE_REGEX)
+    .message('Post Code must be in valid UK format')
+    .required()
 })
 
 const carrierSchema = Joi.object({
