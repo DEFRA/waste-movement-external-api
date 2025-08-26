@@ -4,7 +4,9 @@ export function createMovementRequest(overrides) {
     carrier: {
       registrationNumber: '123456789',
       organisationName: 'Test Carrier',
-      address: '123 Test St, Test City, TE1 1ST',
+      address: {
+        postCode: 'TE1 1ST'
+      },
       emailAddress: 'email@email.com',
       phoneNumber: '01234567890',
       vehicleRegistration: 'MK12 F89',

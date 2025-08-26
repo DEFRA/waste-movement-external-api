@@ -8,11 +8,16 @@ import {
   reasonForNoConsignmentCodeSchema
 } from './hazardous-waste-consignment.js'
 
+const addressSchema = Joi.object({
+  fullAddress: Joi.string(),
+  postCode: Joi.string().required()
+})
+
 const carrierSchema = Joi.object({
   registrationNumber: Joi.string(),
   reasonForNoRegistrationNumber: Joi.string(),
-  organisationName: Joi.string(),
-  address: Joi.string(),
+  organisationName: Joi.string().required(),
+  address: addressSchema,
   emailAddress: Joi.string().email(),
   phoneNumber: Joi.string(),
   vehicleRegistration: Joi.string(),
