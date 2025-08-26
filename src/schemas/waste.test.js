@@ -796,7 +796,7 @@ describe('Receipt Schema Validation', () => {
               containsHazardous,
               ...(components && { components })
             },
-            quantity: {
+            weight: {
               metric: 'Tonnes',
               amount: 1,
               isEstimate: false
@@ -1016,7 +1016,7 @@ describe('Receipt Schema Validation', () => {
                 containsHazardous: true
                 // No components provided - should be invalid
               },
-              quantity: {
+              weight: {
                 metric: 'Tonnes',
                 amount: 1,
                 isEstimate: false
@@ -1045,7 +1045,7 @@ describe('Receipt Schema Validation', () => {
                 hazCodes: [1, 2, 3]
                 // No components provided - should still be invalid
               },
-              quantity: {
+              weight: {
                 metric: 'Tonnes',
                 amount: 1,
                 isEstimate: false
@@ -1079,7 +1079,7 @@ describe('Receipt Schema Validation', () => {
                   }
                 ]
               },
-              quantity: {
+              weight: {
                 metric: 'Tonnes',
                 amount: 1,
                 isEstimate: false
@@ -1109,7 +1109,7 @@ describe('Receipt Schema Validation', () => {
                   }
                 ]
               },
-              quantity: {
+              weight: {
                 metric: 'Tonnes',
                 amount: 1,
                 isEstimate: false
