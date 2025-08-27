@@ -12,13 +12,22 @@ import {
 // BEGIN-NOSCAN
 const UK_POSTCODE_REGEX =
   /^((GIR 0A{2})|((([A-Z]\d{1,2})|(([A-Z][A-HJ-Y]\d{1,2})|(([A-Z]\d[A-Z])|([A-Z][A-HJ-Y]\d?[A-Z])))) \d[A-Z]{2}))$/i // NOSONAR
+// Ireland Eircode regex (routing key + unique identifier)
+// Reference: https://www.eircode.ie
+const IRL_POSTCODE_REGEX =
+  /^(?:D6W|[AC-FHKNPRTV-Y]\d{2}) ?[0-9AC-FHKNPRTV-Y]{4}$/i
 // END-NOSCAN
 
 const addressSchema = Joi.object({
   fullAddress: Joi.string(),
-  postCode: Joi.string()
-    .pattern(UK_POSTCODE_REGEX)
-    .message('Post Code must be in valid UK format')
+  postCode: Joi.alternatives()
+    .try(
+      Joi.string().pattern(UK_POSTCODE_REGEX),
+      Joi.string().pattern(IRL_POSTCODE_REGEX)
+    )
+    .messages({
+      'alternatives.match': 'Post Code must be in valid UK or Ireland format'
+    })
     .required()
 })
 
@@ -55,9 +64,11 @@ const receiptSchema = Joi.object({
 }).label('Receipt')
 
 const brokerOrDealerSchema = Joi.object({
-  organisationName: Joi.string(),
-  address: Joi.string(),
-  registrationNumber: Joi.string()
+  organisationName: Joi.string().required(),
+  address: addressSchema,
+  registrationNumber: Joi.string(),
+  phoneNumber: Joi.string(),
+  emailAddress: Joi.string().email()
 }).label('BrokerOrDealer')
 
 export const receiveMovementRequestSchema = Joi.object({

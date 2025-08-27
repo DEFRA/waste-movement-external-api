@@ -51,7 +51,9 @@ describe('Carrier Validation', () => {
 
     const { error } = validate(carrier)
     expect(error).toBeDefined()
-    expect(error.message).toBe('Post Code must be in valid UK format')
+    expect(error.message).toBe(
+      'Post Code must be in valid UK or Ireland format'
+    )
   })
 
   it('rejects invalid email format when provided', () => {
