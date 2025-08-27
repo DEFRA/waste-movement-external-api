@@ -1,64 +1,73 @@
 import { receiveMovementRequestSchema } from './receipt.js'
-import { createMovementRequest } from '../test/utils/createMovementRequest.js'
+
+// Test Constants
+const TEST_CONSTANTS = {
+  SITE_ID: 'site123',
+  VALID_EWC_CODE: '010101',
+  DEFAULT_WASTE_DESCRIPTION: 'Test waste',
+  DEFAULT_PHYSICAL_FORM: 'Solid',
+  DEFAULT_METRIC: 'Tonnes',
+  DEFAULT_AMOUNT: 1,
+  DEFAULT_IS_ESTIMATE: false
+}
+
+// Single flexible payload helper function
+const createTestPayload = (overrides = {}) => {
+  const { wasteItemOverrides, ...rootOverrides } = overrides
+
+  // Build waste item with defaults
+  const defaultWasteItem = {
+    ewcCodes: [TEST_CONSTANTS.VALID_EWC_CODE],
+    wasteDescription: TEST_CONSTANTS.DEFAULT_WASTE_DESCRIPTION,
+    physicalForm: TEST_CONSTANTS.DEFAULT_PHYSICAL_FORM,
+    weight: {
+      metric: TEST_CONSTANTS.DEFAULT_METRIC,
+      amount: TEST_CONSTANTS.DEFAULT_AMOUNT,
+      isEstimate: TEST_CONSTANTS.DEFAULT_IS_ESTIMATE
+    }
+  }
+
+  // Merge waste item overrides
+  const wasteItem = wasteItemOverrides
+    ? { ...defaultWasteItem, ...wasteItemOverrides }
+    : defaultWasteItem
+
+  // Build and return complete payload
+  return {
+    receivingSiteId: TEST_CONSTANTS.SITE_ID,
+    wasteItems: [wasteItem],
+    ...rootOverrides
+  }
+}
 
 describe('Receipt Schema Validation', () => {
   describe('POPs Indicator Validation', () => {
-    // Helper function to validate a payload with POPs indicator
-    const validatePopsIndicator = (containsPops) => {
-      const payload = {
-        receivingSiteId: 'site123',
-        wasteItems: [
-          {
-            ewcCodes: ['010101'],
-            wasteDescription: 'Test waste',
-            physicalForm: 'Solid',
-            pops: containsPops !== undefined ? { containsPops } : undefined,
-            weight: {
-              metric: 'Tonnes',
-              amount: 1,
-              isEstimate: false
-            }
-          }
-        ]
-      }
-
-      return receiveMovementRequestSchema.validate(payload)
-    }
-
     it('should accept valid POPs indicator (true)', () => {
-      const result = validatePopsIndicator(true)
+      const payload = createTestPayload({
+        wasteItemOverrides: { pops: { containsPops: true } }
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeUndefined()
     })
 
     it('should accept valid POPs indicator (false)', () => {
-      const result = validatePopsIndicator(false)
+      const payload = createTestPayload({
+        wasteItemOverrides: { pops: { containsPops: false } }
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeUndefined()
     })
 
     it('should accept missing POPs section', () => {
-      const result = validatePopsIndicator(undefined)
+      const payload = createTestPayload()
+      const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeUndefined()
     })
 
     it('should reject missing containsPops field', () => {
-      // Create a payload with pops object but missing containsPops
-      const payload = {
-        receivingSiteId: 'site123',
-        wasteItems: [
-          {
-            ewcCodes: ['010101'],
-            wasteDescription: 'Test waste',
-            physicalForm: 'Solid',
-            pops: {}, // Empty pops object without containsPops
-            weight: {
-              metric: 'Tonnes',
-              amount: 1,
-              isEstimate: false
-            }
-          }
-        ]
-      }
-
+      const payload = createTestPayload({
+        wasteItemOverrides: { pops: {} } // Empty pops object without containsPops
+      })
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeDefined()
       expect(result.error.message).toContain(
@@ -70,23 +79,9 @@ describe('Receipt Schema Validation', () => {
   describe('Hazardous Waste Validation', () => {
     // Helper function to validate a payload with hazardous waste data
     const validateHazardous = (hazardous) => {
-      const payload = {
-        receivingSiteId: 'site123',
-        wasteItems: [
-          {
-            ewcCodes: ['010101'],
-            wasteDescription: 'Test waste',
-            physicalForm: 'Solid',
-            hazardous,
-            weight: {
-              metric: 'Tonnes',
-              amount: 1,
-              isEstimate: false
-            }
-          }
-        ]
-      }
-
+      const payload = createTestPayload({
+        wasteItemOverrides: { hazardous }
+      })
       return receiveMovementRequestSchema.validate(payload)
     }
 
@@ -388,25 +383,12 @@ describe('Receipt Schema Validation', () => {
   describe('EWC Code Validation', () => {
     // Helper function to validate a payload with a specific EWC code
     const validateEwcCode = (ewcCodeArray) => {
-      const payload = {
-        receivingSiteId: 'site123',
-        wasteItems: [
-          {
-            ewcCodes: ewcCodeArray,
-            wasteDescription: 'Test waste',
-            physicalForm: 'Solid',
-            pops: {
-              containsPops: false
-            },
-            weight: {
-              metric: 'Tonnes',
-              amount: 1,
-              isEstimate: false
-            }
-          }
-        ]
-      }
-
+      const payload = createTestPayload({
+        wasteItemOverrides: {
+          ewcCodes: ewcCodeArray,
+          pops: { containsPops: false }
+        }
+      })
       return receiveMovementRequestSchema.validate(payload)
     }
 
@@ -486,17 +468,17 @@ describe('Receipt Schema Validation', () => {
     })
 
     it('should require the EWC code field', () => {
-      // Test with missing EWC code
+      // Test with missing EWC code - need to build manually as ewcCodes is required
       const payload = {
-        receivingSiteId: 'site123',
+        receivingSiteId: TEST_CONSTANTS.SITE_ID,
         wasteItems: [
           {
-            wasteDescription: 'Test waste',
-            physicalForm: 'Solid',
+            wasteDescription: TEST_CONSTANTS.DEFAULT_WASTE_DESCRIPTION,
+            physicalForm: TEST_CONSTANTS.DEFAULT_PHYSICAL_FORM,
             weight: {
-              metric: 'Tonnes',
-              amount: 1,
-              isEstimate: false
+              metric: TEST_CONSTANTS.DEFAULT_METRIC,
+              amount: TEST_CONSTANTS.DEFAULT_AMOUNT,
+              isEstimate: TEST_CONSTANTS.DEFAULT_IS_ESTIMATE
             }
           }
         ]
@@ -514,26 +496,14 @@ describe('Receipt Schema Validation', () => {
   describe('Chemical/Biological Concentration Validation', () => {
     // Helper function to validate a payload with hazardous waste and components
     const validateHazardousWithComponents = (containsHazardous, components) => {
-      const payload = {
-        receivingSiteId: 'site123',
-        wasteItems: [
-          {
-            ewcCodes: ['010101'],
-            wasteDescription: 'Test waste',
-            physicalForm: 'Solid',
-            hazardous: {
-              containsHazardous,
-              ...(components && { components })
-            },
-            weight: {
-              metric: 'Tonnes',
-              amount: 1,
-              isEstimate: false
-            }
+      const payload = createTestPayload({
+        wasteItemOverrides: {
+          hazardous: {
+            containsHazardous,
+            ...(components && { components })
           }
-        ]
-      }
-
+        }
+      })
       return receiveMovementRequestSchema.validate(payload)
     }
 
@@ -715,38 +685,16 @@ describe('Receipt Schema Validation', () => {
 
   describe('Physical Form Validation', () => {
     it('should accept valid physical form', () => {
-      const payload = createMovementRequest({
-        wasteItems: [
-          {
-            ewcCodes: ['010101'],
-            wasteDescription: 'Test waste',
-            physicalForm: 'Solid',
-            weight: {
-              metric: 'Tonnes',
-              amount: 1,
-              isEstimate: false
-            }
-          }
-        ]
+      const payload = createTestPayload({
+        wasteItemOverrides: { physicalForm: 'Solid' }
       })
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeUndefined()
     })
 
     it('should reject invalid physical form', () => {
-      const payload = createMovementRequest({
-        wasteItems: [
-          {
-            ewcCodes: ['010101'],
-            wasteDescription: 'Test waste',
-            physicalForm: 'Invalid',
-            weight: {
-              metric: 'Tonnes',
-              amount: 1,
-              isEstimate: false
-            }
-          }
-        ]
+      const payload = createTestPayload({
+        wasteItemOverrides: { physicalForm: 'Invalid' }
       })
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeDefined()
@@ -756,20 +704,22 @@ describe('Receipt Schema Validation', () => {
     })
 
     it('should reject empty physical form', () => {
-      const payload = createMovementRequest({
+      // Need to build manually as physicalForm is required in defaults
+      const payload = {
+        receivingSiteId: TEST_CONSTANTS.SITE_ID,
         wasteItems: [
           {
-            ewcCodes: ['010101'],
-            wasteDescription: 'Test waste',
+            ewcCodes: [TEST_CONSTANTS.VALID_EWC_CODE],
+            wasteDescription: TEST_CONSTANTS.DEFAULT_WASTE_DESCRIPTION,
             // physicalForm missing,
             weight: {
-              metric: 'Tonnes',
-              amount: 1,
-              isEstimate: false
+              metric: TEST_CONSTANTS.DEFAULT_METRIC,
+              amount: TEST_CONSTANTS.DEFAULT_AMOUNT,
+              isEstimate: TEST_CONSTANTS.DEFAULT_IS_ESTIMATE
             }
           }
         ]
-      })
+      }
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeDefined()
       expect(result.error.message).toContain(
@@ -781,26 +731,14 @@ describe('Receipt Schema Validation', () => {
   describe('Chemical or Biological Component Name Validation', () => {
     // Helper function to validate hazardous waste with component names
     const validateComponentName = (containsHazardous, components) => {
-      const payload = {
-        receivingSiteId: 'site123',
-        wasteItems: [
-          {
-            ewcCodes: ['010101'],
-            wasteDescription: 'Test waste',
-            physicalForm: 'Solid',
-            hazardous: {
-              containsHazardous,
-              ...(components && { components })
-            },
-            weight: {
-              metric: 'Tonnes',
-              amount: 1,
-              isEstimate: false
-            }
+      const payload = createTestPayload({
+        wasteItemOverrides: {
+          hazardous: {
+            containsHazardous,
+            ...(components && { components })
           }
-        ]
-      }
-
+        }
+      })
       return receiveMovementRequestSchema.validate(payload)
     }
 
