@@ -50,12 +50,12 @@ const hazardousSchema = Joi.object({
   components: Joi.array()
     .items(
       Joi.object({
-        name: Joi.string().required().invalid(null, 'Not Supplied').messages({
+        name: Joi.string().required().invalid(null).messages({
           'any.required': 'Chemical or Biological Component name is required',
           'string.base':
             'Chemical or Biological Component name must be a string',
           'any.invalid':
-            'Chemical or Biological Component name must be an actual component name, not null or "Not Supplied"'
+            'Chemical or Biological Component name must be an actual component name, not null'
         }),
         concentration: Joi.custom((value, helpers) => {
           // Check if it's a valid number

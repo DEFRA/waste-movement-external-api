@@ -761,20 +761,7 @@ describe('Receipt Schema Validation', () => {
       ])
       expect(result.error).toBeDefined()
       expect(result.error.message).toContain(
-        'Chemical or Biological Component name must be an actual component name, not null or "Not Supplied"'
-      )
-    })
-
-    it('should REJECT "Not Supplied" as component name when hazardous properties are present', () => {
-      const result = validateComponentName(true, [
-        {
-          name: 'Not Supplied',
-          concentration: 30
-        }
-      ])
-      expect(result.error).toBeDefined()
-      expect(result.error.message).toContain(
-        'Chemical or Biological Component name must be an actual component name, not null or "Not Supplied"'
+        'Chemical or Biological Component name must be an actual component name, not null'
       )
     })
 
