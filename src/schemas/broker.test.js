@@ -67,6 +67,16 @@ describe('BrokerOrDealer Validation', () => {
     expect(error).toBeUndefined()
   })
 
+  it('accept valid Ireland Eircode without space', () => {
+    const broker = {
+      organisationName: 'Irish Broker',
+      address: { fullAddress: '1 Broker St, Dublin', postCode: 'A65F4E2' }
+    }
+
+    const { error } = validate(broker)
+    expect(error).toBeUndefined()
+  })
+
   it('rejects invalid broker postcode', () => {
     const broker = {
       organisationName: 'Invalid Postcode Broker',
