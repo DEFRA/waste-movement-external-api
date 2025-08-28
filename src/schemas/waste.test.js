@@ -1,64 +1,73 @@
 import { receiveMovementRequestSchema } from './receipt.js'
-import { createMovementRequest } from '../test/utils/createMovementRequest.js'
+
+// Test Constants
+const TEST_CONSTANTS = {
+  SITE_ID: 'site123',
+  VALID_EWC_CODE: '010101',
+  DEFAULT_WASTE_DESCRIPTION: 'Test waste',
+  DEFAULT_PHYSICAL_FORM: 'Solid',
+  DEFAULT_METRIC: 'Tonnes',
+  DEFAULT_AMOUNT: 1,
+  DEFAULT_IS_ESTIMATE: false
+}
+
+// Single flexible payload helper function
+const createTestPayload = (overrides = {}) => {
+  const { wasteItemOverrides, ...rootOverrides } = overrides
+
+  // Build waste item with defaults
+  const defaultWasteItem = {
+    ewcCodes: [TEST_CONSTANTS.VALID_EWC_CODE],
+    wasteDescription: TEST_CONSTANTS.DEFAULT_WASTE_DESCRIPTION,
+    physicalForm: TEST_CONSTANTS.DEFAULT_PHYSICAL_FORM,
+    weight: {
+      metric: TEST_CONSTANTS.DEFAULT_METRIC,
+      amount: TEST_CONSTANTS.DEFAULT_AMOUNT,
+      isEstimate: TEST_CONSTANTS.DEFAULT_IS_ESTIMATE
+    }
+  }
+
+  // Merge waste item overrides
+  const wasteItem = wasteItemOverrides
+    ? { ...defaultWasteItem, ...wasteItemOverrides }
+    : defaultWasteItem
+
+  // Build and return complete payload
+  return {
+    receivingSiteId: TEST_CONSTANTS.SITE_ID,
+    wasteItems: [wasteItem],
+    ...rootOverrides
+  }
+}
 
 describe('Receipt Schema Validation', () => {
   describe('POPs Indicator Validation', () => {
-    // Helper function to validate a payload with POPs indicator
-    const validatePopsIndicator = (containsPops) => {
-      const payload = {
-        receivingSiteId: 'site123',
-        wasteItems: [
-          {
-            ewcCodes: ['010101'],
-            wasteDescription: 'Test waste',
-            physicalForm: 'Solid',
-            pops: containsPops !== undefined ? { containsPops } : undefined,
-            weight: {
-              metric: 'Tonnes',
-              amount: 1,
-              isEstimate: false
-            }
-          }
-        ]
-      }
-
-      return receiveMovementRequestSchema.validate(payload)
-    }
-
     it('should accept valid POPs indicator (true)', () => {
-      const result = validatePopsIndicator(true)
+      const payload = createTestPayload({
+        wasteItemOverrides: { pops: { containsPops: true } }
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeUndefined()
     })
 
     it('should accept valid POPs indicator (false)', () => {
-      const result = validatePopsIndicator(false)
+      const payload = createTestPayload({
+        wasteItemOverrides: { pops: { containsPops: false } }
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeUndefined()
     })
 
     it('should accept missing POPs section', () => {
-      const result = validatePopsIndicator(undefined)
+      const payload = createTestPayload()
+      const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeUndefined()
     })
 
     it('should reject missing containsPops field', () => {
-      // Create a payload with pops object but missing containsPops
-      const payload = {
-        receivingSiteId: 'site123',
-        wasteItems: [
-          {
-            ewcCodes: ['010101'],
-            wasteDescription: 'Test waste',
-            physicalForm: 'Solid',
-            pops: {}, // Empty pops object without containsPops
-            weight: {
-              metric: 'Tonnes',
-              amount: 1,
-              isEstimate: false
-            }
-          }
-        ]
-      }
-
+      const payload = createTestPayload({
+        wasteItemOverrides: { pops: {} } // Empty pops object without containsPops
+      })
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeDefined()
       expect(result.error.message).toContain(
@@ -70,150 +79,145 @@ describe('Receipt Schema Validation', () => {
   describe('Hazardous Waste Validation', () => {
     // Helper function to validate a payload with hazardous waste data
     const validateHazardous = (hazardous) => {
-      const payload = {
-        receivingSiteId: 'site123',
-        wasteItems: [
-          {
-            ewcCodes: ['010101'],
-            wasteDescription: 'Test waste',
-            physicalForm: 'Solid',
-            hazardous,
-            weight: {
-              metric: 'Tonnes',
-              amount: 1,
-              isEstimate: false
-            }
-          }
-        ]
-      }
-
+      const payload = createTestPayload({
+        wasteItemOverrides: { hazardous }
+      })
       return receiveMovementRequestSchema.validate(payload)
     }
 
-    it('should accept valid hazardous indicator (true)', () => {
-      const result = validateHazardous({
-        containsHazardous: true
-      })
-      expect(result.error).toBeUndefined()
-    })
-
-    it('should accept valid hazardous indicator (false)', () => {
-      const result = validateHazardous({
-        containsHazardous: false
-      })
-      expect(result.error).toBeUndefined()
-    })
-
-    it('should accept hazardous with hazCodes array', () => {
-      const result = validateHazardous({
-        containsHazardous: true,
-        hazCodes: [1, 2, 3]
-      })
-      expect(result.error).toBeUndefined()
-    })
-
-    it('should accept hazardous with components array', () => {
-      const result = validateHazardous({
-        containsHazardous: true,
-        components: [
+    describe('Hazardous validation scenarios', () => {
+      describe('Valid hazardous scenarios', () => {
+        const validTestCases = [
           {
-            name: 'Mercury',
-            concentration: 30
+            description: 'valid hazardous indicator (false)',
+            input: { containsHazardous: false }
           },
           {
-            name: 'Lead',
-            concentration: 15
-          }
-        ]
-      })
-      expect(result.error).toBeUndefined()
-    })
-
-    it('should accept hazardous with both hazCodes and components', () => {
-      const result = validateHazardous({
-        containsHazardous: true,
-        hazCodes: [1, 2],
-        components: [
+            description: 'hazardous with components array',
+            input: {
+              containsHazardous: true,
+              components: [
+                { name: 'Mercury', concentration: 30 },
+                { name: 'Lead', concentration: 15 }
+              ]
+            }
+          },
           {
-            name: 'Mercury',
-            concentration: 30
+            description: 'hazardous with both hazCodes and components',
+            input: {
+              containsHazardous: true,
+              hazCodes: [1, 2],
+              components: [{ name: 'Mercury', concentration: 30 }]
+            }
+          },
+          {
+            description: 'missing hazardous section',
+            input: undefined
           }
         ]
-      })
-      expect(result.error).toBeUndefined()
-    })
 
-    it('should accept missing hazardous section', () => {
-      const result = validateHazardous(undefined)
-      expect(result.error).toBeUndefined()
-    })
-
-    it('should reject missing containsHazardous field when hazardous object exists', () => {
-      const result = validateHazardous({
-        hazCodes: [1, 2, 3]
+        it.each(validTestCases)('should accept $description', ({ input }) => {
+          const result = validateHazardous(input)
+          expect(result.error).toBeUndefined()
+        })
       })
-      expect(result.error).toBeDefined()
-      expect(result.error.message).toContain(
-        'Hazardous waste is any waste that is potentially harmful to human health or the environment.'
-      )
-    })
 
-    it('should reject invalid hazCodes types', () => {
-      const result = validateHazardous({
-        containsHazardous: true,
-        hazCodes: ['not', 'numbers']
+      describe('Invalid hazardous scenarios', () => {
+        const invalidTestCases = [
+          {
+            description: 'hazardous indicator (true) without components',
+            input: { containsHazardous: true },
+            errorMessage:
+              'Chemical or Biological component name must be specified when hazardous properties are present'
+          },
+          {
+            description: 'hazardous with only hazCodes array (no components)',
+            input: { containsHazardous: true, hazCodes: [1, 2, 3] },
+            errorMessage:
+              'Chemical or Biological component name must be specified when hazardous properties are present'
+          },
+          {
+            description:
+              'missing containsHazardous field when hazardous object exists',
+            input: { hazCodes: [1, 2, 3] },
+            errorMessage:
+              'Hazardous waste is any waste that is potentially harmful to human health or the environment.'
+          },
+          {
+            description: 'invalid hazCodes types',
+            input: { containsHazardous: true, hazCodes: ['not', 'numbers'] },
+            errorMessage: 'must be a number'
+          }
+        ]
+
+        it.each(invalidTestCases)(
+          'should reject $description',
+          ({ input, errorMessage }) => {
+            const result = validateHazardous(input)
+            expect(result.error).toBeDefined()
+            expect(result.error.message).toContain(errorMessage)
+          }
+        )
       })
-      expect(result.error).toBeDefined()
-      expect(result.error.message).toContain('must be a number')
     })
 
     // Test scenarios from user story
     describe('HP Code Validation Scenarios', () => {
-      it('should accept valid single HP code (1)', () => {
+      it('should reject valid single HP code (1) without components', () => {
         const result = validateHazardous({
           containsHazardous: true,
           hazCodes: [1]
         })
-        expect(result.error).toBeUndefined()
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Chemical or Biological component name must be specified when hazardous properties are present'
+        )
       })
 
-      it('should accept valid single HP code (15)', () => {
+      it('should accept valid single HP code (15) with components', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          hazCodes: [15]
+          hazCodes: [15],
+          components: [{ name: 'Mercury', concentration: 10 }]
         })
         expect(result.error).toBeUndefined()
       })
 
-      it('should accept multiple valid HP codes (1, 3)', () => {
+      it('should accept multiple valid HP codes (1, 3) with components', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          hazCodes: [1, 3]
+          hazCodes: [1, 3],
+          components: [{ name: 'Arsenic compounds', concentration: 20 }]
         })
         expect(result.error).toBeUndefined()
       })
 
-      it('should accept multiple valid HP codes (5, 10, 12)', () => {
+      it('should accept multiple valid HP codes (5, 10, 12) with components', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          hazCodes: [5, 10, 12]
+          hazCodes: [5, 10, 12],
+          components: [{ name: 'Lead compounds', concentration: 15 }]
         })
         expect(result.error).toBeUndefined()
       })
 
-      it('should accept empty hazCodes array when containsHazardous is true', () => {
+      it('should accept empty hazCodes array when containsHazardous is true with valid components', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          hazCodes: []
+          hazCodes: [],
+          components: [{ name: 'Mercury', concentration: 'Not Supplied' }]
         })
         expect(result.error).toBeUndefined()
       })
 
-      it('should accept missing hazCodes field', () => {
+      it('should reject missing hazCodes field without components', () => {
         const result = validateHazardous({
           containsHazardous: true
         })
-        expect(result.error).toBeUndefined()
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Chemical or Biological component name must be specified when hazardous properties are present'
+        )
       })
 
       it('should reject HP code 0 (out of range)', () => {
@@ -305,27 +309,32 @@ describe('Receipt Schema Validation', () => {
         expect(result.error.message).toContain('Hazard code must be an integer')
       })
 
-      it('should accept all valid HP codes (1-15)', () => {
+      it('should accept all valid HP codes (1-15) with components', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          hazCodes: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+          hazCodes: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+          components: [
+            { name: 'Mixed hazardous compounds', concentration: 100 }
+          ]
         })
         expect(result.error).toBeUndefined()
       })
 
-      it('should accept duplicate HP codes and deduplicate them', () => {
+      it('should accept duplicate HP codes and deduplicate them with components', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          hazCodes: [1, 1, 1]
+          hazCodes: [1, 1, 1],
+          components: [{ name: 'Cyanides', concentration: 5 }]
         })
         expect(result.error).toBeUndefined()
         expect(result.value.wasteItems[0].hazardous.hazCodes).toEqual([1])
       })
 
-      it('should deduplicate HP codes with different values', () => {
+      it('should deduplicate HP codes with different values with components', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          hazCodes: [1, 5, 1, 10]
+          hazCodes: [1, 5, 1, 10],
+          components: [{ name: 'Chromium VI compounds', concentration: 8 }]
         })
         expect(result.error).toBeUndefined()
         expect(result.value.wasteItems[0].hazardous.hazCodes).toEqual([
@@ -333,19 +342,23 @@ describe('Receipt Schema Validation', () => {
         ])
       })
 
-      it('should deduplicate HP codes even with valid range', () => {
+      it('should deduplicate HP codes even with valid range with components', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          hazCodes: [15, 3, 15]
+          hazCodes: [15, 3, 15],
+          components: [{ name: 'Cadmium compounds', concentration: 12 }]
         })
         expect(result.error).toBeUndefined()
         expect(result.value.wasteItems[0].hazardous.hazCodes).toEqual([15, 3])
       })
 
-      it('should deduplicate complex HP codes array', () => {
+      it('should deduplicate complex HP codes array with components', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          hazCodes: [1, 1, 4, 1, 2, 3, 3, 3, 2, 4]
+          hazCodes: [1, 1, 4, 1, 2, 3, 3, 3, 2, 4],
+          components: [
+            { name: 'PCBs (Polychlorinated biphenyls)', concentration: 50 }
+          ]
         })
         expect(result.error).toBeUndefined()
         // The Set preserves insertion order for unique values
@@ -370,25 +383,12 @@ describe('Receipt Schema Validation', () => {
   describe('EWC Code Validation', () => {
     // Helper function to validate a payload with a specific EWC code
     const validateEwcCode = (ewcCodeArray) => {
-      const payload = {
-        receivingSiteId: 'site123',
-        wasteItems: [
-          {
-            ewcCodes: ewcCodeArray,
-            wasteDescription: 'Test waste',
-            physicalForm: 'Solid',
-            pops: {
-              containsPops: false
-            },
-            weight: {
-              metric: 'Tonnes',
-              amount: 1,
-              isEstimate: false
-            }
-          }
-        ]
-      }
-
+      const payload = createTestPayload({
+        wasteItemOverrides: {
+          ewcCodes: ewcCodeArray,
+          pops: { containsPops: false }
+        }
+      })
       return receiveMovementRequestSchema.validate(payload)
     }
 
@@ -468,17 +468,17 @@ describe('Receipt Schema Validation', () => {
     })
 
     it('should require the EWC code field', () => {
-      // Test with missing EWC code
+      // Test with missing EWC code - need to build manually as ewcCodes is required
       const payload = {
-        receivingSiteId: 'site123',
+        receivingSiteId: TEST_CONSTANTS.SITE_ID,
         wasteItems: [
           {
-            wasteDescription: 'Test waste',
-            physicalForm: 'Solid',
+            wasteDescription: TEST_CONSTANTS.DEFAULT_WASTE_DESCRIPTION,
+            physicalForm: TEST_CONSTANTS.DEFAULT_PHYSICAL_FORM,
             weight: {
-              metric: 'Tonnes',
-              amount: 1,
-              isEstimate: false
+              metric: TEST_CONSTANTS.DEFAULT_METRIC,
+              amount: TEST_CONSTANTS.DEFAULT_AMOUNT,
+              isEstimate: TEST_CONSTANTS.DEFAULT_IS_ESTIMATE
             }
           }
         ]
@@ -496,26 +496,14 @@ describe('Receipt Schema Validation', () => {
   describe('Chemical/Biological Concentration Validation', () => {
     // Helper function to validate a payload with hazardous waste and components
     const validateHazardousWithComponents = (containsHazardous, components) => {
-      const payload = {
-        receivingSiteId: 'site123',
-        wasteItems: [
-          {
-            ewcCodes: ['010101'],
-            wasteDescription: 'Test waste',
-            physicalForm: 'Solid',
-            hazardous: {
-              containsHazardous,
-              ...(components && { components })
-            },
-            weight: {
-              metric: 'Tonnes',
-              amount: 1,
-              isEstimate: false
-            }
+      const payload = createTestPayload({
+        wasteItemOverrides: {
+          hazardous: {
+            containsHazardous,
+            ...(components && { components })
           }
-        ]
-      }
-
+        }
+      })
       return receiveMovementRequestSchema.validate(payload)
     }
 
@@ -527,7 +515,7 @@ describe('Receipt Schema Validation', () => {
           { concentration: 0, description: 'zero value' }
         ]
 
-        testCases.forEach(({ concentration, description }) => {
+        testCases.forEach(({ concentration }) => {
           const result = validateHazardousWithComponents(true, [
             {
               name: 'Mercury',
@@ -626,7 +614,7 @@ describe('Receipt Schema Validation', () => {
         ])
         expect(result.error).toBeDefined()
         expect(result.error.message).toContain(
-          'Chemical or Biological concentration cannot be provided when hazardous properties are not present'
+          'Chemical or Biological components cannot be provided when no hazardous properties are indicated'
         )
       })
 
@@ -639,7 +627,7 @@ describe('Receipt Schema Validation', () => {
         ])
         expect(result.error).toBeDefined()
         expect(result.error.message).toContain(
-          'Chemical or Biological concentration cannot be provided when hazardous properties are not present'
+          'Chemical or Biological components cannot be provided when no hazardous properties are indicated'
         )
       })
 
@@ -652,7 +640,7 @@ describe('Receipt Schema Validation', () => {
         ])
         expect(result.error).toBeDefined()
         expect(result.error.message).toContain(
-          'Chemical or Biological concentration cannot be provided when hazardous properties are not present'
+          'Chemical or Biological components cannot be provided when no hazardous properties are indicated'
         )
       })
     })
@@ -697,38 +685,16 @@ describe('Receipt Schema Validation', () => {
 
   describe('Physical Form Validation', () => {
     it('should accept valid physical form', () => {
-      const payload = createMovementRequest({
-        wasteItems: [
-          {
-            ewcCodes: ['010101'],
-            wasteDescription: 'Test waste',
-            physicalForm: 'Solid',
-            weight: {
-              metric: 'Tonnes',
-              amount: 1,
-              isEstimate: false
-            }
-          }
-        ]
+      const payload = createTestPayload({
+        wasteItemOverrides: { physicalForm: 'Solid' }
       })
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeUndefined()
     })
 
     it('should reject invalid physical form', () => {
-      const payload = createMovementRequest({
-        wasteItems: [
-          {
-            ewcCodes: ['010101'],
-            wasteDescription: 'Test waste',
-            physicalForm: 'Invalid',
-            weight: {
-              metric: 'Tonnes',
-              amount: 1,
-              isEstimate: false
-            }
-          }
-        ]
+      const payload = createTestPayload({
+        wasteItemOverrides: { physicalForm: 'Invalid' }
       })
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeDefined()
@@ -738,24 +704,90 @@ describe('Receipt Schema Validation', () => {
     })
 
     it('should reject empty physical form', () => {
-      const payload = createMovementRequest({
+      // Need to build manually as physicalForm is required in defaults
+      const payload = {
+        receivingSiteId: TEST_CONSTANTS.SITE_ID,
         wasteItems: [
           {
-            ewcCodes: ['010101'],
-            wasteDescription: 'Test waste',
+            ewcCodes: [TEST_CONSTANTS.VALID_EWC_CODE],
+            wasteDescription: TEST_CONSTANTS.DEFAULT_WASTE_DESCRIPTION,
             // physicalForm missing,
             weight: {
-              metric: 'Tonnes',
-              amount: 1,
-              isEstimate: false
+              metric: TEST_CONSTANTS.DEFAULT_METRIC,
+              amount: TEST_CONSTANTS.DEFAULT_AMOUNT,
+              isEstimate: TEST_CONSTANTS.DEFAULT_IS_ESTIMATE
             }
           }
         ]
-      })
+      }
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeDefined()
       expect(result.error.message).toContain(
         '"wasteItems[0].physicalForm" is required'
+      )
+    })
+  })
+
+  describe('Chemical or Biological Component Name Validation', () => {
+    // Helper function to validate hazardous waste with component names
+    const validateComponentName = (containsHazardous, components) => {
+      const payload = createTestPayload({
+        wasteItemOverrides: {
+          hazardous: {
+            containsHazardous,
+            ...(components && { components })
+          }
+        }
+      })
+      return receiveMovementRequestSchema.validate(payload)
+    }
+
+    it('should accept valid hazardous substance names when hazardous properties are present', () => {
+      const result = validateComponentName(true, [
+        {
+          name: 'Mercury',
+          concentration: 50
+        }
+      ])
+      expect(result.error).toBeUndefined()
+    })
+
+    it('should REJECT null as component name when hazardous properties are present', () => {
+      const result = validateComponentName(true, [
+        {
+          name: null,
+          concentration: 30
+        }
+      ])
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toContain(
+        'Chemical or Biological Component name must be an actual component name, not null'
+      )
+    })
+
+    it('should require components when hazardous properties are present', () => {
+      const result = validateComponentName(true)
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toContain(
+        'Chemical or Biological component name must be specified when hazardous properties are present'
+      )
+    })
+
+    it('should accept submission without components when no hazardous properties', () => {
+      const result = validateComponentName(false)
+      expect(result.error).toBeUndefined()
+    })
+
+    it('should reject components when no hazardous properties are indicated', () => {
+      const result = validateComponentName(false, [
+        {
+          name: 'Mercury',
+          concentration: 25
+        }
+      ])
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toContain(
+        'Chemical or Biological components cannot be provided when no hazardous properties are indicated'
       )
     })
   })

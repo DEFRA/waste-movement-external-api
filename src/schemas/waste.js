@@ -47,62 +47,78 @@ const hazardousSchema = Joi.object({
     }, 'HP codes deduplication')
     .optional()
     .label('HazardCodes'),
-  components: Joi.array().items(
-    Joi.object({
-      name: Joi.string().required().messages({
-        'any.required': 'Chemical or Biological Component name is required'
-      }),
-      concentration: Joi.custom((value, helpers) => {
-        // Check if it's a valid number
-        if (typeof value === 'number') {
-          if (value < 0) {
-            return helpers.error('number.min')
+  components: Joi.array()
+    .items(
+      Joi.object({
+        name: Joi.string().required().invalid(null).messages({
+          'any.required': 'Chemical or Biological Component name is required',
+          'string.base':
+            'Chemical or Biological Component name must be a string',
+          'any.invalid':
+            'Chemical or Biological Component name must be an actual component name, not null'
+        }),
+        concentration: Joi.custom((value, helpers) => {
+          // Check if it's a valid number
+          if (typeof value === 'number') {
+            if (value < 0) {
+              return helpers.error('number.min')
+            }
+            return value
           }
-          return value
-        }
 
-        // Check if it's a valid string
-        if (typeof value === 'string') {
-          if (value === 'Not Supplied') {
-            return value
+          // Check if it's a valid string
+          if (typeof value === 'string') {
+            if (value === 'Not Supplied') {
+              return value
+            }
+            if (value === '') {
+              return value
+            }
+            // Any other string is invalid
+            return helpers.error(CUSTOM_ERROR_TYPE)
           }
-          if (value === '') {
-            return value
-          }
-          // Any other string is invalid
+
+          // Any other type is invalid
           return helpers.error(CUSTOM_ERROR_TYPE)
-        }
-
-        // Any other type is invalid
-        return helpers.error(CUSTOM_ERROR_TYPE)
-      })
-        .required()
-        .messages({
-          'any.required':
-            'Chemical or Biological concentration is required when hazardous properties are present',
-          'number.min':
-            'Chemical or Biological concentration cannot be negative',
-          'any.custom':
-            'Chemical or Biological concentration must be a valid number or "Not Supplied"'
         })
-    }).label('ComponentItem')
-  )
+          .required()
+          .messages({
+            'any.required':
+              'Chemical or Biological concentration is required when hazardous properties are present',
+            'number.min':
+              'Chemical or Biological concentration cannot be negative',
+            'any.custom':
+              'Chemical or Biological concentration must be a valid number or "Not Supplied"'
+          })
+      }).label('ComponentItem')
+    )
+    .optional()
 })
   .custom((value, helpers) => {
-    // Custom validation to check if components are provided when containsHazardous is false
-    if (
-      value &&
-      value.containsHazardous === false &&
-      value.components &&
-      value.components.length > 0
+    // Custom validation to check components based on containsHazardous value
+    if (value && value.containsHazardous === true) {
+      // When hazardous, components are required with at least one item
+      if (!value.components || value.components.length === 0) {
+        return helpers.error('any.required')
+      }
+      return value
+    } else if (
+      value?.containsHazardous === false &&
+      value.components?.length > 0
     ) {
-      return helpers.error(CUSTOM_ERROR_TYPE)
+      // When not hazardous, components should not be provided
+      return helpers.error('any.invalid')
+    } else {
+      // No validation needed when containsHazardous is undefined or null
+      // Let the containsHazardous required validation handle it
+      return value
     }
-    return value
   })
   .messages({
-    'any.custom':
-      'Chemical or Biological concentration cannot be provided when hazardous properties are not present'
+    'any.required':
+      'Chemical or Biological component name must be specified when hazardous properties are present',
+    'any.invalid':
+      'Chemical or Biological components cannot be provided when no hazardous properties are indicated'
   })
   .label('Hazardous')
 
