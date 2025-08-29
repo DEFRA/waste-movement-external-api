@@ -37,6 +37,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
         it(`should accept valid means of transport: ${meansOfTransport}`, () => {
           const validPayload = {
             receivingSiteId: 'site123',
+            dateTimeReceived: '2024-01-15T14:30:00Z',
             carrier: {
               organisationName: 'Test Carrier',
               meansOfTransport: meansOfTransport
@@ -62,6 +63,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
         it(`should reject invalid means of transport: ${meansOfTransport}`, () => {
           const invalidPayload = {
             receivingSiteId: 'site123',
+            dateTimeReceived: '2024-01-15T14:30:00Z',
             carrier: {
               organisationName: 'Test Carrier',
               meansOfTransport: meansOfTransport
@@ -80,6 +82,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
       it('should accept submission without means of transport', () => {
         const validPayload = {
           receivingSiteId: 'site123',
+          dateTimeReceived: '2024-01-15T14:30:00Z',
           carrier: {
             organisationName: 'Test Carrier'
             // No meansOfTransport specified

@@ -29,6 +29,7 @@ describe('Receipt Schema Validation - Physical Form', () => {
       // Need to build manually as physicalForm is required in defaults
       const payload = {
         receivingSiteId: TEST_CONSTANTS.SITE_ID,
+        dateTimeReceived: '2021-01-01T00:00:00.000Z',
         wasteItems: [
           {
             ewcCodes: [TEST_CONSTANTS.VALID_EWC_CODE],

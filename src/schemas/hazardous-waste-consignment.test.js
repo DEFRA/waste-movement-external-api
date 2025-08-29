@@ -7,6 +7,7 @@ import {
 // Helper to build a base valid payload
 const buildBasePayload = () => ({
   receivingSiteId: 'site123',
+  dateTimeReceived: '2025-08-29T15:24:00Z',
   wasteItems: [
     {
       ewcCodes: ['010101'], // non-hazardous by default

@@ -37,8 +37,8 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
         it(`should accept valid code: ${code}`, () => {
           const validPayload = {
             receivingSiteId: 'site123',
+            dateTimeReceived: '2024-01-15T14:30:00Z',
             receipt: {
-              dateTimeReceived: '2024-01-15T14:30:00Z',
               disposalOrRecoveryCodes: [
                 {
                   code,
@@ -60,8 +60,8 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
       it('should accept multiple valid codes', () => {
         const validPayload = {
           receivingSiteId: 'site123',
+          dateTimeReceived: '2024-01-15T14:30:00Z',
           receipt: {
-            dateTimeReceived: '2024-01-15T14:30:00Z',
             disposalOrRecoveryCodes: [
               {
                 code: 'R1',
@@ -103,8 +103,8 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
         it(`should reject invalid code: ${code}`, () => {
           const invalidPayload = {
             receivingSiteId: 'site123',
+            dateTimeReceived: '2024-01-15T14:30:00Z',
             receipt: {
-              dateTimeReceived: '2024-01-15T14:30:00Z',
               disposalOrRecoveryCodes: [
                 {
                   code,
@@ -130,8 +130,8 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
       it('should reject code without quantity', () => {
         const invalidPayload = {
           receivingSiteId: 'site123',
+          dateTimeReceived: '2024-01-15T14:30:00Z',
           receipt: {
-            dateTimeReceived: '2024-01-15T14:30:00Z',
             disposalOrRecoveryCodes: [
               {
                 code: 'R1'
@@ -151,8 +151,8 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
       it('should reject quantity without required fields', () => {
         const invalidPayload = {
           receivingSiteId: 'site123',
+          dateTimeReceived: '2024-01-15T14:30:00Z',
           receipt: {
-            dateTimeReceived: '2024-01-15T14:30:00Z',
             disposalOrRecoveryCodes: [
               {
                 code: 'R1',
@@ -175,8 +175,8 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
       it('should accept submission without disposal/recovery codes', () => {
         const validPayload = {
           receivingSiteId: 'site123',
+          dateTimeReceived: '2024-01-15T14:30:00Z',
           receipt: {
-            dateTimeReceived: '2024-01-15T14:30:00Z'
             // No disposalOrRecoveryCodes specified
           }
         }
@@ -240,8 +240,8 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
       it('should successfully create movement with multiple codes', async () => {
         const validPayload = {
           receivingSiteId: 'site123',
+          dateTimeReceived: '2024-01-15T14:30:00Z',
           receipt: {
-            dateTimeReceived: '2024-01-15T14:30:00Z',
             disposalOrRecoveryCodes: [
               {
                 code: 'R3',
@@ -293,8 +293,8 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
       it('should handle backend errors', async () => {
         const validPayload = {
           receivingSiteId: 'site123',
+          dateTimeReceived: '2024-01-15T14:30:00Z',
           receipt: {
-            dateTimeReceived: '2024-01-15T14:30:00Z',
             disposalOrRecoveryCodes: [
               {
                 code: 'R1',
