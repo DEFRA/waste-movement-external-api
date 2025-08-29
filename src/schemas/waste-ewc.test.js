@@ -96,6 +96,7 @@ describe('Receipt Schema Validation - EWC', () => {
       // Test with missing EWC code - need to build manually as ewcCodes is required
       const payload = {
         receivingSiteId: TEST_CONSTANTS.SITE_ID,
+        dateTimeReceived: '2021-01-01T00:00:00.000Z',
         wasteItems: [
           {
             wasteDescription: TEST_CONSTANTS.DEFAULT_WASTE_DESCRIPTION,

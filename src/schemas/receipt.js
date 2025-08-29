@@ -59,7 +59,6 @@ const disposalOrRecoveryCodeSchema = Joi.object({
 }).label('DisposalOrRecoveryCode')
 
 const receiptSchema = Joi.object({
-  dateTimeReceived: Joi.date().iso(),
   disposalOrRecoveryCodes: Joi.array().items(disposalOrRecoveryCodeSchema)
 }).label('Receipt')
 
@@ -73,6 +72,7 @@ const brokerOrDealerSchema = Joi.object({
 
 export const receiveMovementRequestSchema = Joi.object({
   receivingSiteId: Joi.string().required(),
+  dateTimeReceived: Joi.date().iso().required(),
   hazardousWasteConsignmentCode: hazardousWasteConsignmentCodeSchema,
   reasonForNoConsignmentCode: reasonForNoConsignmentCodeSchema,
   yourUniqueReference: Joi.string(),

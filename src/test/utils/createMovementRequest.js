@@ -1,6 +1,7 @@
 export function createMovementRequest(overrides) {
   const defaultMovementRequest = {
     receivingSiteId: 'site123',
+    dateTimeReceived: '2021-01-01T00:00:00.000Z',
     carrier: {
       registrationNumber: '123456789',
       organisationName: 'Test Carrier',
@@ -19,9 +20,6 @@ export function createMovementRequest(overrides) {
           authorisationNumber: '1234'
         }
       ]
-    },
-    receipt: {
-      dateTimeReceived: '2021-01-01T00:00:00.000Z'
     }
   }
 

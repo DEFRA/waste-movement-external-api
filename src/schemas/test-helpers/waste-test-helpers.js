@@ -33,6 +33,7 @@ export const createTestPayload = (overrides = {}) => {
   // Build and return complete payload
   return {
     receivingSiteId: TEST_CONSTANTS.SITE_ID,
+    dateTimeReceived: '2021-01-01T00:00:00.000Z',
     wasteItems: [wasteItem],
     ...rootOverrides
   }
