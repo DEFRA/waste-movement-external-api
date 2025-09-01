@@ -43,7 +43,18 @@ const carrierSchema = Joi.object({
   otherMeansOfTransport: Joi.string()
 }).label('Carrier')
 
+const receiverAddressSchema = addressSchema.keys({
+  fullAddress: Joi.string().required(),
+  postCode: Joi.string()
+    .pattern(UK_POSTCODE_REGEX)
+    .message('Post Code must be in valid UK format')
+    .required()
+})
+
 const receiverSchema = Joi.object({
+  organisationName: Joi.string().required(),
+  emailAddress: Joi.string().email(),
+  phoneNumber: Joi.string(),
   authorisations: Joi.array().items({
     authorisationType: Joi.string(),
     authorisationNumber: Joi.string()
@@ -59,6 +70,7 @@ const disposalOrRecoveryCodeSchema = Joi.object({
 }).label('DisposalOrRecoveryCode')
 
 const receiptSchema = Joi.object({
+  address: receiverAddressSchema.required(),
   disposalOrRecoveryCodes: Joi.array().items(disposalOrRecoveryCodeSchema)
 }).label('Receipt')
 
@@ -90,5 +102,5 @@ export const receiveMovementRequestSchema = Joi.object({
   carrier: carrierSchema,
   brokerOrDealer: brokerOrDealerSchema,
   receiver: receiverSchema,
-  receipt: receiptSchema
+  receipt: receiptSchema.required()
 }).label('Movement')

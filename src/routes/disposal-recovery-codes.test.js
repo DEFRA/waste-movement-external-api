@@ -39,6 +39,10 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
             receivingSiteId: 'site123',
             dateTimeReceived: '2024-01-15T14:30:00Z',
             receipt: {
+              address: {
+                fullAddress: '123 Main St, City, Country',
+                postCode: 'AB1 2CD'
+              },
               disposalOrRecoveryCodes: [
                 {
                   code,
@@ -62,6 +66,10 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
           receivingSiteId: 'site123',
           dateTimeReceived: '2024-01-15T14:30:00Z',
           receipt: {
+            address: {
+              fullAddress: '123 Main St, City, Country',
+              postCode: 'AB1 2CD'
+            },
             disposalOrRecoveryCodes: [
               {
                 code: 'R1',
@@ -105,6 +113,10 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
             receivingSiteId: 'site123',
             dateTimeReceived: '2024-01-15T14:30:00Z',
             receipt: {
+              address: {
+                fullAddress: '123 Main St, City, Country',
+                postCode: 'AB1 2CD'
+              },
               disposalOrRecoveryCodes: [
                 {
                   code,
@@ -132,6 +144,10 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
           receivingSiteId: 'site123',
           dateTimeReceived: '2024-01-15T14:30:00Z',
           receipt: {
+            address: {
+              fullAddress: '123 Main St, City, Country',
+              postCode: 'AB1 2CD'
+            },
             disposalOrRecoveryCodes: [
               {
                 code: 'R1'
@@ -177,6 +193,10 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
           receivingSiteId: 'site123',
           dateTimeReceived: '2024-01-15T14:30:00Z',
           receipt: {
+            address: {
+              fullAddress: '123 Main St, City, Country',
+              postCode: 'AB1 2CD'
+            }
             // No disposalOrRecoveryCodes specified
           }
         }
