@@ -3,6 +3,7 @@ import { httpClients } from '../common/helpers/http-client.js'
 import { createReceiptMovement } from './create-receipt-movement.js'
 import { receiveMovementRequestSchema } from '../schemas/receipt.js'
 import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
+import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -29,32 +30,35 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
     })
   })
 
+  function createPayload(disposalOrRecoveryCodes) {
+    return {
+      ...createMovementRequest(),
+      receipt: {
+        address: {
+          fullAddress: '123 Main St, City, Country',
+          postCode: 'AB1 2CD'
+        },
+        ...disposalOrRecoveryCodes
+      }
+    }
+  }
+
   describe('Schema Validation Tests', () => {
     describe('Valid Disposal/Recovery Codes', () => {
-      const validCodes = DISPOSAL_OR_RECOVERY_CODES
-
-      validCodes.forEach((code) => {
+      DISPOSAL_OR_RECOVERY_CODES.forEach((code) => {
         it(`should accept valid code: ${code}`, () => {
-          const validPayload = {
-            receivingSiteId: 'site123',
-            dateTimeReceived: '2024-01-15T14:30:00Z',
-            receipt: {
-              address: {
-                fullAddress: '123 Main St, City, Country',
-                postCode: 'AB1 2CD'
-              },
-              disposalOrRecoveryCodes: [
-                {
-                  code,
-                  weight: {
-                    metric: 'Tonnes',
-                    amount: 0.1,
-                    isEstimate: false
-                  }
+          const validPayload = createPayload({
+            disposalOrRecoveryCodes: [
+              {
+                code,
+                weight: {
+                  metric: 'Tonnes',
+                  amount: 0.1,
+                  isEstimate: false
                 }
-              ]
-            }
-          }
+              }
+            ]
+          })
 
           const { error } = receiveMovementRequestSchema.validate(validPayload)
           expect(error).toBeUndefined()
@@ -62,42 +66,34 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
       })
 
       it('should accept multiple valid codes', () => {
-        const validPayload = {
-          receivingSiteId: 'site123',
-          dateTimeReceived: '2024-01-15T14:30:00Z',
-          receipt: {
-            address: {
-              fullAddress: '123 Main St, City, Country',
-              postCode: 'AB1 2CD'
-            },
-            disposalOrRecoveryCodes: [
-              {
-                code: 'R1',
-                weight: {
-                  metric: 'Tonnes',
-                  amount: 0.1,
-                  isEstimate: false
-                }
-              },
-              {
-                code: 'D10',
-                weight: {
-                  metric: 'Tonnes',
-                  amount: 0.0505,
-                  isEstimate: false
-                }
-              },
-              {
-                code: 'R3',
-                weight: {
-                  metric: 'Tonnes',
-                  amount: 0.02,
-                  isEstimate: false
-                }
+        const validPayload = createPayload({
+          disposalOrRecoveryCodes: [
+            {
+              code: 'R1',
+              weight: {
+                metric: 'Tonnes',
+                amount: 0.1,
+                isEstimate: false
               }
-            ]
-          }
-        }
+            },
+            {
+              code: 'D10',
+              weight: {
+                metric: 'Tonnes',
+                amount: 0.0505,
+                isEstimate: false
+              }
+            },
+            {
+              code: 'R3',
+              weight: {
+                metric: 'Tonnes',
+                amount: 0.02,
+                isEstimate: false
+              }
+            }
+          ]
+        })
 
         const { error } = receiveMovementRequestSchema.validate(validPayload)
         expect(error).toBeUndefined()
@@ -109,26 +105,18 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
 
       invalidCodes.forEach((code) => {
         it(`should reject invalid code: ${code}`, () => {
-          const invalidPayload = {
-            receivingSiteId: 'site123',
-            dateTimeReceived: '2024-01-15T14:30:00Z',
-            receipt: {
-              address: {
-                fullAddress: '123 Main St, City, Country',
-                postCode: 'AB1 2CD'
-              },
-              disposalOrRecoveryCodes: [
-                {
-                  code,
-                  weight: {
-                    metric: 'Tonnes',
-                    amount: 0.1,
-                    isEstimate: false
-                  }
+          const invalidPayload = createPayload({
+            disposalOrRecoveryCodes: [
+              {
+                code,
+                weight: {
+                  metric: 'Tonnes',
+                  amount: 0.1,
+                  isEstimate: false
                 }
-              ]
-            }
-          }
+              }
+            ]
+          })
 
           const { error } =
             receiveMovementRequestSchema.validate(invalidPayload)
@@ -140,22 +128,14 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
 
     describe('Missing Quantity', () => {
       it('should reject code without quantity', () => {
-        const invalidPayload = {
-          receivingSiteId: 'site123',
-          dateTimeReceived: '2024-01-15T14:30:00Z',
-          receipt: {
-            address: {
-              fullAddress: '123 Main St, City, Country',
-              postCode: 'AB1 2CD'
-            },
-            disposalOrRecoveryCodes: [
-              {
-                code: 'R1'
-                // No quantity specified
-              }
-            ]
-          }
-        }
+        const invalidPayload = createPayload({
+          disposalOrRecoveryCodes: [
+            {
+              code: 'R1'
+              // No quantity specified
+            }
+          ]
+        })
 
         const { error } = receiveMovementRequestSchema.validate(invalidPayload)
         expect(error).toBeDefined()
@@ -165,21 +145,17 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
 
     describe('Incomplete Quantity', () => {
       it('should reject quantity without required fields', () => {
-        const invalidPayload = {
-          receivingSiteId: 'site123',
-          dateTimeReceived: '2024-01-15T14:30:00Z',
-          receipt: {
-            disposalOrRecoveryCodes: [
-              {
-                code: 'R1',
-                weight: {
-                  metric: 'Tonnes'
-                  // Missing amount and isEstimate
-                }
+        const invalidPayload = createPayload({
+          disposalOrRecoveryCodes: [
+            {
+              code: 'R1',
+              weight: {
+                metric: 'Tonnes'
+                // Missing amount and isEstimate
               }
-            ]
-          }
-        }
+            }
+          ]
+        })
 
         const { error } = receiveMovementRequestSchema.validate(invalidPayload)
         expect(error).toBeDefined()
@@ -189,17 +165,9 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
 
     describe('Optional Disposal/Recovery Codes', () => {
       it('should accept submission without disposal/recovery codes', () => {
-        const validPayload = {
-          receivingSiteId: 'site123',
-          dateTimeReceived: '2024-01-15T14:30:00Z',
-          receipt: {
-            address: {
-              fullAddress: '123 Main St, City, Country',
-              postCode: 'AB1 2CD'
-            }
-            // No disposalOrRecoveryCodes specified
-          }
-        }
+        const validPayload = createPayload({
+          // No disposalOrRecoveryCodes specified
+        })
 
         const { error } = receiveMovementRequestSchema.validate(validPayload)
         expect(error).toBeUndefined()
@@ -210,22 +178,18 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
   describe('Handler Tests for Disposal/Recovery Codes', () => {
     describe('Successful submissions with valid codes', () => {
       it('should successfully create movement with R1 code', async () => {
-        const validPayload = {
-          receivingSiteId: 'site123',
-          receipt: {
-            dateTimeReceived: '2024-01-15T14:30:00Z',
-            disposalOrRecoveryCodes: [
-              {
-                code: 'R1',
-                weight: {
-                  metric: 'Tonnes',
-                  amount: 0.1,
-                  isEstimate: false
-                }
+        const validPayload = createPayload({
+          disposalOrRecoveryCodes: [
+            {
+              code: 'R1',
+              weight: {
+                metric: 'Tonnes',
+                amount: 0.1,
+                isEstimate: false
               }
-            ]
-          }
-        }
+            }
+          ]
+        })
 
         httpClients.wasteMovement.post.mockResolvedValue({
           statusCode: 200
@@ -258,30 +222,26 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
       })
 
       it('should successfully create movement with multiple codes', async () => {
-        const validPayload = {
-          receivingSiteId: 'site123',
-          dateTimeReceived: '2024-01-15T14:30:00Z',
-          receipt: {
-            disposalOrRecoveryCodes: [
-              {
-                code: 'R3',
-                weight: {
-                  metric: 'Tonnes',
-                  amount: 0.02,
-                  isEstimate: false
-                }
-              },
-              {
-                code: 'D5',
-                weight: {
-                  metric: 'Tonnes',
-                  amount: 0.03,
-                  isEstimate: false
-                }
+        const validPayload = createPayload({
+          disposalOrRecoveryCodes: [
+            {
+              code: 'R3',
+              weight: {
+                metric: 'Tonnes',
+                amount: 0.02,
+                isEstimate: false
               }
-            ]
-          }
-        }
+            },
+            {
+              code: 'D5',
+              weight: {
+                metric: 'Tonnes',
+                amount: 0.03,
+                isEstimate: false
+              }
+            }
+          ]
+        })
 
         httpClients.wasteMovement.post.mockResolvedValue({
           statusCode: 200
@@ -311,22 +271,18 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
 
     describe('Handler error handling', () => {
       it('should handle backend errors', async () => {
-        const validPayload = {
-          receivingSiteId: 'site123',
-          dateTimeReceived: '2024-01-15T14:30:00Z',
-          receipt: {
-            disposalOrRecoveryCodes: [
-              {
-                code: 'R1',
-                weight: {
-                  metric: 'Tonnes',
-                  amount: 0.1,
-                  isEstimate: false
-                }
+        const validPayload = createPayload({
+          disposalOrRecoveryCodes: [
+            {
+              code: 'R1',
+              weight: {
+                metric: 'Tonnes',
+                amount: 0.1,
+                isEstimate: false
               }
-            ]
-          }
-        }
+            }
+          ]
+        })
 
         httpClients.wasteMovement.post.mockRejectedValue(
           new Error('Backend Error')
