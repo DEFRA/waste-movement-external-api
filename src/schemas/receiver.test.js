@@ -108,11 +108,14 @@ describe('Receiver Validation', () => {
   it('rejects invalid receiver email address', () => {
     const receiver = {
       organisationName: 'Invalid Email Receiver',
-      address: { fullAddress: '1 Receiver St, Town', postCode: 'TE1 1ST' },
       emailAddress: 'not-an-email'
     }
 
-    const { error } = validate(receiver)
+    const receipt = {
+      address: { fullAddress: '1 Receiver St, Town', postCode: 'TE1 1ST' }
+    }
+
+    const { error } = validate(receiver, receipt)
     expect(error).toBeDefined()
     expect(error.message).toBe('"receiver.emailAddress" must be a valid email')
   })
