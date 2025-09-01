@@ -3,11 +3,11 @@ import {
   generateAllValidationWarnings,
   VALIDATION_ERROR_TYPES
 } from '../common/helpers/validation-warnings.js'
+import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 
 // Helper to build a base valid payload
 const buildBasePayload = () => ({
-  receivingSiteId: 'site123',
-  dateTimeReceived: '2025-08-29T15:24:00Z',
+  ...createMovementRequest(),
   wasteItems: [
     {
       ewcCodes: ['010101'], // non-hazardous by default

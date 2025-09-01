@@ -1,10 +1,11 @@
 import { receiveMovementRequestSchema } from '../schemas/receipt.js'
+import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 
 describe('Create Receipt Movement - Date and Time Received Validation', () => {
   describe('Schema Validation Tests for dateTimeReceived', () => {
-    it('should accept a valid ISO date-time for receipt.dateTimeReceived', () => {
+    it('should accept a valid ISO date-time for dateTimeReceived', () => {
       const payload = {
-        receivingSiteId: 'site123',
+        ...createMovementRequest(),
         dateTimeReceived: '2025-08-29T15:24:00Z'
       }
 
@@ -12,9 +13,9 @@ describe('Create Receipt Movement - Date and Time Received Validation', () => {
       expect(error).toBeUndefined()
     })
 
-    it('should reject an invalid date-time for receipt.dateTimeReceived', () => {
+    it('should reject an invalid date-time for dateTimeReceived', () => {
       const payload = {
-        receivingSiteId: 'site123',
+        ...createMovementRequest(),
         // Invalid ISO date-time
         dateTimeReceived: 'not-a-date'
       }

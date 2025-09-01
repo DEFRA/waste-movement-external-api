@@ -1,4 +1,6 @@
 // Test Constants
+import { createMovementRequest } from '../../test/utils/createMovementRequest.js'
+
 export const TEST_CONSTANTS = {
   SITE_ID: 'site123',
   VALID_EWC_CODE: '010101',
@@ -32,8 +34,7 @@ export const createTestPayload = (overrides = {}) => {
 
   // Build and return complete payload
   return {
-    receivingSiteId: TEST_CONSTANTS.SITE_ID,
-    dateTimeReceived: '2021-01-01T00:00:00.000Z',
+    ...createMovementRequest(),
     wasteItems: [wasteItem],
     ...rootOverrides
   }

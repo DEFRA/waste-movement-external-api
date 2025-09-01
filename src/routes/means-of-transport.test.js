@@ -3,6 +3,7 @@ import { httpClients } from '../common/helpers/http-client.js'
 import { createReceiptMovement } from './create-receipt-movement.js'
 import { receiveMovementRequestSchema } from '../schemas/receipt.js'
 import { MEANS_OF_TRANSPORT } from '../common/constants/means-of-transport.js'
+import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -35,14 +36,12 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
 
       validMeansOfTransport.forEach((meansOfTransport) => {
         it(`should accept valid means of transport: ${meansOfTransport}`, () => {
-          const validPayload = {
-            receivingSiteId: 'site123',
-            dateTimeReceived: '2024-01-15T14:30:00Z',
+          const validPayload = createMovementRequest({
             carrier: {
               organisationName: 'Test Carrier',
               meansOfTransport: meansOfTransport
             }
-          }
+          })
 
           const { error } = receiveMovementRequestSchema.validate(validPayload)
           expect(error).toBeUndefined()
@@ -81,8 +80,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
     describe('Optional Means of Transport', () => {
       it('should accept submission without means of transport', () => {
         const validPayload = {
-          receivingSiteId: 'site123',
-          dateTimeReceived: '2024-01-15T14:30:00Z',
+          ...createMovementRequest(),
           carrier: {
             organisationName: 'Test Carrier'
             // No meansOfTransport specified

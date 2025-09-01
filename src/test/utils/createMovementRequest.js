@@ -14,12 +14,19 @@ export function createMovementRequest(overrides) {
       meansOfTransport: 'Road'
     },
     receiver: {
+      organisationName: 'Test Receiver',
       authorisations: [
         {
           authorisationType: 'type',
           authorisationNumber: '1234'
         }
       ]
+    },
+    receipt: {
+      address: {
+        fullAddress: '123 Test St, Test City',
+        postCode: 'TE1 1ST'
+      }
     }
   }
 
