@@ -3,7 +3,14 @@ import { receiveMovementRequestSchema } from './receipt.js'
 describe('receiveMovementRequestSchema - otherReferencesForMovement validation', () => {
   const basePayload = {
     receivingSiteId: 'site123',
-    dateTimeReceived: new Date().toISOString()
+    dateTimeReceived: new Date().toISOString(),
+    receipt: {
+      address: {
+        fullAddress: '123 Main Street, London',
+        postCode: 'SW1A 1AA'
+      },
+      disposalOrRecoveryCodes: []
+    }
   }
 
   describe('valid payloads', () => {
