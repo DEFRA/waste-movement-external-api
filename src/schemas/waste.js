@@ -1,6 +1,6 @@
 import Joi from 'joi'
 import { isValidEwcCode } from '../common/constants/ewc-codes.js'
-import { weightSchema } from './quantity.js'
+import { weightSchema } from './weight.js'
 
 const MAX_EWC_CODES_COUNT = 5
 const MIN_HAZARD_CODE = 1
