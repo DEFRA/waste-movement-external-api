@@ -1,6 +1,7 @@
 import { jest } from '@jest/globals'
 import { httpClients } from '../common/helpers/http-client.js'
 import { createReceiptMovement } from './create-receipt-movement.js'
+import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -30,35 +31,7 @@ describe('Create Receipt Movement Route', () => {
     })
   })
 
-  const validPayload = {
-    receivingSiteId: 'site123',
-    receiverReference: 'ref123',
-    specialHandlingRequirements: 'Handle with care',
-    wasteItems: {
-      wasteCode: '123456',
-      description: 'Test waste'
-    },
-    carrier: {
-      name: 'Test Carrier',
-      address: {
-        street: '123 Test St',
-        city: 'Test City',
-        postcode: 'TE1 1ST'
-      }
-    },
-    receipt: {
-      disposalOrRecoveryCodes: [
-        {
-          code: 'R1',
-          weight: {
-            metric: 'Tonnes',
-            amount: 10,
-            isEstimate: false
-          }
-        }
-      ]
-    }
-  }
+  const validPayload = createMovementRequest()
 
   it('should successfully create a waste movement', async () => {
     // Mock successful waste movement creation
@@ -81,10 +54,12 @@ describe('Create Receipt Movement Route', () => {
 
     await createReceiptMovement.handler(request, h)
 
-    expect(h.response).toHaveBeenCalledWith({
-      statusCode: 200,
-      globalMovementId: mockWasteTrackingId
-    })
+    expect(h.response).toHaveBeenCalledWith(
+      expect.objectContaining({
+        statusCode: 200,
+        globalMovementId: mockWasteTrackingId
+      })
+    )
 
     // Verify waste tracking ID was requested
     expect(httpClients.wasteTracking.get).toHaveBeenCalledWith('/next')

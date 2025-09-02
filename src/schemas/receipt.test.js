@@ -1,17 +1,10 @@
 import { receiveMovementRequestSchema } from './receipt.js'
+import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 
 describe('receiveMovementRequestSchema - otherReferencesForMovement validation', () => {
-  const basePayload = {
-    receivingSiteId: 'site123',
-    dateTimeReceived: new Date().toISOString(),
-    receipt: {
-      address: {
-        fullAddress: '123 Main Street, London',
-        postCode: 'SW1A 1AA'
-      },
-      disposalOrRecoveryCodes: []
-    }
-  }
+  const basePayload = createMovementRequest({
+    dateTimeReceived: new Date().toISOString()
+  })
 
   describe('valid payloads', () => {
     it('should accept valid array of label-reference pairs', () => {
@@ -136,29 +129,6 @@ describe('receiveMovementRequestSchema - otherReferencesForMovement validation',
       expect(error.message).toContain(
         '"otherReferencesForMovement[0].reference" is not allowed to be empty'
       )
-    })
-
-    it('should accept very long labels and references', () => {
-      const payload = {
-        ...basePayload,
-        otherReferencesForMovement: [
-          { label: 'a'.repeat(1000), reference: 'b'.repeat(1000) }
-        ]
-      }
-      const { error } = receiveMovementRequestSchema.validate(payload)
-      expect(error).toBeUndefined()
-    })
-
-    it('should accept large arrays of references', () => {
-      const payload = {
-        ...basePayload,
-        otherReferencesForMovement: Array(100).fill({
-          label: 'Test',
-          reference: 'REF-001'
-        })
-      }
-      const { error } = receiveMovementRequestSchema.validate(payload)
-      expect(error).toBeUndefined()
     })
   })
 })

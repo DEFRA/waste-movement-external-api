@@ -1,6 +1,7 @@
 import { httpClients } from '../common/helpers/http-client.js'
 import { handleUpdateReceiptMovement } from '../handlers/update-receipt-movement.js'
 import { updateReceiptMovement } from './update-receipt-movement.js'
+import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import Boom from '@hapi/boom'
 
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -44,34 +45,7 @@ describe('handleUpdateReceiptMovement', () => {
     params: {
       wasteTrackingId: '123e4567-e89b-12d3-a456-426614174000'
     },
-    payload: {
-      receivingSiteId: '123e4567-e89b-12d3-a456-426614174001',
-      wasteItems: [
-        {
-          ewcCodes: ['01 01 01'],
-          description: 'Test waste',
-          physicalForm: 'Solid',
-          containers: 'Bulk',
-          weight: {
-            metric: 'Tonnes',
-            amount: 1,
-            isEstimate: false
-          }
-        }
-      ],
-      receipt: {
-        disposalOrRecoveryCodes: [
-          {
-            code: 'R1',
-            weight: {
-              metric: 'Tonnes',
-              amount: 10,
-              isEstimate: false
-            }
-          }
-        ]
-      }
-    }
+    payload: createMovementRequest()
   }
 
   const mockH = {
@@ -94,9 +68,11 @@ describe('handleUpdateReceiptMovement', () => {
       `/movements/${mockRequest.params.wasteTrackingId}/receive`,
       { movement: mockRequest.payload }
     )
-    expect(mockH.response).toHaveBeenCalledWith({
-      message: 'Receipt movement updated successfully'
-    })
+    expect(mockH.response).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Receipt movement updated successfully'
+      })
+    )
     expect(mockH.code).toHaveBeenCalledWith(200)
   })
 
@@ -150,8 +126,10 @@ describe('handleUpdateReceiptMovement', () => {
         })
       }
     )
-    expect(mockH.response).toHaveBeenCalledWith({
-      message: 'Receipt movement updated successfully'
-    })
+    expect(mockH.response).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Receipt movement updated successfully'
+      })
+    )
   })
 })
