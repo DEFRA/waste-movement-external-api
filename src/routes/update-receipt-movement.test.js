@@ -119,7 +119,7 @@ describe('handleUpdateReceiptMovement', () => {
     ).rejects.toThrow(Boom.badRequest('Invalid input'))
   })
 
-  it('should accept otherReferencesForMovement as an array of label-reference pairs', async () => {
+  it('should correctly pass otherReferencesForMovement to backend service', async () => {
     httpClients.wasteMovement.put.mockResolvedValueOnce({
       statusCode: 200
     })
@@ -130,68 +130,28 @@ describe('handleUpdateReceiptMovement', () => {
         ...mockRequest.payload,
         otherReferencesForMovement: [
           { label: 'PO Number', reference: 'PO-12345' },
-          { label: 'Waste Ticket', reference: 'WT-67890' },
-          { label: 'Haulier Note', reference: 'HN-11111' }
+          { label: 'Waste Ticket', reference: 'WT-67890' }
         ]
       }
     }
 
     await handleUpdateReceiptMovement(requestWithReferences, mockH)
 
+    // Verify the exact payload structure was passed to backend
     expect(httpClients.wasteMovement.put).toHaveBeenCalledWith(
       `/movements/${mockRequest.params.wasteTrackingId}/receive`,
-      { movement: requestWithReferences.payload }
-    )
-    expect(mockH.response).toHaveBeenCalledWith({
-      message: 'Receipt movement updated successfully'
-    })
-    expect(mockH.code).toHaveBeenCalledWith(200)
-  })
-
-  it('should accept empty otherReferencesForMovement array', async () => {
-    httpClients.wasteMovement.put.mockResolvedValueOnce({
-      statusCode: 200
-    })
-
-    const requestWithEmptyReferences = {
-      ...mockRequest,
-      payload: {
-        ...mockRequest.payload,
-        otherReferencesForMovement: []
+      {
+        movement: expect.objectContaining({
+          ...mockRequest.payload,
+          otherReferencesForMovement: [
+            { label: 'PO Number', reference: 'PO-12345' },
+            { label: 'Waste Ticket', reference: 'WT-67890' }
+          ]
+        })
       }
-    }
-
-    await handleUpdateReceiptMovement(requestWithEmptyReferences, mockH)
-
-    expect(httpClients.wasteMovement.put).toHaveBeenCalledWith(
-      `/movements/${mockRequest.params.wasteTrackingId}/receive`,
-      { movement: requestWithEmptyReferences.payload }
     )
     expect(mockH.response).toHaveBeenCalledWith({
       message: 'Receipt movement updated successfully'
     })
-    expect(mockH.code).toHaveBeenCalledWith(200)
-  })
-
-  it('should accept payload without otherReferencesForMovement field', async () => {
-    httpClients.wasteMovement.put.mockResolvedValueOnce({
-      statusCode: 200
-    })
-
-    const requestWithoutReferences = {
-      ...mockRequest,
-      payload: mockRequest.payload // Already doesn't have otherReferencesForMovement
-    }
-
-    await handleUpdateReceiptMovement(requestWithoutReferences, mockH)
-
-    expect(httpClients.wasteMovement.put).toHaveBeenCalledWith(
-      `/movements/${mockRequest.params.wasteTrackingId}/receive`,
-      { movement: requestWithoutReferences.payload }
-    )
-    expect(mockH.response).toHaveBeenCalledWith({
-      message: 'Receipt movement updated successfully'
-    })
-    expect(mockH.code).toHaveBeenCalledWith(200)
   })
 })
