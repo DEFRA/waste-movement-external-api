@@ -76,7 +76,15 @@ export const receiveMovementRequestSchema = Joi.object({
   hazardousWasteConsignmentCode: hazardousWasteConsignmentCodeSchema,
   reasonForNoConsignmentCode: reasonForNoConsignmentCodeSchema,
   yourUniqueReference: Joi.string(),
-  otherReferencesForMovement: Joi.string(),
+  otherReferencesForMovement: Joi.array()
+    .items(
+      Joi.object({
+        label: Joi.string().trim().min(1).max(100).required(),
+        reference: Joi.string().trim().min(1).max(255).required()
+      })
+    )
+    .max(20)
+    .optional(),
   specialHandlingRequirements: Joi.string(),
   wasteItems: Joi.array().items(wasteItemsSchema),
   carrier: carrierSchema,

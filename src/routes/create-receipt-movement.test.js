@@ -151,4 +151,124 @@ describe('Create Receipt Movement Route', () => {
     })
     expect(h.code).toHaveBeenCalledWith(500)
   })
+
+  it('should accept otherReferencesForMovement as an array of label-reference pairs', async () => {
+    // Mock successful waste movement creation
+    httpClients.wasteMovement.post.mockResolvedValue({
+      statusCode: 200
+    })
+
+    const payloadWithReferences = {
+      ...validPayload,
+      otherReferencesForMovement: [
+        { label: 'PO Number', reference: 'PO-12345' },
+        { label: 'Waste Ticket', reference: 'WT-67890' },
+        { label: 'Haulier Note', reference: 'HN-11111' }
+      ]
+    }
+
+    const request = {
+      auth: {
+        credentials: {
+          clientId: 'test-client-id'
+        }
+      },
+      payload: payloadWithReferences
+    }
+    const h = {
+      response: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis()
+    }
+
+    await createReceiptMovement.handler(request, h)
+
+    expect(h.response).toHaveBeenCalledWith({
+      statusCode: 200,
+      globalMovementId: mockWasteTrackingId
+    })
+
+    // Verify the payload with references was sent correctly
+    expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
+      `/movements/${mockWasteTrackingId}/receive`,
+      {
+        movement: payloadWithReferences
+      }
+    )
+  })
+
+  it('should accept empty otherReferencesForMovement array', async () => {
+    // Mock successful waste movement creation
+    httpClients.wasteMovement.post.mockResolvedValue({
+      statusCode: 200
+    })
+
+    const payloadWithEmptyReferences = {
+      ...validPayload,
+      otherReferencesForMovement: []
+    }
+
+    const request = {
+      auth: {
+        credentials: {
+          clientId: 'test-client-id'
+        }
+      },
+      payload: payloadWithEmptyReferences
+    }
+    const h = {
+      response: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis()
+    }
+
+    await createReceiptMovement.handler(request, h)
+
+    expect(h.response).toHaveBeenCalledWith({
+      statusCode: 200,
+      globalMovementId: mockWasteTrackingId
+    })
+
+    expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
+      `/movements/${mockWasteTrackingId}/receive`,
+      {
+        movement: payloadWithEmptyReferences
+      }
+    )
+  })
+
+  it('should accept payload without otherReferencesForMovement field', async () => {
+    // Mock successful waste movement creation
+    httpClients.wasteMovement.post.mockResolvedValue({
+      statusCode: 200
+    })
+
+    // Payload without otherReferencesForMovement field
+    const payloadWithoutReferences = { ...validPayload }
+
+    const request = {
+      auth: {
+        credentials: {
+          clientId: 'test-client-id'
+        }
+      },
+      payload: payloadWithoutReferences
+    }
+    const h = {
+      response: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis()
+    }
+
+    await createReceiptMovement.handler(request, h)
+
+    expect(h.response).toHaveBeenCalledWith({
+      statusCode: 200,
+      globalMovementId: mockWasteTrackingId
+    })
+
+    expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
+      `/movements/${mockWasteTrackingId}/receive`,
+      {
+        movement: payloadWithoutReferences
+      }
+    )
+  })
 })
