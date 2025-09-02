@@ -8,6 +8,8 @@ import {
   reasonForNoConsignmentCodeSchema
 } from './hazardous-waste-consignment.js'
 
+const MIN_STRING_LENGTH = 1
+
 // RegEx per Gov UK recommendation: https://assets.publishing.service.gov.uk/media/5a7f3ff4ed915d74e33f5438/Bulk_Data_Transfer_-_additional_validation_valid_from_12_November_2015.pdf
 // BEGIN-NOSCAN
 const UK_POSTCODE_REGEX =
@@ -91,11 +93,10 @@ export const receiveMovementRequestSchema = Joi.object({
   otherReferencesForMovement: Joi.array()
     .items(
       Joi.object({
-        label: Joi.string().trim().min(1).max(100).required(),
-        reference: Joi.string().trim().min(1).max(255).required()
+        label: Joi.string().min(MIN_STRING_LENGTH).required(),
+        reference: Joi.string().min(MIN_STRING_LENGTH).required()
       })
     )
-    .max(20)
     .optional(),
   specialHandlingRequirements: Joi.string(),
   wasteItems: Joi.array().items(wasteItemsSchema),

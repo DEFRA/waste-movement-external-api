@@ -138,60 +138,27 @@ describe('receiveMovementRequestSchema - otherReferencesForMovement validation',
       )
     })
 
-    it('should reject label exceeding 100 characters', () => {
+    it('should accept very long labels and references', () => {
       const payload = {
         ...basePayload,
         otherReferencesForMovement: [
-          { label: 'a'.repeat(101), reference: 'PO-12345' }
+          { label: 'a'.repeat(1000), reference: 'b'.repeat(1000) }
         ]
       }
       const { error } = receiveMovementRequestSchema.validate(payload)
-      expect(error).toBeDefined()
-      expect(error.message).toContain(
-        '"otherReferencesForMovement[0].label" length must be less than or equal to 100 characters long'
-      )
+      expect(error).toBeUndefined()
     })
 
-    it('should reject reference exceeding 255 characters', () => {
+    it('should accept large arrays of references', () => {
       const payload = {
         ...basePayload,
-        otherReferencesForMovement: [
-          { label: 'PO Number', reference: 'a'.repeat(256) }
-        ]
-      }
-      const { error } = receiveMovementRequestSchema.validate(payload)
-      expect(error).toBeDefined()
-      expect(error.message).toContain(
-        '"otherReferencesForMovement[0].reference" length must be less than or equal to 255 characters long'
-      )
-    })
-
-    it('should reject array with more than 20 items', () => {
-      const payload = {
-        ...basePayload,
-        otherReferencesForMovement: Array(21).fill({
+        otherReferencesForMovement: Array(100).fill({
           label: 'Test',
           reference: 'REF-001'
         })
       }
       const { error } = receiveMovementRequestSchema.validate(payload)
-      expect(error).toBeDefined()
-      expect(error.message).toContain(
-        '"otherReferencesForMovement" must contain less than or equal to 20 items'
-      )
-    })
-
-    it('should trim whitespace from label and reference', () => {
-      const payload = {
-        ...basePayload,
-        otherReferencesForMovement: [
-          { label: '  PO Number  ', reference: '  PO-12345  ' }
-        ]
-      }
-      const { value, error } = receiveMovementRequestSchema.validate(payload)
       expect(error).toBeUndefined()
-      expect(value.otherReferencesForMovement[0].label).toBe('PO Number')
-      expect(value.otherReferencesForMovement[0].reference).toBe('PO-12345')
     })
   })
 })
