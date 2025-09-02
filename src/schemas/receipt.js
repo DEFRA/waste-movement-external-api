@@ -2,7 +2,7 @@ import Joi from 'joi'
 import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
 import { MEANS_OF_TRANSPORT } from '../common/constants/means-of-transport.js'
 import { wasteItemsSchema } from './waste.js'
-import { weightSchema } from './quantity.js'
+import { weightSchema } from './weight.js'
 import {
   hazardousWasteConsignmentCodeSchema,
   reasonForNoConsignmentCodeSchema
