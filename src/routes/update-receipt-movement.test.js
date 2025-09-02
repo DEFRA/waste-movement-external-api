@@ -59,18 +59,16 @@ describe('handleUpdateReceiptMovement', () => {
           }
         }
       ],
-      receipt: {
-        disposalOrRecoveryCodes: [
-          {
-            code: 'R1',
-            weight: {
-              metric: 'Tonnes',
-              amount: 10,
-              isEstimate: false
-            }
+      disposalOrRecoveryCodes: [
+        {
+          code: 'R1',
+          weight: {
+            metric: 'Tonnes',
+            amount: 10,
+            isEstimate: false
           }
-        ]
-      }
+        }
+      ]
     }
   }
 

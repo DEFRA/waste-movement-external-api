@@ -70,8 +70,7 @@ const disposalOrRecoveryCodeSchema = Joi.object({
 }).label('DisposalOrRecoveryCode')
 
 const receiptSchema = Joi.object({
-  address: receiverAddressSchema.required(),
-  disposalOrRecoveryCodes: Joi.array().items(disposalOrRecoveryCodeSchema)
+  address: receiverAddressSchema.required()
 }).label('Receipt')
 
 const brokerOrDealerSchema = Joi.object({
@@ -94,5 +93,6 @@ export const receiveMovementRequestSchema = Joi.object({
   carrier: carrierSchema,
   brokerOrDealer: brokerOrDealerSchema,
   receiver: receiverSchema,
-  receipt: receiptSchema.required()
+  receipt: receiptSchema.required(),
+  disposalOrRecoveryCodes: Joi.array().items(disposalOrRecoveryCodeSchema)
 }).label('Movement')

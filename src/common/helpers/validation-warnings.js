@@ -24,19 +24,8 @@ export const VALIDATION_KEYS = {
 export const generateDisposalRecoveryWarnings = (payload) => {
   const warnings = []
 
-  // Check if receipt section exists
-  if (!payload.receipt) {
-    warnings.push({
-      key: VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES,
-      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message:
-        'Disposal or Recovery codes are required for proper waste tracking and compliance'
-    })
-    return warnings
-  }
-
   // Check if disposalOrRecoveryCodes array exists
-  if (!payload.receipt.disposalOrRecoveryCodes) {
+  if (!payload.disposalOrRecoveryCodes) {
     warnings.push({
       key: VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
@@ -47,7 +36,7 @@ export const generateDisposalRecoveryWarnings = (payload) => {
   }
 
   // Check if disposalOrRecoveryCodes array is empty
-  if (payload.receipt.disposalOrRecoveryCodes.length === 0) {
+  if (payload.disposalOrRecoveryCodes.length === 0) {
     warnings.push({
       key: VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
@@ -61,7 +50,7 @@ export const generateDisposalRecoveryWarnings = (payload) => {
   // Note: Missing codes and quantities are handled by schema validation (rejection)
   // This warning logic only handles cases where the request passes schema validation
   // but still has business rule violations that should generate warnings
-  payload.receipt.disposalOrRecoveryCodes.forEach((codeEntry, index) => {
+  payload.disposalOrRecoveryCodes.forEach((codeEntry, index) => {
     // Check if code is missing (this should be caught by schema validation)
     if (!codeEntry.code) {
       warnings.push({
