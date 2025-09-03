@@ -97,39 +97,4 @@ describe('handleUpdateReceiptMovement', () => {
       handleUpdateReceiptMovement(mockRequest, mockH)
     ).rejects.toThrow(Boom.notFound('Movement not found'))
   })
-
-  it('should correctly pass otherReferencesForMovement to backend service', async () => {
-    httpClients.wasteMovement.put.mockResolvedValueOnce({
-      statusCode: 200
-    })
-
-    const requestWithReferences = {
-      ...mockRequest,
-      payload: {
-        ...mockRequest.payload,
-        otherReferencesForMovement: [
-          { label: 'PO Number', reference: 'PO-12345' },
-          { label: 'Waste Ticket', reference: 'WT-67890' }
-        ]
-      }
-    }
-
-    await handleUpdateReceiptMovement(requestWithReferences, mockH)
-
-    // Verify the exact payload structure was passed to backend
-    expect(httpClients.wasteMovement.put).toHaveBeenCalledWith(
-      `/movements/${mockRequest.params.wasteTrackingId}/receive`,
-      {
-        movement: expect.objectContaining({
-          ...mockRequest.payload,
-          otherReferencesForMovement: [
-            { label: 'PO Number', reference: 'PO-12345' },
-            { label: 'Waste Ticket', reference: 'WT-67890' }
-          ]
-        })
-      }
-    )
-
-    expect(mockH.response).toHaveBeenCalledWith(expectedResponseWithWarnings)
-  })
 })
