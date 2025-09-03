@@ -46,18 +46,16 @@ describe('Create Receipt Movement Handler', () => {
         postcode: 'TE1 1ST'
       }
     },
-    receipt: {
-      disposalOrRecoveryCodes: [
-        {
-          code: 'R1',
-          weight: {
-            metric: 'Tonnes',
-            amount: 10,
-            isEstimate: false
-          }
+    disposalOrRecoveryCodes: [
+      {
+        code: 'R1',
+        weight: {
+          metric: 'Tonnes',
+          amount: 10,
+          isEstimate: false
         }
-      ]
-    }
+      }
+    ]
   }
 
   const request = {

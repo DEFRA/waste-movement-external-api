@@ -33,13 +33,7 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
   function createPayload(disposalOrRecoveryCodes) {
     return {
       ...createMovementRequest(),
-      receipt: {
-        address: {
-          fullAddress: '123 Main St, City, Country',
-          postCode: 'AB1 2CD'
-        },
-        ...disposalOrRecoveryCodes
-      }
+      ...disposalOrRecoveryCodes
     }
   }
 
@@ -139,7 +133,9 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
 
         const { error } = receiveMovementRequestSchema.validate(invalidPayload)
         expect(error).toBeDefined()
-        expect(error.details[0].message).toContain('"Quantity" is required')
+        expect(error.details[0].message).toContain(
+          '"disposalOrRecoveryCodes[0].weight" is required'
+        )
       })
     })
 
