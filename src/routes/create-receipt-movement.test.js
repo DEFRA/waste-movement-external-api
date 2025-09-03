@@ -54,12 +54,10 @@ describe('Create Receipt Movement Route', () => {
 
     await createReceiptMovement.handler(request, h)
 
-    expect(h.response).toHaveBeenCalledWith(
-      expect.objectContaining({
-        statusCode: 200,
-        globalMovementId: mockWasteTrackingId
-      })
-    )
+    expect(h.response).toHaveBeenCalledWith({
+      statusCode: 200,
+      globalMovementId: mockWasteTrackingId
+    })
 
     // Verify waste tracking ID was requested
     expect(httpClients.wasteTracking.get).toHaveBeenCalledWith('/next')

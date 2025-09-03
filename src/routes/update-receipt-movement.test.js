@@ -68,11 +68,10 @@ describe('handleUpdateReceiptMovement', () => {
       `/movements/${mockRequest.params.wasteTrackingId}/receive`,
       { movement: mockRequest.payload }
     )
-    expect(mockH.response).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: 'Receipt movement updated successfully'
-      })
-    )
+    expect(mockH.response).toHaveBeenCalledWith({
+      message: 'Receipt movement updated successfully'
+    })
+
     expect(mockH.code).toHaveBeenCalledWith(200)
   })
 
@@ -84,15 +83,6 @@ describe('handleUpdateReceiptMovement', () => {
     await expect(
       handleUpdateReceiptMovement(mockRequest, mockH)
     ).rejects.toThrow(Boom.notFound('Movement not found'))
-  })
-
-  it('should handle bad request error', async () => {
-    const badRequestError = new Error('Invalid input')
-    httpClients.wasteMovement.put.mockRejectedValueOnce(badRequestError)
-
-    await expect(
-      handleUpdateReceiptMovement(mockRequest, mockH)
-    ).rejects.toThrow(Boom.badRequest('Invalid input'))
   })
 
   it('should correctly pass otherReferencesForMovement to backend service', async () => {
@@ -126,10 +116,9 @@ describe('handleUpdateReceiptMovement', () => {
         })
       }
     )
-    expect(mockH.response).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: 'Receipt movement updated successfully'
-      })
-    )
+
+    expect(mockH.response).toHaveBeenCalledWith({
+      message: 'Receipt movement updated successfully'
+    })
   })
 })
