@@ -97,4 +97,13 @@ describe('handleUpdateReceiptMovement', () => {
       handleUpdateReceiptMovement(mockRequest, mockH)
     ).rejects.toThrow(Boom.notFound('Movement not found'))
   })
+
+  it('should handle bad request error', async () => {
+    const badRequestError = new Error('Invalid input')
+    httpClients.wasteMovement.put.mockRejectedValueOnce(badRequestError)
+
+    await expect(
+      handleUpdateReceiptMovement(mockRequest, mockH)
+    ).rejects.toThrow(Boom.badRequest('Invalid input'))
+  })
 })
