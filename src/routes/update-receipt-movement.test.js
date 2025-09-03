@@ -53,6 +53,21 @@ describe('handleUpdateReceiptMovement', () => {
     code: jest.fn().mockReturnThis()
   }
 
+  // Common expected response with validation warnings
+  const expectedResponseWithWarnings = {
+    message: 'Receipt movement updated successfully',
+    validation: {
+      warnings: [
+        {
+          errorType: 'NotProvided',
+          key: 'receipt.disposalOrRecoveryCodes',
+          message:
+            'Disposal or Recovery codes are required for proper waste tracking and compliance'
+        }
+      ]
+    }
+  }
+
   beforeEach(() => {
     jest.clearAllMocks()
   })
@@ -68,9 +83,7 @@ describe('handleUpdateReceiptMovement', () => {
       `/movements/${mockRequest.params.wasteTrackingId}/receive`,
       { movement: mockRequest.payload }
     )
-    expect(mockH.response).toHaveBeenCalledWith({
-      message: 'Receipt movement updated successfully'
-    })
+    expect(mockH.response).toHaveBeenCalledWith(expectedResponseWithWarnings)
 
     expect(mockH.code).toHaveBeenCalledWith(200)
   })
@@ -117,8 +130,6 @@ describe('handleUpdateReceiptMovement', () => {
       }
     )
 
-    expect(mockH.response).toHaveBeenCalledWith({
-      message: 'Receipt movement updated successfully'
-    })
+    expect(mockH.response).toHaveBeenCalledWith(expectedResponseWithWarnings)
   })
 })

@@ -33,6 +33,14 @@ describe('Create Receipt Movement Route', () => {
 
   const validPayload = createMovementRequest()
 
+  // Common validation warnings
+  const disposalOrRecoveryCodesWarning = {
+    errorType: 'NotProvided',
+    key: 'receipt.disposalOrRecoveryCodes',
+    message:
+      'Disposal or Recovery codes are required for proper waste tracking and compliance'
+  }
+
   it('should successfully create a waste movement', async () => {
     // Mock successful waste movement creation
     httpClients.wasteMovement.post.mockResolvedValue({
@@ -56,7 +64,10 @@ describe('Create Receipt Movement Route', () => {
 
     expect(h.response).toHaveBeenCalledWith({
       statusCode: 200,
-      globalMovementId: mockWasteTrackingId
+      globalMovementId: mockWasteTrackingId,
+      validation: {
+        warnings: [disposalOrRecoveryCodesWarning]
+      }
     })
 
     // Verify waste tracking ID was requested
