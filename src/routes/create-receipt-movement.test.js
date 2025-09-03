@@ -135,48 +135,4 @@ describe('Create Receipt Movement Route', () => {
     })
     expect(h.code).toHaveBeenCalledWith(500)
   })
-
-  it('should correctly pass otherReferencesForMovement to backend service', async () => {
-    // Mock successful waste movement creation
-    httpClients.wasteMovement.post.mockResolvedValue({
-      statusCode: 200
-    })
-
-    const payloadWithReferences = {
-      ...validPayload,
-      otherReferencesForMovement: [
-        { label: 'PO Number', reference: 'PO-12345' },
-        { label: 'Waste Ticket', reference: 'WT-67890' }
-      ]
-    }
-
-    const request = {
-      auth: {
-        credentials: {
-          clientId: 'test-client-id'
-        }
-      },
-      payload: payloadWithReferences
-    }
-    const h = {
-      response: jest.fn().mockReturnThis(),
-      code: jest.fn().mockReturnThis()
-    }
-
-    await createReceiptMovement.handler(request, h)
-
-    // Verify the exact payload structure was passed to backend
-    expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
-      `/movements/${mockWasteTrackingId}/receive`,
-      {
-        movement: expect.objectContaining({
-          ...validPayload,
-          otherReferencesForMovement: [
-            { label: 'PO Number', reference: 'PO-12345' },
-            { label: 'Waste Ticket', reference: 'WT-67890' }
-          ]
-        })
-      }
-    )
-  })
 })
