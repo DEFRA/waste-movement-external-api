@@ -41,7 +41,7 @@ export const generateDisposalRecoveryWarnings = (payload) => {
       key: VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message:
-        'At least one Disposal or Recovery code must be specified with associated quantity'
+        'At least one Disposal or Recovery code must be specified with associated weight'
     })
     return warnings
   }
@@ -60,20 +60,20 @@ export const generateDisposalRecoveryWarnings = (payload) => {
       })
     }
 
-    // Check if quantity is missing (this should be caught by schema validation)
+    // Check if weight is missing (this should be caught by schema validation)
     if (!codeEntry.weight) {
       warnings.push({
-        key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].quantity`,
+        key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].weight`,
         errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-        message: `Quantity is required for Disposal/Recovery code: ${codeEntry.code || 'UNKNOWN'}`
+        message: `Weight is required for Disposal/Recovery code: ${codeEntry.code || 'UNKNOWN'}`
       })
     } else {
-      // Check if quantity has required fields (these should be caught by schema validation)
+      // Check if weight has required fields (these should be caught by schema validation)
       if (!codeEntry.weight.metric) {
         warnings.push({
-          key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].quantity.metric`,
+          key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].weight.metric`,
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Quantity metric is required'
+          message: 'Weight metric is required'
         })
       }
 
@@ -82,9 +82,9 @@ export const generateDisposalRecoveryWarnings = (payload) => {
         codeEntry.weight.amount === null
       ) {
         warnings.push({
-          key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].quantity.amount`,
+          key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].weight.amount`,
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Quantity amount is required'
+          message: 'Weight amount is required'
         })
       }
 
@@ -93,9 +93,9 @@ export const generateDisposalRecoveryWarnings = (payload) => {
         codeEntry.weight.isEstimate === null
       ) {
         warnings.push({
-          key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].quantity.isEstimate`,
+          key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].weight.isEstimate`,
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Quantity estimate flag is required'
+          message: 'Weight estimate flag is required'
         })
       }
     }
