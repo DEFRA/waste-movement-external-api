@@ -34,8 +34,39 @@ const addressSchema = Joi.object({
 })
 
 const carrierSchema = Joi.object({
-  registrationNumber: Joi.string(),
-  reasonForNoRegistrationNumber: Joi.string(),
+  registrationNumber: Joi.string()
+    .required()
+    .custom((value, helpers) => {
+      const reasonProvided =
+        helpers.state.ancestors[0].reasonForNoRegistrationNumber
+
+      // If registration number is "N/A" (case-insensitive), reason is required
+      if (value && value.toUpperCase() === 'N/A') {
+        if (!reasonProvided || reasonProvided.trim() === '') {
+          return helpers.error('carrier.naRequiresReason')
+        }
+      }
+
+      return value
+    })
+    .messages({
+      'string.empty': 'Carrier registration number is required',
+      'any.required': 'Carrier registration number is required'
+    }),
+  reasonForNoRegistrationNumber: Joi.string().custom((value, helpers) => {
+    const registrationNumber = helpers.state.ancestors[0].registrationNumber
+
+    // Reason should only be provided when registration number is "N/A"
+    if (
+      registrationNumber &&
+      registrationNumber.toUpperCase() !== 'N/A' &&
+      value
+    ) {
+      return helpers.error('carrier.reasonOnlyForNA')
+    }
+
+    return value
+  }),
   organisationName: Joi.string().required(),
   address: addressSchema,
   emailAddress: Joi.string().email(),
@@ -43,7 +74,15 @@ const carrierSchema = Joi.object({
   vehicleRegistration: Joi.string(),
   meansOfTransport: Joi.string().valid(...MEANS_OF_TRANSPORT),
   otherMeansOfTransport: Joi.string()
-}).label('Carrier')
+})
+  .label('Carrier')
+  .messages({
+    'carrier.naRequiresReason':
+      'When carrier registration number is "N/A", a reason must be provided',
+    'carrier.registrationRequired': 'Carrier registration number is required',
+    'carrier.reasonOnlyForNA':
+      'Reason for no registration number should only be provided when registration number is "N/A"'
+  })
 
 const receiverAddressSchema = addressSchema.keys({
   fullAddress: Joi.string().required(),
