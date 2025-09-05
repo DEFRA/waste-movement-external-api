@@ -32,14 +32,13 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
 
   describe('Schema Validation Tests', () => {
     describe('Valid Means of Transport', () => {
-      const validMeansOfTransport = MEANS_OF_TRANSPORT
-
-      validMeansOfTransport.forEach((meansOfTransport) => {
+      MEANS_OF_TRANSPORT.forEach((meansOfTransport) => {
         it(`should accept valid means of transport: ${meansOfTransport}`, () => {
           const validPayload = createMovementRequest({
             carrier: {
+              registrationNumber: 'CBDU123456',
               organisationName: 'Test Carrier',
-              meansOfTransport: meansOfTransport
+              meansOfTransport
             }
           })
 
@@ -64,8 +63,9 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
             receivingSiteId: 'site123',
             dateTimeReceived: '2024-01-15T14:30:00Z',
             carrier: {
+              registrationNumber: 'CBDU123456',
               organisationName: 'Test Carrier',
-              meansOfTransport: meansOfTransport
+              meansOfTransport
             }
           }
 
@@ -82,6 +82,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
         const validPayload = {
           ...createMovementRequest(),
           carrier: {
+            registrationNumber: 'CBDU123456',
             organisationName: 'Test Carrier'
             // No meansOfTransport specified
           }
