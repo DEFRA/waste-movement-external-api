@@ -1,5 +1,6 @@
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createTestPayload } from './test-helpers/waste-test-helpers.js'
+import { isValidPopName } from '../common/constants/pop-names.js'
 
 describe('Receipt Schema Validation - POPs', () => {
   describe('POPs Indicator Validation', () => {
@@ -231,6 +232,44 @@ describe('Receipt Schema Validation - POPs', () => {
         const result = receiveMovementRequestSchema.validate(payload)
         expect(result.error).toBeUndefined()
       })
+    })
+  })
+
+  describe('isValidPopName function unit tests', () => {
+    describe('returns true for valid POP names', () => {
+      // Reuse the samplePopNames array from above to test valid cases
+      const validPopNames = [
+        'Carrier did not provide detail',
+        '',
+        'Endosulfan',
+        'PFOS',
+        'PCB',
+        'DDT'
+      ]
+
+      it.each(validPopNames)('should return true for: "%s"', (popName) => {
+        expect(isValidPopName(popName)).toBe(true)
+      })
+    })
+
+    describe('returns false for invalid inputs', () => {
+      const invalidInputs = [
+        [null, 'null'],
+        [undefined, 'undefined'],
+        ['Invalid POP Name', 'invalid string'],
+        [123, 'number'],
+        [true, 'boolean'],
+        [{}, 'object'],
+        [[], 'array'],
+        ['pfos', 'wrong case']
+      ]
+
+      it.each(invalidInputs)(
+        'should return false for %s (%s)',
+        (input, description) => {
+          expect(isValidPopName(input)).toBe(false)
+        }
+      )
     })
   })
 })
