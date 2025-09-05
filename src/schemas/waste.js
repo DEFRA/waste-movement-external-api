@@ -1,5 +1,6 @@
 import Joi from 'joi'
 import { isValidEwcCode } from '../common/constants/ewc-codes.js'
+import { isValidPopName } from '../common/constants/pop-names.js'
 import { weightSchema } from './weight.js'
 
 const MAX_EWC_CODES_COUNT = 5
@@ -12,13 +13,51 @@ const popsSchema = Joi.object({
     'any.required':
       'Does the waste contain persistent organic pollutants (POPs)? is required'
   }),
-  pops: Joi.array().items(
+  components: Joi.array().items(
     Joi.object({
-      name: Joi.string(),
-      concentration: Joi.number()
-    }).label('PopsItem')
+      name: Joi.string()
+        .allow('') // Allow empty string as it's a valid POP name
+        .custom((value, helpers) => {
+          if (!isValidPopName(value)) {
+            return helpers.error('string.popNameInvalid')
+          }
+          return value
+        })
+        .required()
+        .messages({
+          'any.required': 'POP name is required',
+          'string.popNameInvalid': 'POP name is not valid'
+        }),
+      concentration: Joi.number().required().messages({
+        'any.required': 'POP concentration is required'
+      })
+    }).label('PopComponent')
   )
-}).label('Pops')
+})
+  .custom((value, helpers) => {
+    // Custom validation based on containsPops value
+    if (value && value.containsPops === true) {
+      // When POPs are present, components can be provided (optional)
+      return value
+    } else if (value && value.containsPops === false) {
+      // When POPs are not present, components should not be provided
+      // Exception: allow empty string in component names
+      if (value.components && value.components.length > 0) {
+        const hasNonEmptyName = value.components.some(
+          (comp) => comp.name && comp.name !== ''
+        )
+        if (hasNonEmptyName) {
+          return helpers.error('any.invalid')
+        }
+      }
+      return value
+    }
+    return value
+  })
+  .messages({
+    'any.invalid': 'A POP name cannot be provided when POPs are not present'
+  })
+  .label('Pops')
 
 const hazardousSchema = Joi.object({
   containsHazardous: Joi.boolean().required().messages({
