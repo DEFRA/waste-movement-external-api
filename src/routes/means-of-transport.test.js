@@ -38,7 +38,9 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
             carrier: {
               registrationNumber: 'CBDU123456',
               organisationName: 'Test Carrier',
-              meansOfTransport
+              meansOfTransport,
+              vehicleRegistration:
+                meansOfTransport !== 'Road' ? undefined : 'ABC123'
             }
           })
 
