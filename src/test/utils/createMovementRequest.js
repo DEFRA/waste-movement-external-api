@@ -3,7 +3,7 @@ export function createMovementRequest(overrides) {
     receivingSiteId: 'site123',
     dateTimeReceived: '2021-01-01T00:00:00.000Z',
     carrier: {
-      registrationNumber: '123456789',
+      registrationNumber: 'CBDU123456',
       organisationName: 'Test Carrier',
       address: {
         postCode: 'TE1 1ST'
