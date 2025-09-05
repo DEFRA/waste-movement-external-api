@@ -105,9 +105,11 @@ const receiverSchema = Joi.object({
   phoneNumber: Joi.string(),
   authorisations: Joi.array().items({
     authorisationType: Joi.string(),
-    authorisationNumber: Joi.string()
-  }),
-  regulatoryPositionStatement: Joi.string()
+    authorisationNumber: Joi.string(),
+    regulatoryPositionStatement: Joi.array()
+      .items(Joi.number().integer().positive())
+      .optional()
+  })
 }).label('Receiver')
 
 const disposalOrRecoveryCodeSchema = Joi.object({
