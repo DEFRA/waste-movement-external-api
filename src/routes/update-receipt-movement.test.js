@@ -88,6 +88,44 @@ describe('handleUpdateReceiptMovement', () => {
     expect(mockH.code).toHaveBeenCalledWith(200)
   })
 
+  it('should successfully update a receipt movement with RPS numbers', async () => {
+    const requestWithRPS = {
+      ...mockRequest,
+      payload: {
+        ...mockRequest.payload,
+        receiver: {
+          ...mockRequest.payload.receiver,
+          authorisations: [
+            {
+              authorisationType: 'permit',
+              authorisationNumber: 'EPR/AB1234CD',
+              regulatoryPositionStatement: [100, 200, 300]
+            }
+          ]
+        }
+      }
+    }
+
+    httpClients.wasteMovement.put.mockResolvedValueOnce({
+      statusCode: 200
+    })
+
+    await handleUpdateReceiptMovement(requestWithRPS, mockH)
+
+    expect(httpClients.wasteMovement.put).toHaveBeenCalledWith(
+      `/movements/${mockRequest.params.wasteTrackingId}/receive`,
+      { movement: requestWithRPS.payload }
+    )
+    expect(mockH.response).toHaveBeenCalledWith(expectedResponseWithWarnings)
+    expect(mockH.code).toHaveBeenCalledWith(200)
+
+    // Verify the RPS numbers were included in the API call
+    const callPayload = httpClients.wasteMovement.put.mock.calls[0][1].movement
+    expect(
+      callPayload.receiver.authorisations[0].regulatoryPositionStatement
+    ).toEqual([100, 200, 300])
+  })
+
   it('should handle not found error', async () => {
     const notFoundError = new Error('Not Found')
     notFoundError.name = 'NotFoundError'

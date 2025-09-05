@@ -82,6 +82,58 @@ describe('Create Receipt Movement Route', () => {
     )
   })
 
+  it('should successfully create a waste movement with RPS numbers', async () => {
+    // Mock successful waste movement creation
+    httpClients.wasteMovement.post.mockResolvedValue({
+      statusCode: 200
+    })
+
+    const payloadWithRPS = {
+      ...validPayload,
+      receiver: {
+        ...validPayload.receiver,
+        authorisations: [
+          {
+            authorisationType: 'permit',
+            authorisationNumber: 'EPR123',
+            regulatoryPositionStatement: [123, 456, 789]
+          }
+        ]
+      }
+    }
+
+    const request = {
+      auth: {
+        credentials: {
+          clientId: 'test-client-id'
+        }
+      },
+      payload: payloadWithRPS
+    }
+    const h = {
+      response: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis()
+    }
+
+    await createReceiptMovement.handler(request, h)
+
+    expect(h.response).toHaveBeenCalledWith({
+      statusCode: 200,
+      globalMovementId: mockWasteTrackingId,
+      validation: {
+        warnings: [disposalOrRecoveryCodesWarning]
+      }
+    })
+
+    // Verify waste movement was created with RPS numbers
+    expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
+      `/movements/${mockWasteTrackingId}/receive`,
+      {
+        movement: payloadWithRPS
+      }
+    )
+  })
+
   it('should return 500 when waste movement creation fails', async () => {
     // Mock waste movement creation failure
     httpClients.wasteMovement.post.mockRejectedValue(new Error('API Error'))

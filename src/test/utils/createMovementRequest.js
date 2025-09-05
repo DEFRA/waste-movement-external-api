@@ -18,7 +18,8 @@ export function createMovementRequest(overrides) {
       authorisations: [
         {
           authorisationType: 'type',
-          authorisationNumber: '1234'
+          authorisationNumber: '1234',
+          regulatoryPositionStatement: [343]
         }
       ]
     },

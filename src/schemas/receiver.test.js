@@ -1,5 +1,6 @@
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
+import { TEST_DATA } from './test-constants.js'
 
 describe('Receiver Validation', () => {
   const basePayload = createMovementRequest()
@@ -118,5 +119,46 @@ describe('Receiver Validation', () => {
     const { error } = validate(receiver, receipt)
     expect(error).toBeDefined()
     expect(error.message).toBe('"receiver.emailAddress" must be a valid email')
+  })
+
+  it('accepts receiver with authorisations containing valid RPS numbers', () => {
+    const receiver = {
+      organisationName: TEST_DATA.RECEIVER.ORGANISATION_NAME,
+      authorisations: [
+        {
+          authorisationType: TEST_DATA.AUTHORISATION.TYPE,
+          authorisationNumber: TEST_DATA.AUTHORISATION.NUMBERS.COMPLEX,
+          regulatoryPositionStatement: [123, 456]
+        }
+      ]
+    }
+
+    const receipt = {
+      address: TEST_DATA.ADDRESS.RECEIVER
+    }
+
+    const { error } = validate(receiver, receipt)
+    expect(error).toBeUndefined()
+  })
+
+  it('rejects receiver with invalid RPS number format', () => {
+    const receiver = {
+      organisationName: TEST_DATA.RECEIVER.ORGANISATION_NAME,
+      authorisations: [
+        {
+          authorisationType: TEST_DATA.AUTHORISATION.TYPE,
+          authorisationNumber: TEST_DATA.AUTHORISATION.NUMBERS.COMPLEX,
+          regulatoryPositionStatement: [TEST_DATA.RPS.INVALID.STRINGS[0]]
+        }
+      ]
+    }
+
+    const receipt = {
+      address: TEST_DATA.ADDRESS.RECEIVER
+    }
+
+    const { error } = validate(receiver, receipt)
+    expect(error).toBeDefined()
+    expect(error.message).toContain('must be a number')
   })
 })
