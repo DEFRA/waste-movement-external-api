@@ -32,6 +32,22 @@ describe('receiveMovementRequestSchema - otherReferencesForMovement validation',
       const { error } = receiveMovementRequestSchema.validate(basePayload)
       expect(error).toBeUndefined()
     })
+
+    it('should accept payload without special handling requirements', () => {
+      const { error } = receiveMovementRequestSchema.validate(basePayload)
+      expect(error).toBeUndefined()
+    })
+
+    it('should accept payload special handling requirements with less than 5000 characters', () => {
+      const payload = {
+        ...basePayload,
+        specialHandlingRequirements: 'a'.repeat(5000)
+      }
+
+      const { error } = receiveMovementRequestSchema.validate(payload)
+
+      expect(error).toBeUndefined()
+    })
   })
 
   describe('invalid payloads', () => {
@@ -128,6 +144,21 @@ describe('receiveMovementRequestSchema - otherReferencesForMovement validation',
       expect(error).toBeDefined()
       expect(error.message).toContain(
         '"otherReferencesForMovement[0].reference" is not allowed to be empty'
+      )
+    })
+
+    it('should accept payload special handling requirements with less than 5000 characters', () => {
+      const payload = {
+        ...basePayload,
+        specialHandlingRequirements: 'a'.repeat(5001)
+      }
+
+      const { error } = receiveMovementRequestSchema.validate(payload)
+
+      expect(error).toBeDefined()
+      console.log(error.message)
+      expect(error.message).toContain(
+        '"specialHandlingRequirements" length must be less than or equal to 5000 characters long'
       )
     })
   })
