@@ -10,6 +10,13 @@ import {
 
 const MIN_STRING_LENGTH = 1
 
+// Carrier validation error messages
+const CARRIER_REGISTRATION_REQUIRED = 'Carrier registration number is required'
+const CARRIER_NA_REQUIRES_REASON =
+  'When carrier registration number is "N/A", a reason must be provided'
+const CARRIER_REASON_ONLY_FOR_NA =
+  'Reason for no registration number should only be provided when registration number is "N/A"'
+
 // RegEx per Gov UK recommendation: https://assets.publishing.service.gov.uk/media/5a7f3ff4ed915d74e33f5438/Bulk_Data_Transfer_-_additional_validation_valid_from_12_November_2015.pdf
 // BEGIN-NOSCAN
 const UK_POSTCODE_REGEX =
@@ -52,8 +59,8 @@ const carrierSchema = Joi.object({
       return value
     })
     .messages({
-      'string.empty': 'Carrier registration number is required',
-      'any.required': 'Carrier registration number is required'
+      'string.empty': CARRIER_REGISTRATION_REQUIRED,
+      'any.required': CARRIER_REGISTRATION_REQUIRED
     }),
   reasonForNoRegistrationNumber: Joi.string().custom((value, helpers) => {
     const registrationNumber = helpers.state.ancestors[0].registrationNumber
@@ -79,11 +86,9 @@ const carrierSchema = Joi.object({
 })
   .label('Carrier')
   .messages({
-    'carrier.naRequiresReason':
-      'When carrier registration number is "N/A", a reason must be provided',
-    'carrier.registrationRequired': 'Carrier registration number is required',
-    'carrier.reasonOnlyForNA':
-      'Reason for no registration number should only be provided when registration number is "N/A"'
+    'carrier.naRequiresReason': CARRIER_NA_REQUIRES_REASON,
+    'carrier.registrationRequired': CARRIER_REGISTRATION_REQUIRED,
+    'carrier.reasonOnlyForNA': CARRIER_REASON_ONLY_FOR_NA
   })
 
 const receiverAddressSchema = addressSchema.keys({
