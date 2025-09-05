@@ -41,10 +41,12 @@ const carrierSchema = Joi.object({
         helpers.state.ancestors[0].reasonForNoRegistrationNumber
 
       // If registration number is "N/A" (case-insensitive), reason is required
-      if (value && value.toUpperCase() === 'N/A') {
-        if (!reasonProvided || reasonProvided.trim() === '') {
-          return helpers.error('carrier.naRequiresReason')
-        }
+      if (
+        value &&
+        value.toUpperCase() === 'N/A' &&
+        (!reasonProvided || reasonProvided.trim() === '')
+      ) {
+        return helpers.error('carrier.naRequiresReason')
       }
 
       return value
