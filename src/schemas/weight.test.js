@@ -47,6 +47,23 @@ describe('Receipt Schema Validation - Weight', () => {
         )
       })
     })
+
+    describe('IsEstimate Validation', () => {
+      it.each(['True', 'False', 'true', 'false', true, false])(
+        'should accept valid isEstimate - %s',
+        (isEstimate) => {
+          const result = validateWithWeightOverrides({ isEstimate })
+
+          expect(result.error).toBeUndefined()
+        }
+      )
+
+      it('should require isEstimate', () => {
+        const result = validateWithWeightOverrides({ isEstimate: undefined })
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain('isEstimate is required')
+      })
+    })
   })
 
   describe('In disposalOrRecoveryCode', () => {
