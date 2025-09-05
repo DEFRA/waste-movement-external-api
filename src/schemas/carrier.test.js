@@ -1,5 +1,6 @@
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
+import { MEANS_OF_TRANSPORT } from '../common/constants/means-of-transport.js'
 
 describe('Carrier Registration Validation', () => {
   const basePayload = createMovementRequest()
@@ -181,5 +182,68 @@ describe('Carrier Registration Validation', () => {
       expect(error).toBeDefined()
       expect(error.message).toBe('"carrier.emailAddress" must be a valid email')
     })
+  })
+
+  describe('Vehicle registration validation', () => {
+    it('allows vehicle registration when Means of Transport is Road', () => {
+      const carrier = {
+        organisationName: 'Carrier Name',
+        registrationNumber: 'CBDU123456',
+        meansOfTransport: 'Road',
+        vehicleRegistration: 'ABC 123'
+      }
+
+      const { error } = validate(carrier)
+      expect(error).toBeUndefined()
+    })
+
+    it('requires a vehicle registration when Means of Transport is Road', () => {
+      const carrier = {
+        organisationName: 'Carrier Name',
+        registrationNumber: 'CBDU123456',
+        meansOfTransport: 'Road',
+        vehicleRegistration: undefined
+      }
+
+      const { error } = validate(carrier)
+      expect(error).toBeDefined()
+      expect(error.message).toBe(
+        'If carrier.meansOfTransport is "Road" then carrier.vehicleRegistration is required.'
+      )
+    })
+
+    it.each(MEANS_OF_TRANSPORT.filter((x) => x !== 'Road'))(
+      'allows no vehicle registration when Means of Transport is %s',
+      (meansOfTransport) => {
+        const carrier = {
+          organisationName: 'Carrier Name',
+          registrationNumber: 'CBDU123456',
+          meansOfTransport,
+          vehicleRegistration: undefined
+        }
+
+        const { error } = validate(carrier)
+        expect(error).toBeUndefined()
+      }
+    )
+
+    it.each(MEANS_OF_TRANSPORT.filter((x) => x !== 'Road'))(
+      'rejects vehicle registration when Means of Transport is %s',
+      (meansOfTransport) => {
+        const carrier = {
+          organisationName: 'Carrier Name',
+          registrationNumber: 'CBDU123456',
+          meansOfTransport,
+          vehicleRegistration: 'ABC 123'
+        }
+
+        const { error } = validate(carrier)
+        expect(error).toBeDefined()
+        console.log(error)
+        expect(error.message).toBe(
+          'If carrier.meansOfTransport is not "Road" then carrier.vehicleRegistration is not applicable.'
+        )
+      }
+    )
   })
 })
