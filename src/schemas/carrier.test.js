@@ -103,6 +103,21 @@ describe('Carrier Registration Validation', () => {
         'When carrier registration number is "N/A", a reason must be provided'
       )
     })
+
+    it('rejects submission with valid registration number and a reason', () => {
+      const carrier = {
+        registrationNumber: 'CBDU123456',
+        reasonForNoRegistrationNumber:
+          'Should not have a reason with valid number',
+        organisationName: 'Test Carrier'
+      }
+
+      const { error } = validate(carrier)
+      expect(error).toBeDefined()
+      expect(error.message).toBe(
+        'Reason for no registration number should only be provided when registration number is "N/A"'
+      )
+    })
   })
 
   describe('Additional carrier info validation', () => {
