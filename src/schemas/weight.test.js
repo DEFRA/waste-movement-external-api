@@ -64,6 +64,37 @@ describe('Receipt Schema Validation - Weight', () => {
         expect(result.error.message).toContain('isEstimate is required')
       })
     })
+
+    describe('Amount Validation', () => {
+      it('should require amount', () => {
+        const result = validateWithWeightOverrides({ amount: undefined })
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          '"wasteItems[0].weight.amount" is required'
+        )
+      })
+
+      it('should accept a positive number', () => {
+        const result = validateWithWeightOverrides({ amount: 0.1 })
+
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should accept zero', () => {
+        const result = validateWithWeightOverrides({ amount: 0 })
+
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should reject a negative integer', () => {
+        const result = validateWithWeightOverrides({ amount: -0.1 })
+
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          '"wasteItems[0].weight.amount" must be greater than or equal to 0'
+        )
+      })
+    })
   })
 
   describe('In disposalOrRecoveryCode', () => {
@@ -124,6 +155,37 @@ describe('Receipt Schema Validation - Weight', () => {
       expect(result.error.message).toContain(
         '"disposalOrRecoveryCodes[0].weight" is required'
       )
+    })
+
+    describe('Amount Validation', () => {
+      it('should require amount', () => {
+        const result = validateWithReceiptWeightOverrides({ amount: undefined })
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          '"disposalOrRecoveryCodes[0].weight.amount" is required'
+        )
+      })
+
+      it('should accept a positive number', () => {
+        const result = validateWithReceiptWeightOverrides({ amount: 0.1 })
+
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should accept zero', () => {
+        const result = validateWithReceiptWeightOverrides({ amount: 0 })
+
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should reject a negative integer', () => {
+        const result = validateWithReceiptWeightOverrides({ amount: -0.1 })
+
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          '"disposalOrRecoveryCodes[0].weight.amount" must be greater than or equal to 0'
+        )
+      })
     })
   })
 })
