@@ -20,6 +20,7 @@ export const TEST_DATA = {
   },
 
   AUTHORISATION: {
+    TYPE: 'permit',
     NUMBERS: {
       SIMPLE: 'EPR123',
       COMPLEX: 'EPR/AB1234CD'

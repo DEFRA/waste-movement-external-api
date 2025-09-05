@@ -14,6 +14,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
         organisationName: TEST_DATA.RECEIVER.ORGANISATION_NAME,
         authorisations: [
           {
+            authorisationType: TEST_DATA.AUTHORISATION.TYPE,
             authorisationNumber: [TEST_DATA.AUTHORISATION.NUMBERS.SIMPLE],
             regulatoryPositionStatement: TEST_DATA.RPS.VALID.SINGLE
           }
@@ -35,6 +36,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
         organisationName: TEST_DATA.RECEIVER.ORGANISATION_NAME,
         authorisations: [
           {
+            authorisationType: TEST_DATA.AUTHORISATION.TYPE,
             authorisationNumber: [TEST_DATA.AUTHORISATION.NUMBERS.SIMPLE],
             regulatoryPositionStatement: TEST_DATA.RPS.VALID.MULTIPLE
           }
@@ -56,6 +58,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
         organisationName: 'Test Receiver',
         authorisations: [
           {
+            authorisationType: 'permit',
             authorisationNumber: ['EPR123']
           }
         ]
@@ -103,6 +106,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
         organisationName: 'Test Receiver',
         authorisations: [
           {
+            authorisationType: 'permit',
             authorisationNumber: ['EPR123'],
             regulatoryPositionStatement: ['123RPS']
           }
@@ -123,6 +127,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
         organisationName: 'Test Receiver',
         authorisations: [
           {
+            authorisationType: 'permit',
             authorisationNumber: ['EPR123'],
             regulatoryPositionStatement: ['RPS-123']
           }
@@ -143,6 +148,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
         organisationName: 'Test Receiver',
         authorisations: [
           {
+            authorisationType: 'permit',
             authorisationNumber: ['EPR123'],
             regulatoryPositionStatement: ['RPS12A3']
           }
@@ -163,6 +169,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
         organisationName: 'Test Receiver',
         authorisations: [
           {
+            authorisationType: 'permit',
             authorisationNumber: ['EPR123'],
             regulatoryPositionStatement: [-123]
           }
@@ -183,6 +190,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
         organisationName: 'Test Receiver',
         authorisations: [
           {
+            authorisationType: 'permit',
             authorisationNumber: ['EPR123'],
             regulatoryPositionStatement: [0]
           }
@@ -203,6 +211,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
         organisationName: 'Test Receiver',
         authorisations: [
           {
+            authorisationType: 'permit',
             authorisationNumber: ['EPR123'],
             regulatoryPositionStatement: [12.5]
           }
