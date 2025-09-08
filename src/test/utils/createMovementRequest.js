@@ -1,8 +1,9 @@
 export function createMovementRequest(overrides) {
   const defaultMovementRequest = {
     receivingSiteId: 'site123',
+    dateTimeReceived: '2021-01-01T00:00:00.000Z',
     carrier: {
-      registrationNumber: '123456789',
+      registrationNumber: 'CBDU123456',
       organisationName: 'Test Carrier',
       address: {
         postCode: 'TE1 1ST'
@@ -13,6 +14,7 @@ export function createMovementRequest(overrides) {
       meansOfTransport: 'Road'
     },
     receiver: {
+      organisationName: 'Test Receiver',
       authorisations: [
         {
           authorisationType: 'type',
@@ -21,7 +23,10 @@ export function createMovementRequest(overrides) {
       ]
     },
     receipt: {
-      dateTimeReceived: '2021-01-01T00:00:00.000Z'
+      address: {
+        fullAddress: '123 Test St, Test City',
+        postCode: 'TE1 1ST'
+      }
     }
   }
 

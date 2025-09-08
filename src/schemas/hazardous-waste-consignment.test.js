@@ -3,10 +3,11 @@ import {
   generateAllValidationWarnings,
   VALIDATION_ERROR_TYPES
 } from '../common/helpers/validation-warnings.js'
+import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 
 // Helper to build a base valid payload
 const buildBasePayload = () => ({
-  receivingSiteId: 'site123',
+  ...createMovementRequest(),
   wasteItems: [
     {
       ewcCodes: ['010101'], // non-hazardous by default
@@ -16,7 +17,8 @@ const buildBasePayload = () => ({
         metric: 'Tonnes',
         amount: 1,
         isEstimate: false
-      }
+      },
+      numberOfContainers: 1
     }
   ]
 })

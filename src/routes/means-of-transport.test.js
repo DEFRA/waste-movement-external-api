@@ -3,6 +3,7 @@ import { httpClients } from '../common/helpers/http-client.js'
 import { createReceiptMovement } from './create-receipt-movement.js'
 import { receiveMovementRequestSchema } from '../schemas/receipt.js'
 import { MEANS_OF_TRANSPORT } from '../common/constants/means-of-transport.js'
+import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -31,17 +32,17 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
 
   describe('Schema Validation Tests', () => {
     describe('Valid Means of Transport', () => {
-      const validMeansOfTransport = MEANS_OF_TRANSPORT
-
-      validMeansOfTransport.forEach((meansOfTransport) => {
+      MEANS_OF_TRANSPORT.forEach((meansOfTransport) => {
         it(`should accept valid means of transport: ${meansOfTransport}`, () => {
-          const validPayload = {
-            receivingSiteId: 'site123',
+          const validPayload = createMovementRequest({
             carrier: {
+              registrationNumber: 'CBDU123456',
               organisationName: 'Test Carrier',
-              meansOfTransport: meansOfTransport
+              meansOfTransport,
+              vehicleRegistration:
+                meansOfTransport !== 'Road' ? undefined : 'ABC123'
             }
-          }
+          })
 
           const { error } = receiveMovementRequestSchema.validate(validPayload)
           expect(error).toBeUndefined()
@@ -62,9 +63,11 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
         it(`should reject invalid means of transport: ${meansOfTransport}`, () => {
           const invalidPayload = {
             receivingSiteId: 'site123',
+            dateTimeReceived: '2024-01-15T14:30:00Z',
             carrier: {
+              registrationNumber: 'CBDU123456',
               organisationName: 'Test Carrier',
-              meansOfTransport: meansOfTransport
+              meansOfTransport
             }
           }
 
@@ -79,8 +82,9 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
     describe('Optional Means of Transport', () => {
       it('should accept submission without means of transport', () => {
         const validPayload = {
-          receivingSiteId: 'site123',
+          ...createMovementRequest(),
           carrier: {
+            registrationNumber: 'CBDU123456',
             organisationName: 'Test Carrier'
             // No meansOfTransport specified
           }
