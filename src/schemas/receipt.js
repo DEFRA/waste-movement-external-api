@@ -35,13 +35,13 @@ const LONG_STRING_MAX_LENGTH = 5000
 
 const addressSchema = Joi.object({
   fullAddress: Joi.string(),
-  postCode: Joi.alternatives()
+  postcode: Joi.alternatives()
     .try(
       Joi.string().pattern(UK_POSTCODE_REGEX),
       Joi.string().pattern(IRL_POSTCODE_REGEX)
     )
     .messages({
-      'alternatives.match': 'Post Code must be in valid UK or Ireland format'
+      'alternatives.match': 'Postcode must be in valid UK or Ireland format'
     })
     .required()
 })
@@ -106,9 +106,9 @@ const carrierSchema = Joi.object({
 
 const receiverAddressSchema = addressSchema.keys({
   fullAddress: Joi.string().required(),
-  postCode: Joi.string()
+  postcode: Joi.string()
     .pattern(UK_POSTCODE_REGEX)
-    .message('Post Code must be in valid UK format')
+    .message('Postcode must be in valid UK format')
     .required()
 })
 

@@ -10,7 +10,7 @@ describe('BrokerOrDealer Validation', () => {
   it('accepts complete broker info with UK postcode, email and phone', () => {
     const broker = {
       organisationName: 'Test Broker',
-      address: { fullAddress: '1 Broker St, Town', postCode: 'TE1 1ST' },
+      address: { fullAddress: '1 Broker St, Town', postcode: 'TE1 1ST' },
       emailAddress: 'broker@example.com',
       phoneNumber: '01234567890'
     }
@@ -26,7 +26,7 @@ describe('BrokerOrDealer Validation', () => {
 
   it('rejects when any properties provided but organisationName missing', () => {
     const broker = {
-      address: { fullAddress: '1 Broker St, Town', postCode: 'TE1 1ST' },
+      address: { fullAddress: '1 Broker St, Town', postcode: 'TE1 1ST' },
       emailAddress: 'broker@example.com',
       phoneNumber: '01234567890'
     }
@@ -39,7 +39,7 @@ describe('BrokerOrDealer Validation', () => {
   it('accepts valid broker contact address with UK postcode', () => {
     const broker = {
       organisationName: 'Test Broker',
-      address: { fullAddress: '1 Broker St, Town', postCode: 'TE1 1ST' }
+      address: { fullAddress: '1 Broker St, Town', postcode: 'TE1 1ST' }
     }
 
     const { error } = validate(broker)
@@ -54,13 +54,13 @@ describe('BrokerOrDealer Validation', () => {
 
     const { error } = validate(broker)
     expect(error).toBeDefined()
-    expect(error.message).toBe('"brokerOrDealer.address.postCode" is required')
+    expect(error.message).toBe('"brokerOrDealer.address.postcode" is required')
   })
 
   it('accepts valid Ireland Eircode', () => {
     const broker = {
       organisationName: 'Irish Broker',
-      address: { fullAddress: '1 Broker St, Dublin', postCode: 'A65 F4E2' }
+      address: { fullAddress: '1 Broker St, Dublin', postcode: 'A65 F4E2' }
     }
 
     const { error } = validate(broker)
@@ -70,7 +70,7 @@ describe('BrokerOrDealer Validation', () => {
   it('accept valid Ireland Eircode without space', () => {
     const broker = {
       organisationName: 'Irish Broker',
-      address: { fullAddress: '1 Broker St, Dublin', postCode: 'A65F4E2' }
+      address: { fullAddress: '1 Broker St, Dublin', postcode: 'A65F4E2' }
     }
 
     const { error } = validate(broker)
@@ -80,14 +80,12 @@ describe('BrokerOrDealer Validation', () => {
   it('rejects invalid broker postcode', () => {
     const broker = {
       organisationName: 'Invalid Postcode Broker',
-      address: { fullAddress: '1 Broker St, Town', postCode: 'INVALID' }
+      address: { fullAddress: '1 Broker St, Town', postcode: 'INVALID' }
     }
 
     const { error } = validate(broker)
     expect(error).toBeDefined()
-    expect(error.message).toBe(
-      'Post Code must be in valid UK or Ireland format'
-    )
+    expect(error.message).toBe('Postcode must be in valid UK or Ireland format')
   })
 
   it('rejects invalid broker email address', () => {

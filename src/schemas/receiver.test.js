@@ -17,7 +17,7 @@ describe('Receiver Validation', () => {
     const receipt = {
       receiptAddress: {
         fullAddress: '1 Receiver St, Town',
-        postCode: 'TE1 1ST'
+        postcode: 'TE1 1ST'
       }
     }
 
@@ -33,7 +33,7 @@ describe('Receiver Validation', () => {
     const receipt = {
       receiptAddress: {
         fullAddress: '1 Receiver St, Town',
-        postCode: 'TE1 1ST'
+        postcode: 'TE1 1ST'
       }
     }
 
@@ -43,13 +43,13 @@ describe('Receiver Validation', () => {
 
   it('rejects when any receiver properties provided but organisationName missing', () => {
     const receiver = {
-      address: { fullAddress: '1 Receiver St, Town', postCode: 'TE1 1ST' }
+      address: { fullAddress: '1 Receiver St, Town', postcode: 'TE1 1ST' }
     }
 
     const receipt = {
       receiptAddress: {
         fullAddress: '1 Receiver St, Town',
-        postCode: 'TE1 1ST'
+        postcode: 'TE1 1ST'
       }
     }
 
@@ -83,7 +83,7 @@ describe('Receiver Validation', () => {
 
     const { error } = validate(receiver, receipt)
     expect(error).toBeDefined()
-    expect(error.message).toBe('"receipt.receiptAddress.postCode" is required')
+    expect(error.message).toBe('"receipt.receiptAddress.postcode" is required')
   })
 
   it('rejects incomplete receiver address without fullAddress', () => {
@@ -92,7 +92,7 @@ describe('Receiver Validation', () => {
     }
 
     const receipt = {
-      receiptAddress: { postCode: 'TE1 1ST' }
+      receiptAddress: { postcode: 'TE1 1ST' }
     }
 
     const { error } = validate(receiver, receipt)
@@ -110,13 +110,13 @@ describe('Receiver Validation', () => {
     const receipt = {
       receiptAddress: {
         fullAddress: '1 Receiver St, Town',
-        postCode: 'INVALID'
+        postcode: 'INVALID'
       }
     }
 
     const { error } = validate(receiver, receipt)
     expect(error).toBeDefined()
-    expect(error.message).toBe('Post Code must be in valid UK format')
+    expect(error.message).toBe('Postcode must be in valid UK format')
   })
 
   it('rejects valid Ireland Eircode', () => {
@@ -127,13 +127,13 @@ describe('Receiver Validation', () => {
     const receipt = {
       receiptAddress: {
         fullAddress: '1 Receiver St, Dublin',
-        postCode: 'P85 YH98'
+        postcode: 'P85 YH98'
       }
     }
 
     const { error } = validate(receiver, receipt)
     expect(error).toBeDefined()
-    expect(error.message).toBe('Post Code must be in valid UK format')
+    expect(error.message).toBe('Postcode must be in valid UK format')
   })
 
   it('rejects invalid receiver email address', () => {
@@ -145,7 +145,7 @@ describe('Receiver Validation', () => {
     const receipt = {
       receiptAddress: {
         fullAddress: '1 Receiver St, Town',
-        postCode: 'TE1 1ST'
+        postcode: 'TE1 1ST'
       }
     }
 
