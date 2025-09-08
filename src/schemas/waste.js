@@ -51,8 +51,11 @@ const popsSchema = Joi.object({
         }
       }
       return value
+    } else {
+      // When containsPops is undefined, null, or any other value
+      // Let the required validation handle the missing containsPops field
+      return value
     }
-    return value
   })
   .messages({
     'any.invalid': 'A POP name cannot be provided when POPs are not present'
