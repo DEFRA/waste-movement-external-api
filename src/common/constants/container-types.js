@@ -25,10 +25,6 @@ export const validContainerTypes = [
  * @returns {boolean} - True if the code is valid, false otherwise
  */
 export const isValidContainerType = (containerType) => {
-  if (!containerType) {
-    return false
-  }
-
   // Check if the container type is in the list of valid types
   return validContainerTypes.includes(containerType)
 }
