@@ -24,7 +24,8 @@ export const createTestPayload = (overrides = {}) => {
       metric: TEST_CONSTANTS.DEFAULT_METRIC,
       amount: TEST_CONSTANTS.DEFAULT_AMOUNT,
       isEstimate: TEST_CONSTANTS.DEFAULT_IS_ESTIMATE
-    }
+    },
+    numberOfContainers: 1
   }
 
   // Merge waste item overrides
