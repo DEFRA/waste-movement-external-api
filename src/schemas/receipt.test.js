@@ -38,7 +38,7 @@ describe('receiveMovementRequestSchema - otherReferencesForMovement validation',
       expect(error).toBeUndefined()
     })
 
-    it('should accept payload special handling requirements with less than 5000 characters', () => {
+    it('should accept special handling requirements with 5000 characters', () => {
       const payload = {
         ...basePayload,
         specialHandlingRequirements: 'a'.repeat(5000)
@@ -147,7 +147,7 @@ describe('receiveMovementRequestSchema - otherReferencesForMovement validation',
       )
     })
 
-    it('should accept payload special handling requirements with less than 5000 characters', () => {
+    it('should reject special handling requirements with more than 5000 characters', () => {
       const payload = {
         ...basePayload,
         specialHandlingRequirements: 'a'.repeat(5001)
