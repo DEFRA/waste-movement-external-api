@@ -17,7 +17,8 @@ const buildBasePayload = () => ({
         metric: 'Tonnes',
         amount: 1,
         isEstimate: false
-      }
+      },
+      numberOfContainers: 1
     }
   ]
 })

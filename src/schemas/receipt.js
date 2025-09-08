@@ -16,6 +16,10 @@ const CARRIER_NA_REQUIRES_REASON =
   'When carrier registration number is "N/A", a reason must be provided'
 const CARRIER_REASON_ONLY_FOR_NA =
   'Reason for no registration number should only be provided when registration number is "N/A"'
+const CARRIER_VEHICLE_REG_REQUIRED_FOR_ROAD =
+  'If carrier.meansOfTransport is "Road" then carrier.vehicleRegistration is required.'
+const CARRIER_VEHICLE_REG_ONLY_ALLOWED_FOR_ROAD =
+  'If carrier.meansOfTransport is not "Road" then carrier.vehicleRegistration is not applicable.'
 
 // RegEx per Gov UK recommendation: https://assets.publishing.service.gov.uk/media/5a7f3ff4ed915d74e33f5438/Bulk_Data_Transfer_-_additional_validation_valid_from_12_November_2015.pdf
 // BEGIN-NOSCAN
@@ -82,7 +86,14 @@ const carrierSchema = Joi.object({
   address: addressSchema,
   emailAddress: Joi.string().email(),
   phoneNumber: Joi.string(),
-  vehicleRegistration: Joi.string(),
+  vehicleRegistration: Joi.when('meansOfTransport', {
+    is: Joi.string().required().valid('Road'),
+    then: Joi.string().required(),
+    otherwise: Joi.forbidden()
+  }).messages({
+    'any.required': CARRIER_VEHICLE_REG_REQUIRED_FOR_ROAD,
+    'any.unknown': CARRIER_VEHICLE_REG_ONLY_ALLOWED_FOR_ROAD
+  }),
   meansOfTransport: Joi.string().valid(...MEANS_OF_TRANSPORT),
   otherMeansOfTransport: Joi.string()
 })
