@@ -1,6 +1,8 @@
 import Joi from 'joi'
 import { isValidEwcCode } from '../common/constants/ewc-codes.js'
+import { isValidPopName } from '../common/constants/pop-names.js'
 import { weightSchema } from './weight.js'
+import { isValidContainerType } from '../common/constants/container-types.js'
 
 const MAX_EWC_CODES_COUNT = 5
 const MIN_HAZARD_CODE = 1
@@ -12,13 +14,54 @@ const popsSchema = Joi.object({
     'any.required':
       'Does the waste contain persistent organic pollutants (POPs)? is required'
   }),
-  pops: Joi.array().items(
+  components: Joi.array().items(
     Joi.object({
-      name: Joi.string(),
-      concentration: Joi.number()
-    }).label('PopsItem')
+      name: Joi.string()
+        .allow('') // Allow empty string as it's a valid POP name
+        .custom((value, helpers) => {
+          if (!isValidPopName(value)) {
+            return helpers.error('string.popNameInvalid')
+          }
+          return value
+        })
+        .required()
+        .messages({
+          'any.required': 'POP name is required',
+          'string.popNameInvalid': 'POP name is not valid'
+        }),
+      concentration: Joi.number().required().messages({
+        'any.required': 'POP concentration is required'
+      })
+    }).label('PopComponent')
   )
-}).label('Pops')
+})
+  .custom((value, helpers) => {
+    // Custom validation based on containsPops value
+    if (value && value.containsPops === true) {
+      // When POPs are present, components can be provided (optional)
+      return value
+    } else if (value && value.containsPops === false) {
+      // When POPs are not present, components should not be provided
+      // Exception: allow empty string in component names
+      if (value.components && value.components.length > 0) {
+        const hasNonEmptyName = value.components.some(
+          (comp) => comp.name && comp.name !== ''
+        )
+        if (hasNonEmptyName) {
+          return helpers.error('any.invalid')
+        }
+      }
+      return value
+    } else {
+      // When containsPops is undefined, null, or any other value
+      // Let the required validation handle the missing containsPops field
+      return value
+    }
+  })
+  .messages({
+    'any.invalid': 'A POP name cannot be provided when POPs are not present'
+  })
+  .label('Pops')
 
 const hazardousSchema = Joi.object({
   containsHazardous: Joi.boolean().required().messages({
@@ -97,10 +140,7 @@ const hazardousSchema = Joi.object({
   .custom((value, helpers) => {
     // Custom validation to check components based on containsHazardous value
     if (value && value.containsHazardous === true) {
-      // When hazardous, components are required with at least one item
-      if (!value.components || value.components.length === 0) {
-        return helpers.error('any.required')
-      }
+      // When hazardous, components are optional (can be provided or not)
       return value
     } else if (
       value?.containsHazardous === false &&
@@ -136,6 +176,15 @@ function validateEwcCode(value, helpers) {
   return value
 }
 
+function validateContainerType(value, helpers) {
+  // Check if it's in the list of valid container types
+  if (!isValidContainerType(value)) {
+    return helpers.error('string.containerTypeInvalid', { value })
+  }
+
+  return value
+}
+
 export const wasteItemsSchema = Joi.object({
   ewcCodes: Joi.array()
     .items(
@@ -156,7 +205,12 @@ export const wasteItemsSchema = Joi.object({
     .valid('Gas', 'Liquid', 'Solid', 'Powder', 'Sludge', 'Mixed')
     .required(),
   numberOfContainers: Joi.number().required().min(0),
-  typeOfContainers: Joi.string(),
+  typeOfContainers: Joi.string()
+    .required()
+    .custom(validateContainerType, 'Container type validation')
+    .messages({
+      'string.containerTypeInvalid': '{{#label}} must be a valid container type'
+    }),
   weight: weightSchema,
   pops: popsSchema,
   hazardous: hazardousSchema

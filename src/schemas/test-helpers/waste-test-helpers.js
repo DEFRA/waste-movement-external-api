@@ -1,4 +1,5 @@
 // Test Constants
+import { validContainerTypes } from '../../common/constants/container-types.js'
 import { createMovementRequest } from '../../test/utils/createMovementRequest.js'
 
 export const TEST_CONSTANTS = {
@@ -24,7 +25,8 @@ export const createTestPayload = (overrides = {}) => {
       amount: TEST_CONSTANTS.DEFAULT_AMOUNT,
       isEstimate: TEST_CONSTANTS.DEFAULT_IS_ESTIMATE
     },
-    numberOfContainers: 1
+    numberOfContainers: 1,
+    typeOfContainers: validContainerTypes[0]
   }
 
   // Merge waste item overrides

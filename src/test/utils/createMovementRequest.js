@@ -8,7 +8,7 @@ export function createMovementRequest(overrides) {
       registrationNumber: 'CBDU123456',
       organisationName: 'Test Carrier',
       address: {
-        postCode: 'TE1 1ST'
+        postcode: 'TE1 1ST'
       },
       emailAddress: 'email@email.com',
       phoneNumber: '01234567890',
@@ -27,7 +27,7 @@ export function createMovementRequest(overrides) {
     receipt: {
       address: {
         fullAddress: '123 Test St, Test City',
-        postCode: 'TE1 1ST'
+        postcode: 'TE1 1ST'
       }
     }
   }

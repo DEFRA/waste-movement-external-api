@@ -1,3 +1,4 @@
+import { validContainerTypes } from '../common/constants/container-types.js'
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createTestPayload } from './test-helpers/waste-test-helpers.js'
 
@@ -42,6 +43,44 @@ describe('Receipt Schema Validation - Containers', () => {
       expect(result.error).toBeDefined()
       expect(result.error.message).toContain(
         '"wasteItems[0].numberOfContainers" must be greater than or equal to 0'
+      )
+    })
+  })
+  describe('Container type validation', () => {
+    it('should require container type', () => {
+      const payload = createTestPayload({
+        wasteItemOverrides: { typeOfContainers: undefined }
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
+
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toContain(
+        '"wasteItems[0].typeOfContainers" is required'
+      )
+    })
+
+    it.each(validContainerTypes)(
+      'valid container types are accepted - %s',
+      (containerType) => {
+        const payload = createTestPayload({
+          wasteItemOverrides: { typeOfContainers: containerType }
+        })
+
+        const result = receiveMovementRequestSchema.validate(payload)
+
+        expect(result.error).toBeUndefined()
+      }
+    )
+
+    it('should reject invalid container type', () => {
+      const payload = createTestPayload({
+        wasteItemOverrides: { typeOfContainers: 'INV' }
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
+
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toContain(
+        '"wasteItems[0].typeOfContainers" must be a valid container type'
       )
     })
   })
