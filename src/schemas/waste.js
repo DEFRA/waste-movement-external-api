@@ -1,6 +1,7 @@
 import Joi from 'joi'
 import { isValidEwcCode } from '../common/constants/ewc-codes.js'
 import { weightSchema } from './weight.js'
+import { isValidContainerType } from '../common/constants/container-types.js'
 
 const MAX_EWC_CODES_COUNT = 5
 const MIN_HAZARD_CODE = 1
@@ -133,6 +134,15 @@ function validateEwcCode(value, helpers) {
   return value
 }
 
+function validateContainerType(value, helpers) {
+  // Check if it's in the list of valid container types
+  if (!isValidContainerType(value)) {
+    return helpers.error('string.containerTypeInvalid', { value })
+  }
+
+  return value
+}
+
 export const wasteItemsSchema = Joi.object({
   ewcCodes: Joi.array()
     .items(
@@ -153,7 +163,12 @@ export const wasteItemsSchema = Joi.object({
     .valid('Gas', 'Liquid', 'Solid', 'Powder', 'Sludge', 'Mixed')
     .required(),
   numberOfContainers: Joi.number().required().min(0),
-  typeOfContainers: Joi.string(),
+  typeOfContainers: Joi.string()
+    .required()
+    .custom(validateContainerType, 'Container type validation')
+    .messages({
+      'string.containerTypeInvalid': '{{#label}} must be a valid container type'
+    }),
   weight: weightSchema,
   pops: popsSchema,
   hazardous: hazardousSchema
