@@ -131,7 +131,7 @@ const disposalOrRecoveryCodeSchema = Joi.object({
 }).label('DisposalOrRecoveryCode')
 
 const receiptSchema = Joi.object({
-  receiptAddress: receiverAddressSchema.required()
+  address: receiverAddressSchema.required()
 }).label('Receipt')
 
 const brokerOrDealerSchema = Joi.object({

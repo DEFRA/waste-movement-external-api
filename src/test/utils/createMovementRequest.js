@@ -23,7 +23,7 @@ export function createMovementRequest(overrides) {
       ]
     },
     receipt: {
-      receiptAddress: {
+      address: {
         fullAddress: '123 Test St, Test City',
         postcode: 'TE1 1ST'
       }
