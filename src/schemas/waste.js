@@ -155,7 +155,7 @@ export const wasteItemsSchema = Joi.object({
   physicalForm: Joi.string()
     .valid('Gas', 'Liquid', 'Solid', 'Powder', 'Sludge', 'Mixed')
     .required(),
-  numberOfContainers: Joi.number(),
+  numberOfContainers: Joi.number().required().min(0),
   typeOfContainers: Joi.string(),
   weight: weightSchema,
   pops: popsSchema,
