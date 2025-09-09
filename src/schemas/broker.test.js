@@ -7,6 +7,27 @@ describe('BrokerOrDealer Validation', () => {
   const validate = (brokerOrDealer) =>
     receiveMovementRequestSchema.validate({ ...basePayload, brokerOrDealer })
 
+  describe('Broker Registration Number', () => {
+    it('accepts valid broker registration number', () => {
+      const broker = {
+        organisationName: 'Test Broker',
+        registrationNumber: 'CBDU123456'
+      }
+
+      const { error } = validate(broker)
+      expect(error).toBeUndefined()
+    })
+
+    it('accepts submission without broker registration number', () => {
+      const broker = {
+        organisationName: 'Test Broker'
+      }
+
+      const { error } = validate(broker)
+      expect(error).toBeUndefined()
+    })
+  })
+
   it('accepts complete broker info with UK postcode, email and phone', () => {
     const broker = {
       organisationName: 'Test Broker',
