@@ -4,6 +4,7 @@ import {
   VALIDATION_ERROR_TYPES
 } from '../common/helpers/validation-warnings.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
+import { validContainerTypes } from '../common/constants/container-types.js'
 
 // Helper to build a base valid payload
 const buildBasePayload = () => ({
@@ -17,7 +18,9 @@ const buildBasePayload = () => ({
         metric: 'Tonnes',
         amount: 1,
         isEstimate: false
-      }
+      },
+      numberOfContainers: 1,
+      typeOfContainers: validContainerTypes[0]
     }
   ]
 })
