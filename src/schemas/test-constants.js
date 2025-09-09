@@ -30,15 +30,15 @@ export const TEST_DATA = {
   ADDRESS: {
     RECEIVER: {
       fullAddress: '1 Receiver St, Town',
-      postCode: 'TE1 1ST'
+      postcode: 'TE1 1ST'
     },
     INVALID_POSTCODE: {
       fullAddress: '1 Receiver St, Town',
-      postCode: 'INVALID'
+      postcode: 'INVALID'
     },
     IRELAND: {
       fullAddress: '1 Receiver St, Dublin',
-      postCode: 'P85 YH98'
+      postcode: 'P85 YH98'
     }
   },
 

@@ -65,7 +65,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       }
 
       const receipt = {
-        address: { fullAddress: '1 Receiver St, Town', postCode: 'TE1 1ST' }
+        address: { fullAddress: '1 Receiver St, Town', postcode: 'TE1 1ST' }
       }
 
       const { error } = validate(receiver, receipt)
@@ -79,7 +79,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       }
 
       const receipt = {
-        address: { fullAddress: '1 Receiver St, Town', postCode: 'TE1 1ST' }
+        address: { fullAddress: '1 Receiver St, Town', postcode: 'TE1 1ST' }
       }
 
       const { error } = validate(receiver, receipt)
@@ -92,7 +92,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       }
 
       const receipt = {
-        address: { fullAddress: '1 Receiver St, Town', postCode: 'TE1 1ST' }
+        address: { fullAddress: '1 Receiver St, Town', postcode: 'TE1 1ST' }
       }
 
       const { error } = validate(receiver, receipt)
@@ -114,7 +114,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       }
 
       const receipt = {
-        address: { fullAddress: '1 Receiver St, Town', postCode: 'TE1 1ST' }
+        address: { fullAddress: '1 Receiver St, Town', postcode: 'TE1 1ST' }
       }
 
       const { error } = validate(receiver, receipt)
@@ -135,7 +135,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       }
 
       const receipt = {
-        address: { fullAddress: '1 Receiver St, Town', postCode: 'TE1 1ST' }
+        address: { fullAddress: '1 Receiver St, Town', postcode: 'TE1 1ST' }
       }
 
       const { error } = validate(receiver, receipt)
@@ -156,7 +156,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       }
 
       const receipt = {
-        address: { fullAddress: '1 Receiver St, Town', postCode: 'TE1 1ST' }
+        address: { fullAddress: '1 Receiver St, Town', postcode: 'TE1 1ST' }
       }
 
       const { error } = validate(receiver, receipt)
@@ -177,7 +177,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       }
 
       const receipt = {
-        address: { fullAddress: '1 Receiver St, Town', postCode: 'TE1 1ST' }
+        address: { fullAddress: '1 Receiver St, Town', postcode: 'TE1 1ST' }
       }
 
       const { error } = validate(receiver, receipt)
@@ -198,7 +198,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       }
 
       const receipt = {
-        address: { fullAddress: '1 Receiver St, Town', postCode: 'TE1 1ST' }
+        address: { fullAddress: '1 Receiver St, Town', postcode: 'TE1 1ST' }
       }
 
       const { error } = validate(receiver, receipt)
@@ -219,7 +219,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       }
 
       const receipt = {
-        address: { fullAddress: '1 Receiver St, Town', postCode: 'TE1 1ST' }
+        address: { fullAddress: '1 Receiver St, Town', postcode: 'TE1 1ST' }
       }
 
       const { error } = validate(receiver, receipt)
