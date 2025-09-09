@@ -98,10 +98,7 @@ const hazardousSchema = Joi.object({
   .custom((value, helpers) => {
     // Custom validation to check components based on containsHazardous value
     if (value && value.containsHazardous === true) {
-      // When hazardous, components are required with at least one item
-      if (!value.components || value.components.length === 0) {
-        return helpers.error('any.required')
-      }
+      // When hazardous, components are optional (can be provided or not)
       return value
     } else if (
       value?.containsHazardous === false &&
