@@ -143,7 +143,7 @@ const brokerOrDealerSchema = Joi.object({
 }).label('BrokerOrDealer')
 
 export const receiveMovementRequestSchema = Joi.object({
-  receivingSiteId: Joi.string().required(),
+  organisationApiId: Joi.string().required().uuid(),
   dateTimeReceived: Joi.date().iso().required(),
   hazardousWasteConsignmentCode: hazardousWasteConsignmentCodeSchema,
   reasonForNoConsignmentCode: reasonForNoConsignmentCodeSchema,

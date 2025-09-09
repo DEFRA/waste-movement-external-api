@@ -17,7 +17,7 @@ describe('Error Handler', () => {
       method: 'POST',
       url: '/movements/receive',
       payload: {
-        // Missing required receivingSiteId
+        // Missing required organisationApiKey
         yourUniqueReference: 'test-reference'
       }
     })
@@ -44,7 +44,7 @@ describe('Error Handler', () => {
 
     // Check that the required field error has errorType 'NotProvided'
     const requiredFieldError = responseBody.validation.errors.find(
-      (err) => err.key === 'receivingSiteId'
+      (err) => err.key === 'organisationApiId'
     )
     expect(requiredFieldError).toBeDefined()
     expect(requiredFieldError.errorType).toBe('NotProvided')

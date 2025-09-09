@@ -3,6 +3,7 @@ import {
   createTestPayload,
   TEST_CONSTANTS
 } from './test-helpers/waste-test-helpers.js'
+import { v4 as uuidv4 } from 'uuid'
 
 describe('Receipt Schema Validation - Physical Form', () => {
   describe('Physical Form Validation', () => {
@@ -28,7 +29,7 @@ describe('Receipt Schema Validation - Physical Form', () => {
     it('should reject empty physical form', () => {
       // Need to build manually as physicalForm is required in defaults
       const payload = {
-        receivingSiteId: TEST_CONSTANTS.SITE_ID,
+        organisationApiId: uuidv4(),
         dateTimeReceived: '2021-01-01T00:00:00.000Z',
         wasteItems: [
           {

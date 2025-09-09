@@ -2,6 +2,7 @@ import { createServer } from '../server.js'
 import { MongoClient } from 'mongodb'
 import { createMovement } from './create.movement.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
+import { v4 as uuidv4 } from 'uuid'
 
 describe('Update Movement', () => {
   let server
@@ -24,7 +25,7 @@ describe('Update Movement', () => {
     const wasteTrackingId = await createMovement(server)
 
     const movementUpdate = createMovementRequest({
-      receivingSiteId: 'site123updated'
+      organisationApiId: uuidv4()
     })
 
     const response = await server.inject({

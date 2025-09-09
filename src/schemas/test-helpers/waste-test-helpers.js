@@ -2,7 +2,6 @@
 import { createMovementRequest } from '../../test/utils/createMovementRequest.js'
 
 export const TEST_CONSTANTS = {
-  SITE_ID: 'site123',
   VALID_EWC_CODE: '010101',
   DEFAULT_WASTE_DESCRIPTION: 'Test waste',
   DEFAULT_PHYSICAL_FORM: 'Solid',
