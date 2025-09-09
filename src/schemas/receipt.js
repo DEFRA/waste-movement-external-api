@@ -31,6 +31,8 @@ const IRL_POSTCODE_REGEX =
   /^(?:D6W|[AC-FHKNPRTV-Y]\d{2}) ?[0-9AC-FHKNPRTV-Y]{4}$/i
 // END-NOSCAN
 
+const LONG_STRING_MAX_LENGTH = 5000
+
 const addressSchema = Joi.object({
   fullAddress: Joi.string(),
   postCode: Joi.alternatives()
@@ -152,7 +154,7 @@ export const receiveMovementRequestSchema = Joi.object({
       reference: Joi.string().min(MIN_STRING_LENGTH).required()
     })
   ),
-  specialHandlingRequirements: Joi.string(),
+  specialHandlingRequirements: Joi.string().max(LONG_STRING_MAX_LENGTH),
   wasteItems: Joi.array().items(wasteItemsSchema),
   carrier: carrierSchema,
   brokerOrDealer: brokerOrDealerSchema,
