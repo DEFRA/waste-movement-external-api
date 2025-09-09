@@ -126,7 +126,7 @@ describe('Carrier Registration Validation', () => {
       const carrier = {
         registrationNumber: 'CBDU123456',
         organisationName: 'Test Carrier',
-        address: { fullAddress: '123 Test St, Test City', postCode: 'TE1 1ST' },
+        address: { fullAddress: '123 Test St, Test City', postcode: 'TE1 1ST' },
         emailAddress: 'valid@example.com',
         phoneNumber: '01234567890'
       }
@@ -149,25 +149,25 @@ describe('Carrier Registration Validation', () => {
       const carrier = {
         registrationNumber: 'CBDU123456',
         organisationName: 'No Postcode Carrier',
-        address: { fullAddress: '123 Test St' } // Missing postCode
+        address: { fullAddress: '123 Test St' } // Missing postcode
       }
 
       const { error } = validate(carrier)
       expect(error).toBeDefined()
-      expect(error.message).toBe('"carrier.address.postCode" is required')
+      expect(error.message).toBe('"carrier.address.postcode" is required')
     })
 
     it('rejects invalid UK postcode', () => {
       const carrier = {
         registrationNumber: 'CBDU123456',
         organisationName: 'Invalid Postcode Carrier',
-        address: { fullAddress: '123 Test St', postCode: 'INVALID' }
+        address: { fullAddress: '123 Test St', postcode: 'INVALID' }
       }
 
       const { error } = validate(carrier)
       expect(error).toBeDefined()
       expect(error.message).toBe(
-        'Post Code must be in valid UK or Ireland format'
+        'Postcode must be in valid UK or Ireland format'
       )
     })
 
