@@ -12,7 +12,8 @@ describe('Carrier Registration Validation', () => {
     it('accepts submission with valid carrier registration number', () => {
       const carrier = {
         registrationNumber: 'CBDU123456',
-        organisationName: 'Test Carrier'
+        organisationName: 'Test Carrier',
+        meansOfTransport: MEANS_OF_TRANSPORT[1]
       }
 
       const { error } = validate(carrier)
@@ -23,6 +24,7 @@ describe('Carrier Registration Validation', () => {
       const carrier = {
         registrationNumber: 'CBDU123456',
         organisationName: 'Test Carrier',
+        meansOfTransport: MEANS_OF_TRANSPORT[1],
         reasonForNoRegistrationNumber: undefined
       }
 
@@ -36,7 +38,8 @@ describe('Carrier Registration Validation', () => {
       const carrier = {
         registrationNumber: 'N/A',
         reasonForNoRegistrationNumber: 'Carrier did not provide documentation',
-        organisationName: 'Test Carrier'
+        organisationName: 'Test Carrier',
+        meansOfTransport: MEANS_OF_TRANSPORT[1]
       }
 
       const { error } = validate(carrier)
@@ -47,7 +50,8 @@ describe('Carrier Registration Validation', () => {
       const carrier = {
         registrationNumber: 'n/a',
         reasonForNoRegistrationNumber: 'Documentation was not available',
-        organisationName: 'Test Carrier'
+        organisationName: 'Test Carrier',
+        meansOfTransport: MEANS_OF_TRANSPORT[1]
       }
 
       const { error } = validate(carrier)
@@ -58,7 +62,8 @@ describe('Carrier Registration Validation', () => {
   describe('Scenario: Invalid submissions', () => {
     it('rejects submission without carrier registration number', () => {
       const carrier = {
-        organisationName: 'Test Carrier'
+        organisationName: 'Test Carrier',
+        meansOfTransport: MEANS_OF_TRANSPORT[1]
       }
 
       const { error } = validate(carrier)
@@ -70,7 +75,8 @@ describe('Carrier Registration Validation', () => {
       const carrier = {
         registrationNumber: '',
         reasonForNoRegistrationNumber: '',
-        organisationName: 'Test Carrier'
+        organisationName: 'Test Carrier',
+        meansOfTransport: MEANS_OF_TRANSPORT[1]
       }
 
       const { error } = validate(carrier)
@@ -81,7 +87,8 @@ describe('Carrier Registration Validation', () => {
     it('rejects submission with N/A but no reason', () => {
       const carrier = {
         registrationNumber: 'N/A',
-        organisationName: 'Test Carrier'
+        organisationName: 'Test Carrier',
+        meansOfTransport: MEANS_OF_TRANSPORT[1]
       }
 
       const { error } = validate(carrier)
@@ -95,7 +102,8 @@ describe('Carrier Registration Validation', () => {
       const carrier = {
         registrationNumber: 'N/A',
         reasonForNoRegistrationNumber: '   ',
-        organisationName: 'Test Carrier'
+        organisationName: 'Test Carrier',
+        meansOfTransport: MEANS_OF_TRANSPORT[1]
       }
 
       const { error } = validate(carrier)
@@ -110,7 +118,8 @@ describe('Carrier Registration Validation', () => {
         registrationNumber: 'CBDU123456',
         reasonForNoRegistrationNumber:
           'Should not have a reason with valid number',
-        organisationName: 'Test Carrier'
+        organisationName: 'Test Carrier',
+        meansOfTransport: MEANS_OF_TRANSPORT[1]
       }
 
       const { error } = validate(carrier)
@@ -118,6 +127,18 @@ describe('Carrier Registration Validation', () => {
       expect(error.message).toBe(
         'Reason for no registration number should only be provided when registration number is "N/A"'
       )
+    })
+
+    it('rejects submission without means of transport', () => {
+      const carrier = {
+        registrationNumber: 'CBDU123456',
+        organisationName: 'Test Carrier',
+        meansOfTransport: undefined
+      }
+
+      const { error } = validate(carrier)
+      expect(error).toBeDefined()
+      expect(error.message).toBe('"carrier.meansOfTransport" is required')
     })
   })
 
@@ -128,7 +149,8 @@ describe('Carrier Registration Validation', () => {
         organisationName: 'Test Carrier',
         address: { fullAddress: '123 Test St, Test City', postcode: 'TE1 1ST' },
         emailAddress: 'valid@example.com',
-        phoneNumber: '01234567890'
+        phoneNumber: '01234567890',
+        meansOfTransport: MEANS_OF_TRANSPORT[1]
       }
 
       const { error } = validate(carrier)
@@ -137,7 +159,8 @@ describe('Carrier Registration Validation', () => {
 
     it('rejects submission without carrier name', () => {
       const carrier = {
-        registrationNumber: 'CBDU123456'
+        registrationNumber: 'CBDU123456',
+        meansOfTransport: MEANS_OF_TRANSPORT[1]
       }
 
       const { error } = validate(carrier)
@@ -149,6 +172,7 @@ describe('Carrier Registration Validation', () => {
       const carrier = {
         registrationNumber: 'CBDU123456',
         organisationName: 'No Postcode Carrier',
+        meansOfTransport: MEANS_OF_TRANSPORT[1],
         address: { fullAddress: '123 Test St' } // Missing postcode
       }
 
@@ -161,6 +185,7 @@ describe('Carrier Registration Validation', () => {
       const carrier = {
         registrationNumber: 'CBDU123456',
         organisationName: 'Invalid Postcode Carrier',
+        meansOfTransport: MEANS_OF_TRANSPORT[1],
         address: { fullAddress: '123 Test St', postcode: 'INVALID' }
       }
 
@@ -175,6 +200,7 @@ describe('Carrier Registration Validation', () => {
       const carrier = {
         registrationNumber: 'CBDU123456',
         organisationName: 'Invalid Email Carrier',
+        meansOfTransport: MEANS_OF_TRANSPORT[1],
         emailAddress: 'not-an-email'
       }
 
