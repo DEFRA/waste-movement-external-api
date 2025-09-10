@@ -42,6 +42,48 @@ describe('Receiver Validation', () => {
     expect(error).toBeUndefined()
   })
 
+  it('accepts when a single authorisation number is provided', () => {
+    const receiver = {
+      organisationName: 'Test Receiver',
+      authorisations: [
+        {
+          authorisationNumber: ['A1']
+        }
+      ]
+    }
+
+    const receipt = {
+      address: {
+        fullAddress: '1 Receiver St, Town',
+        postcode: 'TE1 1ST'
+      }
+    }
+
+    const { error } = validate(receiver, receipt)
+    expect(error).toBeUndefined()
+  })
+
+  it('accepts when multiple authorisation numbers are provided', () => {
+    const receiver = {
+      organisationName: 'Test Receiver',
+      authorisations: [
+        {
+          authorisationNumber: ['A1', 'B2', 'C3']
+        }
+      ]
+    }
+
+    const receipt = {
+      address: {
+        fullAddress: '1 Receiver St, Town',
+        postcode: 'TE1 1ST'
+      }
+    }
+
+    const { error } = validate(receiver, receipt)
+    expect(error).toBeUndefined()
+  })
+
   it('rejects when any receiver properties provided but organisationName missing', () => {
     const receiver = {
       address: { fullAddress: '1 Receiver St, Town', postcode: 'TE1 1ST' }
@@ -159,7 +201,7 @@ describe('Receiver Validation', () => {
       authorisations: [
         {
           authorisationType: TEST_DATA.AUTHORISATION.TYPE,
-          authorisationNumber: TEST_DATA.AUTHORISATION.NUMBERS.COMPLEX,
+          authorisationNumber: [TEST_DATA.AUTHORISATION.NUMBERS.COMPLEX],
           regulatoryPositionStatement: [123, 456]
         }
       ]
@@ -179,7 +221,7 @@ describe('Receiver Validation', () => {
       authorisations: [
         {
           authorisationType: TEST_DATA.AUTHORISATION.TYPE,
-          authorisationNumber: TEST_DATA.AUTHORISATION.NUMBERS.COMPLEX,
+          authorisationNumber: [TEST_DATA.AUTHORISATION.NUMBERS.COMPLEX],
           regulatoryPositionStatement: [TEST_DATA.RPS.INVALID.STRINGS[0]]
         }
       ]
@@ -192,5 +234,77 @@ describe('Receiver Validation', () => {
     const { error } = validate(receiver, receipt)
     expect(error).toBeDefined()
     expect(error.message).toContain('must be a number')
+  })
+
+  it('rejects when an authorisation number is not provided', () => {
+    const receiver = {
+      organisationName: 'Test Receiver',
+      authorisations: [
+        {
+          authorisationNumber: []
+        }
+      ]
+    }
+
+    const receipt = {
+      address: {
+        fullAddress: '1 Receiver St, Town',
+        postcode: 'TE1 1ST'
+      }
+    }
+
+    const { error } = validate(receiver, receipt)
+    expect(error).toBeDefined()
+    expect(error.message).toBe(
+      '"receiver.authorisations[0].authorisationNumber" must contain at least 1 items'
+    )
+  })
+
+  it('rejects when an authorisation number property is not provided', () => {
+    const receiver = {
+      organisationName: 'Test Receiver',
+      authorisations: [
+        {
+          authorisationNumber: undefined
+        }
+      ]
+    }
+
+    const receipt = {
+      address: {
+        fullAddress: '1 Receiver St, Town',
+        postcode: 'TE1 1ST'
+      }
+    }
+
+    const { error } = validate(receiver, receipt)
+    expect(error).toBeDefined()
+    expect(error.message).toBe(
+      '"receiver.authorisations[0].authorisationNumber" is required'
+    )
+  })
+
+  it('rejects when an authorisation number is provided with an invalid format', () => {
+    const receiver = {
+      organisationName: 'Test Receiver',
+      authorisations: [
+        {
+          authorisationNumber: [1]
+        }
+      ]
+    }
+
+    const receipt = {
+      address: {
+        fullAddress: '1 Receiver St, Town',
+        postcode: 'TE1 1ST'
+      }
+    }
+
+    const { error } = validate(receiver, receipt)
+    expect(error).toBeDefined()
+    expect(error.message).toBe(
+      '"receiver.authorisations[0].authorisationNumber[0]" must be a string'
+    )
   })
 })
