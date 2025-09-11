@@ -19,7 +19,6 @@ export function createMovementRequest(overrides) {
       organisationName: 'Test Receiver',
       authorisations: [
         {
-          authorisationType: 'type',
           authorisationNumber: ['1234'],
           regulatoryPositionStatement: [343]
         }
