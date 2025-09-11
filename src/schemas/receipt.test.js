@@ -156,10 +156,29 @@ describe('receiveMovementRequestSchema - otherReferencesForMovement validation',
       const { error } = receiveMovementRequestSchema.validate(payload)
 
       expect(error).toBeDefined()
-      console.log(error.message)
       expect(error.message).toContain(
         '"specialHandlingRequirements" length must be less than or equal to 5000 characters long'
       )
+    })
+
+    it('should reject when receiver is missing', () => {
+      const payload = {
+        ...basePayload,
+        receiver: undefined
+      }
+      const { error } = receiveMovementRequestSchema.validate(payload)
+      expect(error).toBeDefined()
+      expect(error.message).toContain('"Receiver" is required')
+    })
+
+    it('should reject when receipt is missing', () => {
+      const payload = {
+        ...basePayload,
+        receipt: undefined
+      }
+      const { error } = receiveMovementRequestSchema.validate(payload)
+      expect(error).toBeDefined()
+      expect(error.message).toContain('"Receipt" is required')
     })
   })
 })
