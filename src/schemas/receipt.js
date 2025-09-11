@@ -162,7 +162,7 @@ export const receiveMovementRequestSchema = Joi.object({
   wasteItems: Joi.array().items(wasteItemsSchema),
   carrier: carrierSchema,
   brokerOrDealer: brokerOrDealerSchema,
-  receiver: receiverSchema,
+  receiver: receiverSchema.required(),
   receipt: receiptSchema.required(),
   disposalOrRecoveryCodes: Joi.array().items(disposalOrRecoveryCodeSchema)
 }).label('Movement')
