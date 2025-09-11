@@ -78,21 +78,22 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
           expect(error.details[0].message).toContain('must be one of')
         })
       })
-    })
 
-    describe('Optional Means of Transport', () => {
-      it('should accept submission without means of transport', () => {
-        const validPayload = {
+      it('should reject submission without means of transport', () => {
+        const invalidPayload = {
           ...createMovementRequest(),
           carrier: {
             registrationNumber: 'CBDU123456',
-            organisationName: 'Test Carrier'
-            // No meansOfTransport specified
+            organisationName: 'Test Carrier',
+            meansOfTransport: undefined
           }
         }
 
-        const { error } = receiveMovementRequestSchema.validate(validPayload)
-        expect(error).toBeUndefined()
+        const { error } = receiveMovementRequestSchema.validate(invalidPayload)
+        expect(error).toBeDefined()
+        expect(error.details[0].message).toBe(
+          '"carrier.meansOfTransport" is required'
+        )
       })
     })
   })
