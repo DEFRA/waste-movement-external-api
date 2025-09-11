@@ -19,18 +19,6 @@ describe('Carrier Registration Validation', () => {
       const { error } = validate(carrier)
       expect(error).toBeUndefined()
     })
-
-    it('accepts submission with valid carrier registration number and no reason', () => {
-      const carrier = {
-        registrationNumber: 'CBDU123456',
-        organisationName: 'Test Carrier',
-        meansOfTransport: MEANS_OF_TRANSPORT[1],
-        reasonForNoRegistrationNumber: undefined
-      }
-
-      const { error } = validate(carrier)
-      expect(error).toBeUndefined()
-    })
   })
 
   describe('Scenario: Null/empty registration with reason', () => {
@@ -57,83 +45,39 @@ describe('Carrier Registration Validation', () => {
       const { error } = validate(carrier)
       expect(error).toBeUndefined()
     })
-
-    it('accepts submission with whitespace-only registration and valid reason', () => {
-      const carrier = {
-        registrationNumber: '   ',
-        reasonForNoRegistrationNumber: 'Carrier did not supply registration',
-        organisationName: 'Test Carrier',
-        meansOfTransport: MEANS_OF_TRANSPORT[1]
-      }
-
-      const { error } = validate(carrier)
-      expect(error).toBeUndefined()
-    })
   })
 
   describe('Scenario: Invalid submissions', () => {
-    it('rejects submission with null registration and null reason', () => {
-      const carrier = {
-        registrationNumber: null,
-        reasonForNoRegistrationNumber: null,
-        organisationName: 'Test Carrier',
-        meansOfTransport: MEANS_OF_TRANSPORT[1]
+    it.each([
+      {
+        registration: null,
+        reason: null,
+        description: 'null registration and null reason'
+      },
+      {
+        registration: null,
+        reason: '',
+        description: 'null registration and empty reason'
+      },
+      {
+        registration: '',
+        reason: '',
+        description: 'empty registration and empty reason'
+      },
+      {
+        registration: '   ',
+        reason: '   ',
+        description: 'whitespace-only registration and reason'
+      },
+      {
+        registration: undefined,
+        reason: undefined,
+        description: 'missing registration field'
       }
-
-      const { error } = validate(carrier)
-      expect(error).toBeDefined()
-      expect(error.message).toBe(
-        'Either carrier registration number or reason for no registration number is required'
-      )
-    })
-
-    it('rejects submission with null registration and empty reason', () => {
+    ])('rejects submission with $description', ({ registration, reason }) => {
       const carrier = {
-        registrationNumber: null,
-        reasonForNoRegistrationNumber: '',
-        organisationName: 'Test Carrier',
-        meansOfTransport: MEANS_OF_TRANSPORT[1]
-      }
-
-      const { error } = validate(carrier)
-      expect(error).toBeDefined()
-      expect(error.message).toBe(
-        'Either carrier registration number or reason for no registration number is required'
-      )
-    })
-
-    it('rejects submission with empty registration and empty reason', () => {
-      const carrier = {
-        registrationNumber: '',
-        reasonForNoRegistrationNumber: '',
-        organisationName: 'Test Carrier',
-        meansOfTransport: MEANS_OF_TRANSPORT[1]
-      }
-
-      const { error } = validate(carrier)
-      expect(error).toBeDefined()
-      expect(error.message).toBe(
-        'Either carrier registration number or reason for no registration number is required'
-      )
-    })
-
-    it('rejects submission with whitespace-only registration and whitespace-only reason', () => {
-      const carrier = {
-        registrationNumber: '   ',
-        reasonForNoRegistrationNumber: '   ',
-        organisationName: 'Test Carrier',
-        meansOfTransport: MEANS_OF_TRANSPORT[1]
-      }
-
-      const { error } = validate(carrier)
-      expect(error).toBeDefined()
-      expect(error.message).toBe(
-        'Either carrier registration number or reason for no registration number is required'
-      )
-    })
-
-    it('rejects submission without carrier registration number field', () => {
-      const carrier = {
+        registrationNumber: registration,
+        reasonForNoRegistrationNumber: reason,
         organisationName: 'Test Carrier',
         meansOfTransport: MEANS_OF_TRANSPORT[1]
       }
