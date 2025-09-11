@@ -3,6 +3,7 @@ import {
   generateDisposalRecoveryWarnings,
   generateAllValidationWarnings
 } from './validation-warnings.js'
+import { v4 as uuidv4 } from 'uuid'
 
 describe('Validation Warnings', () => {
   describe('VALIDATION_ERROR_TYPES', () => {
@@ -33,7 +34,7 @@ describe('Validation Warnings', () => {
 
     it('should generate warning when receipt section is missing', () => {
       const payload = {
-        receivingSiteId: 'site123'
+        organisationApiId: uuidv4()
         // No receipt section
       }
 
@@ -386,7 +387,7 @@ describe('Validation Warnings', () => {
 
     it('should handle payload without receipt section', () => {
       const payload = {
-        receivingSiteId: 'site123'
+        organisationApiId: uuidv4()
       }
 
       const warnings = generateAllValidationWarnings(payload)

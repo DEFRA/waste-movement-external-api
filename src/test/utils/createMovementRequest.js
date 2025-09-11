@@ -1,6 +1,8 @@
+import { v4 as uuidv4 } from 'uuid'
+
 export function createMovementRequest(overrides) {
   const defaultMovementRequest = {
-    receivingSiteId: 'site123',
+    organisationApiId: uuidv4(),
     dateTimeReceived: '2021-01-01T00:00:00.000Z',
     carrier: {
       registrationNumber: 'CBDU123456',
