@@ -25,7 +25,8 @@ export default {
   transformIgnorePatterns: [
     `node_modules/(?!${[
       '@defra/hapi-tracing', // Supports ESM only
-      'node-fetch' // Supports ESM only
+      'node-fetch', // Supports ESM only
+      'uuid'
     ].join('|')}/)`
   ]
 }

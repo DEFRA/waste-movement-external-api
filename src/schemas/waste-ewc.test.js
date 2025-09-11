@@ -3,6 +3,7 @@ import {
   createTestPayload,
   TEST_CONSTANTS
 } from './test-helpers/waste-test-helpers.js'
+import { v4 as uuidv4 } from 'uuid'
 
 describe('Receipt Schema Validation - EWC', () => {
   describe('EWC Code Validation', () => {
@@ -95,7 +96,7 @@ describe('Receipt Schema Validation - EWC', () => {
     it('should require the EWC code field', () => {
       // Test with missing EWC code - need to build manually as ewcCodes is required
       const payload = {
-        receivingSiteId: TEST_CONSTANTS.SITE_ID,
+        organisationApiId: uuidv4(),
         dateTimeReceived: '2021-01-01T00:00:00.000Z',
         wasteItems: [
           {

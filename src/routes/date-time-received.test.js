@@ -1,5 +1,6 @@
 import { receiveMovementRequestSchema } from '../schemas/receipt.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
+import { v4 as uuidv4 } from 'uuid'
 
 describe('Create Receipt Movement - Date and Time Received Validation', () => {
   describe('Schema Validation Tests for dateTimeReceived', () => {
@@ -30,7 +31,7 @@ describe('Create Receipt Movement - Date and Time Received Validation', () => {
 
     it('should reject when receipt is provided without dateTimeReceived', () => {
       const payload = {
-        receivingSiteId: 'site123'
+        organisationApiId: uuidv4()
       }
 
       const { error } = receiveMovementRequestSchema.validate(payload)
