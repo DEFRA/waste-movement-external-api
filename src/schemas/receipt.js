@@ -94,7 +94,9 @@ const carrierSchema = Joi.object({
     'any.required': CARRIER_VEHICLE_REG_REQUIRED_FOR_ROAD,
     'any.unknown': CARRIER_VEHICLE_REG_ONLY_ALLOWED_FOR_ROAD
   }),
-  meansOfTransport: Joi.string().valid(...MEANS_OF_TRANSPORT),
+  meansOfTransport: Joi.string()
+    .valid(...MEANS_OF_TRANSPORT)
+    .required(),
   otherMeansOfTransport: Joi.string()
 })
   .label('Carrier')
@@ -118,7 +120,7 @@ const receiverSchema = Joi.object({
   phoneNumber: Joi.string(),
   authorisations: Joi.array().items({
     authorisationType: Joi.string(),
-    authorisationNumber: Joi.string()
+    authorisationNumber: Joi.array().items(Joi.string()).required().min(1)
   }),
   regulatoryPositionStatement: Joi.string()
 }).label('Receiver')
