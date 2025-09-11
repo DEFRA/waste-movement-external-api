@@ -200,7 +200,6 @@ describe('Receiver Validation', () => {
       organisationName: TEST_DATA.RECEIVER.ORGANISATION_NAME,
       authorisations: [
         {
-          authorisationType: TEST_DATA.AUTHORISATION.TYPE,
           authorisationNumber: [TEST_DATA.AUTHORISATION.NUMBERS.COMPLEX],
           regulatoryPositionStatement: [123, 456]
         }
@@ -220,7 +219,6 @@ describe('Receiver Validation', () => {
       organisationName: TEST_DATA.RECEIVER.ORGANISATION_NAME,
       authorisations: [
         {
-          authorisationType: TEST_DATA.AUTHORISATION.TYPE,
           authorisationNumber: [TEST_DATA.AUTHORISATION.NUMBERS.COMPLEX],
           regulatoryPositionStatement: [TEST_DATA.RPS.INVALID.STRINGS[0]]
         }
