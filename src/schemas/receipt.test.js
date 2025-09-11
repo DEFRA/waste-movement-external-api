@@ -156,7 +156,6 @@ describe('receiveMovementRequestSchema - otherReferencesForMovement validation',
       const { error } = receiveMovementRequestSchema.validate(payload)
 
       expect(error).toBeDefined()
-      console.log(error.message)
       expect(error.message).toContain(
         '"specialHandlingRequirements" length must be less than or equal to 5000 characters long'
       )
