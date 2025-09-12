@@ -16,14 +16,3 @@ export const validHazCodes = [
   'HP_15',
   'HP_POP'
 ]
-
-/**
- * Validates if the provided haz code is in the list of valid codes
- *
- * @param {string} hazCode - The haz code to validate
- * @returns {boolean} - True if the code is valid, false otherwise
- */
-export const isValidHazCode = (hazCode) => {
-  // Check if the haz codeis in the list of valid types
-  return validHazCodes.includes(hazCode)
-}

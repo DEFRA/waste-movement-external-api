@@ -61,7 +61,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
           {
             description: 'invalid hazCodes types (string)',
             input: { containsHazardous: true, hazCodes: ['HP 1', 'HP2'] },
-            errorMessage: `"wasteItems[0].hazardous.hazCodes[0]" must be one of ${validHazCodes.join(', ')}`
+            errorMessage: `"wasteItems[0].hazardous.hazCodes[0]" must be one of [${validHazCodes.join(', ')}]`
           },
           {
             description: 'invalid hazCodes types (undefined)',
@@ -71,8 +71,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
           {
             description: 'invalid hazCodes types (null)',
             input: { containsHazardous: true, hazCodes: [null] },
-            errorMessage:
-              '"wasteItems[0].hazardous.hazCodes[0]" must be a string'
+            errorMessage: `"wasteItems[0].hazardous.hazCodes[0]" must be one of [${validHazCodes.join(', ')}]`
           }
         ]
 
@@ -137,7 +136,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         })
         expect(result.error).toBeDefined()
         expect(result.error.message).toBe(
-          `"wasteItems[0].hazardous.hazCodes[0]" must be one of ${validHazCodes.join(', ')}`
+          `"wasteItems[0].hazardous.hazCodes[0]" must be one of [${validHazCodes.join(', ')}]`
         )
       })
 
@@ -148,7 +147,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         })
         expect(result.error).toBeDefined()
         expect(result.error.message).toBe(
-          `"wasteItems[0].hazardous.hazCodes[0]" must be one of ${validHazCodes.join(', ')}`
+          `"wasteItems[0].hazardous.hazCodes[0]" must be one of [${validHazCodes.join(', ')}]`
         )
       })
 
@@ -159,7 +158,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         })
         expect(result.error).toBeDefined()
         expect(result.error.message).toBe(
-          `"wasteItems[0].hazardous.hazCodes[0]" must be one of ${validHazCodes.join(', ')}`
+          `"wasteItems[0].hazardous.hazCodes[0]" must be one of [${validHazCodes.join(', ')}]`
         )
       })
 
@@ -170,7 +169,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         })
         expect(result.error).toBeDefined()
         expect(result.error.message).toBe(
-          `"wasteItems[0].hazardous.hazCodes[0]" must be one of ${validHazCodes.join(', ')}`
+          `"wasteItems[0].hazardous.hazCodes[0]" must be one of [${validHazCodes.join(', ')}]`
         )
       })
 
@@ -181,7 +180,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         })
         expect(result.error).toBeDefined()
         expect(result.error.message).toBe(
-          `"wasteItems[0].hazardous.hazCodes[0]" must be one of ${validHazCodes.join(', ')}`
+          `"wasteItems[0].hazardous.hazCodes[0]" must be one of [${validHazCodes.join(', ')}]`
         )
       })
 
@@ -192,7 +191,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         })
         expect(result.error).toBeDefined()
         expect(result.error.message).toBe(
-          `"wasteItems[0].hazardous.hazCodes[0]" must be one of ${validHazCodes.join(', ')}`
+          `"wasteItems[0].hazardous.hazCodes[0]" must be one of [${validHazCodes.join(', ')}]`
         )
       })
 
@@ -276,7 +275,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         })
         expect(result.error).toBeDefined()
         expect(result.error.message).toBe(
-          `"wasteItems[0].hazardous.hazCodes[2]" must be one of ${validHazCodes.join(', ')}`
+          `"wasteItems[0].hazardous.hazCodes[2]" must be one of [${validHazCodes.join(', ')}]`
         )
       })
     })

@@ -3,7 +3,7 @@ import { isValidEwcCode } from '../common/constants/ewc-codes.js'
 import { isValidPopName } from '../common/constants/pop-names.js'
 import { weightSchema } from './weight.js'
 import { isValidContainerType } from '../common/constants/container-types.js'
-import { isValidHazCode, validHazCodes } from '../common/constants/haz-codes.js'
+import { validHazCodes } from '../common/constants/haz-codes.js'
 
 const MAX_EWC_CODES_COUNT = 5
 const CUSTOM_ERROR_TYPE = 'any.custom'
@@ -68,13 +68,7 @@ const hazardousSchema = Joi.object({
       'Hazardous waste is any waste that is potentially harmful to human health or the environment.'
   }),
   hazCodes: Joi.array()
-    .items(
-      Joi.string()
-        .custom(validateHazCodes, 'HP codes validation')
-        .messages({
-          'string.invalid': `{{#label}} must be one of ${validHazCodes.join(', ')}`
-        })
-    )
+    .items(Joi.string().valid(...validHazCodes))
     .custom((value) => {
       // Automatically deduplicate HP codes if duplicates exist
       if (value && value.length > 0) {
@@ -174,15 +168,6 @@ function validateContainerType(value, helpers) {
   // Check if it's in the list of valid container types
   if (!isValidContainerType(value)) {
     return helpers.error('string.containerTypeInvalid', { value })
-  }
-
-  return value
-}
-
-function validateHazCodes(value, helpers) {
-  // Check if it's in the list of valid HP codes
-  if (!isValidHazCode(value)) {
-    return helpers.error('string.invalid', { value })
   }
 
   return value
