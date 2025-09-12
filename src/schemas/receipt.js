@@ -14,7 +14,7 @@ const MIN_STRING_LENGTH = 1
 const CARRIER_REGISTRATION_REQUIRED = 'Carrier registration number is required'
 const CARRIER_REGISTRATION_OR_REASON_REQUIRED =
   'Either carrier registration number or reason for no registration number is required'
-const CARRIER_REASON_ONLY_FOR_NA =
+const CARRIER_REASON_ONLY_FOR_NULL =
   'Reason for no registration number should only be provided when registration number is not provided'
 const CARRIER_VEHICLE_REG_REQUIRED_FOR_ROAD =
   'If carrier.meansOfTransport is "Road" then carrier.vehicleRegistration is required.'
@@ -84,7 +84,7 @@ const carrierSchema = Joi.object({
       !isEmpty(registrationNumber) &&
       !isEmpty(reasonForNoRegistrationNumber)
     ) {
-      return helpers.error('carrier.reasonOnlyForNA')
+      return helpers.error('carrier.reasonOnlyForNull')
     }
 
     return obj
@@ -94,7 +94,7 @@ const carrierSchema = Joi.object({
     'carrier.registrationRequired': CARRIER_REGISTRATION_REQUIRED,
     'carrier.registrationOrReasonRequired':
       CARRIER_REGISTRATION_OR_REASON_REQUIRED,
-    'carrier.reasonOnlyForNA': CARRIER_REASON_ONLY_FOR_NA
+    'carrier.reasonOnlyForNull': CARRIER_REASON_ONLY_FOR_NULL
   })
 
 const receiverAddressSchema = addressSchema.keys({
