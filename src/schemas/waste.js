@@ -3,10 +3,9 @@ import { isValidEwcCode } from '../common/constants/ewc-codes.js'
 import { isValidPopName } from '../common/constants/pop-names.js'
 import { weightSchema } from './weight.js'
 import { isValidContainerType } from '../common/constants/container-types.js'
+import { validHazCodes } from '../common/constants/haz-codes.js'
 
 const MAX_EWC_CODES_COUNT = 5
-const MIN_HAZARD_CODE = 1
-const MAX_HAZARD_CODE = 15
 const CUSTOM_ERROR_TYPE = 'any.custom'
 
 const popsSchema = Joi.object({
@@ -69,18 +68,7 @@ const hazardousSchema = Joi.object({
       'Hazardous waste is any waste that is potentially harmful to human health or the environment.'
   }),
   hazCodes: Joi.array()
-    .items(
-      Joi.number()
-        .integer()
-        .min(MIN_HAZARD_CODE)
-        .max(MAX_HAZARD_CODE)
-        .messages({
-          'number.base': 'Hazard code must be a number',
-          'number.integer': 'Hazard code must be an integer',
-          'number.min': 'Hazard code must be between 1 and 15 (HP1-HP15)',
-          'number.max': 'Hazard code must be between 1 and 15 (HP1-HP15)'
-        })
-    )
+    .items(Joi.string().valid(...validHazCodes))
     .custom((value) => {
       // Automatically deduplicate HP codes if duplicates exist
       if (value && value.length > 0) {
