@@ -45,6 +45,18 @@ describe('Carrier Registration Validation', () => {
       const { error } = validate(carrier)
       expect(error).toBeUndefined()
     })
+
+    it('accepts submission with undefined registration and valid reason', () => {
+      const carrier = {
+        registrationNumber: undefined,
+        reasonForNoRegistrationNumber: 'Carrier registration not available',
+        organisationName: 'Test Carrier',
+        meansOfTransport: MEANS_OF_TRANSPORT[1]
+      }
+
+      const { error } = validate(carrier)
+      expect(error).toBeUndefined()
+    })
   })
 
   describe('Scenario: Invalid submissions', () => {
