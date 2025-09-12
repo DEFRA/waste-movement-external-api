@@ -3,10 +3,9 @@ import { isValidEwcCode } from '../common/constants/ewc-codes.js'
 import { isValidPopName } from '../common/constants/pop-names.js'
 import { weightSchema } from './weight.js'
 import { isValidContainerType } from '../common/constants/container-types.js'
+import { isValidHazCode, validHazCodes } from '../common/constants/haz-codes.js'
 
 const MAX_EWC_CODES_COUNT = 5
-const MIN_HAZARD_CODE = 1
-const MAX_HAZARD_CODE = 15
 const CUSTOM_ERROR_TYPE = 'any.custom'
 
 const popsSchema = Joi.object({
@@ -70,15 +69,10 @@ const hazardousSchema = Joi.object({
   }),
   hazCodes: Joi.array()
     .items(
-      Joi.number()
-        .integer()
-        .min(MIN_HAZARD_CODE)
-        .max(MAX_HAZARD_CODE)
+      Joi.string()
+        .custom(validateHazCodes, 'HP codes validation')
         .messages({
-          'number.base': 'Hazard code must be a number',
-          'number.integer': 'Hazard code must be an integer',
-          'number.min': 'Hazard code must be between 1 and 15 (HP1-HP15)',
-          'number.max': 'Hazard code must be between 1 and 15 (HP1-HP15)'
+          'string.invalid': `{{#label}} must be one of ${validHazCodes.join(', ')}`
         })
     )
     .custom((value) => {
@@ -180,6 +174,15 @@ function validateContainerType(value, helpers) {
   // Check if it's in the list of valid container types
   if (!isValidContainerType(value)) {
     return helpers.error('string.containerTypeInvalid', { value })
+  }
+
+  return value
+}
+
+function validateHazCodes(value, helpers) {
+  // Check if it's in the list of valid HP codes
+  if (!isValidHazCode(value)) {
+    return helpers.error('string.invalid', { value })
   }
 
   return value
