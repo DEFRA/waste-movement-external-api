@@ -1,3 +1,4 @@
+import { validHazCodes } from '../common/constants/haz-codes.js'
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createTestPayload } from './test-helpers/waste-test-helpers.js'
 
@@ -32,7 +33,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
             description: 'hazardous with both hazCodes and components',
             input: {
               containsHazardous: true,
-              hazCodes: [1, 2],
+              hazCodes: ['HP_1', 'HP_2'],
               components: [{ name: 'Mercury', concentration: 30 }]
             }
           },
@@ -53,14 +54,25 @@ describe('Receipt Schema Validation - Hazardous', () => {
           {
             description:
               'missing containsHazardous field when hazardous object exists',
-            input: { hazCodes: [1, 2, 3] },
+            input: { hazCodes: ['HP_1', 'HP_2', 'HP_3'] },
             errorMessage:
               'Hazardous waste is any waste that is potentially harmful to human health or the environment.'
           },
           {
-            description: 'invalid hazCodes types',
-            input: { containsHazardous: true, hazCodes: ['not', 'numbers'] },
-            errorMessage: 'must be a number'
+            description: 'invalid hazCodes types (string)',
+            input: { containsHazardous: true, hazCodes: ['HP 1', 'HP2'] },
+            errorMessage: `"wasteItems[0].hazardous.hazCodes[0]" must be one of ${validHazCodes.join(', ')}`
+          },
+          {
+            description: 'invalid hazCodes types (undefined)',
+            input: { containsHazardous: true, hazCodes: [undefined] },
+            errorMessage: '"HazardCodes" must not be a sparse array item'
+          },
+          {
+            description: 'invalid hazCodes types (null)',
+            input: { containsHazardous: true, hazCodes: [null] },
+            errorMessage:
+              '"wasteItems[0].hazardous.hazCodes[0]" must be a string'
           }
         ]
 
@@ -81,7 +93,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         // Single HP code with components
         const result1 = validateHazardous({
           containsHazardous: true,
-          hazCodes: [15],
+          hazCodes: ['HP_15'],
           components: [{ name: 'Mercury', concentration: 10 }]
         })
         expect(result1.error).toBeUndefined()
@@ -89,14 +101,14 @@ describe('Receipt Schema Validation - Hazardous', () => {
         // Multiple HP codes without components
         const result2 = validateHazardous({
           containsHazardous: true,
-          hazCodes: [1, 3]
+          hazCodes: ['HP_1', 'HP_3']
         })
         expect(result2.error).toBeUndefined()
 
         // Multiple HP codes with components
         const result3 = validateHazardous({
           containsHazardous: true,
-          hazCodes: [5, 10, 12],
+          hazCodes: ['HP_5', 'HP_10', 'HP_12'],
           components: [{ name: 'Lead compounds', concentration: 15 }]
         })
         expect(result3.error).toBeUndefined()
@@ -118,158 +130,153 @@ describe('Receipt Schema Validation - Hazardous', () => {
         expect(result.error).toBeUndefined()
       })
 
-      it('should reject HP code 0 (out of range)', () => {
+      it('should reject HP code 0', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          hazCodes: [0]
+          hazCodes: ['HP_0']
         })
         expect(result.error).toBeDefined()
-        expect(result.error.message).toContain(
-          'Hazard code must be between 1 and 15 (HP1-HP15)'
+        expect(result.error.message).toBe(
+          `"wasteItems[0].hazardous.hazCodes[0]" must be one of ${validHazCodes.join(', ')}`
         )
       })
 
-      it('should reject HP code 16 (out of range)', () => {
+      it('should reject HP code 16', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          hazCodes: [16]
+          hazCodes: ['HP_16']
         })
         expect(result.error).toBeDefined()
-        expect(result.error.message).toContain(
-          'Hazard code must be between 1 and 15 (HP1-HP15)'
+        expect(result.error.message).toBe(
+          `"wasteItems[0].hazardous.hazCodes[0]" must be one of ${validHazCodes.join(', ')}`
         )
       })
 
       it('should reject HP code 17 (invalid per user story)', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          hazCodes: [17]
+          hazCodes: ['HP_17']
         })
         expect(result.error).toBeDefined()
-        expect(result.error.message).toContain(
-          'Hazard code must be between 1 and 15 (HP1-HP15)'
+        expect(result.error.message).toBe(
+          `"wasteItems[0].hazardous.hazCodes[0]" must be one of ${validHazCodes.join(', ')}`
         )
       })
 
-      it('should reject string format "HP 17"', () => {
+      it('should reject invalid format "HP 17"', () => {
         const result = validateHazardous({
           containsHazardous: true,
           hazCodes: ['HP 17']
         })
         expect(result.error).toBeDefined()
-        expect(result.error.message).toContain('must be a number')
+        expect(result.error.message).toBe(
+          `"wasteItems[0].hazardous.hazCodes[0]" must be one of ${validHazCodes.join(', ')}`
+        )
       })
 
-      it('should reject string format "H P1"', () => {
+      it('should reject invalid format "H P1"', () => {
         const result = validateHazardous({
           containsHazardous: true,
           hazCodes: ['H P1']
         })
         expect(result.error).toBeDefined()
-        expect(result.error.message).toContain('must be a number')
+        expect(result.error.message).toBe(
+          `"wasteItems[0].hazardous.hazCodes[0]" must be one of ${validHazCodes.join(', ')}`
+        )
       })
 
-      it('should reject string format "HP 1"', () => {
-        const result = validateHazardous({
-          containsHazardous: true,
-          hazCodes: ['HP 1']
-        })
-        expect(result.error).toBeDefined()
-        expect(result.error.message).toContain('must be a number')
-      })
-
-      it('should reject string "Not A Code"', () => {
+      it('should reject invalid value "Not A Code"', () => {
         const result = validateHazardous({
           containsHazardous: true,
           hazCodes: ['Not A Code']
         })
         expect(result.error).toBeDefined()
-        expect(result.error.message).toContain('must be a number')
-      })
-
-      it('should reject negative HP codes', () => {
-        const result = validateHazardous({
-          containsHazardous: true,
-          hazCodes: [-1]
-        })
-        expect(result.error).toBeDefined()
-        expect(result.error.message).toContain(
-          'Hazard code must be between 1 and 15 (HP1-HP15)'
+        expect(result.error.message).toBe(
+          `"wasteItems[0].hazardous.hazCodes[0]" must be one of ${validHazCodes.join(', ')}`
         )
       })
 
-      it('should reject decimal HP codes', () => {
-        const result = validateHazardous({
-          containsHazardous: true,
-          hazCodes: [1.5]
-        })
-        expect(result.error).toBeDefined()
-        expect(result.error.message).toContain('Hazard code must be an integer')
-      })
-
-      it('should accept all valid HP codes (1-15) with components', () => {
-        const validCodes = Array.from({ length: 15 }, (_, i) => i + 1)
-        const result = validateHazardous({
-          containsHazardous: true,
-          hazCodes: validCodes,
-          components: [{ name: 'Mercury', concentration: 30 }]
-        })
-        expect(result.error).toBeUndefined()
-      })
+      it.each(validHazCodes)(
+        'should accept all valid HP codes with components',
+        (hazCode) => {
+          const result = validateHazardous({
+            containsHazardous: true,
+            hazCodes: [hazCode],
+            components: [{ name: 'Mercury', concentration: 30 }]
+          })
+          expect(result.error).toBeUndefined()
+        }
+      )
 
       it('should accept duplicate HP codes and deduplicate them with components', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          hazCodes: [1, 1, 2, 2],
+          hazCodes: ['HP_1', 'HP_1', 'HP_2', 'HP_2'],
           components: [{ name: 'Mercury', concentration: 30 }]
         })
         expect(result.error).toBeUndefined()
         // Get the validated hazardous object
         const validatedHazardous = result.value.wasteItems[0].hazardous
-        expect(validatedHazardous.hazCodes).toEqual([1, 2])
+        expect(validatedHazardous.hazCodes).toEqual(['HP_1', 'HP_2'])
       })
 
       it('should deduplicate HP codes with different values with components', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          hazCodes: [3, 5, 3, 7, 5],
+          hazCodes: ['HP_3', 'HP_5', 'HP_3', 'HP_7', 'HP_5'],
           components: [{ name: 'Lead compounds', concentration: 20 }]
         })
         expect(result.error).toBeUndefined()
         const validatedHazardous = result.value.wasteItems[0].hazardous
-        expect(validatedHazardous.hazCodes).toEqual([3, 5, 7])
+        expect(validatedHazardous.hazCodes).toEqual(['HP_3', 'HP_5', 'HP_7'])
       })
 
       it('should deduplicate HP codes even with valid range with components', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          hazCodes: [15, 15, 1, 1],
+          hazCodes: ['HP_15', 'HP_15', 'HP_1', 'HP_1'],
           components: [{ name: 'Arsenic compounds', concentration: 25 }]
         })
         expect(result.error).toBeUndefined()
         const validatedHazardous = result.value.wasteItems[0].hazardous
-        expect(validatedHazardous.hazCodes).toEqual([15, 1])
+        expect(validatedHazardous.hazCodes).toEqual(['HP_15', 'HP_1'])
       })
 
       it('should deduplicate complex HP codes array with components', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          hazCodes: [1, 2, 3, 1, 2, 3, 4, 5, 4],
+          hazCodes: [
+            'HP_1',
+            'HP_2',
+            'HP_3',
+            'HP_1',
+            'HP_2',
+            'HP_3',
+            'HP_4',
+            'HP_5',
+            'HP_4'
+          ],
           components: [{ name: 'Mercury', concentration: 15 }]
         })
         expect(result.error).toBeUndefined()
         const validatedHazardous = result.value.wasteItems[0].hazardous
-        expect(validatedHazardous.hazCodes).toEqual([1, 2, 3, 4, 5])
+        expect(validatedHazardous.hazCodes).toEqual([
+          'HP_1',
+          'HP_2',
+          'HP_3',
+          'HP_4',
+          'HP_5'
+        ])
       })
 
       it('should reject mix of valid and invalid HP codes', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          hazCodes: [1, 2, 16]
+          hazCodes: ['HP_1', 'HP_2', 'HP_16']
         })
         expect(result.error).toBeDefined()
-        expect(result.error.message).toContain(
-          'Hazard code must be between 1 and 15 (HP1-HP15)'
+        expect(result.error.message).toBe(
+          `"wasteItems[0].hazardous.hazCodes[2]" must be one of ${validHazCodes.join(', ')}`
         )
       })
     })
