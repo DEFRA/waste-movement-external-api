@@ -31,10 +31,23 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
   })
 
   function createPayload(disposalOrRecoveryCodes) {
-    return {
-      ...createMovementRequest(),
-      ...disposalOrRecoveryCodes
+    const baseRequest = createMovementRequest()
+
+    // If disposalOrRecoveryCodes provided, add them to the first wasteItem
+    if (disposalOrRecoveryCodes) {
+      return {
+        ...baseRequest,
+        wasteItems: [
+          {
+            ...baseRequest.wasteItems[0],
+            disposalOrRecoveryCodes:
+              disposalOrRecoveryCodes.disposalOrRecoveryCodes
+          }
+        ]
+      }
     }
+
+    return baseRequest
   }
 
   describe('Schema Validation Tests', () => {
@@ -134,7 +147,7 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
         const { error } = receiveMovementRequestSchema.validate(invalidPayload)
         expect(error).toBeDefined()
         expect(error.details[0].message).toContain(
-          '"disposalOrRecoveryCodes[0].weight" is required'
+          '"wasteItems[0].disposalOrRecoveryCodes[0].weight" is required'
         )
       })
     })

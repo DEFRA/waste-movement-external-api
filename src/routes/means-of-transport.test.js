@@ -31,6 +31,34 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
     })
   })
 
+  // Test helpers
+  const createTestRequest = (payload) => ({
+    auth: { credentials: { clientId: 'test-client-id' } },
+    payload
+  })
+
+  const createMockResponse = () => ({
+    response: jest.fn().mockReturnThis(),
+    code: jest.fn().mockReturnThis()
+  })
+
+  const expectSuccessfulResponse = (h) => {
+    expect(h.response).toHaveBeenCalledWith({
+      statusCode: 200,
+      globalMovementId: mockWasteTrackingId,
+      validation: {
+        warnings: [
+          {
+            errorType: 'NotProvided',
+            key: 'receipt.wasteItems[0].disposalOrRecoveryCodes',
+            message:
+              'Disposal or Recovery codes are required for proper waste tracking and compliance'
+          }
+        ]
+      }
+    })
+  }
+
   describe('Schema Validation Tests', () => {
     describe('Valid Means of Transport', () => {
       MEANS_OF_TRANSPORT.forEach((meansOfTransport) => {
@@ -101,7 +129,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
   describe('Handler Tests for Means of Transport', () => {
     describe('Successful submissions with valid means of transport', () => {
       it('should successfully create movement with Road transport', async () => {
-        const validPayload = {
+        const payload = {
           organisationApiId: uuidv4(),
           carrier: {
             organisationName: 'Test Carrier',
@@ -109,43 +137,18 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
           }
         }
 
-        httpClients.wasteMovement.post.mockResolvedValue({
-          statusCode: 200
-        })
+        httpClients.wasteMovement.post.mockResolvedValue({ statusCode: 200 })
 
-        const request = {
-          auth: {
-            credentials: {
-              clientId: 'test-client-id'
-            }
-          },
-          payload: validPayload
-        }
-        const h = {
-          response: jest.fn().mockReturnThis(),
-          code: jest.fn().mockReturnThis()
-        }
+        const request = createTestRequest(payload)
+        const h = createMockResponse()
 
         await createReceiptMovement.handler(request, h)
 
-        expect(h.response).toHaveBeenCalledWith({
-          statusCode: 200,
-          globalMovementId: mockWasteTrackingId,
-          validation: {
-            warnings: [
-              {
-                errorType: 'NotProvided',
-                key: 'receipt.disposalOrRecoveryCodes',
-                message:
-                  'Disposal or Recovery codes are required for proper waste tracking and compliance'
-              }
-            ]
-          }
-        })
+        expectSuccessfulResponse(h)
 
         expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
           `/movements/${mockWasteTrackingId}/receive`,
-          { movement: validPayload }
+          { movement: payload }
         )
       })
 
@@ -184,7 +187,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
             warnings: [
               {
                 errorType: 'NotProvided',
-                key: 'receipt.disposalOrRecoveryCodes',
+                key: 'receipt.wasteItems[0].disposalOrRecoveryCodes',
                 message:
                   'Disposal or Recovery codes are required for proper waste tracking and compliance'
               }
@@ -228,7 +231,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
             warnings: [
               {
                 errorType: 'NotProvided',
-                key: 'receipt.disposalOrRecoveryCodes',
+                key: 'receipt.wasteItems[0].disposalOrRecoveryCodes',
                 message:
                   'Disposal or Recovery codes are required for proper waste tracking and compliance'
               }

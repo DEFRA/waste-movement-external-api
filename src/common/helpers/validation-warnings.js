@@ -12,8 +12,73 @@ export const VALIDATION_ERROR_TYPES = {
  * Validation warning keys
  */
 export const VALIDATION_KEYS = {
-  RECEIPT_DISPOSAL_RECOVERY_CODES: 'receipt.disposalOrRecoveryCodes',
+  RECEIPT_DISPOSAL_RECOVERY_CODES: 'receipt.wasteItems.disposalOrRecoveryCodes',
   REASON_NO_CONSIGNMENT_CODE: 'receipt.reasonForNoConsignmentCode'
+}
+
+/**
+ * Helper function to check if disposal/recovery codes exist for a waste item
+ * @param {Object} wasteItem - The waste item to check
+ * @returns {boolean} Whether the waste item has valid disposal/recovery codes
+ */
+const hasValidDisposalRecoveryCodes = (wasteItem) => {
+  return (
+    wasteItem.disposalOrRecoveryCodes &&
+    Array.isArray(wasteItem.disposalOrRecoveryCodes) &&
+    wasteItem.disposalOrRecoveryCodes.length > 0
+  )
+}
+
+/**
+ * Validate weight fields for a disposal/recovery code entry
+ * @param {Object} codeEntry - The disposal/recovery code entry
+ * @param {string} codeKeyBase - The base key path for warnings
+ * @returns {Array} Array of validation warnings for weight fields
+ */
+const validateWeightFields = (codeEntry, codeKeyBase) => {
+  const warnings = []
+
+  if (!codeEntry.weight) {
+    warnings.push({
+      key: `${codeKeyBase}.weight`,
+      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      message: `Weight is required for Disposal/Recovery code: ${codeEntry.code || 'UNKNOWN'}`
+    })
+    return warnings
+  }
+
+  // Check individual weight fields
+  if (!codeEntry.weight.metric) {
+    warnings.push({
+      key: `${codeKeyBase}.weight.metric`,
+      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      message: 'Weight metric is required'
+    })
+  }
+
+  if (
+    codeEntry.weight.amount === undefined ||
+    codeEntry.weight.amount === null
+  ) {
+    warnings.push({
+      key: `${codeKeyBase}.weight.amount`,
+      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      message: 'Weight amount is required'
+    })
+  }
+
+  if (
+    codeEntry.weight.isEstimate === undefined ||
+    codeEntry.weight.isEstimate === null
+  ) {
+    warnings.push({
+      key: `${codeKeyBase}.weight.isEstimate`,
+      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      message: 'Weight estimate flag is required'
+    })
+  }
+
+  return warnings
 }
 
 /**
@@ -24,10 +89,10 @@ export const VALIDATION_KEYS = {
 export const generateDisposalRecoveryWarnings = (payload) => {
   const warnings = []
 
-  // Check if disposalOrRecoveryCodes array exists
-  if (!payload.disposalOrRecoveryCodes) {
+  // Check if wasteItems exist
+  if (!payload.wasteItems || !Array.isArray(payload.wasteItems)) {
     warnings.push({
-      key: VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES,
+      key: 'receipt.wasteItems[0].disposalOrRecoveryCodes',
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message:
         'Disposal or Recovery codes are required for proper waste tracking and compliance'
@@ -35,71 +100,56 @@ export const generateDisposalRecoveryWarnings = (payload) => {
     return warnings
   }
 
-  // Check if disposalOrRecoveryCodes array is empty
-  if (payload.disposalOrRecoveryCodes.length === 0) {
+  // Check if any waste item has disposal/recovery codes
+  let hasAnyDisposalOrRecoveryCodes = false
+
+  payload.wasteItems.forEach((wasteItem, wasteItemIndex) => {
+    // Check if this waste item has valid disposal/recovery codes
+    if (!hasValidDisposalRecoveryCodes(wasteItem)) {
+      const message = !wasteItem.disposalOrRecoveryCodes
+        ? 'Disposal or Recovery codes are required for proper waste tracking and compliance'
+        : 'At least one Disposal or Recovery code must be specified with associated weight'
+
+      warnings.push({
+        key: `receipt.wasteItems[${wasteItemIndex}].disposalOrRecoveryCodes`,
+        errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+        message
+      })
+      return
+    }
+
+    hasAnyDisposalOrRecoveryCodes = true
+
+    // Check each disposal/recovery code entry for this waste item
+    // Note: Missing codes and quantities are handled by schema validation (rejection)
+    // This warning logic only handles cases where the request passes schema validation
+    // but still has business rule violations that should generate warnings
+    wasteItem.disposalOrRecoveryCodes.forEach((codeEntry, codeIndex) => {
+      const codeKeyBase = `receipt.wasteItems[${wasteItemIndex}].disposalOrRecoveryCodes[${codeIndex}]`
+
+      // Check if code is missing (this should be caught by schema validation)
+      if (!codeEntry.code) {
+        warnings.push({
+          key: `${codeKeyBase}.code`,
+          errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+          message: 'Disposal or Recovery code is required for each entry'
+        })
+      }
+
+      // Validate weight fields
+      warnings.push(...validateWeightFields(codeEntry, codeKeyBase))
+    })
+  })
+
+  // If no waste items have disposal/recovery codes at all, add a general warning
+  if (!hasAnyDisposalOrRecoveryCodes && warnings.length === 0) {
     warnings.push({
       key: VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message:
-        'At least one Disposal or Recovery code must be specified with associated weight'
+        'Disposal or Recovery codes are required for proper waste tracking and compliance'
     })
-    return warnings
   }
-
-  // Check each disposal/recovery code entry
-  // Note: Missing codes and quantities are handled by schema validation (rejection)
-  // This warning logic only handles cases where the request passes schema validation
-  // but still has business rule violations that should generate warnings
-  payload.disposalOrRecoveryCodes.forEach((codeEntry, index) => {
-    // Check if code is missing (this should be caught by schema validation)
-    if (!codeEntry.code) {
-      warnings.push({
-        key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].code`,
-        errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-        message: 'Disposal or Recovery code is required for each entry'
-      })
-    }
-
-    // Check if weight is missing (this should be caught by schema validation)
-    if (!codeEntry.weight) {
-      warnings.push({
-        key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].weight`,
-        errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-        message: `Weight is required for Disposal/Recovery code: ${codeEntry.code || 'UNKNOWN'}`
-      })
-    } else {
-      // Check if weight has required fields (these should be caught by schema validation)
-      if (!codeEntry.weight.metric) {
-        warnings.push({
-          key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].weight.metric`,
-          errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight metric is required'
-        })
-      }
-
-      if (
-        codeEntry.weight.amount === undefined ||
-        codeEntry.weight.amount === null
-      ) {
-        warnings.push({
-          key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].weight.amount`,
-          errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight amount is required'
-        })
-      }
-
-      if (
-        codeEntry.weight.isEstimate === undefined ||
-        codeEntry.weight.isEstimate === null
-      ) {
-        warnings.push({
-          key: `${VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES}[${index}].weight.isEstimate`,
-          errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight estimate flag is required'
-        })
-      }
-    }
-  })
 
   return warnings
 }

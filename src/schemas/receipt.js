@@ -1,8 +1,6 @@
 import Joi from 'joi'
-import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
 import { MEANS_OF_TRANSPORT } from '../common/constants/means-of-transport.js'
 import { wasteItemsSchema } from './waste.js'
-import { weightSchema } from './weight.js'
 import {
   hazardousWasteConsignmentCodeSchema,
   reasonForNoConsignmentCodeSchema
@@ -117,13 +115,6 @@ const receiverSchema = Joi.object({
   })
 }).label('Receiver')
 
-const disposalOrRecoveryCodeSchema = Joi.object({
-  code: Joi.string()
-    .valid(...DISPOSAL_OR_RECOVERY_CODES)
-    .required(),
-  weight: weightSchema.required()
-}).label('DisposalOrRecoveryCode')
-
 const receiptSchema = Joi.object({
   address: receiverAddressSchema.required()
 }).label('Receipt')
@@ -153,6 +144,5 @@ export const receiveMovementRequestSchema = Joi.object({
   carrier: carrierSchema,
   brokerOrDealer: brokerOrDealerSchema,
   receiver: receiverSchema.required(),
-  receipt: receiptSchema.required(),
-  disposalOrRecoveryCodes: Joi.array().items(disposalOrRecoveryCodeSchema)
+  receipt: receiptSchema.required()
 }).label('Movement')
