@@ -17,6 +17,14 @@ export const VALIDATION_KEYS = {
 }
 
 /**
+ * Validation warning messages
+ */
+export const VALIDATION_MESSAGES = {
+  DISPOSAL_RECOVERY_REQUIRED:
+    'Disposal or Recovery codes are required for proper waste tracking and compliance'
+}
+
+/**
  * Helper function to check if disposal/recovery codes exist for a waste item
  * @param {Object} wasteItem - The waste item to check
  * @returns {boolean} Whether the waste item has valid disposal/recovery codes
@@ -94,8 +102,7 @@ export const generateDisposalRecoveryWarnings = (payload) => {
     warnings.push({
       key: 'receipt.wasteItems[0].disposalOrRecoveryCodes',
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message:
-        'Disposal or Recovery codes are required for proper waste tracking and compliance'
+      message: VALIDATION_MESSAGES.DISPOSAL_RECOVERY_REQUIRED
     })
     return warnings
   }
@@ -107,7 +114,7 @@ export const generateDisposalRecoveryWarnings = (payload) => {
     // Check if this waste item has valid disposal/recovery codes
     if (!hasValidDisposalRecoveryCodes(wasteItem)) {
       const message = !wasteItem.disposalOrRecoveryCodes
-        ? 'Disposal or Recovery codes are required for proper waste tracking and compliance'
+        ? VALIDATION_MESSAGES.DISPOSAL_RECOVERY_REQUIRED
         : 'At least one Disposal or Recovery code must be specified with associated weight'
 
       warnings.push({
@@ -146,8 +153,7 @@ export const generateDisposalRecoveryWarnings = (payload) => {
     warnings.push({
       key: VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message:
-        'Disposal or Recovery codes are required for proper waste tracking and compliance'
+      message: VALIDATION_MESSAGES.DISPOSAL_RECOVERY_REQUIRED
     })
   }
 
