@@ -29,7 +29,27 @@ export function createMovementRequest(overrides) {
         fullAddress: '123 Test St, Test City',
         postcode: 'TE1 1ST'
       }
-    }
+    },
+    wasteItems: [
+      {
+        ewcCodes: ['200101'],
+        wasteDescription: 'Default test waste description',
+        physicalForm: 'Solid',
+        numberOfContainers: 1,
+        typeOfContainers: 'SKI',
+        weight: {
+          metric: 'Tonnes',
+          amount: 1.0,
+          isEstimate: false
+        },
+        pops: {
+          containsPops: false
+        },
+        hazardous: {
+          containsHazardous: false
+        }
+      }
+    ]
   }
 
   return {

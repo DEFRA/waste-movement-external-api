@@ -35,10 +35,36 @@ describe('Create Receipt Movement Handler', () => {
     organisationApiId: uuidv4(),
     receiverReference: 'ref123',
     specialHandlingRequirements: 'Handle with care',
-    wasteItems: {
-      wasteCode: '123456',
-      description: 'Test waste'
-    },
+    wasteItems: [
+      {
+        ewcCodes: ['200101'],
+        wasteDescription: 'Test waste',
+        physicalForm: 'Solid',
+        numberOfContainers: 1,
+        typeOfContainers: 'SKI',
+        weight: {
+          metric: 'Tonnes',
+          amount: 1.0,
+          isEstimate: false
+        },
+        pops: {
+          containsPops: false
+        },
+        hazardous: {
+          containsHazardous: false
+        },
+        disposalOrRecoveryCodes: [
+          {
+            code: 'R1',
+            weight: {
+              metric: 'Tonnes',
+              amount: 10,
+              isEstimate: false
+            }
+          }
+        ]
+      }
+    ],
     carrier: {
       name: 'Test Carrier',
       address: {
@@ -46,17 +72,7 @@ describe('Create Receipt Movement Handler', () => {
         city: 'Test City',
         postcode: 'TE1 1ST'
       }
-    },
-    disposalOrRecoveryCodes: [
-      {
-        code: 'R1',
-        weight: {
-          metric: 'Tonnes',
-          amount: 10,
-          isEstimate: false
-        }
-      }
-    ]
+    }
   }
 
   const request = {

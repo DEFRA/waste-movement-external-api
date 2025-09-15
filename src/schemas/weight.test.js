@@ -99,17 +99,23 @@ describe('Receipt Schema Validation - Weight', () => {
 
   describe('In disposalOrRecoveryCode', () => {
     const validateWithReceiptWeightOverrides = (weightOverrides) => {
+      const basePayload = createMovementRequest()
       const payload = {
-        ...createMovementRequest(),
-        disposalOrRecoveryCodes: [
+        ...basePayload,
+        wasteItems: [
           {
-            code: 'R1',
-            weight: {
-              metric: 'Tonnes',
-              amount: 1,
-              isEstimate: false,
-              ...weightOverrides
-            }
+            ...basePayload.wasteItems[0],
+            disposalOrRecoveryCodes: [
+              {
+                code: 'R1',
+                weight: {
+                  metric: 'Tonnes',
+                  amount: 1,
+                  isEstimate: false,
+                  ...weightOverrides
+                }
+              }
+            ]
           }
         ]
       }
@@ -128,7 +134,7 @@ describe('Receipt Schema Validation - Weight', () => {
       const result = validateWithReceiptWeightOverrides({ metric: 'Pounds' })
       expect(result.error).toBeDefined()
       expect(result.error.message).toContain(
-        '"disposalOrRecoveryCodes[0].weight.metric" must be one of [Grams, Kilograms, Tonnes]'
+        '"wasteItems[0].disposalOrRecoveryCodes[0].weight.metric" must be one of [Grams, Kilograms, Tonnes]'
       )
     })
 
@@ -136,24 +142,30 @@ describe('Receipt Schema Validation - Weight', () => {
       const result = validateWithReceiptWeightOverrides({ metric: undefined })
       expect(result.error).toBeDefined()
       expect(result.error.message).toContain(
-        '"disposalOrRecoveryCodes[0].weight.metric" is required'
+        '"wasteItems[0].disposalOrRecoveryCodes[0].weight.metric" is required'
       )
     })
 
     it('should require weight object in each disposalOrRecoveryCode', () => {
+      const basePayload = createMovementRequest()
       const payload = {
-        ...createMovementRequest(),
-        disposalOrRecoveryCodes: [
+        ...basePayload,
+        wasteItems: [
           {
-            code: 'R1'
-            // weight omitted
+            ...basePayload.wasteItems[0],
+            disposalOrRecoveryCodes: [
+              {
+                code: 'R1'
+                // weight omitted
+              }
+            ]
           }
         ]
       }
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeDefined()
       expect(result.error.message).toContain(
-        '"disposalOrRecoveryCodes[0].weight" is required'
+        '"wasteItems[0].disposalOrRecoveryCodes[0].weight" is required'
       )
     })
 
@@ -162,7 +174,7 @@ describe('Receipt Schema Validation - Weight', () => {
         const result = validateWithReceiptWeightOverrides({ amount: undefined })
         expect(result.error).toBeDefined()
         expect(result.error.message).toContain(
-          '"disposalOrRecoveryCodes[0].weight.amount" is required'
+          '"wasteItems[0].disposalOrRecoveryCodes[0].weight.amount" is required'
         )
       })
 
@@ -183,7 +195,7 @@ describe('Receipt Schema Validation - Weight', () => {
 
         expect(result.error).toBeDefined()
         expect(result.error.message).toContain(
-          '"disposalOrRecoveryCodes[0].weight.amount" must be greater than or equal to 0'
+          '"wasteItems[0].disposalOrRecoveryCodes[0].weight.amount" must be greater than or equal to 0'
         )
       })
     })

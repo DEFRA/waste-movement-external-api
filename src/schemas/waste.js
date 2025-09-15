@@ -4,9 +4,17 @@ import { isValidPopName } from '../common/constants/pop-names.js'
 import { weightSchema } from './weight.js'
 import { isValidContainerType } from '../common/constants/container-types.js'
 import { validHazCodes } from '../common/constants/haz-codes.js'
+import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
 
 const MAX_EWC_CODES_COUNT = 5
 const CUSTOM_ERROR_TYPE = 'any.custom'
+
+const disposalOrRecoveryCodeSchema = Joi.object({
+  code: Joi.string()
+    .valid(...DISPOSAL_OR_RECOVERY_CODES)
+    .required(),
+  weight: weightSchema.required()
+}).label('DisposalOrRecoveryCode')
 
 const popsSchema = Joi.object({
   containsPops: Joi.boolean().required().messages({
@@ -201,5 +209,6 @@ export const wasteItemsSchema = Joi.object({
     }),
   weight: weightSchema,
   pops: popsSchema,
-  hazardous: hazardousSchema
+  hazardous: hazardousSchema,
+  disposalOrRecoveryCodes: Joi.array().items(disposalOrRecoveryCodeSchema)
 }).label('Waste')
