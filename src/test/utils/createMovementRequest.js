@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
+import { sourceOfComponentsNotProvided } from '../../common/constants/source-of-components'
 
 export function createMovementRequest(overrides) {
   const defaultMovementRequest = {
@@ -46,7 +47,8 @@ export function createMovementRequest(overrides) {
           containsPops: false
         },
         hazardous: {
-          containsHazardous: false
+          containsHazardous: false,
+          sourceOfComponents: sourceOfComponentsNotProvided.NOT_PROVIDED
         }
       }
     ]

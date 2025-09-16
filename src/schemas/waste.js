@@ -5,6 +5,11 @@ import { weightSchema } from './weight.js'
 import { isValidContainerType } from '../common/constants/container-types.js'
 import { validHazCodes } from '../common/constants/haz-codes.js'
 import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
+import {
+  sourceOfComponentsNotProvided,
+  sourceOfComponentsProvided,
+  validSourceOfComponents
+} from '../common/constants/source-of-components.js'
 
 const MAX_EWC_CODES_COUNT = 5
 const CUSTOM_ERROR_TYPE = 'any.custom'
@@ -75,6 +80,9 @@ const hazardousSchema = Joi.object({
     'any.required':
       'Hazardous waste is any waste that is potentially harmful to human health or the environment.'
   }),
+  sourceOfComponents: Joi.string()
+    .valid(...Object.values(validSourceOfComponents))
+    .required(),
   hazCodes: Joi.array()
     .items(Joi.string().valid(...validHazCodes))
     .custom((value) => {
@@ -89,7 +97,7 @@ const hazardousSchema = Joi.object({
   components: Joi.array()
     .items(
       Joi.object({
-        name: Joi.string().required().invalid(null).messages({
+        name: Joi.string().invalid(null).messages({
           'any.required': 'Chemical or Biological Component name is required',
           'string.base':
             'Chemical or Biological Component name must be a string',
@@ -119,19 +127,30 @@ const hazardousSchema = Joi.object({
 
           // Any other type is invalid
           return helpers.error(CUSTOM_ERROR_TYPE)
+        }).messages({
+          'any.required':
+            'Chemical or Biological concentration is required when hazardous properties are present',
+          'number.min':
+            'Chemical or Biological concentration cannot be negative',
+          'any.custom':
+            'Chemical or Biological concentration must be a valid number or "Not Supplied"'
         })
-          .required()
-          .messages({
-            'any.required':
-              'Chemical or Biological concentration is required when hazardous properties are present',
-            'number.min':
-              'Chemical or Biological concentration cannot be negative',
-            'any.custom':
-              'Chemical or Biological concentration must be a valid number or "Not Supplied"'
-          })
       }).label('ComponentItem')
     )
-    .optional()
+    .when('sourceOfComponents', {
+      is: sourceOfComponentsNotProvided.NOT_PROVIDED,
+      then: Joi.custom((value, helpers) => {
+        if (value && value.length > 0) {
+          return helpers.error('array.invalid')
+        }
+        return value
+      }).messages({
+        'array.invalid': `{{ #label }} must either be an empty array or not provided if sourceOfComponents is ${sourceOfComponentsNotProvided.NOT_PROVIDED}`
+      }),
+      otherwise: Joi.required().messages({
+        'any.required': `Components is required when Source of Components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+      })
+    })
 })
   .custom((value, helpers) => {
     // Custom validation to check components based on containsHazardous value
@@ -152,7 +171,7 @@ const hazardousSchema = Joi.object({
   })
   .messages({
     'any.required':
-      'Chemical or Biological component name must be specified when hazardous properties are present',
+      'Chemical or Biological component name and Source of Components must be specified when hazardous properties are present',
     'any.invalid':
       'Chemical or Biological components cannot be provided when no hazardous properties are indicated'
   })
