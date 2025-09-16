@@ -12,7 +12,7 @@ export const VALIDATION_ERROR_TYPES = {
  * Validation warning keys
  */
 export const VALIDATION_KEYS = {
-  RECEIPT_DISPOSAL_RECOVERY_CODES: 'receipt.wasteItems.disposalOrRecoveryCodes',
+  RECEIPT_DISPOSAL_RECOVERY_CODES: 'wasteItems.disposalOrRecoveryCodes',
   REASON_NO_CONSIGNMENT_CODE: 'receipt.reasonForNoConsignmentCode'
 }
 
@@ -100,7 +100,7 @@ export const generateDisposalRecoveryWarnings = (payload) => {
   // Check if wasteItems exist
   if (!payload.wasteItems || !Array.isArray(payload.wasteItems)) {
     warnings.push({
-      key: 'receipt.wasteItems[0].disposalOrRecoveryCodes',
+      key: 'wasteItems[0].disposalOrRecoveryCodes',
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message: VALIDATION_MESSAGES.DISPOSAL_RECOVERY_REQUIRED
     })
@@ -118,7 +118,7 @@ export const generateDisposalRecoveryWarnings = (payload) => {
         : 'At least one Disposal or Recovery code must be specified with associated weight'
 
       warnings.push({
-        key: `receipt.wasteItems[${wasteItemIndex}].disposalOrRecoveryCodes`,
+        key: `wasteItems[${wasteItemIndex}].disposalOrRecoveryCodes`,
         errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
         message
       })
@@ -132,7 +132,7 @@ export const generateDisposalRecoveryWarnings = (payload) => {
     // This warning logic only handles cases where the request passes schema validation
     // but still has business rule violations that should generate warnings
     wasteItem.disposalOrRecoveryCodes.forEach((codeEntry, codeIndex) => {
-      const codeKeyBase = `receipt.wasteItems[${wasteItemIndex}].disposalOrRecoveryCodes[${codeIndex}]`
+      const codeKeyBase = `wasteItems[${wasteItemIndex}].disposalOrRecoveryCodes[${codeIndex}]`
 
       // Check if code is missing (this should be caught by schema validation)
       if (!codeEntry.code) {
