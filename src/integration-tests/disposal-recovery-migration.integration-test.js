@@ -82,7 +82,7 @@ describe('Disposal/Recovery Code Migration Integration Tests', () => {
       expect(response.statusCode).toBe(200)
       expect(response.result.validation.warnings).toHaveLength(1)
       expect(response.result.validation.warnings[0]).toEqual({
-        key: 'receipt.wasteItems[0].disposalOrRecoveryCodes',
+        key: 'wasteItems[0].disposalOrRecoveryCodes',
         errorType: 'NotProvided',
         message:
           'Disposal or Recovery codes are required for proper waste tracking and compliance'
@@ -111,12 +111,12 @@ describe('Disposal/Recovery Code Migration Integration Tests', () => {
 
       expect(response.statusCode).toBe(200)
       expect(response.result.validation.warnings).toContainEqual({
-        key: 'receipt.wasteItems[0].disposalOrRecoveryCodes[0].weight.amount',
+        key: 'wasteItems[0].disposalOrRecoveryCodes[0].weight.amount',
         errorType: 'NotProvided',
         message: 'Weight amount is required'
       })
       expect(response.result.validation.warnings).toContainEqual({
-        key: 'receipt.wasteItems[0].disposalOrRecoveryCodes[0].weight.isEstimate',
+        key: 'wasteItems[0].disposalOrRecoveryCodes[0].weight.isEstimate',
         errorType: 'NotProvided',
         message: 'Weight estimate flag is required'
       })
@@ -154,7 +154,7 @@ describe('Disposal/Recovery Code Migration Integration Tests', () => {
 
       expect(response.statusCode).toBe(200)
       expect(response.result.validation.warnings).toContainEqual({
-        key: 'receipt.wasteItems[1].disposalOrRecoveryCodes',
+        key: 'wasteItems[1].disposalOrRecoveryCodes',
         errorType: 'NotProvided',
         message:
           'Disposal or Recovery codes are required for proper waste tracking and compliance'
