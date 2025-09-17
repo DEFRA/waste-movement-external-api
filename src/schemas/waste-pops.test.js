@@ -240,6 +240,25 @@ describe('Receipt Schema Validation - POPs', () => {
         expect(result.error).toBeUndefined()
       })
 
+      it('should accept POP components with details when source is OWN_TESTING', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'OWN_TESTING',
+              components: [
+                {
+                  name: 'Endosulfan',
+                  concentration: 42.5
+                }
+              ]
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeUndefined()
+      })
+
       it('should accept source NOT_PROVIDED with empty components array', () => {
         const payload = createTestPayload({
           wasteItemOverrides: {
@@ -306,6 +325,29 @@ describe('Receipt Schema Validation - POPs', () => {
                 }
               ]
             }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should accept POP components array with empty object when containsPops is false', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: false,
+              components: [{}]
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should treat pops property set to undefined as valid', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: undefined
           }
         })
         const result = receiveMovementRequestSchema.validate(payload)

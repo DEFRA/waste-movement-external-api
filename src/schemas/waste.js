@@ -42,6 +42,46 @@ const popComponentSchema = Joi.object({
   })
 }).label('PopComponent')
 
+const hasComponents = (components) =>
+  Array.isArray(components) && components.length > 0
+
+const hasNonEmptyName = (components) =>
+  Array.isArray(components) &&
+  components.some((component) => {
+    const name = component?.name
+    return name !== undefined && name !== null && name !== ''
+  })
+
+const validatePopPresence = (value, helpers) => {
+  const { sourceOfComponents, components } = value
+
+  if (sourceOfComponents === POP_COMPONENT_SOURCES.NOT_PROVIDED) {
+    if (hasComponents(components)) {
+      return helpers.error('pops.componentsNotAllowed')
+    }
+
+    return value
+  }
+
+  if (!hasComponents(components)) {
+    return helpers.error('pops.componentsRequired')
+  }
+
+  return value
+}
+
+const validatePopAbsence = (value, helpers) => {
+  if (value.sourceOfComponents !== undefined) {
+    return helpers.error('pops.sourceNotAllowed')
+  }
+
+  if (hasNonEmptyName(value.components)) {
+    return helpers.error('any.invalid')
+  }
+
+  return value
+}
+
 const popsSchema = Joi.object({
   containsPops: Joi.boolean().required().messages({
     'any.required':
@@ -68,40 +108,11 @@ const popsSchema = Joi.object({
     }
 
     if (value.containsPops === true) {
-      const { sourceOfComponents, components } = value
-
-      if (sourceOfComponents === POP_COMPONENT_SOURCES.NOT_PROVIDED) {
-        if (components && components.length > 0) {
-          return helpers.error('pops.componentsNotAllowed')
-        }
-
-        return value
-      }
-
-      const hasComponents = Array.isArray(components) && components.length > 0
-
-      if (!hasComponents) {
-        return helpers.error('pops.componentsRequired')
-      }
-
-      return value
+      return validatePopPresence(value, helpers)
     }
 
     if (value.containsPops === false) {
-      if (value.sourceOfComponents !== undefined) {
-        return helpers.error('pops.sourceNotAllowed')
-      }
-
-      if (value.components && value.components.length > 0) {
-        const hasNonEmptyName = value.components.some((component) => {
-          const name = component?.name
-          return name !== undefined && name !== null && name !== ''
-        })
-
-        if (hasNonEmptyName) {
-          return helpers.error('any.invalid')
-        }
-      }
+      return validatePopAbsence(value, helpers)
     }
 
     return value
