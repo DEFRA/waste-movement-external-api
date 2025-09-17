@@ -1,6 +1,10 @@
 import Joi from 'joi'
 import { isValidEwcCode } from '../common/constants/ewc-codes.js'
 import { isValidPopName } from '../common/constants/pop-names.js'
+import {
+  POP_COMPONENT_SOURCES,
+  validPopComponentSources
+} from '../common/constants/pop-component-sources.js'
 import { weightSchema } from './weight.js'
 import { isValidContainerType } from '../common/constants/container-types.js'
 import { validHazCodes } from '../common/constants/haz-codes.js'
@@ -16,57 +20,100 @@ const disposalOrRecoveryCodeSchema = Joi.object({
   weight: weightSchema.required()
 }).label('DisposalOrRecoveryCode')
 
+const popComponentSchema = Joi.object({
+  name: Joi.string()
+    .allow('')
+    .custom((value, helpers) => {
+      if (value === undefined) {
+        return value
+      }
+
+      if (!isValidPopName(value)) {
+        return helpers.error('string.popNameInvalid')
+      }
+
+      return value
+    })
+    .messages({
+      'string.popNameInvalid': 'POP name is not valid'
+    }),
+  concentration: Joi.number().messages({
+    'number.base': 'POP concentration must be a number'
+  })
+}).label('PopComponent')
+
 const popsSchema = Joi.object({
   containsPops: Joi.boolean().required().messages({
     'any.required':
       'Does the waste contain persistent organic pollutants (POPs)? is required'
   }),
-  components: Joi.array().items(
-    Joi.object({
-      name: Joi.string()
-        .allow('') // Allow empty string as it's a valid POP name
-        .custom((value, helpers) => {
-          if (!isValidPopName(value)) {
-            return helpers.error('string.popNameInvalid')
-          }
-          return value
-        })
-        .required()
-        .messages({
-          'any.required': 'POP name is required',
-          'string.popNameInvalid': 'POP name is not valid'
-        }),
-      concentration: Joi.number().required().messages({
-        'any.required': 'POP concentration is required'
+  sourceOfComponents: Joi.string()
+    .valid(...validPopComponentSources)
+    .when('containsPops', {
+      is: true,
+      then: Joi.required().messages({
+        'any.required':
+          'Source of POP components is required when POPs are present'
+      }),
+      otherwise: Joi.forbidden().messages({
+        'any.unknown':
+          'Source of POP components can only be provided when POPs are present'
       })
-    }).label('PopComponent')
-  )
+    }),
+  components: Joi.array().items(popComponentSchema)
 })
   .custom((value, helpers) => {
-    // Custom validation based on containsPops value
-    if (value && value.containsPops === true) {
-      // When POPs are present, components can be provided (optional)
+    if (!value) {
       return value
-    } else if (value && value.containsPops === false) {
-      // When POPs are not present, components should not be provided
-      // Exception: allow empty string in component names
+    }
+
+    if (value.containsPops === true) {
+      const { sourceOfComponents, components } = value
+
+      if (sourceOfComponents === POP_COMPONENT_SOURCES.NOT_PROVIDED) {
+        if (components && components.length > 0) {
+          return helpers.error('pops.componentsNotAllowed')
+        }
+
+        return value
+      }
+
+      const hasComponents = Array.isArray(components) && components.length > 0
+
+      if (!hasComponents) {
+        return helpers.error('pops.componentsRequired')
+      }
+
+      return value
+    }
+
+    if (value.containsPops === false) {
+      if (value.sourceOfComponents !== undefined) {
+        return helpers.error('pops.sourceNotAllowed')
+      }
+
       if (value.components && value.components.length > 0) {
-        const hasNonEmptyName = value.components.some(
-          (comp) => comp.name && comp.name !== ''
-        )
+        const hasNonEmptyName = value.components.some((component) => {
+          const name = component?.name
+          return name !== undefined && name !== null && name !== ''
+        })
+
         if (hasNonEmptyName) {
           return helpers.error('any.invalid')
         }
       }
-      return value
-    } else {
-      // When containsPops is undefined, null, or any other value
-      // Let the required validation handle the missing containsPops field
-      return value
     }
+
+    return value
   })
   .messages({
-    'any.invalid': 'A POP name cannot be provided when POPs are not present'
+    'any.invalid': 'A POP name cannot be provided when POPs are not present',
+    'pops.componentsNotAllowed':
+      'POP components must not be provided when the source is NOT_PROVIDED',
+    'pops.componentsRequired':
+      'At least one POP component must be provided when a source is specified',
+    'pops.sourceNotAllowed':
+      'Source of POP components can only be provided when POPs are present'
   })
   .label('Pops')
 
