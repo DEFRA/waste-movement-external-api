@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { sourceOfComponentsNotProvided } from '../../common/constants/source-of-components'
+import { sourceOfComponentsNotProvided } from '../../common/constants/source-of-components.js'
 
 export function createMovementRequest(overrides) {
   const defaultMovementRequest = {
