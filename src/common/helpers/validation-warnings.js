@@ -206,18 +206,12 @@ export const generateHazardousConsignmentWarnings = (payload) => {
 export const generateSourceOfComponentsWarnings = (payload) => {
   const warnings = []
 
-  if (!payload?.waste?.hazardous) {
+  if (!Array.isArray(payload?.wasteItems)) {
     return warnings
   }
 
-  const sourceOfComponents = payload.waste.hazardous.sourceOfComponents
-  const hazardousComponents = payload.waste.hazardous.components
-
   // If source of components has been provided then all hazardous components should have a name and concentration
-  if (
-    Object.keys(sourceOfComponentsProvided).includes(sourceOfComponents) &&
-    !haveAllHazardousComponentsGotNameAndConcentration(hazardousComponents)
-  ) {
+  if (!haveAllHazardousComponentsGotNameAndConcentration(payload.wasteItems)) {
     warnings.push({
       key: VALIDATION_KEYS.HAZARDOUS_COMPONENTS,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
@@ -231,20 +225,35 @@ export const generateSourceOfComponentsWarnings = (payload) => {
 /**
  * Determines if name and concentration have been provided for all hazardous components
  *
- * @param {Object} hazardousComponents - The request hazardous components
+ * @param {Object} wasteItems - The request waste items
  * @returns {boolean} True if name and concentration have been provided for all hazardous components, otherwise false
  */
-function haveAllHazardousComponentsGotNameAndConcentration(
-  hazardousComponents
-) {
-  return (
-    hazardousComponents &&
-    hazardousComponents.length > 0 &&
-    hazardousComponents.every(
-      ({ name, concentration }) =>
-        name && name.trim().length > 0 && concentration >= 0
+function haveAllHazardousComponentsGotNameAndConcentration(wasteItems) {
+  return wasteItems.every((wasteItem) => {
+    if (!wasteItem.hazardous) {
+      return true
+    }
+
+    const sourceOfComponents = wasteItem.hazardous.sourceOfComponents
+
+    if (
+      sourceOfComponents === undefined ||
+      !Object.keys(sourceOfComponentsProvided).includes(sourceOfComponents)
+    ) {
+      return true
+    }
+
+    const hazardousComponents = wasteItem.hazardous.components
+
+    return (
+      hazardousComponents &&
+      hazardousComponents.length > 0 &&
+      hazardousComponents.every(
+        ({ name, concentration }) =>
+          name && name.trim().length > 0 && concentration >= 0
+      )
     )
-  )
+  })
 }
 
 /**

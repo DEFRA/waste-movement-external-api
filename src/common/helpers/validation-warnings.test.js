@@ -358,24 +358,10 @@ describe('Validation Warnings', () => {
     )
 
     it.each([undefined, null])(
-      'should return empty array when waste payload is %s',
+      'should return empty array when wasteItems payload is %s',
       (value) => {
         const payload = {
-          waste: value
-        }
-
-        const warnings = generateSourceOfComponentsWarnings(payload)
-        expect(warnings).toEqual([])
-      }
-    )
-
-    it.each([undefined, null])(
-      'should return empty array when hazardous payload is %s',
-      (value) => {
-        const payload = {
-          waste: {
-            hazardous: value
-          }
+          wasteItems: value
         }
 
         const warnings = generateSourceOfComponentsWarnings(payload)
@@ -387,21 +373,23 @@ describe('Validation Warnings', () => {
       'should return empty array when source of components is %s and hazardous components is provided',
       (value) => {
         const payload = {
-          waste: {
-            hazardous: {
-              sourceOfComponents: value,
-              components: [
-                {
-                  name: 'Mercury',
-                  concentration: 30
-                },
-                {
-                  name: 'Lead',
-                  concentration: 0
-                }
-              ]
+          wasteItems: [
+            {
+              hazardous: {
+                sourceOfComponents: value,
+                components: [
+                  {
+                    name: 'Mercury',
+                    concentration: 30
+                  },
+                  {
+                    name: 'Lead',
+                    concentration: 0
+                  }
+                ]
+              }
             }
-          }
+          ]
         }
 
         const warnings = generateSourceOfComponentsWarnings(payload)
@@ -413,12 +401,14 @@ describe('Validation Warnings', () => {
       'should generate warning when source of components is %s and hazardous components is an empty array',
       (value) => {
         const payload = {
-          waste: {
-            hazardous: {
-              sourceOfComponents: value,
-              components: []
+          wasteItems: [
+            {
+              hazardous: {
+                sourceOfComponents: value,
+                components: []
+              }
             }
-          }
+          ]
         }
 
         const warnings = generateSourceOfComponentsWarnings(payload)
@@ -436,18 +426,20 @@ describe('Validation Warnings', () => {
       'should generate warning when source of components is %s and hazardous components contains an empty object',
       (value) => {
         const payload = {
-          waste: {
-            hazardous: {
-              sourceOfComponents: value,
-              components: [
-                {
-                  name: 'Mercury',
-                  concentration: 30
-                },
-                {}
-              ]
+          wasteItems: [
+            {
+              hazardous: {
+                sourceOfComponents: value,
+                components: [
+                  {
+                    name: 'Mercury',
+                    concentration: 30
+                  },
+                  {}
+                ]
+              }
             }
-          }
+          ]
         }
 
         const warnings = generateSourceOfComponentsWarnings(payload)
@@ -465,21 +457,23 @@ describe('Validation Warnings', () => {
       'should generate warning when source of components is %s and hazardous component name is undefined',
       (componentSource) => {
         const payload = {
-          waste: {
-            hazardous: {
-              sourceOfComponents: componentSource,
-              components: [
-                {
-                  name: 'Mercury',
-                  concentration: 30
-                },
-                {
-                  name: undefined,
-                  concentration: 30
-                }
-              ]
+          wasteItems: [
+            {
+              hazardous: {
+                sourceOfComponents: componentSource,
+                components: [
+                  {
+                    name: 'Mercury',
+                    concentration: 30
+                  },
+                  {
+                    name: undefined,
+                    concentration: 30
+                  }
+                ]
+              }
             }
-          }
+          ]
         }
 
         const warnings = generateSourceOfComponentsWarnings(payload)
@@ -497,21 +491,23 @@ describe('Validation Warnings', () => {
       'should generate warning when source of components is %s and hazardous component name is an empty string',
       (componentSource) => {
         const payload = {
-          waste: {
-            hazardous: {
-              sourceOfComponents: componentSource,
-              components: [
-                {
-                  name: 'Mercury',
-                  concentration: 30
-                },
-                {
-                  name: '',
-                  concentration: 30
-                }
-              ]
+          wasteItems: [
+            {
+              hazardous: {
+                sourceOfComponents: componentSource,
+                components: [
+                  {
+                    name: 'Mercury',
+                    concentration: 30
+                  },
+                  {
+                    name: '',
+                    concentration: 30
+                  }
+                ]
+              }
             }
-          }
+          ]
         }
 
         const warnings = generateSourceOfComponentsWarnings(payload)
@@ -529,21 +525,23 @@ describe('Validation Warnings', () => {
       'should generate warning when source of components is %s and hazardous component concentration is undefined',
       (componentSource) => {
         const payload = {
-          waste: {
-            hazardous: {
-              sourceOfComponents: componentSource,
-              components: [
-                {
-                  name: 'Mercury',
-                  concentration: 30
-                },
-                {
-                  name: 'Mercury',
-                  concentration: undefined
-                }
-              ]
+          wasteItems: [
+            {
+              hazardous: {
+                sourceOfComponents: componentSource,
+                components: [
+                  {
+                    name: 'Mercury',
+                    concentration: 30
+                  },
+                  {
+                    name: 'Mercury',
+                    concentration: undefined
+                  }
+                ]
+              }
             }
-          }
+          ]
         }
 
         const warnings = generateSourceOfComponentsWarnings(payload)
