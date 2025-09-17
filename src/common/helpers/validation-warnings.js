@@ -242,7 +242,7 @@ function haveAllHazardousComponentsGotNameAndConcentration(
     hazardousComponents.length > 0 &&
     hazardousComponents.every(
       ({ name, concentration }) =>
-        name && name.trim().length > 0 && concentration
+        name && name.trim().length > 0 && concentration >= 0
     )
   )
 }

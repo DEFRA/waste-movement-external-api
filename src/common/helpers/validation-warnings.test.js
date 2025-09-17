@@ -396,8 +396,8 @@ describe('Validation Warnings', () => {
                   concentration: 30
                 },
                 {
-                  name: 'Mercury',
-                  concentration: 30
+                  name: 'Lead',
+                  concentration: 0
                 }
               ]
             }
