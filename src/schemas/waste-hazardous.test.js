@@ -129,6 +129,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
             description: 'invalid concentration string that is not allowed',
             input: {
               containsHazardous: true,
+              sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
               components: [{ name: 'Mercury', concentration: 'invalid' }]
             },
             errorMessage:
@@ -138,6 +139,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
             description: 'invalid concentration type (object)',
             input: {
               containsHazardous: true,
+              sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
               components: [{ name: 'Mercury', concentration: {} }]
             },
             errorMessage:
