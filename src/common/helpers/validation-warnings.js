@@ -1,4 +1,5 @@
 import { hasHazardousEwcCodes } from '../../schemas/hazardous-waste-consignment.js'
+import { sourceOfComponentsProvided } from '../constants/source-of-components.js'
 
 /**
  * Validation warning types as defined in the API specification
@@ -13,7 +14,8 @@ export const VALIDATION_ERROR_TYPES = {
  */
 export const VALIDATION_KEYS = {
   RECEIPT_DISPOSAL_RECOVERY_CODES: 'wasteItems.disposalOrRecoveryCodes',
-  REASON_NO_CONSIGNMENT_CODE: 'receipt.reasonForNoConsignmentCode'
+  REASON_NO_CONSIGNMENT_CODE: 'receipt.reasonForNoConsignmentCode',
+  HAZARDOUS_COMPONENTS: 'wasteItems.hazardous.components'
 }
 
 /**
@@ -195,6 +197,69 @@ export const generateHazardousConsignmentWarnings = (payload) => {
 }
 
 /**
+ * Generate warnings for source of component conditions
+ * If source of components is provided then hazardous components must be provided, otherwise add a warning
+ *
+ * @param {Object} payload
+ * @returns {Array}
+ */
+export const generateSourceOfComponentsWarnings = (payload) => {
+  const warnings = []
+
+  if (!Array.isArray(payload?.wasteItems)) {
+    return warnings
+  }
+
+  // If source of components has been provided then all hazardous components should have a name and concentration
+  if (!haveAllHazardousComponentsGotNameAndConcentration(payload.wasteItems)) {
+    warnings.push({
+      key: VALIDATION_KEYS.HAZARDOUS_COMPONENTS,
+      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      message: `Hazardous components must be provided with both name and concentration if source of components is one of: ${Object.keys(sourceOfComponentsProvided).join(', ')}`
+    })
+  }
+
+  return warnings
+}
+
+/**
+ * Determines if name and concentration have been provided for all hazardous components
+ *
+ * @param {Object} wasteItems - The request waste items
+ * @returns {boolean} True if name and concentration have been provided for all hazardous components, otherwise false
+ */
+function haveAllHazardousComponentsGotNameAndConcentration(wasteItems) {
+  return wasteItems.every((wasteItem) => {
+    if (!wasteItem.hazardous) {
+      return true
+    }
+
+    const sourceOfComponents = wasteItem.hazardous.sourceOfComponents
+
+    if (
+      sourceOfComponents === undefined ||
+      !Object.keys(sourceOfComponentsProvided).includes(sourceOfComponents)
+    ) {
+      return true
+    }
+
+    const hazardousComponents = wasteItem.hazardous.components
+
+    return (
+      hazardousComponents &&
+      hazardousComponents.length > 0 &&
+      hazardousComponents.every(
+        ({ name, concentration }) =>
+          name &&
+          name.trim().length > 0 &&
+          typeof concentration === 'number' &&
+          concentration >= 0
+      )
+    )
+  })
+}
+
+/**
  * Generate all validation warnings for a movement request
  * @param {Object} payload - The request payload
  * @returns {Array} Array of all validation warnings
@@ -209,6 +274,10 @@ export const generateAllValidationWarnings = (payload) => {
   // Add hazardous consignment related warnings
   const consignmentWarnings = generateHazardousConsignmentWarnings(payload)
   warnings.push(...consignmentWarnings)
+
+  // Add source of components related warnings
+  const sourceOfComponentsWarnings = generateSourceOfComponentsWarnings(payload)
+  warnings.push(...sourceOfComponentsWarnings)
 
   return warnings
 }

@@ -1,7 +1,9 @@
+import { sourceOfComponentsProvided } from '../constants/source-of-components.js'
 import {
   VALIDATION_ERROR_TYPES,
   generateDisposalRecoveryWarnings,
-  generateAllValidationWarnings
+  generateAllValidationWarnings,
+  generateSourceOfComponentsWarnings
 } from './validation-warnings.js'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -342,6 +344,250 @@ describe('Validation Warnings', () => {
         }
       ])
     })
+  })
+
+  describe('generateSourceOfComponentsWarnings', () => {
+    it.each([undefined, null])(
+      'should return empty array when receipt payload is %s',
+      (value) => {
+        const payload = value
+
+        const warnings = generateSourceOfComponentsWarnings(payload)
+        expect(warnings).toEqual([])
+      }
+    )
+
+    it.each([undefined, null])(
+      'should return empty array when wasteItems payload is %s',
+      (value) => {
+        const payload = {
+          wasteItems: value
+        }
+
+        const warnings = generateSourceOfComponentsWarnings(payload)
+        expect(warnings).toEqual([])
+      }
+    )
+
+    it.each(Object.keys(sourceOfComponentsProvided))(
+      'should return empty array when source of components is %s and hazardous components is provided',
+      (value) => {
+        const payload = {
+          wasteItems: [
+            {
+              hazardous: {
+                sourceOfComponents: value,
+                components: [
+                  {
+                    name: 'Mercury',
+                    concentration: 30
+                  },
+                  {
+                    name: 'Lead',
+                    concentration: 0
+                  }
+                ]
+              }
+            }
+          ]
+        }
+
+        const warnings = generateSourceOfComponentsWarnings(payload)
+        expect(warnings).toEqual([])
+      }
+    )
+
+    it.each(Object.keys(sourceOfComponentsProvided))(
+      'should generate warning when source of components is %s and hazardous components is an empty array',
+      (value) => {
+        const payload = {
+          wasteItems: [
+            {
+              hazardous: {
+                sourceOfComponents: value,
+                components: []
+              }
+            }
+          ]
+        }
+
+        const warnings = generateSourceOfComponentsWarnings(payload)
+        expect(warnings).toEqual([
+          {
+            key: 'wasteItems.hazardous.components',
+            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+            message: `Hazardous components must be provided with both name and concentration if source of components is one of: ${Object.keys(sourceOfComponentsProvided).join(', ')}`
+          }
+        ])
+      }
+    )
+
+    it.each(Object.keys(sourceOfComponentsProvided))(
+      'should generate warning when source of components is %s and hazardous components contains an empty object',
+      (value) => {
+        const payload = {
+          wasteItems: [
+            {
+              hazardous: {
+                sourceOfComponents: value,
+                components: [
+                  {
+                    name: 'Mercury',
+                    concentration: 30
+                  },
+                  {}
+                ]
+              }
+            }
+          ]
+        }
+
+        const warnings = generateSourceOfComponentsWarnings(payload)
+        expect(warnings).toEqual([
+          {
+            key: 'wasteItems.hazardous.components',
+            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+            message: `Hazardous components must be provided with both name and concentration if source of components is one of: ${Object.keys(sourceOfComponentsProvided).join(', ')}`
+          }
+        ])
+      }
+    )
+
+    it.each(Object.keys(sourceOfComponentsProvided))(
+      'should generate warning when source of components is %s and hazardous component name is undefined',
+      (componentSource) => {
+        const payload = {
+          wasteItems: [
+            {
+              hazardous: {
+                sourceOfComponents: componentSource,
+                components: [
+                  {
+                    name: 'Mercury',
+                    concentration: 30
+                  },
+                  {
+                    name: undefined,
+                    concentration: 30
+                  }
+                ]
+              }
+            }
+          ]
+        }
+
+        const warnings = generateSourceOfComponentsWarnings(payload)
+        expect(warnings).toEqual([
+          {
+            key: 'wasteItems.hazardous.components',
+            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+            message: `Hazardous components must be provided with both name and concentration if source of components is one of: ${Object.keys(sourceOfComponentsProvided).join(', ')}`
+          }
+        ])
+      }
+    )
+
+    it.each(Object.keys(sourceOfComponentsProvided))(
+      'should generate warning when source of components is %s and hazardous component name is an empty string',
+      (componentSource) => {
+        const payload = {
+          wasteItems: [
+            {
+              hazardous: {
+                sourceOfComponents: componentSource,
+                components: [
+                  {
+                    name: 'Mercury',
+                    concentration: 30
+                  },
+                  {
+                    name: '',
+                    concentration: 30
+                  }
+                ]
+              }
+            }
+          ]
+        }
+
+        const warnings = generateSourceOfComponentsWarnings(payload)
+        expect(warnings).toEqual([
+          {
+            key: 'wasteItems.hazardous.components',
+            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+            message: `Hazardous components must be provided with both name and concentration if source of components is one of: ${Object.keys(sourceOfComponentsProvided).join(', ')}`
+          }
+        ])
+      }
+    )
+
+    it.each(Object.keys(sourceOfComponentsProvided))(
+      'should generate warning when source of components is %s and hazardous component concentration is undefined',
+      (componentSource) => {
+        const payload = {
+          wasteItems: [
+            {
+              hazardous: {
+                sourceOfComponents: componentSource,
+                components: [
+                  {
+                    name: 'Mercury',
+                    concentration: 30
+                  },
+                  {
+                    name: 'Mercury',
+                    concentration: undefined
+                  }
+                ]
+              }
+            }
+          ]
+        }
+
+        const warnings = generateSourceOfComponentsWarnings(payload)
+        expect(warnings).toEqual([
+          {
+            key: 'wasteItems.hazardous.components',
+            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+            message: `Hazardous components must be provided with both name and concentration if source of components is one of: ${Object.keys(sourceOfComponentsProvided).join(', ')}`
+          }
+        ])
+      }
+    )
+
+    it.each(['', 'Not Supplied'])(
+      'should generate warning when source of components is provided and hazardous component concentration is %s',
+      (value) => {
+        const payload = {
+          wasteItems: [
+            {
+              hazardous: {
+                sourceOfComponents: sourceOfComponentsProvided.CARRIER_PROVIDED,
+                components: [
+                  {
+                    name: 'Mercury',
+                    concentration: 30
+                  },
+                  {
+                    name: 'Lead',
+                    concentration: value
+                  }
+                ]
+              }
+            }
+          ]
+        }
+
+        const warnings = generateSourceOfComponentsWarnings(payload)
+        expect(warnings).toEqual([
+          {
+            key: 'wasteItems.hazardous.components',
+            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+            message: `Hazardous components must be provided with both name and concentration if source of components is one of: ${Object.keys(sourceOfComponentsProvided).join(', ')}`
+          }
+        ])
+      }
+    )
   })
 
   describe('generateAllValidationWarnings', () => {
