@@ -250,7 +250,10 @@ function haveAllHazardousComponentsGotNameAndConcentration(wasteItems) {
       hazardousComponents.length > 0 &&
       hazardousComponents.every(
         ({ name, concentration }) =>
-          name && name.trim().length > 0 && concentration >= 0
+          name &&
+          name.trim().length > 0 &&
+          typeof concentration === 'number' &&
+          concentration >= 0
       )
     )
   })
