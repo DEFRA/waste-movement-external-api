@@ -28,6 +28,14 @@ describe('Receipt Schema Validation - POPs', () => {
       expect(result.error).toBeUndefined()
     })
 
+    it('should accept payload when POPs property is omitted', () => {
+      const payload = createTestPayload()
+      delete payload.wasteItems[0].pops
+
+      const result = receiveMovementRequestSchema.validate(payload)
+      expect(result.error).toBeUndefined()
+    })
+
     it('should reject missing containsPops field', () => {
       const payload = createTestPayload({
         wasteItemOverrides: { pops: {} } // Empty pops object without containsPops
@@ -434,12 +442,9 @@ describe('Receipt Schema Validation - POPs', () => {
         ['pfos', 'wrong case']
       ]
 
-      it.each(invalidInputs)(
-        'should return false for %s (%s)',
-        (input, description) => {
-          expect(isValidPopName(input)).toBe(false)
-        }
-      )
+      it.each(invalidInputs)('should return false for %s (%s)', (input) => {
+        expect(isValidPopName(input)).toBe(false)
+      })
     })
   })
 })
