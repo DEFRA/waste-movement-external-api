@@ -226,6 +226,23 @@ describe('Receipt Schema Validation - POPs', () => {
         )
       })
 
+      it('should reject POP components when source is CARRIER_PROVIDED but array is empty', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'CARRIER_PROVIDED',
+              components: []
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'At least one POP component must be provided when a source is specified'
+        )
+      })
+
       it('should accept POP components with empty object when source is GUIDANCE', () => {
         const payload = createTestPayload({
           wasteItemOverrides: {
@@ -257,6 +274,28 @@ describe('Receipt Schema Validation - POPs', () => {
         })
         const result = receiveMovementRequestSchema.validate(payload)
         expect(result.error).toBeUndefined()
+      })
+
+      it('should reject POP component concentration when value is not numeric', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'OWN_TESTING',
+              components: [
+                {
+                  name: 'Endosulfan',
+                  concentration: 'invalid'
+                }
+              ]
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'POP concentration must be a number'
+        )
       })
 
       it('should accept source NOT_PROVIDED with empty components array', () => {
