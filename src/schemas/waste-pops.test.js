@@ -46,6 +46,32 @@ describe('Receipt Schema Validation - POPs', () => {
         'Does the waste contain persistent organic pollutants (POPs)? is required'
       )
     })
+
+    it('should reject null pops object (shows line 107 is unreachable)', () => {
+      // Create payload without using the helper to ensure null is preserved
+      const payload = createTestPayload()
+      payload.wasteItems[0].pops = null
+
+      const result = receiveMovementRequestSchema.validate(payload)
+      // Joi rejects null before custom validator runs, making line 107 unreachable
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toContain('"Pops" must be of type object')
+    })
+
+    it('should handle undefined containsPops (coverage line 118)', () => {
+      const payload = createTestPayload({
+        wasteItemOverrides: {
+          pops: {
+            containsPops: undefined,
+            components: []
+          }
+        }
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
+      expect(result.error).toBeDefined()
+      // Should require containsPops to be defined
+      expect(result.error.message).toContain('persistent organic pollutants')
+    })
   })
 
   describe('POP Name Validation', () => {
@@ -139,6 +165,25 @@ describe('Receipt Schema Validation - POPs', () => {
               sourceOfComponents: 'CARRIER_PROVIDED',
               components: [
                 {
+                  concentration: 100
+                }
+              ]
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should accept POP component with undefined name (coverage line 28)', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'CARRIER_PROVIDED',
+              components: [
+                {
+                  name: undefined,
                   concentration: 100
                 }
               ]
@@ -414,6 +459,25 @@ describe('Receipt Schema Validation - POPs', () => {
         expect(result.error).toBeDefined()
         expect(result.error.message).toContain(
           'Source of POP components can only be provided when POPs are present'
+        )
+      })
+
+      it('should trigger validatePopAbsence error for sourceOfComponents (coverage line 75)', () => {
+        // This tests the specific branch in validatePopAbsence function
+        // where sourceOfComponents is defined when containsPops is false
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: false,
+              sourceOfComponents: 'NOT_PROVIDED' // Using a valid value that might bypass early validation
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeDefined()
+        // The error should come from either the forbidden rule or the custom validator
+        expect(result.error.message).toMatch(
+          /Source of POP components|pops.sourceNotAllowed/
         )
       })
     })

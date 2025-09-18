@@ -23,11 +23,10 @@ const disposalOrRecoveryCodeSchema = Joi.object({
 const popComponentSchema = Joi.object({
   name: Joi.string()
     .allow('')
+    .optional() // Optional field - undefined values don't reach custom validator
     .custom((value, helpers) => {
-      if (value === undefined) {
-        return value
-      }
-
+      // Custom validator is only called when value is defined
+      // Joi's .optional() handles undefined values before this runs
       if (!isValidPopName(value)) {
         return helpers.error('string.popNameInvalid')
       }
@@ -71,10 +70,9 @@ const validatePopPresence = (value, helpers) => {
 }
 
 const validatePopAbsence = (value, helpers) => {
-  if (value.sourceOfComponents !== undefined) {
-    return helpers.error('pops.sourceNotAllowed')
-  }
-
+  // This function is called when containsPops is false
+  // Note: sourceOfComponents is already forbidden by Joi when containsPops is false,
+  // so we only need to check for non-empty POP names
   if (hasNonEmptyName(value.components)) {
     return helpers.error('any.invalid')
   }
@@ -103,19 +101,10 @@ const popsSchema = Joi.object({
   components: Joi.array().items(popComponentSchema)
 })
   .custom((value, helpers) => {
-    if (!value) {
-      return value
-    }
-
-    if (value.containsPops === true) {
-      return validatePopPresence(value, helpers)
-    }
-
-    if (value.containsPops === false) {
-      return validatePopAbsence(value, helpers)
-    }
-
-    return value
+    // Since containsPops is required and boolean, we can simplify
+    return value.containsPops
+      ? validatePopPresence(value, helpers)
+      : validatePopAbsence(value, helpers)
   })
   .messages({
     'any.invalid': 'A POP name cannot be provided when POPs are not present',
