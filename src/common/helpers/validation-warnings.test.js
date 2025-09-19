@@ -3,7 +3,8 @@ import {
   VALIDATION_ERROR_TYPES,
   generateDisposalRecoveryWarnings,
   generateAllValidationWarnings,
-  generateSourceOfComponentsWarnings
+  generateSourceOfComponentsWarnings,
+  generatePopComponentWarnings
 } from './validation-warnings.js'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -350,9 +351,7 @@ describe('Validation Warnings', () => {
     it.each([undefined, null])(
       'should return empty array when receipt payload is %s',
       (value) => {
-        const payload = value
-
-        const warnings = generateSourceOfComponentsWarnings(payload)
+        const warnings = generateSourceOfComponentsWarnings(value)
         expect(warnings).toEqual([])
       }
     )
@@ -588,6 +587,154 @@ describe('Validation Warnings', () => {
         ])
       }
     )
+  })
+
+  describe('generatePopComponentWarnings', () => {
+    it('should generate warning when CARRIER_PROVIDED has no components', () => {
+      const payload = {
+        wasteItems: [
+          {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'CARRIER_PROVIDED'
+            }
+          }
+        ]
+      }
+      const warnings = generatePopComponentWarnings(payload)
+      expect(warnings).toHaveLength(1)
+      expect(warnings[0]).toEqual({
+        key: 'wasteItems[0].pops.components',
+        errorType: 'NotProvided',
+        message:
+          'POP components are recommended when source of components is CARRIER_PROVIDED'
+      })
+    })
+
+    it('should generate warning when GUIDANCE has empty components array', () => {
+      const payload = {
+        wasteItems: [
+          {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'GUIDANCE',
+              components: []
+            }
+          }
+        ]
+      }
+      const warnings = generatePopComponentWarnings(payload)
+      expect(warnings).toHaveLength(1)
+      expect(warnings[0].message).toContain('GUIDANCE')
+    })
+
+    it('should generate warning when OWN_TESTING has no components', () => {
+      const payload = {
+        wasteItems: [
+          {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'OWN_TESTING'
+            }
+          }
+        ]
+      }
+      const warnings = generatePopComponentWarnings(payload)
+      expect(warnings).toHaveLength(1)
+      expect(warnings[0].message).toContain('OWN_TESTING')
+    })
+
+    it('should not generate warning when NOT_PROVIDED has no components', () => {
+      const payload = {
+        wasteItems: [
+          {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'NOT_PROVIDED'
+            }
+          }
+        ]
+      }
+      const warnings = generatePopComponentWarnings(payload)
+      expect(warnings).toHaveLength(0)
+    })
+
+    it('should not generate warning when components are provided', () => {
+      const payload = {
+        wasteItems: [
+          {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'CARRIER_PROVIDED',
+              components: [{ name: 'Aldrin' }]
+            }
+          }
+        ]
+      }
+      const warnings = generatePopComponentWarnings(payload)
+      expect(warnings).toHaveLength(0)
+    })
+
+    it('should not generate warning when containsPops is false', () => {
+      const payload = {
+        wasteItems: [
+          {
+            pops: {
+              containsPops: false
+            }
+          }
+        ]
+      }
+      const warnings = generatePopComponentWarnings(payload)
+      expect(warnings).toHaveLength(0)
+    })
+
+    it('should handle multiple waste items', () => {
+      const payload = {
+        wasteItems: [
+          {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'CARRIER_PROVIDED'
+            }
+          },
+          {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'GUIDANCE'
+            }
+          },
+          {
+            pops: {
+              containsPops: false
+            }
+          }
+        ]
+      }
+      const warnings = generatePopComponentWarnings(payload)
+      expect(warnings).toHaveLength(2)
+      expect(warnings[0].key).toBe('wasteItems[0].pops.components')
+      expect(warnings[1].key).toBe('wasteItems[1].pops.components')
+    })
+
+    it('should handle payload without wasteItems', () => {
+      const payload = {}
+      const warnings = generatePopComponentWarnings(payload)
+      expect(warnings).toHaveLength(0)
+    })
+
+    it('should handle wasteItems without pops field', () => {
+      const payload = {
+        wasteItems: [
+          {
+            ewcCodes: ['200101'],
+            wasteDescription: 'Test waste'
+          }
+        ]
+      }
+      const warnings = generatePopComponentWarnings(payload)
+      expect(warnings).toHaveLength(0)
+    })
   })
 
   describe('generateAllValidationWarnings', () => {

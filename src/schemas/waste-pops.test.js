@@ -1,7 +1,6 @@
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createTestPayload } from './test-helpers/waste-test-helpers.js'
 import { isValidPopName } from '../common/constants/pop-names.js'
-import { generatePopComponentWarnings } from '../common/helpers/validation-warnings.js'
 
 describe('Receipt Schema Validation - POPs', () => {
   describe('POPs Indicator Validation', () => {
@@ -491,95 +490,6 @@ describe('Receipt Schema Validation - POPs', () => {
           /Source of POP components|pops.sourceNotAllowed/
         )
       })
-    })
-  })
-
-  describe('POP Component Warning Generation', () => {
-    it('should generate warning when CARRIER_PROVIDED has no components', () => {
-      const payload = createTestPayload({
-        wasteItemOverrides: {
-          pops: {
-            containsPops: true,
-            sourceOfComponents: 'CARRIER_PROVIDED'
-          }
-        }
-      })
-      const warnings = generatePopComponentWarnings(payload)
-      expect(warnings).toHaveLength(1)
-      expect(warnings[0]).toEqual({
-        key: 'wasteItems[0].pops.components',
-        errorType: 'NotProvided',
-        message:
-          'POP components are recommended when source of components is CARRIER_PROVIDED'
-      })
-    })
-
-    it('should generate warning when GUIDANCE has empty components array', () => {
-      const payload = createTestPayload({
-        wasteItemOverrides: {
-          pops: {
-            containsPops: true,
-            sourceOfComponents: 'GUIDANCE',
-            components: []
-          }
-        }
-      })
-      const warnings = generatePopComponentWarnings(payload)
-      expect(warnings).toHaveLength(1)
-      expect(warnings[0].message).toContain('GUIDANCE')
-    })
-
-    it('should generate warning when OWN_TESTING has no components', () => {
-      const payload = createTestPayload({
-        wasteItemOverrides: {
-          pops: {
-            containsPops: true,
-            sourceOfComponents: 'OWN_TESTING'
-          }
-        }
-      })
-      const warnings = generatePopComponentWarnings(payload)
-      expect(warnings).toHaveLength(1)
-      expect(warnings[0].message).toContain('OWN_TESTING')
-    })
-
-    it('should not generate warning when NOT_PROVIDED has no components', () => {
-      const payload = createTestPayload({
-        wasteItemOverrides: {
-          pops: {
-            containsPops: true,
-            sourceOfComponents: 'NOT_PROVIDED'
-          }
-        }
-      })
-      const warnings = generatePopComponentWarnings(payload)
-      expect(warnings).toHaveLength(0)
-    })
-
-    it('should not generate warning when components are provided', () => {
-      const payload = createTestPayload({
-        wasteItemOverrides: {
-          pops: {
-            containsPops: true,
-            sourceOfComponents: 'CARRIER_PROVIDED',
-            components: [{ name: 'Aldrin' }]
-          }
-        }
-      })
-      const warnings = generatePopComponentWarnings(payload)
-      expect(warnings).toHaveLength(0)
-    })
-
-    it('should not generate warning when containsPops is false', () => {
-      const payload = createTestPayload({
-        wasteItemOverrides: {
-          pops: {
-            containsPops: false
-          }
-        }
-      })
-      const warnings = generatePopComponentWarnings(payload)
-      expect(warnings).toHaveLength(0)
     })
   })
 
