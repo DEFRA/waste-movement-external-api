@@ -4,7 +4,8 @@ import {
   generateDisposalRecoveryWarnings,
   generateAllValidationWarnings,
   generateSourceOfComponentsWarnings,
-  generatePopComponentWarnings
+  generatePopComponentWarnings,
+  generatePopComponentsWarnings
 } from './validation-warnings.js'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -364,6 +365,7 @@ describe('Validation Warnings', () => {
         }
 
         const warnings = generateSourceOfComponentsWarnings(payload)
+
         expect(warnings).toEqual([])
       }
     )
@@ -735,6 +737,153 @@ describe('Validation Warnings', () => {
       const warnings = generatePopComponentWarnings(payload)
       expect(warnings).toHaveLength(0)
     })
+  })
+
+  describe('generatePopComponentsWarnings', () => {
+    it.each([undefined, null])(
+      'should return empty array when payload is %s',
+      (value) => {
+        const payload = value
+
+        const warnings = generatePopComponentsWarnings(payload)
+        expect(warnings).toEqual([])
+      }
+    )
+
+    it.each([undefined, null])(
+      'should return empty array when payload.wasteItems is %s',
+      (value) => {
+        const payload = {
+          wasteItems: value
+        }
+
+        const warnings = generateSourceOfComponentsWarnings(payload)
+
+        expect(warnings).toEqual([])
+      }
+    )
+
+    it.each([undefined, null])(
+      'should return empty array when payload.wasteItems is %s',
+      (value) => {
+        const payload = {
+          wasteItems: [
+            {
+              pops: {
+                containsPops: true,
+                components: value
+              }
+            }
+          ]
+        }
+
+        const warnings = generateSourceOfComponentsWarnings(payload)
+
+        expect(warnings).toEqual([])
+      }
+    )
+
+    it.each(['', null, undefined])(
+      'should generate warning when POP component name is %s',
+      (value) => {
+        const payload = {
+          wasteItems: [
+            {
+              pops: {
+                containsPops: true,
+                components: [
+                  {
+                    name: 'Aldrin',
+                    concentration: 30
+                  },
+                  {
+                    name: value,
+                    concentration: 40
+                  }
+                ]
+              }
+            }
+          ]
+        }
+
+        const warnings = generatePopComponentsWarnings(payload)
+        expect(warnings).toEqual([
+          {
+            key: 'wasteItems.pops.components.name',
+            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+            message: 'POP name is required when POP concentration is provided'
+          }
+        ])
+      }
+    )
+
+    it.each([null, undefined])(
+      'should generate warning when POP component concentration is %s',
+      (value) => {
+        const payload = {
+          wasteItems: [
+            {
+              pops: {
+                containsPops: true,
+                components: [
+                  {
+                    name: 'Aldrin',
+                    concentration: 30
+                  },
+                  {
+                    name: 'Chlordane',
+                    concentration: value
+                  }
+                ]
+              }
+            }
+          ]
+        }
+
+        const warnings = generatePopComponentsWarnings(payload)
+        expect(warnings).toEqual([
+          {
+            key: 'wasteItems.pops.components.name',
+            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+            message: 'POP name is required when POP concentration is provided'
+          }
+        ])
+      }
+    )
+
+    it.each([null, undefined])(
+      'should generate warning when POP component name and concentration are %s',
+      (value) => {
+        const payload = {
+          wasteItems: [
+            {
+              pops: {
+                containsPops: true,
+                components: [
+                  {
+                    name: 'Aldrin',
+                    concentration: 30
+                  },
+                  {
+                    name: value,
+                    concentration: value
+                  }
+                ]
+              }
+            }
+          ]
+        }
+
+        const warnings = generatePopComponentsWarnings(payload)
+        expect(warnings).toEqual([
+          {
+            key: 'wasteItems.pops.components.name',
+            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+            message: 'POP name is required when POP concentration is provided'
+          }
+        ])
+      }
+    )
   })
 
   describe('generateAllValidationWarnings', () => {
