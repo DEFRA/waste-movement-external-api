@@ -26,54 +26,50 @@ const popsSchema = Joi.object({
     'any.required':
       'Does the waste contain persistent organic pollutants (POPs)? is required'
   }),
-  components: Joi.array().items(
-    Joi.object({
-      name: Joi.string()
-        .allow('') // Allow empty string as it's a valid POP name
-        .custom((value, helpers) => {
-          if (!isValidPopName(value)) {
-            return helpers.error('string.popNameInvalid')
+  components: Joi.array()
+    .items(
+      Joi.object({
+        name: Joi.string()
+          .allow('', null) // Allow empty string and null as they're valid POP names and handled by validation warnings
+          .custom((value, helpers) => {
+            if (!isValidPopName(value)) {
+              return helpers.error('any.invalid')
+            }
+            return value
+          })
+          .messages({
+            'any.required': 'POP name is required',
+            'any.invalid': 'POP name is not valid'
+          }),
+        concentration: Joi.custom((value, helpers) => {
+          if (typeof value === 'number') {
+            if (value < 0) {
+              return helpers.error('number.min')
+            }
+            return value
           }
-          return value
+
+          if (typeof value === 'string') {
+            return helpers.error(CUSTOM_ERROR_TYPE)
+          }
+
+          // Any other type is invalid
+          return helpers.error(CUSTOM_ERROR_TYPE)
+        }).messages({
+          'any.required': '{{ #label }} is required',
+          'any.custom': '{{ #label }} must be a valid number',
+          'number.min': '{{ #label }} concentration cannot be negative'
         })
-        .required()
-        .messages({
-          'any.required': 'POP name is required',
-          'string.popNameInvalid': 'POP name is not valid'
-        }),
-      concentration: Joi.number().required().messages({
-        'any.required': 'POP concentration is required'
+      }).label('PopComponent')
+    )
+    .when('containsPops', {
+      is: true,
+      then: Joi.array().empty(null).required().min(1),
+      otherwise: Joi.array().empty(null).forbidden().messages({
+        'any.unknown': '{{ #label }} is not allowed when POPs are not present'
       })
-    }).label('PopComponent')
-  )
-})
-  .custom((value, helpers) => {
-    // Custom validation based on containsPops value
-    if (value && value.containsPops === true) {
-      // When POPs are present, components can be provided (optional)
-      return value
-    } else if (value && value.containsPops === false) {
-      // When POPs are not present, components should not be provided
-      // Exception: allow empty string in component names
-      if (value.components && value.components.length > 0) {
-        const hasNonEmptyName = value.components.some(
-          (comp) => comp.name && comp.name !== ''
-        )
-        if (hasNonEmptyName) {
-          return helpers.error('any.invalid')
-        }
-      }
-      return value
-    } else {
-      // When containsPops is undefined, null, or any other value
-      // Let the required validation handle the missing containsPops field
-      return value
-    }
-  })
-  .messages({
-    'any.invalid': 'A POP name cannot be provided when POPs are not present'
-  })
-  .label('Pops')
+    })
+}).label('Pops')
 
 const hazardousSchema = Joi.object({
   containsHazardous: Joi.boolean().required().messages({
