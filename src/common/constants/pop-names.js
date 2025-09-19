@@ -3,7 +3,6 @@
 // and EU Regulation (EUR-Lex - 02019R1021-20250804)
 
 export const validPopNames = [
-  'Carrier did not provide detail',
   '', // Empty string is valid per requirements
   'Endosulfan',
   'Hexachlorobutadiene',

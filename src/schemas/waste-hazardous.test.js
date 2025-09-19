@@ -126,6 +126,26 @@ describe('Receipt Schema Validation - Hazardous', () => {
               'Hazardous waste is any waste that is potentially harmful to human health or the environment.'
           },
           {
+            description: 'invalid concentration string that is not allowed',
+            input: {
+              containsHazardous: true,
+              sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+              components: [{ name: 'Mercury', concentration: 'invalid' }]
+            },
+            errorMessage:
+              'Chemical or Biological concentration must be a valid number or "Not Supplied"'
+          },
+          {
+            description: 'invalid concentration type (object)',
+            input: {
+              containsHazardous: true,
+              sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+              components: [{ name: 'Mercury', concentration: {} }]
+            },
+            errorMessage:
+              'Chemical or Biological concentration must be a valid number or "Not Supplied"'
+          },
+          {
             description: 'invalid hazCodes types (string)',
             input: {
               containsHazardous: true,
