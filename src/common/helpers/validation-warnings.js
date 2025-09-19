@@ -17,7 +17,8 @@ export const VALIDATION_KEYS = {
   RECEIPT_DISPOSAL_RECOVERY_CODES: 'wasteItems.disposalOrRecoveryCodes',
   REASON_NO_CONSIGNMENT_CODE: 'receipt.reasonForNoConsignmentCode',
   HAZARDOUS_COMPONENTS: 'wasteItems.hazardous.components',
-  POP_COMPONENTS: 'wasteItems.pops.components'
+  POP_COMPONENTS: 'wasteItems.pops.components',
+  POP_NAME: 'wasteItems.pops.components.name'
 }
 
 /**
@@ -225,6 +226,46 @@ export const generateSourceOfComponentsWarnings = (payload) => {
 }
 
 /**
+ * Generate warnings for POP components conditions.
+ * If POP concentration is provided then POP name must also be provided, otherwise add a warning
+ *
+ * @param {Object} payload
+ * @returns {Array} Array of all validation warnings
+ */
+export const generatePopComponentsWarnings = (payload) => {
+  const warnings = []
+
+  if (!Array.isArray(payload?.wasteItems)) {
+    return warnings
+  }
+
+  const hasPopName = payload.wasteItems.every(({ pops }) => {
+    if (!pops?.containsPops) {
+      return true
+    }
+
+    if (!Array.isArray(pops?.components)) {
+      return true
+    }
+
+    return pops.components.every(({ concentration, name }) => {
+      return concentration && name && name.trim().length > 0
+    })
+  })
+
+  // If POP concentration is provided then POP name must also be provided
+  if (!hasPopName) {
+    warnings.push({
+      key: VALIDATION_KEYS.POP_NAME,
+      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      message: 'POP name is required when POP concentration is provided'
+    })
+  }
+
+  return warnings
+}
+
+/**
  * Determines if name and concentration have been provided for all hazardous components
  *
  * @param {Object} wasteItems - The request waste items
@@ -322,6 +363,9 @@ export const generateAllValidationWarnings = (payload) => {
   // Add POP components warnings
   const popWarnings = generatePopComponentWarnings(payload)
   warnings.push(...popWarnings)
+
+  const popComponentWarnings = generatePopComponentsWarnings(payload)
+  warnings.push(...popComponentWarnings)
 
   return warnings
 }

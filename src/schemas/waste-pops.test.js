@@ -7,7 +7,16 @@ describe('Receipt Schema Validation - POPs', () => {
     it('should accept valid POPs indicator (true)', () => {
       const payload = createTestPayload({
         wasteItemOverrides: {
-          pops: { containsPops: true, sourceOfComponents: 'NOT_PROVIDED' }
+          pops: {
+            containsPops: true,
+            sourceOfComponents: 'NOT_PROVIDED',
+            components: [
+              {
+                name: 'Aldrin',
+                concentration: 30
+              }
+            ]
+          }
         }
       })
       const result = receiveMovementRequestSchema.validate(payload)
@@ -80,7 +89,9 @@ describe('Receipt Schema Validation - POPs', () => {
       '', // Empty string case
       'Endosulfan', // Regular POP name
       'PFOS', // Acronym case
-      'Tetra-, penta-, hexa-, hepta- and deca- bromodiphenyl ether' // Complex name
+      'Tetra-, penta-, hexa-, hepta- and deca- bromodiphenyl ether', // Complex name
+      null,
+      undefined
     ]
 
     describe('When waste contains POPs', () => {
@@ -96,6 +107,61 @@ describe('Receipt Schema Validation - POPs', () => {
                   {
                     name: popName,
                     concentration: 100
+                  }
+                ]
+              }
+            }
+          })
+          const result = receiveMovementRequestSchema.validate(payload)
+          expect(result.error).toBeUndefined()
+        }
+      )
+
+      it('should accept valid POP components when concentration is missing', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              components: [
+                {
+                  name: 'Aldrin'
+                }
+              ]
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should accept valid POP components when name is missing', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              components: [
+                {
+                  concentration: 30
+                }
+              ]
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeUndefined()
+      })
+
+      it.each([12.5, 9.12345678, 500, 0])(
+        'should accept valid POP concentration value: "%s"',
+        (value) => {
+          const payload = createTestPayload({
+            wasteItemOverrides: {
+              pops: {
+                containsPops: true,
+                components: [
+                  {
+                    name: 'Aldrin',
+                    concentration: value
                   }
                 ]
               }
@@ -136,7 +202,26 @@ describe('Receipt Schema Validation - POPs', () => {
           }
         })
         const result = receiveMovementRequestSchema.validate(payload)
-        expect(result.error).toBeUndefined()
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toBe(
+          '"wasteItems[0].pops.components" is required'
+        )
+      })
+
+      it('should reject POPs when components is undefined when containsPops is true', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              components: undefined
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toBe(
+          '"wasteItems[0].pops.components" is required'
+        )
       })
 
       it('should accept POP component without concentration', () => {
@@ -147,7 +232,8 @@ describe('Receipt Schema Validation - POPs', () => {
               sourceOfComponents: 'CARRIER_PROVIDED',
               components: [
                 {
-                  name: 'Aldrin'
+                  name: 'Aldrin',
+                  concentration: -12
                 }
               ]
             }
@@ -172,7 +258,9 @@ describe('Receipt Schema Validation - POPs', () => {
             }
           }
         })
+        console.dir({ payload }, { depth: null })
         const result = receiveMovementRequestSchema.validate(payload)
+
         expect(result.error).toBeUndefined()
       })
 
@@ -371,41 +459,19 @@ describe('Receipt Schema Validation - POPs', () => {
     })
 
     describe('When waste does not contain POPs', () => {
-      it('should accept when no POP name is specified', () => {
-        const payload = createTestPayload({
-          wasteItemOverrides: {
-            pops: {
-              containsPops: false
-            }
-          }
-        })
-        const result = receiveMovementRequestSchema.validate(payload)
-        expect(result.error).toBeUndefined()
-      })
-
-      const nonEmptySampleNames = samplePopNames.filter((name) => name !== '')
-
-      it.each(nonEmptySampleNames)(
-        'should reject non-empty POP name "%s" when containsPops is false',
-        (popName) => {
+      it.each([undefined, null])(
+        'should accept when no components are specified (%s)',
+        (value) => {
           const payload = createTestPayload({
             wasteItemOverrides: {
               pops: {
                 containsPops: false,
-                components: [
-                  {
-                    name: popName,
-                    concentration: 100
-                  }
-                ]
+                components: value
               }
             }
           })
           const result = receiveMovementRequestSchema.validate(payload)
-          expect(result.error).toBeDefined()
-          expect(result.error.message).toContain(
-            'A POP name cannot be provided when POPs are not present'
-          )
+          expect(result.error).toBeUndefined()
         }
       )
 
@@ -416,8 +482,8 @@ describe('Receipt Schema Validation - POPs', () => {
               containsPops: false,
               components: [
                 {
-                  name: '',
-                  concentration: 0
+                  name: 'Aldrin',
+                  concentration: 100
                 }
               ]
             }
@@ -454,6 +520,124 @@ describe('Receipt Schema Validation - POPs', () => {
         })
         const result = receiveMovementRequestSchema.validate(payload)
         expect(result.error).toBeUndefined()
+      })
+
+      it('should reject POPs when components is null when containsPops is true', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              components: null
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toBe(
+          '"wasteItems[0].pops.components" is required'
+        )
+      })
+
+      it('should reject POPs when components is an empty array when containsPops is true', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              components: []
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toBe(
+          '"wasteItems[0].pops.components" must contain at least 1 items'
+        )
+      })
+
+      it('should reject a negative POP concentration value when containsPops is true', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'CARRIER_PROVIDED',
+              components: [
+                {
+                  name: 'Aldrin',
+                  concentration: -12
+                }
+              ]
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          '"wasteItems[0].pops.components[0].concentration" concentration cannot be negative'
+        )
+      })
+
+      it('should reject a numeric string POP concentration value when containsPops is true', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'CARRIER_PROVIDED',
+              components: [
+                {
+                  name: 'Aldrin',
+                  concentration: '12'
+                }
+              ]
+            }
+          }
+        })
+        console.dir({ payload }, { depth: null })
+        const result = receiveMovementRequestSchema.validate(payload)
+
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          '"wasteItems[0].pops.components[0].concentration" must be a valid number'
+        )
+      })
+    })
+
+    describe('When waste does not contain POPs', () => {
+      it.each([undefined, null])(
+        'should accept when no components are specified (%s)',
+        (value) => {
+          const payload = createTestPayload({
+            wasteItemOverrides: {
+              pops: {
+                containsPops: false,
+                components: value
+              }
+            }
+          })
+          const result = receiveMovementRequestSchema.validate(payload)
+          expect(result.error).toBeUndefined()
+        }
+      )
+
+      it('should reject when components are specified', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: false,
+              components: [
+                {
+                  name: 'Aldrin',
+                  concentration: 100
+                }
+              ]
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toBe(
+          '"wasteItems[0].pops.components" is not allowed when POPs are not present'
+        )
       })
 
       it('should reject sourceOfComponents when containsPops is false', () => {
