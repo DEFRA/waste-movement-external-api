@@ -49,13 +49,6 @@ const popComponentSchema = Joi.object({
 const hasComponents = (components) =>
   Array.isArray(components) && components.length > 0
 
-const hasNonEmptyName = (components) =>
-  Array.isArray(components) &&
-  components.some((component) => {
-    const name = component?.name
-    return name !== undefined && name !== null && name !== ''
-  })
-
 const validatePopPresence = (value, helpers) => {
   const { sourceOfComponents, components } = value
 
@@ -67,18 +60,18 @@ const validatePopPresence = (value, helpers) => {
     return value
   }
 
-  if (!hasComponents(components)) {
-    return helpers.error('pops.componentsRequired')
-  }
+  // For other sources (CARRIER_PROVIDED, GUIDANCE, OWN_TESTING),
+  // components are recommended but not required - warnings are handled separately
+  // This allows the submission to pass validation even without components
 
   return value
 }
 
 const validatePopAbsence = (value, helpers) => {
   // This function is called when containsPops is false
-  // Note: sourceOfComponents is already forbidden by Joi when containsPops is false,
-  // so we only need to check for non-empty POP names
-  if (hasNonEmptyName(value.components)) {
+  // When POPs are not present, no component details should be provided at all
+  // This includes empty objects, as per business requirements
+  if (hasComponents(value.components)) {
     return helpers.error('any.invalid')
   }
 
@@ -115,8 +108,6 @@ const popsSchema = Joi.object({
     'any.invalid': 'A POP name cannot be provided when POPs are not present',
     'pops.componentsNotAllowed':
       'POP components must not be provided when the source is NOT_PROVIDED',
-    'pops.componentsRequired':
-      'At least one POP component must be provided when a source is specified',
     'pops.sourceNotAllowed':
       'Source of POP components can only be provided when POPs are present'
   })

@@ -1,5 +1,6 @@
 import { hasHazardousEwcCodes } from '../../schemas/hazardous-waste-consignment.js'
 import { sourceOfComponentsProvided } from '../constants/source-of-components.js'
+import { POP_COMPONENT_SOURCES } from '../constants/pop-component-sources.js'
 
 /**
  * Validation warning types as defined in the API specification
@@ -15,7 +16,8 @@ export const VALIDATION_ERROR_TYPES = {
 export const VALIDATION_KEYS = {
   RECEIPT_DISPOSAL_RECOVERY_CODES: 'wasteItems.disposalOrRecoveryCodes',
   REASON_NO_CONSIGNMENT_CODE: 'receipt.reasonForNoConsignmentCode',
-  HAZARDOUS_COMPONENTS: 'wasteItems.hazardous.components'
+  HAZARDOUS_COMPONENTS: 'wasteItems.hazardous.components',
+  POP_COMPONENTS: 'wasteItems.pops.components'
 }
 
 /**
@@ -260,6 +262,44 @@ function haveAllHazardousComponentsGotNameAndConcentration(wasteItems) {
 }
 
 /**
+ * Generate warnings for POP components
+ * If source of components is provided (not NOT_PROVIDED) but no components are given, add a warning
+ * @param {Object} payload - The request payload
+ * @returns {Array} Array of validation warnings for POPs
+ */
+export const generatePopComponentWarnings = (payload) => {
+  const warnings = []
+
+  if (!Array.isArray(payload?.wasteItems)) {
+    return warnings
+  }
+
+  payload.wasteItems.forEach((wasteItem, index) => {
+    if (!wasteItem.pops || !wasteItem.pops.containsPops) {
+      return
+    }
+
+    const sourceOfComponents = wasteItem.pops.sourceOfComponents
+    const components = wasteItem.pops.components
+
+    // Check if source is one of the values that expects components
+    if (
+      sourceOfComponents &&
+      sourceOfComponents !== POP_COMPONENT_SOURCES.NOT_PROVIDED &&
+      (!components || components.length === 0)
+    ) {
+      warnings.push({
+        key: `wasteItems[${index}].pops.components`,
+        errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+        message: `POP components are recommended when source of components is ${sourceOfComponents}`
+      })
+    }
+  })
+
+  return warnings
+}
+
+/**
  * Generate all validation warnings for a movement request
  * @param {Object} payload - The request payload
  * @returns {Array} Array of all validation warnings
@@ -278,6 +318,10 @@ export const generateAllValidationWarnings = (payload) => {
   // Add source of components related warnings
   const sourceOfComponentsWarnings = generateSourceOfComponentsWarnings(payload)
   warnings.push(...sourceOfComponentsWarnings)
+
+  // Add POP components warnings
+  const popWarnings = generatePopComponentWarnings(payload)
+  warnings.push(...popWarnings)
 
   return warnings
 }
