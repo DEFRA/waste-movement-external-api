@@ -275,7 +275,7 @@ export const generatePopComponentWarnings = (payload) => {
   }
 
   payload.wasteItems.forEach((wasteItem, index) => {
-    if (!wasteItem.pops || !wasteItem.pops.containsPops) {
+    if (!wasteItem.pops?.containsPops) {
       return
     }
 
