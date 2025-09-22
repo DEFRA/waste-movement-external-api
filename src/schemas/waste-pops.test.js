@@ -6,7 +6,9 @@ describe('Receipt Schema Validation - POPs', () => {
   describe('POPs Indicator Validation', () => {
     it('should accept valid POPs indicator (true)', () => {
       const payload = createTestPayload({
-        wasteItemOverrides: { pops: { containsPops: true } }
+        wasteItemOverrides: {
+          pops: { containsPops: true, sourceOfComponents: 'NOT_PROVIDED' }
+        }
       })
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeUndefined()
@@ -26,6 +28,14 @@ describe('Receipt Schema Validation - POPs', () => {
       expect(result.error).toBeUndefined()
     })
 
+    it('should accept payload when POPs property is omitted', () => {
+      const payload = createTestPayload()
+      delete payload.wasteItems[0].pops
+
+      const result = receiveMovementRequestSchema.validate(payload)
+      expect(result.error).toBeUndefined()
+    })
+
     it('should reject missing containsPops field', () => {
       const payload = createTestPayload({
         wasteItemOverrides: { pops: {} } // Empty pops object without containsPops
@@ -36,12 +46,37 @@ describe('Receipt Schema Validation - POPs', () => {
         'Does the waste contain persistent organic pollutants (POPs)? is required'
       )
     })
+
+    it('should reject null pops object (shows line 107 is unreachable)', () => {
+      // Create payload without using the helper to ensure null is preserved
+      const payload = createTestPayload()
+      payload.wasteItems[0].pops = null
+
+      const result = receiveMovementRequestSchema.validate(payload)
+      // Joi rejects null before custom validator runs, making line 107 unreachable
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toContain('"Pops" must be of type object')
+    })
+
+    it('should handle undefined containsPops (coverage line 118)', () => {
+      const payload = createTestPayload({
+        wasteItemOverrides: {
+          pops: {
+            containsPops: undefined,
+            components: []
+          }
+        }
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
+      expect(result.error).toBeDefined()
+      // Should require containsPops to be defined
+      expect(result.error.message).toContain('persistent organic pollutants')
+    })
   })
 
   describe('POP Name Validation', () => {
     // Representative sample of POP names for testing
     const samplePopNames = [
-      'Carrier did not provide detail', // Special case
       '', // Empty string case
       'Endosulfan', // Regular POP name
       'PFOS', // Acronym case
@@ -56,6 +91,7 @@ describe('Receipt Schema Validation - POPs', () => {
             wasteItemOverrides: {
               pops: {
                 containsPops: true,
+                sourceOfComponents: 'CARRIER_PROVIDED',
                 components: [
                   {
                     name: popName,
@@ -75,6 +111,7 @@ describe('Receipt Schema Validation - POPs', () => {
           wasteItemOverrides: {
             pops: {
               containsPops: true,
+              sourceOfComponents: 'CARRIER_PROVIDED',
               components: [
                 {
                   name: 'Invalid POP Name',
@@ -89,11 +126,12 @@ describe('Receipt Schema Validation - POPs', () => {
         expect(result.error.message).toContain('POP name is not valid')
       })
 
-      it('should accept POPs without components when containsPops is true', () => {
+      it('should accept POPs without components when source is NOT_PROVIDED', () => {
         const payload = createTestPayload({
           wasteItemOverrides: {
             pops: {
-              containsPops: true
+              containsPops: true,
+              sourceOfComponents: 'NOT_PROVIDED'
             }
           }
         })
@@ -101,11 +139,12 @@ describe('Receipt Schema Validation - POPs', () => {
         expect(result.error).toBeUndefined()
       })
 
-      it('should require concentration when POP component is provided', () => {
+      it('should accept POP component without concentration', () => {
         const payload = createTestPayload({
           wasteItemOverrides: {
             pops: {
               containsPops: true,
+              sourceOfComponents: 'CARRIER_PROVIDED',
               components: [
                 {
                   name: 'Aldrin'
@@ -115,17 +154,18 @@ describe('Receipt Schema Validation - POPs', () => {
           }
         })
         const result = receiveMovementRequestSchema.validate(payload)
-        expect(result.error).toBeDefined()
-        expect(result.error.message).toContain('POP concentration is required')
+        expect(result.error).toBeUndefined()
       })
 
-      it('should require name when POP component is provided', () => {
+      it('should accept POP component with undefined name (coverage line 28)', () => {
         const payload = createTestPayload({
           wasteItemOverrides: {
             pops: {
               containsPops: true,
+              sourceOfComponents: 'CARRIER_PROVIDED',
               components: [
                 {
+                  name: undefined,
                   concentration: 100
                 }
               ]
@@ -133,15 +173,15 @@ describe('Receipt Schema Validation - POPs', () => {
           }
         })
         const result = receiveMovementRequestSchema.validate(payload)
-        expect(result.error).toBeDefined()
-        expect(result.error.message).toContain('POP name is required')
+        expect(result.error).toBeUndefined()
       })
 
-      it('should reject null POP name when containsPops is true', () => {
+      it('should reject POP component with null name', () => {
         const payload = createTestPayload({
           wasteItemOverrides: {
             pops: {
               containsPops: true,
+              sourceOfComponents: 'CARRIER_PROVIDED',
               components: [
                 {
                   name: null,
@@ -156,15 +196,127 @@ describe('Receipt Schema Validation - POPs', () => {
         expect(result.error.message).toContain('must be a string')
       })
 
-      it('should reject undefined POP name when containsPops is true', () => {
+      it('should reject POPs data when sourceOfComponents is missing', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Source of POP components is required when POPs are present'
+        )
+      })
+
+      it('should reject invalid sourceOfComponents value', () => {
         const payload = createTestPayload({
           wasteItemOverrides: {
             pops: {
               containsPops: true,
+              sourceOfComponents: 'INVALID_SOURCE',
+              components: [{}]
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          '"wasteItems[0].pops.sourceOfComponents" must be one of'
+        )
+      })
+
+      it('should accept POPs without components when source is CARRIER_PROVIDED (warning handled separately)', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'CARRIER_PROVIDED'
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        // Schema validation should pass - warnings are generated separately
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should reject POP components when source is NOT_PROVIDED', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'NOT_PROVIDED',
+              components: [{}]
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'POP components must not be provided when the source is NOT_PROVIDED'
+        )
+      })
+
+      it('should accept POPs with empty components array when source is CARRIER_PROVIDED (warning handled separately)', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'CARRIER_PROVIDED',
+              components: []
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        // Schema validation should pass - warnings are generated separately
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should accept POP components with empty object when source is GUIDANCE', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'GUIDANCE',
+              components: [{}]
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should accept POP components with details when source is OWN_TESTING', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'OWN_TESTING',
               components: [
                 {
-                  name: undefined,
-                  concentration: 100
+                  name: 'Endosulfan',
+                  concentration: 42.5
+                }
+              ]
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should reject POP component concentration when value is not numeric', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'OWN_TESTING',
+              components: [
+                {
+                  name: 'Endosulfan',
+                  concentration: 'invalid'
                 }
               ]
             }
@@ -172,7 +324,49 @@ describe('Receipt Schema Validation - POPs', () => {
         })
         const result = receiveMovementRequestSchema.validate(payload)
         expect(result.error).toBeDefined()
-        expect(result.error.message).toContain('POP name is required')
+        expect(result.error.message).toContain(
+          'POP concentration must be a number'
+        )
+      })
+
+      it('should accept source NOT_PROVIDED with empty components array', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'NOT_PROVIDED',
+              components: []
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should accept POPs without components when source is GUIDANCE (warning handled separately)', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'GUIDANCE'
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should accept POPs without components when source is OWN_TESTING (warning handled separately)', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'OWN_TESTING'
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeUndefined()
       })
     })
 
@@ -215,7 +409,7 @@ describe('Receipt Schema Validation - POPs', () => {
         }
       )
 
-      it('should accept empty POP name when containsPops is false', () => {
+      it('should reject component with empty POP name when containsPops is false', () => {
         const payload = createTestPayload({
           wasteItemOverrides: {
             pops: {
@@ -230,7 +424,71 @@ describe('Receipt Schema Validation - POPs', () => {
           }
         })
         const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'A POP name cannot be provided when POPs are not present'
+        )
+      })
+
+      it('should reject POP components array with empty object when containsPops is false', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: false,
+              components: [{}]
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'A POP name cannot be provided when POPs are not present'
+        )
+      })
+
+      it('should treat pops property set to undefined as valid', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: undefined
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
         expect(result.error).toBeUndefined()
+      })
+
+      it('should reject sourceOfComponents when containsPops is false', () => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: false,
+              sourceOfComponents: 'CARRIER_PROVIDED'
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          'Source of POP components can only be provided when POPs are present'
+        )
+      })
+
+      it('should trigger validatePopAbsence error for sourceOfComponents (coverage line 75)', () => {
+        // This tests the specific branch in validatePopAbsence function
+        // where sourceOfComponents is defined when containsPops is false
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: false,
+              sourceOfComponents: 'NOT_PROVIDED' // Using a valid value that might bypass early validation
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeDefined()
+        // The error should come from either the forbidden rule or the custom validator
+        expect(result.error.message).toMatch(
+          /Source of POP components|pops.sourceNotAllowed/
+        )
       })
     })
   })
@@ -238,14 +496,7 @@ describe('Receipt Schema Validation - POPs', () => {
   describe('isValidPopName function unit tests', () => {
     describe('returns true for valid POP names', () => {
       // Reuse the samplePopNames array from above to test valid cases
-      const validPopNames = [
-        'Carrier did not provide detail',
-        '',
-        'Endosulfan',
-        'PFOS',
-        'PCB',
-        'DDT'
-      ]
+      const validPopNames = ['', 'Endosulfan', 'PFOS', 'PCB', 'DDT']
 
       it.each(validPopNames)('should return true for: "%s"', (popName) => {
         expect(isValidPopName(popName)).toBe(true)
@@ -257,6 +508,7 @@ describe('Receipt Schema Validation - POPs', () => {
         [null, 'null'],
         [undefined, 'undefined'],
         ['Invalid POP Name', 'invalid string'],
+        ['Carrier did not provide detail', 'deprecated entry'],
         [123, 'number'],
         [true, 'boolean'],
         [{}, 'object'],
@@ -264,12 +516,9 @@ describe('Receipt Schema Validation - POPs', () => {
         ['pfos', 'wrong case']
       ]
 
-      it.each(invalidInputs)(
-        'should return false for %s (%s)',
-        (input, description) => {
-          expect(isValidPopName(input)).toBe(false)
-        }
-      )
+      it.each(invalidInputs)('should return false for %s (%s)', (input) => {
+        expect(isValidPopName(input)).toBe(false)
+      })
     })
   })
 })
