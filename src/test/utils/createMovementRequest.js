@@ -18,13 +18,8 @@ export function createMovementRequest(overrides) {
     },
     receiver: {
       organisationName: 'Test Receiver',
-      authorisations: [
-        {
-          authorisationType: 'type',
-          authorisationNumber: ['1234'],
-          regulatoryPositionStatement: [343]
-        }
-      ]
+      authorisationNumbers: ['1234'],
+      regulatoryPositionStatements: [343]
     },
     receipt: {
       address: {

@@ -107,13 +107,10 @@ const receiverSchema = Joi.object({
   organisationName: Joi.string().required(),
   emailAddress: Joi.string().email(),
   phoneNumber: Joi.string(),
-  authorisations: Joi.array().items({
-    authorisationType: Joi.string(),
-    authorisationNumber: Joi.array().items(Joi.string()).required().min(1),
-    regulatoryPositionStatement: Joi.array()
-      .items(Joi.number().integer().positive())
-      .optional()
-  })
+  authorisationNumbers: Joi.array().items(Joi.string()).optional(),
+  regulatoryPositionStatements: Joi.array()
+    .items(Joi.number().integer().positive())
+    .optional()
 }).label('Receiver')
 
 const receiptSchema = Joi.object({

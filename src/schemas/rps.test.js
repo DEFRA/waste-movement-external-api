@@ -12,13 +12,8 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
     it('accepts single positive integer', () => {
       const receiver = {
         organisationName: TEST_DATA.RECEIVER.ORGANISATION_NAME,
-        authorisations: [
-          {
-            authorisationType: TEST_DATA.AUTHORISATION.TYPE,
-            authorisationNumber: [TEST_DATA.AUTHORISATION.NUMBERS.SIMPLE],
-            regulatoryPositionStatement: TEST_DATA.RPS.VALID.SINGLE
-          }
-        ]
+        authorisationNumbers: TEST_DATA.AUTHORISATION_NUMBERS.SIMPLE,
+        regulatoryPositionStatements: TEST_DATA.RPS.VALID.SINGLE
       }
 
       const receipt = {
@@ -34,13 +29,8 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
     it('accepts multiple positive integers', () => {
       const receiver = {
         organisationName: TEST_DATA.RECEIVER.ORGANISATION_NAME,
-        authorisations: [
-          {
-            authorisationType: TEST_DATA.AUTHORISATION.TYPE,
-            authorisationNumber: [TEST_DATA.AUTHORISATION.NUMBERS.SIMPLE],
-            regulatoryPositionStatement: TEST_DATA.RPS.VALID.MULTIPLE
-          }
-        ]
+        authorisationNumbers: TEST_DATA.AUTHORISATION_NUMBERS.SIMPLE,
+        regulatoryPositionStatements: TEST_DATA.RPS.VALID.MULTIPLE
       }
 
       const receipt = {
@@ -56,12 +46,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
     it('accepts when RPS is not provided', () => {
       const receiver = {
         organisationName: 'Test Receiver',
-        authorisations: [
-          {
-            authorisationType: 'permit',
-            authorisationNumber: ['EPR123']
-          }
-        ]
+        authorisationNumbers: ['EPR123']
       }
 
       const receipt = {
@@ -72,10 +57,11 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       expect(error).toBeUndefined()
     })
 
-    it('accepts when authorisations is empty', () => {
+    it('accepts when both authorisations and RPS are empty', () => {
       const receiver = {
         organisationName: 'Test Receiver',
-        authorisations: []
+        authorisationNumbers: [],
+        regulatoryPositionStatements: []
       }
 
       const receipt = {
@@ -86,7 +72,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       expect(error).toBeUndefined()
     })
 
-    it('accepts when authorisations is not provided', () => {
+    it('accepts when neither authorisations nor RPS are provided', () => {
       const receiver = {
         organisationName: 'Test Receiver'
       }
@@ -104,13 +90,8 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
     it('rejects string value "123RPS"', () => {
       const receiver = {
         organisationName: 'Test Receiver',
-        authorisations: [
-          {
-            authorisationType: 'permit',
-            authorisationNumber: ['EPR123'],
-            regulatoryPositionStatement: ['123RPS']
-          }
-        ]
+        authorisationNumbers: ['EPR123'],
+        regulatoryPositionStatements: ['123RPS']
       }
 
       const receipt = {
@@ -125,13 +106,8 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
     it('rejects string value "RPS-123"', () => {
       const receiver = {
         organisationName: 'Test Receiver',
-        authorisations: [
-          {
-            authorisationType: 'permit',
-            authorisationNumber: ['EPR123'],
-            regulatoryPositionStatement: ['RPS-123']
-          }
-        ]
+        authorisationNumbers: ['EPR123'],
+        regulatoryPositionStatements: ['RPS-123']
       }
 
       const receipt = {
@@ -146,13 +122,8 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
     it('rejects string value "RPS12A3"', () => {
       const receiver = {
         organisationName: 'Test Receiver',
-        authorisations: [
-          {
-            authorisationType: 'permit',
-            authorisationNumber: ['EPR123'],
-            regulatoryPositionStatement: ['RPS12A3']
-          }
-        ]
+        authorisationNumbers: ['EPR123'],
+        regulatoryPositionStatements: ['RPS12A3']
       }
 
       const receipt = {
@@ -167,13 +138,8 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
     it('rejects negative numbers', () => {
       const receiver = {
         organisationName: 'Test Receiver',
-        authorisations: [
-          {
-            authorisationType: 'permit',
-            authorisationNumber: ['EPR123'],
-            regulatoryPositionStatement: [-123]
-          }
-        ]
+        authorisationNumbers: ['EPR123'],
+        regulatoryPositionStatements: [-123]
       }
 
       const receipt = {
@@ -188,13 +154,8 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
     it('rejects zero', () => {
       const receiver = {
         organisationName: 'Test Receiver',
-        authorisations: [
-          {
-            authorisationType: 'permit',
-            authorisationNumber: ['EPR123'],
-            regulatoryPositionStatement: [0]
-          }
-        ]
+        authorisationNumbers: ['EPR123'],
+        regulatoryPositionStatements: [0]
       }
 
       const receipt = {
@@ -209,13 +170,8 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
     it('rejects decimal numbers', () => {
       const receiver = {
         organisationName: 'Test Receiver',
-        authorisations: [
-          {
-            authorisationType: 'permit',
-            authorisationNumber: ['EPR123'],
-            regulatoryPositionStatement: [12.5]
-          }
-        ]
+        authorisationNumbers: ['EPR123'],
+        regulatoryPositionStatements: [12.5]
       }
 
       const receipt = {
@@ -225,6 +181,51 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       const { error } = validate(receiver, receipt)
       expect(error).toBeDefined()
       expect(error.message).toContain('must be an integer')
+    })
+  })
+
+  describe('RPS can be provided independently of authorisation numbers', () => {
+    it('accepts RPS without any authorisation numbers', () => {
+      const receiver = {
+        organisationName: 'Test Receiver',
+        regulatoryPositionStatements: [123, 456]
+      }
+
+      const receipt = {
+        address: { fullAddress: '1 Receiver St, Town', postcode: 'TE1 1ST' }
+      }
+
+      const { error } = validate(receiver, receipt)
+      expect(error).toBeUndefined()
+    })
+
+    it('accepts authorisation numbers without RPS', () => {
+      const receiver = {
+        organisationName: 'Test Receiver',
+        authorisationNumbers: ['EPR123', 'EPR456']
+      }
+
+      const receipt = {
+        address: { fullAddress: '1 Receiver St, Town', postcode: 'TE1 1ST' }
+      }
+
+      const { error } = validate(receiver, receipt)
+      expect(error).toBeUndefined()
+    })
+
+    it('accepts both authorisation numbers and RPS together', () => {
+      const receiver = {
+        organisationName: 'Test Receiver',
+        authorisationNumbers: ['EPR123', 'EPR456'],
+        regulatoryPositionStatements: [100, 200, 300]
+      }
+
+      const receipt = {
+        address: { fullAddress: '1 Receiver St, Town', postcode: 'TE1 1ST' }
+      }
+
+      const { error } = validate(receiver, receipt)
+      expect(error).toBeUndefined()
     })
   })
 })
