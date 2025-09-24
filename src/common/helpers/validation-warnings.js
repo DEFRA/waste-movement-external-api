@@ -1,6 +1,8 @@
 import { hasHazardousEwcCodes } from '../../schemas/hazardous-waste-consignment.js'
-import { sourceOfComponentsProvided } from '../constants/source-of-components.js'
-import { POP_COMPONENT_SOURCES } from '../constants/pop-component-sources.js'
+import {
+  sourceOfComponentsNotProvided,
+  sourceOfComponentsProvided
+} from '../constants/source-of-components.js'
 
 /**
  * Validation warning types as defined in the API specification
@@ -326,7 +328,7 @@ export const generatePopComponentWarnings = (payload) => {
     // Check if source is one of the values that expects components
     if (
       sourceOfComponents &&
-      sourceOfComponents !== POP_COMPONENT_SOURCES.NOT_PROVIDED &&
+      sourceOfComponents !== sourceOfComponentsNotProvided.NOT_PROVIDED &&
       (!components || components.length === 0)
     ) {
       warnings.push({

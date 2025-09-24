@@ -1,10 +1,6 @@
 import Joi from 'joi'
 import { isValidEwcCode } from '../common/constants/ewc-codes.js'
 import { isValidPopName } from '../common/constants/pop-names.js'
-import {
-  POP_COMPONENT_SOURCES,
-  validPopComponentSources
-} from '../common/constants/pop-component-sources.js'
 import { weightSchema } from './weight.js'
 import { isValidContainerType } from '../common/constants/container-types.js'
 import { validHazCodes } from '../common/constants/haz-codes.js'
@@ -31,7 +27,7 @@ const hasComponents = (components) =>
 const validatePopPresence = (value, helpers) => {
   const { sourceOfComponents, components } = value
 
-  if (sourceOfComponents === POP_COMPONENT_SOURCES.NOT_PROVIDED) {
+  if (sourceOfComponents === 'NOT_PROVIDED') {
     if (hasComponents(components)) {
       return helpers.error('pops.componentsNotAllowed')
     }
@@ -51,7 +47,7 @@ const validatePopAbsence = (value, helpers) => {
   // When POPs are not present, no component details should be provided at all
   // This includes empty objects, as per business requirements
   if (hasComponents(value.components)) {
-    return helpers.error('any.invalid')
+    return helpers.error('any.containsPopsFalse')
   }
 
   return value
@@ -63,54 +59,67 @@ const popsSchema = Joi.object({
       'Does the waste contain persistent organic pollutants (POPs)? is required'
   }),
   sourceOfComponents: Joi.string()
-    .valid(...validPopComponentSources)
+    .valid(...Object.values(validSourceOfComponents))
     .when('containsPops', {
       is: true,
       then: Joi.required().messages({
         'any.required':
           'Source of POP components is required when POPs are present'
-      }),
-      otherwise: Joi.forbidden().messages({
-        'any.unknown':
-          'Source of POP components can only be provided when POPs are present'
       })
+      // otherwise: Joi.forbidden().messages({
+      //   'any.unknown':
+      //     'Source of POP components can only be provided when POPs are present'
+      // })
     }),
-  components: Joi.array().items(
-    Joi.object({
-      name: Joi.string()
-        .allow('', null) // Allow empty string and null as they're valid POP names and handled by validation warnings
-        .custom((value, helpers) => {
-          if (!isValidPopName(value)) {
-            return helpers.error('any.invalid')
+  components: Joi.array()
+    .items(
+      Joi.object({
+        name: Joi.string()
+          .empty('')
+          .empty(null)
+          .custom((value, helpers) => {
+            if (!isValidPopName(value)) {
+              return helpers.error('any.invalid')
+            }
+            return value
+          })
+          .required()
+          .messages({
+            'any.required': '{{ #label }} is required',
+            'any.invalid': '{{ #label }} is not valid'
+          }),
+        concentration: Joi.custom((value, helpers) => {
+          if (typeof value === 'number') {
+            if (value < 0) {
+              return helpers.error('number.min')
+            }
+            return value
           }
-          return value
-        })
-        .messages({
-          'any.required': 'POP name is required',
-          'any.invalid': 'POP name is not valid'
-        }),
-      concentration: Joi.custom((value, helpers) => {
-        if (typeof value === 'number') {
-          if (value < 0) {
-            return helpers.error('number.min')
-          }
-          return value
-        }
 
-        if (typeof value === 'string') {
+          if (typeof value === 'string') {
+            return helpers.error(CUSTOM_ERROR_TYPE)
+          }
+
+          // Any other type is invalid
           return helpers.error(CUSTOM_ERROR_TYPE)
-        }
-
-        // Any other type is invalid
-        return helpers.error(CUSTOM_ERROR_TYPE)
-      }).messages({
-        'any.required': '{{ #label }} is required',
-        'any.custom': '{{ #label }} must be a valid number',
-        'number.min': '{{ #label }} concentration cannot be negative'
+        })
+          .allow(null)
+          .messages({
+            'any.required': '{{ #label }} is required',
+            'any.custom': '{{ #label }} must be a valid number',
+            'number.min': '{{ #label }} concentration cannot be negative'
+          })
+      }).label('PopComponent')
+    )
+    .empty(null)
+    .when('containsPops', {
+      is: true,
+      then: Joi.required().messages({
+        'any.required': '{{ #label }} is required when POPs are present'
       })
-    }).label('PopComponent')
-  )
+    })
 })
+  .empty(null)
   .custom((value, helpers) => {
     // Since containsPops is required and boolean, we can simplify
     return value.containsPops
@@ -120,9 +129,11 @@ const popsSchema = Joi.object({
   .messages({
     'any.invalid': 'A POP name cannot be provided when POPs are not present',
     'pops.componentsNotAllowed':
-      'POP components must not be provided when the source is NOT_PROVIDED',
+      'POP components must not be provided when the source of components is NOT_PROVIDED',
     'pops.sourceNotAllowed':
-      'Source of POP components can only be provided when POPs are present'
+      'Source of POP components can only be provided when POPs are present',
+    'any.containsPopsFalse':
+      'POP components must not be provided when POPs are not present'
   })
   .label('Pops')
 

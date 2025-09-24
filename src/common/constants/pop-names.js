@@ -3,7 +3,6 @@
 // and EU Regulation (EUR-Lex - 02019R1021-20250804)
 
 export const validPopNames = [
-  '', // Empty string is valid per requirements
   'Endosulfan',
   'Hexachlorobutadiene',
   'Polychlorinated naphthalenes',
@@ -44,11 +43,6 @@ export const validPopNames = [
  * @returns {boolean} - True if the name is valid, false otherwise
  */
 export const isValidPopName = (name) => {
-  // Handle null/undefined
-  if (name === null || name === undefined) {
-    return false
-  }
-
   // Check if the name is in the list of valid names
   return validPopNames.includes(name)
 }
