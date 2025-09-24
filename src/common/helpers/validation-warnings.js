@@ -292,10 +292,11 @@ export const generatePopComponentWarnings = (payload) => {
  */
 function isPopComponentsEmpty(sourceOfComponents, components) {
   return (
-    sourceOfComponents &&
-    sourceOfComponents !== 'NOT_PROVIDED' &&
-    Array.isArray(components) &&
-    components.length === 0
+    (sourceOfComponents &&
+      sourceOfComponents !== 'NOT_PROVIDED' &&
+      Array.isArray(components) &&
+      components.length === 0) ||
+    !Array.isArray(components)
   )
 }
 

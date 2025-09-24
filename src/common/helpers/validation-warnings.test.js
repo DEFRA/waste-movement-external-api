@@ -449,6 +449,25 @@ describe('Validation Warnings', () => {
     })
 
     it.each([undefined, null])(
+      'should handle when POP components is not provided: "%s"',
+      (value) => {
+        const payload = {
+          wasteItems: [
+            {
+              pops: {
+                containsPops: true,
+                sourceOfComponents: 'CARRIER_SUPPLIED',
+                components: value
+              }
+            }
+          ]
+        }
+
+        generatePopComponentWarnings(payload)
+      }
+    )
+
+    it.each([undefined, null])(
       'should generate warning when POP components is provided with a missing concentration value: "%s"',
       (value) => {
         const payload = {
