@@ -107,7 +107,7 @@ const receiverSchema = Joi.object({
   organisationName: Joi.string().required(),
   emailAddress: Joi.string().email(),
   phoneNumber: Joi.string(),
-  authorisationNumbers: Joi.array().items(Joi.string()),
+  authorisationNumbers: Joi.array().items(Joi.string()).min(1).required(),
   regulatoryPositionStatements: Joi.array().items(
     Joi.number().integer().positive()
   )
