@@ -19,11 +19,10 @@ export const TEST_DATA = {
     PHONE: '01234567890'
   },
 
-  AUTHORISATION: {
-    NUMBERS: {
-      SIMPLE: 'EPR123',
-      COMPLEX: 'EPR/AB1234CD'
-    }
+  AUTHORISATION_NUMBERS: {
+    SIMPLE: ['EPR123'],
+    COMPLEX: ['EPR/AB1234CD'],
+    MULTIPLE: ['EPR123', 'EPR456', 'EPR789']
   },
 
   ADDRESS: {
