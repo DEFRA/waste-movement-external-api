@@ -228,7 +228,7 @@ export const generatePopComponentWarnings = (payload) => {
     }
 
     // Check if source is one of the values that expects components
-    if (isPopComponentsEmpty(sourceOfComponents, components)) {
+    if (isPopComponentsEmpty(components)) {
       warnings.push({
         key: `wasteItems[${index}].pops.components`,
         errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
@@ -236,7 +236,7 @@ export const generatePopComponentWarnings = (payload) => {
       })
     }
 
-    if (isPopConcentrationMissing(sourceOfComponents, components)) {
+    if (isPopConcentrationMissing(components)) {
       warnings.push({
         key: `wasteItems[${index}].pops.components`,
         errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
@@ -250,11 +250,10 @@ export const generatePopComponentWarnings = (payload) => {
 
 /**
  * Determines if POP components is an empty array
- * @param {Object} sourceOfComponents - The POP source of components
  * @param {Object} components - The POP components
  * @returns {Boolean} True if POP components array is empty, otherwisse false
  */
-function isPopComponentsEmpty(sourceOfComponents, components) {
+function isPopComponentsEmpty(components) {
   return (
     (Array.isArray(components) && components.length === 0) ||
     !Array.isArray(components)
@@ -263,13 +262,12 @@ function isPopComponentsEmpty(sourceOfComponents, components) {
 
 /**
  * Determines if any of the POP components has a missing concentration value
- * @param {Object} sourceOfComponents - The POP source of components
  * @param {Object} components - The POP components
  * @returns {Boolean} True if any of the POP components has a missing concentration value, otherwise false
  */
-function isPopConcentrationMissing(sourceOfComponents, components) {
+function isPopConcentrationMissing(components) {
   return (
-    !isPopComponentsEmpty(sourceOfComponents, components) &&
+    !isPopComponentsEmpty(components) &&
     components.some(
       (component) =>
         component.concentration === undefined ||
