@@ -12,7 +12,8 @@ describe('Receiver Validation', () => {
     const receiver = {
       organisationName: 'Test Receiver',
       emailAddress: 'receiver@example.com',
-      phoneNumber: '01234567890'
+      phoneNumber: '01234567890',
+      authorisationNumbers: ['EPR123']
     }
 
     const receipt = {
@@ -28,7 +29,8 @@ describe('Receiver Validation', () => {
 
   it('accepts when no receiver tel/email are provided', () => {
     const receiver = {
-      organisationName: 'Test Receiver'
+      organisationName: 'Test Receiver',
+      authorisationNumbers: ['EPR123']
     }
 
     const receipt = {
@@ -76,7 +78,7 @@ describe('Receiver Validation', () => {
     expect(error).toBeUndefined()
   })
 
-  it('accepts when no authorisation numbers are provided', () => {
+  it('rejects when no authorisation numbers are provided', () => {
     const receiver = {
       organisationName: 'Test Receiver'
     }
@@ -89,10 +91,11 @@ describe('Receiver Validation', () => {
     }
 
     const { error } = validate(receiver, receipt)
-    expect(error).toBeUndefined()
+    expect(error).toBeDefined()
+    expect(error.message).toBe('"receiver.authorisationNumbers" is required')
   })
 
-  it('accepts when authorisation numbers is an empty array', () => {
+  it('rejects when authorisation numbers is an empty array', () => {
     const receiver = {
       organisationName: 'Test Receiver',
       authorisationNumbers: []
@@ -106,7 +109,10 @@ describe('Receiver Validation', () => {
     }
 
     const { error } = validate(receiver, receipt)
-    expect(error).toBeUndefined()
+    expect(error).toBeDefined()
+    expect(error.message).toBe(
+      '"receiver.authorisationNumbers" must contain at least 1 items'
+    )
   })
 
   it('rejects when any receiver properties provided but organisationName missing', () => {
@@ -130,7 +136,8 @@ describe('Receiver Validation', () => {
     const receiver = {
       organisationName: 'Test Receiver',
       emailAddress: 'receiver@example.com',
-      phoneNumber: '01234567890'
+      phoneNumber: '01234567890',
+      authorisationNumbers: ['EPR123']
     }
 
     const receipt = {}
@@ -142,7 +149,8 @@ describe('Receiver Validation', () => {
 
   it('rejects incomplete receiver address without postcode', () => {
     const receiver = {
-      organisationName: 'Test Receiver'
+      organisationName: 'Test Receiver',
+      authorisationNumbers: ['EPR123']
     }
 
     const receipt = {
@@ -156,7 +164,8 @@ describe('Receiver Validation', () => {
 
   it('rejects incomplete receiver address without fullAddress', () => {
     const receiver = {
-      organisationName: 'Test Receiver'
+      organisationName: 'Test Receiver',
+      authorisationNumbers: ['EPR123']
     }
 
     const receipt = {
@@ -170,7 +179,8 @@ describe('Receiver Validation', () => {
 
   it('rejects invalid UK postcode', () => {
     const receiver = {
-      organisationName: 'Invalid Postcode Receiver'
+      organisationName: 'Invalid Postcode Receiver',
+      authorisationNumbers: ['EPR123']
     }
 
     const receipt = {
@@ -187,7 +197,8 @@ describe('Receiver Validation', () => {
 
   it('rejects valid Ireland Eircode', () => {
     const receiver = {
-      organisationName: 'Invalid Eircode Receiver'
+      organisationName: 'Invalid Eircode Receiver',
+      authorisationNumbers: ['EPR123']
     }
 
     const receipt = {
@@ -205,7 +216,8 @@ describe('Receiver Validation', () => {
   it('rejects invalid receiver email address', () => {
     const receiver = {
       organisationName: 'Invalid Email Receiver',
-      emailAddress: 'not-an-email'
+      emailAddress: 'not-an-email',
+      authorisationNumbers: ['EPR123']
     }
 
     const receipt = {
@@ -274,6 +286,7 @@ describe('Receiver Validation', () => {
   it('accepts receiver with only regulatory position statements', () => {
     const receiver = {
       organisationName: 'Test Receiver',
+      authorisationNumbers: ['EPR123'],
       regulatoryPositionStatements: [123, 456, 789]
     }
 
