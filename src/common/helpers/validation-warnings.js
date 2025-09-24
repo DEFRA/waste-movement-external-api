@@ -199,46 +199,6 @@ export const generateHazardousConsignmentWarnings = (payload) => {
 }
 
 /**
- * Generate warnings for POP components conditions.
- * If POP concentration is provided then POP name must also be provided, otherwise add a warning
- *
- * @param {Object} payload
- * @returns {Array} Array of all validation warnings
- */
-export const generatePopComponentsWarnings = (payload) => {
-  const warnings = []
-
-  if (!Array.isArray(payload?.wasteItems)) {
-    return warnings
-  }
-
-  const hasPopName = payload.wasteItems.every(({ pops }) => {
-    if (!pops?.containsPops) {
-      return true
-    }
-
-    if (!Array.isArray(pops?.components)) {
-      return true
-    }
-
-    return pops.components.every(({ concentration, name }) => {
-      return concentration && name && name.trim().length > 0
-    })
-  })
-
-  // If POP concentration is provided then POP name must also be provided
-  if (!hasPopName) {
-    warnings.push({
-      key: VALIDATION_KEYS.POP_NAME,
-      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: 'POP name is required when POP concentration is provided'
-    })
-  }
-
-  return warnings
-}
-
-/**
  * Generate warnings for POP components
  *
  * item   contains<Haz/Pops>	sourceOfComponents	                    components			                          expected outcome
@@ -262,6 +222,10 @@ export const generatePopComponentWarnings = (payload) => {
 
     const sourceOfComponents = wasteItem.pops.sourceOfComponents
     const components = wasteItem.pops.components
+
+    if (sourceOfComponents === 'NOT_PROVIDED') {
+      return
+    }
 
     // Check if source is one of the values that expects components
     if (isPopComponentsEmpty(sourceOfComponents, components)) {
@@ -292,10 +256,7 @@ export const generatePopComponentWarnings = (payload) => {
  */
 function isPopComponentsEmpty(sourceOfComponents, components) {
   return (
-    (sourceOfComponents &&
-      sourceOfComponents !== 'NOT_PROVIDED' &&
-      Array.isArray(components) &&
-      components.length === 0) ||
+    (Array.isArray(components) && components.length === 0) ||
     !Array.isArray(components)
   )
 }
@@ -336,9 +297,6 @@ export const generateAllValidationWarnings = (payload) => {
   // Add POP components warnings
   const popWarnings = generatePopComponentWarnings(payload)
   warnings.push(...popWarnings)
-
-  const popComponentWarnings = generatePopComponentsWarnings(payload)
-  warnings.push(...popComponentWarnings)
 
   return warnings
 }

@@ -3,8 +3,7 @@ import {
   VALIDATION_ERROR_TYPES,
   generateDisposalRecoveryWarnings,
   generateAllValidationWarnings,
-  generatePopComponentWarnings,
-  generatePopComponentsWarnings
+  generatePopComponentWarnings
 } from './validation-warnings.js'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -353,7 +352,7 @@ describe('Validation Warnings', () => {
       (value) => {
         const payload = value
 
-        const warnings = generatePopComponentsWarnings(payload)
+        const warnings = generatePopComponentWarnings(payload)
         expect(warnings).toEqual([])
       }
     )
@@ -363,7 +362,7 @@ describe('Validation Warnings', () => {
       (value) => {
         const payload = value
 
-        const warnings = generatePopComponentsWarnings(payload)
+        const warnings = generatePopComponentWarnings(payload)
         expect(warnings).toEqual([])
       }
     )
@@ -379,7 +378,7 @@ describe('Validation Warnings', () => {
         ]
       }
 
-      const warnings = generatePopComponentsWarnings(payload)
+      const warnings = generatePopComponentWarnings(payload)
       expect(warnings).toEqual([])
     })
 
@@ -395,7 +394,7 @@ describe('Validation Warnings', () => {
         ]
       }
 
-      const warnings = generatePopComponentsWarnings(payload)
+      const warnings = generatePopComponentWarnings(payload)
       expect(warnings).toEqual([])
     })
 
@@ -421,7 +420,7 @@ describe('Validation Warnings', () => {
         ]
       }
 
-      const warnings = generatePopComponentsWarnings(payload)
+      const warnings = generatePopComponentWarnings(payload)
       expect(warnings).toEqual([])
     })
 
