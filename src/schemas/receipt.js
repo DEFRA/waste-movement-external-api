@@ -13,6 +13,7 @@ import {
   SEPA_CARRIER_REGISTRATION_NUMBER_REGEX,
   UK_POSTCODE_REGEX
 } from '../common/constants/regexes.js'
+import { authorisationNumbersArraySchema } from './authorisation-number.js'
 
 const MIN_STRING_LENGTH = 1
 
@@ -106,7 +107,7 @@ const receiverSchema = Joi.object({
   organisationName: Joi.string().required(),
   emailAddress: Joi.string().email(),
   phoneNumber: Joi.string(),
-  authorisationNumbers: Joi.array().items(Joi.string()).min(1).required(),
+  authorisationNumbers: authorisationNumbersArraySchema,
   regulatoryPositionStatements: Joi.array().items(
     Joi.number().strict().integer().positive()
   )
