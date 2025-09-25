@@ -217,7 +217,7 @@ export const generatePopAndHazardousComponentWarnings = (
   }
 
   const warnings = []
-  const popsOrHazardousbjectProperty = String(popsOrHazardous).toLowerCase()
+  const popsOrHazardousObjectProperty = String(popsOrHazardous).toLowerCase()
   const containsPopsOrHazardousField = `contains${String(popsOrHazardous).charAt(0).toUpperCase()}${String(popsOrHazardous).toLowerCase().slice(1)}`
 
   if (!Array.isArray(payload?.wasteItems)) {
@@ -226,14 +226,14 @@ export const generatePopAndHazardousComponentWarnings = (
 
   payload.wasteItems.forEach((wasteItem, index) => {
     if (
-      !wasteItem[popsOrHazardousbjectProperty]?.[containsPopsOrHazardousField]
+      !wasteItem[popsOrHazardousObjectProperty]?.[containsPopsOrHazardousField]
     ) {
       return
     }
 
     const sourceOfComponents =
-      wasteItem[popsOrHazardousbjectProperty].sourceOfComponents
-    const components = wasteItem[popsOrHazardousbjectProperty].components
+      wasteItem[popsOrHazardousObjectProperty].sourceOfComponents
+    const components = wasteItem[popsOrHazardousObjectProperty].components
 
     if (sourceOfComponents === 'NOT_PROVIDED') {
       return
@@ -242,7 +242,7 @@ export const generatePopAndHazardousComponentWarnings = (
     // Check if source is one of the values that expects components
     if (isPopOrHazardousComponentsEmpty(components)) {
       warnings.push({
-        key: `wasteItems[${index}].${popsOrHazardousbjectProperty}.components`,
+        key: `wasteItems[${index}].${popsOrHazardousObjectProperty}.components`,
         errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
         message: `${popsOrHazardous} components are recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
       })
@@ -250,7 +250,7 @@ export const generatePopAndHazardousComponentWarnings = (
 
     if (isPopOrHazardousConcentrationMissing(components)) {
       warnings.push({
-        key: `wasteItems[${index}].${popsOrHazardousbjectProperty}.components`,
+        key: `wasteItems[${index}].${popsOrHazardousObjectProperty}.components`,
         errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
         message: `${popsOrHazardous} concentration is recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
       })

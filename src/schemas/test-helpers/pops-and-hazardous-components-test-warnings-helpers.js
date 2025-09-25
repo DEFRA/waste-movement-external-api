@@ -9,7 +9,7 @@ export function testPopsAndHazardousComponentWarnings(popsOrHazardous) {
     throw new Error('Expecting popsOrHazardous to be one of: POPs, Hazardous')
   }
 
-  const popsOrHazardousbjectProperty = String(popsOrHazardous).toLowerCase()
+  const popsOrHazardousObjectProperty = String(popsOrHazardous).toLowerCase()
   const containsPopsOrHazardousField = `contains${String(popsOrHazardous).charAt(0).toUpperCase()}${String(popsOrHazardous).toLowerCase().slice(1)}`
 
   describe(`generatePopAndHazardousComponentWarnings: "${popsOrHazardous}"`, () => {
@@ -43,7 +43,7 @@ export function testPopsAndHazardousComponentWarnings(popsOrHazardous) {
       const payload = {
         wasteItems: [
           {
-            [popsOrHazardousbjectProperty]: {
+            [popsOrHazardousObjectProperty]: {
               [containsPopsOrHazardousField]: false
             }
           }
@@ -61,7 +61,7 @@ export function testPopsAndHazardousComponentWarnings(popsOrHazardous) {
       const payload = {
         wasteItems: [
           {
-            [popsOrHazardousbjectProperty]: {
+            [popsOrHazardousObjectProperty]: {
               [containsPopsOrHazardousField]: true,
               sourceOfComponents: 'NOT_PROVIDED'
             }
@@ -80,7 +80,7 @@ export function testPopsAndHazardousComponentWarnings(popsOrHazardous) {
       const payload = {
         wasteItems: [
           {
-            [popsOrHazardousbjectProperty]: {
+            [popsOrHazardousObjectProperty]: {
               [containsPopsOrHazardousField]: true,
               sourceOfComponents: 'CARRIER_SUPPLIED',
               components: [
@@ -109,7 +109,7 @@ export function testPopsAndHazardousComponentWarnings(popsOrHazardous) {
       const payload = {
         wasteItems: [
           {
-            [popsOrHazardousbjectProperty]: {
+            [popsOrHazardousObjectProperty]: {
               [containsPopsOrHazardousField]: true,
               sourceOfComponents: 'CARRIER_SUPPLIED',
               components: []
@@ -124,7 +124,7 @@ export function testPopsAndHazardousComponentWarnings(popsOrHazardous) {
       )
       expect(warnings).toEqual([
         {
-          key: `wasteItems[0].${popsOrHazardousbjectProperty}.components`,
+          key: `wasteItems[0].${popsOrHazardousObjectProperty}.components`,
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message: `${popsOrHazardous} components are recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
         }
@@ -137,7 +137,7 @@ export function testPopsAndHazardousComponentWarnings(popsOrHazardous) {
         const payload = {
           wasteItems: [
             {
-              [popsOrHazardousbjectProperty]: {
+              [popsOrHazardousObjectProperty]: {
                 [containsPopsOrHazardousField]: true,
                 sourceOfComponents: 'CARRIER_SUPPLIED',
                 components: value
@@ -156,7 +156,7 @@ export function testPopsAndHazardousComponentWarnings(popsOrHazardous) {
         const payload = {
           wasteItems: [
             {
-              [popsOrHazardousbjectProperty]: {
+              [popsOrHazardousObjectProperty]: {
                 [containsPopsOrHazardousField]: true,
                 sourceOfComponents: 'CARRIER_SUPPLIED',
                 components: [
@@ -180,7 +180,7 @@ export function testPopsAndHazardousComponentWarnings(popsOrHazardous) {
         )
         expect(warnings).toEqual([
           {
-            key: `wasteItems[0].${popsOrHazardousbjectProperty}.components`,
+            key: `wasteItems[0].${popsOrHazardousObjectProperty}.components`,
             errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
             message: `${popsOrHazardous} concentration is recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
           }
