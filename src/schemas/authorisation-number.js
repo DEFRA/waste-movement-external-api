@@ -3,242 +3,60 @@ import Joi from 'joi'
 /**
  * UK Site Authorization Number Validation
  *
- * This module validates site waste authorization numbers across all UK nations.
- * Each nation has specific format requirements that are documented below.
- *
- * Reference: Gov UK Bulk Data Transfer validation specifications
+ * Validates site waste authorization numbers across all UK nations.
+ * All nation formats are accepted without nation-specific validation.
  */
 
-// ============================================================================
-// ENGLAND Authorization Formats
-// ============================================================================
-/**
- * England accepts the following authorization formats:
- * - Standard format: Two letters, four digits, two letters (e.g., HP3456XX)
- * - With deployment: Standard format with /D and four digits (e.g., AB1234CD/D5678)
- * - EPR prefixed: EPR/ followed by standard format (e.g., EPR/AB1234CD)
- * - EPR with deployment: EPR/ with standard format and deployment (e.g., EPR/AB1234CD/D5678)
- * - EAWML: Environment Agency Waste Management License (e.g., EAWML123456)
- * - WML: Waste Management License (e.g., WML987654)
- */
-const ENGLAND_FORMAT_DEFINITIONS = {
-  STANDARD: {
-    pattern: /^[A-Z]{2}\d{4}[A-Z]{2}$/i,
-    example: 'HP3456XX',
-    description: 'Two letters, four digits, two letters'
-  },
-  STANDARD_WITH_DEPLOYMENT: {
-    pattern: /^[A-Z]{2}\d{4}[A-Z]{2}\/D\d{4}$/i,
-    example: 'AB1234CD/D5678',
-    description: 'Standard format with deployment number'
-  },
-  EPR_STANDARD: {
-    pattern: /^EPR\/[A-Z]{2}\d{4}[A-Z]{2}$/i,
-    example: 'EPR/AB1234CD',
-    description: 'Environmental Permitting Regulations format'
-  },
-  EPR_WITH_DEPLOYMENT: {
-    pattern: /^EPR\/[A-Z]{2}\d{4}[A-Z]{2}\/D\d{4}$/i,
-    example: 'EPR/AB1234CD/D5678',
-    description: 'EPR format with deployment number'
-  },
-  EAWML: {
-    pattern: /^EAWML\d{6}$/i,
-    example: 'EAWML123456',
-    description: 'Environment Agency Waste Management License'
-  },
-  WML: {
-    pattern: /^WML\d{6}$/i,
-    example: 'WML987654',
-    description: 'Waste Management License'
-  }
-}
+// England patterns
+const ENGLAND_PATTERNS = [
+  /^[A-Z]{2}\d{4}[A-Z]{2}$/i, // XX9999XX
+  /^[A-Z]{2}\d{4}[A-Z]{2}\/D\d{4}$/i, // XX9999XX/D9999
+  /^EPR\/[A-Z]{2}\d{4}[A-Z]{2}$/i, // EPR/XX9999XX
+  /^EPR\/[A-Z]{2}\d{4}[A-Z]{2}\/D\d{4}$/i, // EPR/XX9999XX/D9999
+  /^EAWML\d{6}$/i, // EAWML999999
+  /^WML\d{6}$/i // WML999999
+]
 
-const ENGLAND_PATTERNS = Object.values(ENGLAND_FORMAT_DEFINITIONS).map(
-  (def) => def.pattern
-)
+// Scotland (SEPA) patterns
+const SCOTLAND_PATTERNS = [
+  /^PPC\/[AWEN]\/\d{7}$/i, // PPC/A/9999999
+  /^WML\/[LWEN]\/\d{7}$/i, // WML/L/9999999
+  /^PPC\/A\/SEPA\d{4}-\d{4}$/i, // PPC/A/SEPA9999-9999
+  /^WML\/L\/SEPA\d{4}-\d{4}$/i, // WML/L/SEPA9999-9999
+  /^EAS\/P\/\d{6}$/i // EAS/P/999999
+]
 
-// ============================================================================
-// SCOTLAND (SEPA) Authorization Formats
-// ============================================================================
-/**
- * Scotland (SEPA - Scottish Environment Protection Agency) accepts:
- * - PPC permits: Pollution Prevention and Control with various categories (A/W/E/N)
- * - WML permits: Waste Management License with various categories (L/W/E/N)
- * - SEPA reference numbers: Special format with SEPA prefix
- * - EAS permits: Environmental Authorisation Scotland
- */
-const SCOTLAND_FORMAT_DEFINITIONS = {
-  PPC_CATEGORY: {
-    pattern: /^PPC\/[AWEN]\/\d{7}$/i,
-    example: 'PPC/A/1234567',
-    description: 'Pollution Prevention Control (categories: A/W/E/N)'
-  },
-  WML_CATEGORY: {
-    pattern: /^WML\/[LWEN]\/\d{7}$/i,
-    example: 'WML/L/7654321',
-    description: 'Waste Management License (categories: L/W/E/N)'
-  },
-  PPC_SEPA_REF: {
-    pattern: /^PPC\/A\/SEPA\d{4}-\d{4}$/i,
-    example: 'PPC/A/SEPA1234-5678',
-    description: 'PPC with SEPA reference number'
-  },
-  WML_SEPA_REF: {
-    pattern: /^WML\/L\/SEPA\d{4}-\d{4}$/i,
-    example: 'WML/L/SEPA1234-5678',
-    description: 'WML with SEPA reference number'
-  },
-  EAS_PERMIT: {
-    pattern: /^EAS\/P\/\d{6}$/i,
-    example: 'EAS/P/123456',
-    description: 'Environmental Authorisation Scotland permit'
-  }
-}
+// Wales (NRW) patterns - shares patterns with England
+const WALES_PATTERNS = [
+  /^[A-Z]{2}\d{4}[A-Z]{2}$/i, // XX9999XX
+  /^EPR\/[A-Z]{2}\d{4}[A-Z]{2}$/i // EPR/XX9999XX
+]
 
-const SEPA_PATTERNS = Object.values(SCOTLAND_FORMAT_DEFINITIONS).map(
-  (def) => def.pattern
-)
+// Northern Ireland patterns
+const NI_PATTERNS = [
+  /^P\d{4}\/\d{2}[A-Z]$/i, // P9999/99X
+  /^WPPC \d{2}\/\d{2}$/i // WPPC 99/99
+]
 
-// ============================================================================
-// WALES (NRW) Authorization Formats
-// ============================================================================
-/**
- * Wales (Natural Resources Wales) accepts:
- * - Standard format: Same as England standard format
- * - EPR format: Environmental Permitting Regulations format
- */
-const WALES_FORMAT_DEFINITIONS = {
-  STANDARD: {
-    pattern: /^[A-Z]{2}\d{4}[A-Z]{2}$/i,
-    example: 'NW1234CD',
-    description: 'Two letters, four digits, two letters'
-  },
-  EPR_STANDARD: {
-    pattern: /^EPR\/[A-Z]{2}\d{4}[A-Z]{2}$/i,
-    example: 'EPR/NW1234CD',
-    description: 'Environmental Permitting Regulations format'
-  }
-}
-
-const WALES_PATTERNS = Object.values(WALES_FORMAT_DEFINITIONS).map(
-  (def) => def.pattern
-)
-
-// ============================================================================
-// NORTHERN IRELAND Authorization Formats
-// ============================================================================
-/**
- * Northern Ireland accepts:
- * - P format: P followed by numbers and division (e.g., P1234/56A)
- * - WPPC format: Waste Prevention and Control permit (e.g., WPPC 12/34)
- */
-const NI_FORMAT_DEFINITIONS = {
-  P_FORMAT: {
-    pattern: /^P\d{4}\/\d{2}[A-Z]$/i,
-    example: 'P1234/56A',
-    description: 'Permit number with division and letter suffix'
-  },
-  WPPC: {
-    pattern: /^WPPC \d{2}\/\d{2}$/i,
-    example: 'WPPC 12/34',
-    description: 'Waste Prevention and Control permit'
-  }
-}
-
-const NI_PATTERNS = Object.values(NI_FORMAT_DEFINITIONS).map(
-  (def) => def.pattern
-)
-
-// ============================================================================
-// Combined Patterns for Validation
-// ============================================================================
+// Combine all patterns for validation
 const ALL_PATTERNS = [
   ...ENGLAND_PATTERNS,
-  ...SEPA_PATTERNS,
+  ...SCOTLAND_PATTERNS,
   ...WALES_PATTERNS,
   ...NI_PATTERNS
 ]
 
-// ============================================================================
-// Helper Functions
-// ============================================================================
-
-/**
- * Identifies which nation and format type an authorization number belongs to
- * @param {string} value - The authorization number to identify
- * @returns {object|null} - Object with nation, format, example, and description, or null if invalid
- */
-export const identifyAuthorisationFormat = (value) => {
-  if (!value || typeof value !== 'string') {
-    return null
-  }
-
-  const trimmedValue = value.trim()
-
-  // Check each nation's formats
-  const nations = [
-    { name: 'England', formats: ENGLAND_FORMAT_DEFINITIONS },
-    { name: 'Scotland', formats: SCOTLAND_FORMAT_DEFINITIONS },
-    { name: 'Wales', formats: WALES_FORMAT_DEFINITIONS },
-    { name: 'Northern Ireland', formats: NI_FORMAT_DEFINITIONS }
-  ]
-
-  for (const nation of nations) {
-    for (const [formatName, definition] of Object.entries(nation.formats)) {
-      if (definition.pattern.test(trimmedValue)) {
-        return {
-          nation: nation.name,
-          format: formatName,
-          example: definition.example,
-          description: definition.description
-        }
-      }
-    }
-  }
-
-  return null
-}
-
-/**
- * Gets all valid format examples grouped by nation
- * @returns {object} - Object with nation names as keys and arrays of examples as values
- */
-export const getFormatExamples = () => {
-  return {
-    England: Object.values(ENGLAND_FORMAT_DEFINITIONS).map(
-      (def) => def.example
-    ),
-    Scotland: Object.values(SCOTLAND_FORMAT_DEFINITIONS).map(
-      (def) => def.example
-    ),
-    Wales: Object.values(WALES_FORMAT_DEFINITIONS).map((def) => def.example),
-    'Northern Ireland': Object.values(NI_FORMAT_DEFINITIONS).map(
-      (def) => def.example
-    )
-  }
-}
-
 /**
  * Validates a site authorization number against all UK nation formats
- * @param {string} value - The authorization number to validate
- * @returns {boolean} - True if the value matches any valid pattern
  */
 const isValidAuthorisationNumber = (value) => {
   if (!value || typeof value !== 'string') {
     return false
   }
 
-  // Remove any leading/trailing whitespace
   const trimmedValue = value.trim()
-
-  // Check against all patterns
   return ALL_PATTERNS.some((pattern) => pattern.test(trimmedValue))
 }
-
-// ============================================================================
-// Joi Schemas
-// ============================================================================
 
 /**
  * Joi schema for validating site authorization numbers
@@ -248,7 +66,6 @@ export const authorisationNumberSchema = Joi.string()
     if (isValidAuthorisationNumber(value)) {
       return value
     }
-
     return helpers.error('authorisation.invalid')
   })
   .messages({
