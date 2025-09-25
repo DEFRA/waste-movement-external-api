@@ -1,7 +1,7 @@
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createTestPayload } from './test-helpers/waste-test-helpers.js'
 import { isValidPopName, validPopNames } from '../common/constants/pop-names.js'
-import { testPopsAndHazardousComponents } from './test-helpers/pops-and-hazardous-components-test-helpers.js'
+import { testPopsAndHazardousComponentsErrors } from './test-helpers/pops-and-hazardous-components-errors-test-helpers.js'
 
 describe('Receipt Schema Validation - POPs', () => {
   describe('POPs Indicator Validation', () => {
@@ -58,7 +58,7 @@ describe('Receipt Schema Validation - POPs', () => {
     })
   })
 
-  testPopsAndHazardousComponents('POPs')
+  testPopsAndHazardousComponentsErrors('POPs')
 
   it('should reject POP name with an invalid value', () => {
     const payload = createTestPayload({

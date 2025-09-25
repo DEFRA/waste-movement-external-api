@@ -1,4 +1,4 @@
-import { testPopsAndHazardousComponentWarnings } from '../../schemas/test-helpers/pops-and-hazardous-components-test-warnings-helpers.js'
+import { testPopsAndHazardousComponentWarnings } from '../../schemas/test-helpers/pops-and-hazardous-components-warnings-test-helpers.js'
 import {
   VALIDATION_ERROR_TYPES,
   generateDisposalRecoveryWarnings,

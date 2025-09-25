@@ -5,7 +5,7 @@ import {
 import { receiveMovementRequestSchema } from '../receipt.js'
 import { createTestPayload } from './waste-test-helpers.js'
 
-export function testPopsAndHazardousComponents(popsOrHazardous) {
+export function testPopsAndHazardousComponentsErrors(popsOrHazardous) {
   if (!['POPs', 'Hazardous'].includes(popsOrHazardous)) {
     throw new Error('Expecting popsOrHazardous to be one of: POPs, Hazardous')
   }

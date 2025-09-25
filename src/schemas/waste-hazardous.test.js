@@ -4,7 +4,7 @@ import {
   validSourceOfComponents
 } from '../common/constants/source-of-components.js'
 import { receiveMovementRequestSchema } from './receipt.js'
-import { testPopsAndHazardousComponents } from './test-helpers/pops-and-hazardous-components-test-helpers.js'
+import { testPopsAndHazardousComponentsErrors } from './test-helpers/pops-and-hazardous-components-errors-test-helpers.js'
 import { createTestPayload } from './test-helpers/waste-test-helpers.js'
 
 describe('Receipt Schema Validation - Hazardous', () => {
@@ -196,5 +196,5 @@ describe('Receipt Schema Validation - Hazardous', () => {
     )
   })
 
-  testPopsAndHazardousComponents('Hazardous')
+  testPopsAndHazardousComponentsErrors('Hazardous')
 })
