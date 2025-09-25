@@ -5,11 +5,7 @@ import { weightSchema } from './weight.js'
 import { isValidContainerType } from '../common/constants/container-types.js'
 import { validHazCodes } from '../common/constants/haz-codes.js'
 import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
-import {
-  sourceOfComponentsNotProvided,
-  sourceOfComponentsProvided,
-  validSourceOfComponents
-} from '../common/constants/source-of-components.js'
+import { validSourceOfComponents } from '../common/constants/source-of-components.js'
 
 const MAX_EWC_CODES_COUNT = 5
 const CUSTOM_ERROR_TYPE = 'any.custom'
@@ -24,12 +20,12 @@ const disposalOrRecoveryCodeSchema = Joi.object({
 const hasComponents = (components) =>
   Array.isArray(components) && components.length > 0
 
-const validatePopPresence = (value, helpers) => {
+const validatePopOrHazardousPresence = (value, helpers) => {
   const { sourceOfComponents, components } = value
 
   if (sourceOfComponents === 'NOT_PROVIDED') {
     if (hasComponents(components)) {
-      return helpers.error('pops.componentsNotAllowed')
+      return helpers.error('any.componentsNotAllowed')
     }
 
     return value
@@ -42,12 +38,12 @@ const validatePopPresence = (value, helpers) => {
   return value
 }
 
-const validatePopAbsence = (value, helpers) => {
-  // This function is called when containsPops is false
-  // When POPs are not present, no component details should be provided at all
+const validatePopOrHazardousAbsence = (value, helpers) => {
+  // This function is called when containsPops/containsHazardous is false
+  // When POPs/Hazardous are not present, no component details should be provided at all
   // This includes empty objects, as per business requirements
   if (hasComponents(value.components)) {
-    return helpers.error('any.containsPopsFalse')
+    return helpers.error('any.containsPopsHazardousFalse')
   }
 
   return value
@@ -55,8 +51,7 @@ const validatePopAbsence = (value, helpers) => {
 
 const popsSchema = Joi.object({
   containsPops: Joi.boolean().required().messages({
-    'any.required':
-      'Does the waste contain persistent organic pollutants (POPs)? is required'
+    'any.required': '{{ #label }} is required'
   }),
   sourceOfComponents: Joi.string()
     .valid(...Object.values(validSourceOfComponents))
@@ -64,7 +59,7 @@ const popsSchema = Joi.object({
       is: true,
       then: Joi.required().messages({
         'any.required':
-          'Source of POP components is required when POPs are present'
+          '{{ #label }} is required when POPs components are present'
       })
     }),
   components: Joi.array()
@@ -114,7 +109,8 @@ const popsSchema = Joi.object({
         is: 'NOT_PROVIDED',
         then: Joi.optional(),
         otherwise: Joi.required().messages({
-          'any.required': '{{ #label }} is required when POPs are present'
+          'any.required':
+            '{{ #label }} is required when POPs components are present'
         })
       })
     })
@@ -123,17 +119,17 @@ const popsSchema = Joi.object({
   .custom((value, helpers) => {
     // Since containsPops is required and boolean, we can simplify
     return value.containsPops
-      ? validatePopPresence(value, helpers)
-      : validatePopAbsence(value, helpers)
+      ? validatePopOrHazardousPresence(value, helpers)
+      : validatePopOrHazardousAbsence(value, helpers)
   })
   .messages({
-    'any.invalid': 'A POP name cannot be provided when POPs are not present',
-    'pops.componentsNotAllowed':
-      'POP components must not be provided when the source of components is NOT_PROVIDED',
+    'any.invalid': '{{ #label }} cannot be provided when POPs are not present',
+    'any.componentsNotAllowed':
+      'POPs components must not be provided when the source of components is NOT_PROVIDED',
     'pops.sourceNotAllowed':
-      'Source of POP components can only be provided when POPs are present',
-    'any.containsPopsFalse':
-      'POP components must not be provided when POPs are not present'
+      'Source of {{ #label }} can only be provided when POPs are present',
+    'any.containsPopsHazardousFalse':
+      'POPs components must not be provided when POPs components are not present'
   })
   .label('Pops')
 
@@ -144,7 +140,13 @@ const hazardousSchema = Joi.object({
   }),
   sourceOfComponents: Joi.string()
     .valid(...Object.values(validSourceOfComponents))
-    .required(),
+    .when('containsHazardous', {
+      is: true,
+      then: Joi.required().messages({
+        'any.required':
+          '{{ #label }} is required when Hazardous components are present'
+      })
+    }),
   hazCodes: Joi.array()
     .items(Joi.string().valid(...validHazCodes))
     .custom((value) => {
@@ -159,15 +161,11 @@ const hazardousSchema = Joi.object({
   components: Joi.array()
     .items(
       Joi.object({
-        name: Joi.string().invalid(null).messages({
-          'any.required': 'Chemical or Biological Component name is required',
-          'string.base':
-            'Chemical or Biological Component name must be a string',
-          'any.invalid':
-            'Chemical or Biological Component name must be an actual component name, not null'
+        name: Joi.string().empty('').empty(null).required().messages({
+          'any.required': '{{ #label }} is required',
+          'any.invalid': '{{ #label }} is not valid'
         }),
         concentration: Joi.custom((value, helpers) => {
-          // Check if it's a valid number
           if (typeof value === 'number') {
             if (value < 0) {
               return helpers.error('number.min')
@@ -175,67 +173,50 @@ const hazardousSchema = Joi.object({
             return value
           }
 
-          // Check if it's a valid string
           if (typeof value === 'string') {
-            if (value === 'Not Supplied') {
-              return value
-            }
-            if (value === '') {
-              return value
-            }
-            // Any other string is invalid
             return helpers.error(CUSTOM_ERROR_TYPE)
           }
 
           // Any other type is invalid
           return helpers.error(CUSTOM_ERROR_TYPE)
-        }).messages({
-          'any.required':
-            'Chemical or Biological concentration is required when hazardous properties are present',
-          'number.min':
-            'Chemical or Biological concentration cannot be negative',
-          'any.custom':
-            'Chemical or Biological concentration must be a valid number or "Not Supplied"'
         })
+          .allow(null)
+          .messages({
+            'any.required': '{{ #label }} is required',
+            'any.custom': '{{ #label }} must be a valid number',
+            'number.min': '{{ #label }} concentration cannot be negative'
+          })
       }).label('ComponentItem')
     )
-    .when('sourceOfComponents', {
-      is: sourceOfComponentsNotProvided.NOT_PROVIDED,
-      then: Joi.custom((value, helpers) => {
-        if (value && value.length > 0) {
-          return helpers.error('array.invalid')
-        }
-        return value
-      }).messages({
-        'array.invalid': `{{ #label }} must either be an empty array or not provided if sourceOfComponents is ${sourceOfComponentsNotProvided.NOT_PROVIDED}`
-      }),
-      otherwise: Joi.required().messages({
-        'any.required': `Components is required when Source of Components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+    .empty(null)
+    .when('containsHazardous', {
+      is: true,
+      then: Joi.when('sourceOfComponents', {
+        is: 'NOT_PROVIDED',
+        then: Joi.optional(),
+        otherwise: Joi.required().messages({
+          'any.required':
+            '{{ #label }} is required when Hazardous components are present'
+        })
       })
     })
 })
+  .empty(null)
   .custom((value, helpers) => {
-    // Custom validation to check components based on containsHazardous value
-    if (value && value.containsHazardous === true) {
-      // When hazardous, components are optional (can be provided or not)
-      return value
-    } else if (
-      value?.containsHazardous === false &&
-      value.components?.length > 0
-    ) {
-      // When not hazardous, components should not be provided
-      return helpers.error('any.invalid')
-    } else {
-      // No validation needed when containsHazardous is undefined or null
-      // Let the containsHazardous required validation handle it
-      return value
-    }
+    // Since containsHazardous is required and boolean, we can simplify
+    return value.containsHazardous
+      ? validatePopOrHazardousPresence(value, helpers)
+      : validatePopOrHazardousAbsence(value, helpers)
   })
   .messages({
-    'any.required':
-      'Chemical or Biological component name and Source of Components must be specified when hazardous properties are present',
     'any.invalid':
-      'Chemical or Biological components cannot be provided when no hazardous properties are indicated'
+      '{{ #label }} cannot be provided when Hazardous components are not present',
+    'any.componentsNotAllowed':
+      'Hazardous components must not be provided when the source of components is NOT_PROVIDED',
+    'pops.sourceNotAllowed':
+      '{{ #label }} can only be provided when Hazardous components are present',
+    'any.containsPopsHazardousFalse':
+      'Hazardous components must not be provided when Hazardous components are not present'
   })
   .label('Hazardous')
 
