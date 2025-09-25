@@ -9,6 +9,7 @@ import { validSourceOfComponents } from '../common/constants/source-of-component
 
 const MAX_EWC_CODES_COUNT = 5
 const CUSTOM_ERROR_TYPE = 'any.custom'
+const ANY_REQUIRED_ERROR_MESSAGE = '{{ #label }} is required'
 
 const disposalOrRecoveryCodeSchema = Joi.object({
   code: Joi.string()
@@ -49,19 +50,44 @@ const validatePopOrHazardousAbsence = (value, helpers) => {
   return value
 }
 
-const popsSchema = Joi.object({
-  containsPops: Joi.boolean().required().messages({
-    'any.required': '{{ #label }} is required'
-  }),
-  sourceOfComponents: Joi.string()
+const sourceOfComponentsSchema = (fieldName) =>
+  Joi.string()
     .valid(...Object.values(validSourceOfComponents))
-    .when('containsPops', {
+    .when(fieldName, {
       is: true,
       then: Joi.required().messages({
-        'any.required':
-          '{{ #label }} is required when POPs components are present'
+        'any.required': '{{ #label }} is required when components are present'
       })
-    }),
+    })
+
+const concentrationSchema = () =>
+  Joi.custom((value, helpers) => {
+    if (typeof value === 'number') {
+      if (value < 0) {
+        return helpers.error('number.min')
+      }
+      return value
+    }
+
+    if (typeof value === 'string') {
+      return helpers.error(CUSTOM_ERROR_TYPE)
+    }
+
+    // Any other type is invalid
+    return helpers.error(CUSTOM_ERROR_TYPE)
+  })
+    .allow(null)
+    .messages({
+      'any.required': ANY_REQUIRED_ERROR_MESSAGE,
+      'any.custom': '{{ #label }} must be a valid number',
+      'number.min': '{{ #label }} concentration cannot be negative'
+    })
+
+const popsSchema = Joi.object({
+  containsPops: Joi.boolean().required().messages({
+    'any.required': ANY_REQUIRED_ERROR_MESSAGE
+  }),
+  sourceOfComponents: sourceOfComponentsSchema('containsPops'),
   components: Joi.array()
     .items(
       Joi.object({
@@ -76,30 +102,10 @@ const popsSchema = Joi.object({
           })
           .required()
           .messages({
-            'any.required': '{{ #label }} is required',
+            'any.required': ANY_REQUIRED_ERROR_MESSAGE,
             'any.invalid': '{{ #label }} is not valid'
           }),
-        concentration: Joi.custom((value, helpers) => {
-          if (typeof value === 'number') {
-            if (value < 0) {
-              return helpers.error('number.min')
-            }
-            return value
-          }
-
-          if (typeof value === 'string') {
-            return helpers.error(CUSTOM_ERROR_TYPE)
-          }
-
-          // Any other type is invalid
-          return helpers.error(CUSTOM_ERROR_TYPE)
-        })
-          .allow(null)
-          .messages({
-            'any.required': '{{ #label }} is required',
-            'any.custom': '{{ #label }} must be a valid number',
-            'number.min': '{{ #label }} concentration cannot be negative'
-          })
+        concentration: concentrationSchema()
       }).label('PopComponent')
     )
     .empty(null)
@@ -138,15 +144,7 @@ const hazardousSchema = Joi.object({
     'any.required':
       'Hazardous waste is any waste that is potentially harmful to human health or the environment.'
   }),
-  sourceOfComponents: Joi.string()
-    .valid(...Object.values(validSourceOfComponents))
-    .when('containsHazardous', {
-      is: true,
-      then: Joi.required().messages({
-        'any.required':
-          '{{ #label }} is required when Hazardous components are present'
-      })
-    }),
+  sourceOfComponents: sourceOfComponentsSchema('containsHazardous'),
   hazCodes: Joi.array()
     .items(Joi.string().valid(...validHazCodes))
     .custom((value) => {
@@ -162,30 +160,10 @@ const hazardousSchema = Joi.object({
     .items(
       Joi.object({
         name: Joi.string().empty('').empty(null).required().messages({
-          'any.required': '{{ #label }} is required',
+          'any.required': ANY_REQUIRED_ERROR_MESSAGE,
           'any.invalid': '{{ #label }} is not valid'
         }),
-        concentration: Joi.custom((value, helpers) => {
-          if (typeof value === 'number') {
-            if (value < 0) {
-              return helpers.error('number.min')
-            }
-            return value
-          }
-
-          if (typeof value === 'string') {
-            return helpers.error(CUSTOM_ERROR_TYPE)
-          }
-
-          // Any other type is invalid
-          return helpers.error(CUSTOM_ERROR_TYPE)
-        })
-          .allow(null)
-          .messages({
-            'any.required': '{{ #label }} is required',
-            'any.custom': '{{ #label }} must be a valid number',
-            'number.min': '{{ #label }} concentration cannot be negative'
-          })
+        concentration: concentrationSchema()
       }).label('ComponentItem')
     )
     .empty(null)
