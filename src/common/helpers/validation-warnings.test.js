@@ -3,7 +3,6 @@ import {
   VALIDATION_ERROR_TYPES,
   generateDisposalRecoveryWarnings,
   generateAllValidationWarnings,
-  generateSourceOfComponentsWarnings,
   generatePopComponentWarnings
 } from './validation-warnings.js'
 import { v4 as uuidv4 } from 'uuid'
@@ -347,304 +346,43 @@ describe('Validation Warnings', () => {
     })
   })
 
-  describe('generateSourceOfComponentsWarnings', () => {
-    it.each([undefined, null])(
-      'should return empty array when receipt payload is %s',
-      (value) => {
-        const warnings = generateSourceOfComponentsWarnings(value)
-        expect(warnings).toEqual([])
-      }
-    )
-
-    it.each([undefined, null])(
-      'should return empty array when wasteItems payload is %s',
-      (value) => {
-        const payload = {
-          wasteItems: value
-        }
-
-        const warnings = generateSourceOfComponentsWarnings(payload)
-        expect(warnings).toEqual([])
-      }
-    )
-
-    it.each(Object.keys(sourceOfComponentsProvided))(
-      'should return empty array when source of components is %s and hazardous components is provided',
-      (value) => {
-        const payload = {
-          wasteItems: [
-            {
-              hazardous: {
-                sourceOfComponents: value,
-                components: [
-                  {
-                    name: 'Mercury',
-                    concentration: 30
-                  },
-                  {
-                    name: 'Lead',
-                    concentration: 0
-                  }
-                ]
-              }
-            }
-          ]
-        }
-
-        const warnings = generateSourceOfComponentsWarnings(payload)
-        expect(warnings).toEqual([])
-      }
-    )
-
-    it.each(Object.keys(sourceOfComponentsProvided))(
-      'should generate warning when source of components is %s and hazardous components is an empty array',
-      (value) => {
-        const payload = {
-          wasteItems: [
-            {
-              hazardous: {
-                sourceOfComponents: value,
-                components: []
-              }
-            }
-          ]
-        }
-
-        const warnings = generateSourceOfComponentsWarnings(payload)
-        expect(warnings).toEqual([
-          {
-            key: 'wasteItems.hazardous.components',
-            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-            message: `Hazardous components must be provided with both name and concentration if source of components is one of: ${Object.keys(sourceOfComponentsProvided).join(', ')}`
-          }
-        ])
-      }
-    )
-
-    it.each(Object.keys(sourceOfComponentsProvided))(
-      'should generate warning when source of components is %s and hazardous components contains an empty object',
-      (value) => {
-        const payload = {
-          wasteItems: [
-            {
-              hazardous: {
-                sourceOfComponents: value,
-                components: [
-                  {
-                    name: 'Mercury',
-                    concentration: 30
-                  },
-                  {}
-                ]
-              }
-            }
-          ]
-        }
-
-        const warnings = generateSourceOfComponentsWarnings(payload)
-        expect(warnings).toEqual([
-          {
-            key: 'wasteItems.hazardous.components',
-            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-            message: `Hazardous components must be provided with both name and concentration if source of components is one of: ${Object.keys(sourceOfComponentsProvided).join(', ')}`
-          }
-        ])
-      }
-    )
-
-    it.each(Object.keys(sourceOfComponentsProvided))(
-      'should generate warning when source of components is %s and hazardous component name is undefined',
-      (componentSource) => {
-        const payload = {
-          wasteItems: [
-            {
-              hazardous: {
-                sourceOfComponents: componentSource,
-                components: [
-                  {
-                    name: 'Mercury',
-                    concentration: 30
-                  },
-                  {
-                    name: undefined,
-                    concentration: 30
-                  }
-                ]
-              }
-            }
-          ]
-        }
-
-        const warnings = generateSourceOfComponentsWarnings(payload)
-        expect(warnings).toEqual([
-          {
-            key: 'wasteItems.hazardous.components',
-            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-            message: `Hazardous components must be provided with both name and concentration if source of components is one of: ${Object.keys(sourceOfComponentsProvided).join(', ')}`
-          }
-        ])
-      }
-    )
-
-    it.each(Object.keys(sourceOfComponentsProvided))(
-      'should generate warning when source of components is %s and hazardous component name is an empty string',
-      (componentSource) => {
-        const payload = {
-          wasteItems: [
-            {
-              hazardous: {
-                sourceOfComponents: componentSource,
-                components: [
-                  {
-                    name: 'Mercury',
-                    concentration: 30
-                  },
-                  {
-                    name: '',
-                    concentration: 30
-                  }
-                ]
-              }
-            }
-          ]
-        }
-
-        const warnings = generateSourceOfComponentsWarnings(payload)
-        expect(warnings).toEqual([
-          {
-            key: 'wasteItems.hazardous.components',
-            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-            message: `Hazardous components must be provided with both name and concentration if source of components is one of: ${Object.keys(sourceOfComponentsProvided).join(', ')}`
-          }
-        ])
-      }
-    )
-
-    it.each(Object.keys(sourceOfComponentsProvided))(
-      'should generate warning when source of components is %s and hazardous component concentration is undefined',
-      (componentSource) => {
-        const payload = {
-          wasteItems: [
-            {
-              hazardous: {
-                sourceOfComponents: componentSource,
-                components: [
-                  {
-                    name: 'Mercury',
-                    concentration: 30
-                  },
-                  {
-                    name: 'Mercury',
-                    concentration: undefined
-                  }
-                ]
-              }
-            }
-          ]
-        }
-
-        const warnings = generateSourceOfComponentsWarnings(payload)
-        expect(warnings).toEqual([
-          {
-            key: 'wasteItems.hazardous.components',
-            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-            message: `Hazardous components must be provided with both name and concentration if source of components is one of: ${Object.keys(sourceOfComponentsProvided).join(', ')}`
-          }
-        ])
-      }
-    )
-
-    it.each(['', 'Not Supplied'])(
-      'should generate warning when source of components is provided and hazardous component concentration is %s',
-      (value) => {
-        const payload = {
-          wasteItems: [
-            {
-              hazardous: {
-                sourceOfComponents: sourceOfComponentsProvided.CARRIER_PROVIDED,
-                components: [
-                  {
-                    name: 'Mercury',
-                    concentration: 30
-                  },
-                  {
-                    name: 'Lead',
-                    concentration: value
-                  }
-                ]
-              }
-            }
-          ]
-        }
-
-        const warnings = generateSourceOfComponentsWarnings(payload)
-        expect(warnings).toEqual([
-          {
-            key: 'wasteItems.hazardous.components',
-            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-            message: `Hazardous components must be provided with both name and concentration if source of components is one of: ${Object.keys(sourceOfComponentsProvided).join(', ')}`
-          }
-        ])
-      }
-    )
-  })
-
   describe('generatePopComponentWarnings', () => {
-    it('should generate warning when CARRIER_PROVIDED has no components', () => {
+    it.each([undefined, null])(
+      'should return empty array when payload is %s',
+      (value) => {
+        const payload = value
+
+        const warnings = generatePopComponentWarnings(payload)
+        expect(warnings).toEqual([])
+      }
+    )
+
+    it.each([undefined, null])(
+      'should return empty array when wasteItems is %s',
+      (value) => {
+        const payload = value
+
+        const warnings = generatePopComponentWarnings(payload)
+        expect(warnings).toEqual([])
+      }
+    )
+
+    it('should return empty array when containsPops is false', () => {
       const payload = {
         wasteItems: [
           {
             pops: {
-              containsPops: true,
-              sourceOfComponents: 'CARRIER_PROVIDED'
+              containsPops: false
             }
           }
         ]
       }
+
       const warnings = generatePopComponentWarnings(payload)
-      expect(warnings).toHaveLength(1)
-      expect(warnings[0]).toEqual({
-        key: 'wasteItems[0].pops.components',
-        errorType: 'NotProvided',
-        message:
-          'POP components are recommended when source of components is CARRIER_PROVIDED'
-      })
+      expect(warnings).toEqual([])
     })
 
-    it('should generate warning when GUIDANCE has empty components array', () => {
-      const payload = {
-        wasteItems: [
-          {
-            pops: {
-              containsPops: true,
-              sourceOfComponents: 'GUIDANCE',
-              components: []
-            }
-          }
-        ]
-      }
-      const warnings = generatePopComponentWarnings(payload)
-      expect(warnings).toHaveLength(1)
-      expect(warnings[0].message).toContain('GUIDANCE')
-    })
-
-    it('should generate warning when OWN_TESTING has no components', () => {
-      const payload = {
-        wasteItems: [
-          {
-            pops: {
-              containsPops: true,
-              sourceOfComponents: 'OWN_TESTING'
-            }
-          }
-        ]
-      }
-      const warnings = generatePopComponentWarnings(payload)
-      expect(warnings).toHaveLength(1)
-      expect(warnings[0].message).toContain('OWN_TESTING')
-    })
-
-    it('should not generate warning when NOT_PROVIDED has no components', () => {
+    it('should return empty array when sourceOfComponents is NOT_PROVIDED', () => {
       const payload = {
         wasteItems: [
           {
@@ -655,86 +393,113 @@ describe('Validation Warnings', () => {
           }
         ]
       }
+
       const warnings = generatePopComponentWarnings(payload)
-      expect(warnings).toHaveLength(0)
+      expect(warnings).toEqual([])
     })
 
-    it('should not generate warning when components are provided', () => {
+    it('should return empty array when POP components is provided with name and concentration values', () => {
       const payload = {
         wasteItems: [
           {
             pops: {
               containsPops: true,
-              sourceOfComponents: 'CARRIER_PROVIDED',
-              components: [{ name: 'Aldrin' }]
+              sourceOfComponents: 'CARRIER_SUPPLIED',
+              components: [
+                {
+                  name: 'Aldrin',
+                  concentration: 100
+                },
+                {
+                  name: 'Chlordane',
+                  concentration: 30
+                }
+              ]
             }
           }
         ]
       }
+
       const warnings = generatePopComponentWarnings(payload)
-      expect(warnings).toHaveLength(0)
+      expect(warnings).toEqual([])
     })
 
-    it('should not generate warning when containsPops is false', () => {
-      const payload = {
-        wasteItems: [
-          {
-            pops: {
-              containsPops: false
-            }
-          }
-        ]
-      }
-      const warnings = generatePopComponentWarnings(payload)
-      expect(warnings).toHaveLength(0)
-    })
-
-    it('should handle multiple waste items', () => {
+    it('should generate warning when POP components is an empty array', () => {
       const payload = {
         wasteItems: [
           {
             pops: {
               containsPops: true,
-              sourceOfComponents: 'CARRIER_PROVIDED'
-            }
-          },
-          {
-            pops: {
-              containsPops: true,
-              sourceOfComponents: 'GUIDANCE'
-            }
-          },
-          {
-            pops: {
-              containsPops: false
+              sourceOfComponents: 'CARRIER_SUPPLIED',
+              components: []
             }
           }
         ]
       }
+
       const warnings = generatePopComponentWarnings(payload)
-      expect(warnings).toHaveLength(2)
-      expect(warnings[0].key).toBe('wasteItems[0].pops.components')
-      expect(warnings[1].key).toBe('wasteItems[1].pops.components')
+      expect(warnings).toEqual([
+        {
+          key: 'wasteItems[0].pops.components',
+          errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+          message: `POP components are recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+        }
+      ])
     })
 
-    it('should handle payload without wasteItems', () => {
-      const payload = {}
-      const warnings = generatePopComponentWarnings(payload)
-      expect(warnings).toHaveLength(0)
-    })
+    it.each([undefined, null])(
+      'should handle when POP components is not provided: "%s"',
+      (value) => {
+        const payload = {
+          wasteItems: [
+            {
+              pops: {
+                containsPops: true,
+                sourceOfComponents: 'CARRIER_SUPPLIED',
+                components: value
+              }
+            }
+          ]
+        }
 
-    it('should handle wasteItems without pops field', () => {
-      const payload = {
-        wasteItems: [
-          {
-            ewcCodes: ['200101'],
-            wasteDescription: 'Test waste'
-          }
-        ]
+        generatePopComponentWarnings(payload)
       }
-      const warnings = generatePopComponentWarnings(payload)
-      expect(warnings).toHaveLength(0)
-    })
+    )
+
+    it.each([undefined, null])(
+      'should generate warning when POP components is provided with a missing concentration value: "%s"',
+      (value) => {
+        const payload = {
+          wasteItems: [
+            {
+              pops: {
+                containsPops: true,
+                sourceOfComponents: 'CARRIER_SUPPLIED',
+                components: [
+                  {
+                    name: 'Aldrin',
+                    concentration: 100
+                  },
+                  {
+                    name: 'Chlordane',
+                    concentration: value
+                  }
+                ]
+              }
+            }
+          ]
+        }
+
+        const warnings = generatePopComponentWarnings(payload)
+        expect(warnings).toEqual([
+          {
+            key: 'wasteItems[0].pops.components',
+            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+            message: `POP concentration is recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+          }
+        ])
+      }
+    )
   })
 
   describe('generateAllValidationWarnings', () => {

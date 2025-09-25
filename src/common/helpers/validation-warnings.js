@@ -1,6 +1,5 @@
 import { hasHazardousEwcCodes } from '../../schemas/hazardous-waste-consignment.js'
 import { sourceOfComponentsProvided } from '../constants/source-of-components.js'
-import { POP_COMPONENT_SOURCES } from '../constants/pop-component-sources.js'
 
 /**
  * Validation warning types as defined in the API specification
@@ -17,7 +16,8 @@ export const VALIDATION_KEYS = {
   RECEIPT_DISPOSAL_RECOVERY_CODES: 'wasteItems.disposalOrRecoveryCodes',
   REASON_NO_CONSIGNMENT_CODE: 'receipt.reasonForNoConsignmentCode',
   HAZARDOUS_COMPONENTS: 'wasteItems.hazardous.components',
-  POP_COMPONENTS: 'wasteItems.pops.components'
+  POP_COMPONENTS: 'wasteItems.pops.components',
+  POP_NAME: 'wasteItems.pops.components.name'
 }
 
 /**
@@ -199,71 +199,12 @@ export const generateHazardousConsignmentWarnings = (payload) => {
 }
 
 /**
- * Generate warnings for source of component conditions
- * If source of components is provided then hazardous components must be provided, otherwise add a warning
- *
- * @param {Object} payload
- * @returns {Array}
- */
-export const generateSourceOfComponentsWarnings = (payload) => {
-  const warnings = []
-
-  if (!Array.isArray(payload?.wasteItems)) {
-    return warnings
-  }
-
-  // If source of components has been provided then all hazardous components should have a name and concentration
-  if (!haveAllHazardousComponentsGotNameAndConcentration(payload.wasteItems)) {
-    warnings.push({
-      key: VALIDATION_KEYS.HAZARDOUS_COMPONENTS,
-      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: `Hazardous components must be provided with both name and concentration if source of components is one of: ${Object.keys(sourceOfComponentsProvided).join(', ')}`
-    })
-  }
-
-  return warnings
-}
-
-/**
- * Determines if name and concentration have been provided for all hazardous components
- *
- * @param {Object} wasteItems - The request waste items
- * @returns {boolean} True if name and concentration have been provided for all hazardous components, otherwise false
- */
-function haveAllHazardousComponentsGotNameAndConcentration(wasteItems) {
-  return wasteItems.every((wasteItem) => {
-    if (!wasteItem.hazardous) {
-      return true
-    }
-
-    const sourceOfComponents = wasteItem.hazardous.sourceOfComponents
-
-    if (
-      sourceOfComponents === undefined ||
-      !Object.keys(sourceOfComponentsProvided).includes(sourceOfComponents)
-    ) {
-      return true
-    }
-
-    const hazardousComponents = wasteItem.hazardous.components
-
-    return (
-      hazardousComponents &&
-      hazardousComponents.length > 0 &&
-      hazardousComponents.every(
-        ({ name, concentration }) =>
-          name &&
-          name.trim().length > 0 &&
-          typeof concentration === 'number' &&
-          concentration >= 0
-      )
-    )
-  })
-}
-
-/**
  * Generate warnings for POP components
- * If source of components is provided (not NOT_PROVIDED) but no components are given, add a warning
+ *
+ * item   contains<Haz/Pops>	sourceOfComponents	                    components			                          expected outcome
+ * 16     TRUE                Other (e.g GUIDANCE, OWN TESTING etc)   []                                        WARNING
+ * 18     TRUE                Other (e.g GUIDANCE, OWN TESTING etc)   [{ name: 'Aldrin' }]                      WARNING
+ *
  * @param {Object} payload - The request payload
  * @returns {Array} Array of validation warnings for POPs
  */
@@ -282,21 +223,57 @@ export const generatePopComponentWarnings = (payload) => {
     const sourceOfComponents = wasteItem.pops.sourceOfComponents
     const components = wasteItem.pops.components
 
+    if (sourceOfComponents === 'NOT_PROVIDED') {
+      return
+    }
+
     // Check if source is one of the values that expects components
-    if (
-      sourceOfComponents &&
-      sourceOfComponents !== POP_COMPONENT_SOURCES.NOT_PROVIDED &&
-      (!components || components.length === 0)
-    ) {
+    if (isPopComponentsEmpty(components)) {
       warnings.push({
         key: `wasteItems[${index}].pops.components`,
         errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-        message: `POP components are recommended when source of components is ${sourceOfComponents}`
+        message: `POP components are recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+      })
+    }
+
+    if (isPopConcentrationMissing(components)) {
+      warnings.push({
+        key: `wasteItems[${index}].pops.components`,
+        errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+        message: `POP concentration is recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
       })
     }
   })
 
   return warnings
+}
+
+/**
+ * Determines if POP components is an empty array
+ * @param {Object} components - The POP components
+ * @returns {Boolean} True if POP components array is empty, otherwisse false
+ */
+function isPopComponentsEmpty(components) {
+  return (
+    (Array.isArray(components) && components.length === 0) ||
+    !Array.isArray(components)
+  )
+}
+
+/**
+ * Determines if any of the POP components has a missing concentration value
+ * @param {Object} components - The POP components
+ * @returns {Boolean} True if any of the POP components has a missing concentration value, otherwise false
+ */
+function isPopConcentrationMissing(components) {
+  return (
+    !isPopComponentsEmpty(components) &&
+    components.some(
+      (component) =>
+        component.concentration === undefined ||
+        component.concentration === null
+    )
+  )
 }
 
 /**
@@ -314,10 +291,6 @@ export const generateAllValidationWarnings = (payload) => {
   // Add hazardous consignment related warnings
   const consignmentWarnings = generateHazardousConsignmentWarnings(payload)
   warnings.push(...consignmentWarnings)
-
-  // Add source of components related warnings
-  const sourceOfComponentsWarnings = generateSourceOfComponentsWarnings(payload)
-  warnings.push(...sourceOfComponentsWarnings)
 
   // Add POP components warnings
   const popWarnings = generatePopComponentWarnings(payload)
