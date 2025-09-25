@@ -391,7 +391,7 @@ describe('Receipt Schema Validation - POPs', () => {
       )
     })
 
-    it('should reject POPs when containsPops is true and concentration is a negatve number', () => {
+    it('should reject POPs when containsPops is true and concentration is a negative number', () => {
       const payload = createTestPayload({
         wasteItemOverrides: {
           pops: {
@@ -471,7 +471,7 @@ describe('Receipt Schema Validation - POPs', () => {
     )
 
     it.each([undefined, null])(
-      'should reject POPs when containsPops is true and no components are provided: "%s"',
+      'should reject POPs when containsPops is true, sourceOfComponents is other than NOT_PROVIDED and no components are provided: "%s"',
       (value) => {
         const payload = createTestPayload({
           wasteItemOverrides: {
@@ -487,6 +487,23 @@ describe('Receipt Schema Validation - POPs', () => {
         expect(result.error.message).toBe(
           '"wasteItems[0].pops.components" is required when POPs are present'
         )
+      }
+    )
+
+    it.each([undefined, null])(
+      'should accept POPs when containsPops is true, sourceOfComponents is NOT_PROVIDED and no components are provided: "%s"',
+      (value) => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            pops: {
+              containsPops: true,
+              sourceOfComponents: 'NOT_PROVIDED',
+              components: value
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeUndefined()
       }
     )
 

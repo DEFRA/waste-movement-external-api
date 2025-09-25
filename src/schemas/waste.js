@@ -66,10 +66,6 @@ const popsSchema = Joi.object({
         'any.required':
           'Source of POP components is required when POPs are present'
       })
-      // otherwise: Joi.forbidden().messages({
-      //   'any.unknown':
-      //     'Source of POP components can only be provided when POPs are present'
-      // })
     }),
   components: Joi.array()
     .items(
@@ -114,8 +110,12 @@ const popsSchema = Joi.object({
     .empty(null)
     .when('containsPops', {
       is: true,
-      then: Joi.required().messages({
-        'any.required': '{{ #label }} is required when POPs are present'
+      then: Joi.when('sourceOfComponents', {
+        is: 'NOT_PROVIDED',
+        then: Joi.optional(),
+        otherwise: Joi.required().messages({
+          'any.required': '{{ #label }} is required when POPs are present'
+        })
       })
     })
 })
