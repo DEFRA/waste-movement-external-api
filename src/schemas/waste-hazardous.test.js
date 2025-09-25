@@ -440,7 +440,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         ])
         expect(result.error).toBeDefined()
         expect(result.error.message).toContain(
-          'Chemical or Biological concentration cannot be negative'
+          'Chemical or Biological concentration must be a positive number (greater than 0)'
         )
       })
 
@@ -627,7 +627,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         ])
         expect(result.error).toBeDefined()
         expect(result.error.message).toContain(
-          'Chemical or Biological concentration cannot be negative'
+          'Chemical or Biological concentration must be a positive number (greater than 0)'
         )
       })
     })
