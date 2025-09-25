@@ -57,7 +57,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       expect(error).toBeUndefined()
     })
 
-    it('accepts when both authorisations and RPS are empty', () => {
+    it('rejects when both authorisations and RPS are empty', () => {
       const receiver = {
         organisationName: 'Test Receiver',
         authorisationNumbers: [],
@@ -69,10 +69,13 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       }
 
       const { error } = validate(receiver, receipt)
-      expect(error).toBeUndefined()
+      expect(error).toBeDefined()
+      expect(error.message).toBe(
+        '"receiver.authorisationNumbers" must contain at least 1 items'
+      )
     })
 
-    it('accepts when neither authorisations nor RPS are provided', () => {
+    it('rejects when neither authorisations nor RPS are provided', () => {
       const receiver = {
         organisationName: 'Test Receiver'
       }
@@ -82,7 +85,8 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       }
 
       const { error } = validate(receiver, receipt)
-      expect(error).toBeUndefined()
+      expect(error).toBeDefined()
+      expect(error.message).toBe('"receiver.authorisationNumbers" is required')
     })
   })
 
@@ -185,7 +189,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
   })
 
   describe('RPS can be provided independently of authorisation numbers', () => {
-    it('accepts RPS without any authorisation numbers', () => {
+    it('rejects RPS without any authorisation numbers', () => {
       const receiver = {
         organisationName: 'Test Receiver',
         regulatoryPositionStatements: [123, 456]
@@ -196,7 +200,8 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       }
 
       const { error } = validate(receiver, receipt)
-      expect(error).toBeUndefined()
+      expect(error).toBeDefined()
+      expect(error.message).toBe('"receiver.authorisationNumbers" is required')
     })
 
     it('accepts authorisation numbers without RPS', () => {
