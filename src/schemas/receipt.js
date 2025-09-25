@@ -5,6 +5,7 @@ import {
   hazardousWasteConsignmentCodeSchema,
   reasonForNoConsignmentCodeSchema
 } from './hazardous-waste-consignment.js'
+import { authorisationNumbersArraySchema } from './authorisation-number.js'
 
 const MIN_STRING_LENGTH = 1
 
@@ -107,7 +108,7 @@ const receiverSchema = Joi.object({
   organisationName: Joi.string().required(),
   emailAddress: Joi.string().email(),
   phoneNumber: Joi.string(),
-  authorisationNumbers: Joi.array().items(Joi.string()).min(1).required(),
+  authorisationNumbers: authorisationNumbersArraySchema,
   regulatoryPositionStatements: Joi.array().items(
     Joi.number().integer().positive()
   )

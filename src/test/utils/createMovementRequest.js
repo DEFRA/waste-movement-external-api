@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import { sourceOfComponentsNotProvided } from '../../common/constants/source-of-components.js'
+import { TEST_DATA } from '../../schemas/test-constants.js'
 
 export function createMovementRequest(overrides) {
   const defaultMovementRequest = {
@@ -18,7 +19,9 @@ export function createMovementRequest(overrides) {
     },
     receiver: {
       organisationName: 'Test Receiver',
-      authorisationNumbers: ['1234'],
+      authorisationNumbers: [
+        TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX
+      ],
       regulatoryPositionStatements: [343]
     },
     receipt: {
