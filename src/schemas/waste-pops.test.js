@@ -339,7 +339,7 @@ describe('Receipt Schema Validation - POPs', () => {
       expect(result.error).toBeUndefined()
     })
 
-    it.each([12.5, 9.12345678, 500, 0])(
+    it.each([12.5, 9.12345678, 500])(
       'should accept valid POP concentration value: "%s"',
       (value) => {
         const payload = createTestPayload({
@@ -364,6 +364,32 @@ describe('Receipt Schema Validation - POPs', () => {
         expect(result.error).toBeUndefined()
       }
     )
+
+    it('should reject POPs when concentration is zero', () => {
+      const payload = createTestPayload({
+        wasteItemOverrides: {
+          pops: {
+            containsPops: true,
+            sourceOfComponents: 'CARRIER_PROVIDED',
+            components: [
+              {
+                name: 'Aldrin',
+                concentration: 100
+              },
+              {
+                name: 'Aldrin',
+                concentration: 0
+              }
+            ]
+          }
+        }
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toBe(
+        '"wasteItems[0].pops.components[1].concentration" concentration must be a positive number (greater than 0)'
+      )
+    })
 
     it('should reject POPs when containsPops is true and concentration is not a number', () => {
       const payload = createTestPayload({
@@ -413,7 +439,7 @@ describe('Receipt Schema Validation - POPs', () => {
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeDefined()
       expect(result.error.message).toBe(
-        '"wasteItems[0].pops.components[1].concentration" concentration cannot be negative'
+        '"wasteItems[0].pops.components[1].concentration" concentration must be a positive number (greater than 0)'
       )
     })
 

@@ -90,8 +90,8 @@ const popsSchema = Joi.object({
           }),
         concentration: Joi.custom((value, helpers) => {
           if (typeof value === 'number') {
-            if (value < 0) {
-              return helpers.error('number.min')
+            if (value <= 0) {
+              return helpers.error('number.positive')
             }
             return value
           }
@@ -107,7 +107,8 @@ const popsSchema = Joi.object({
           .messages({
             'any.required': '{{ #label }} is required',
             'any.custom': '{{ #label }} must be a valid number',
-            'number.min': '{{ #label }} concentration cannot be negative'
+            'number.positive':
+              '{{ #label }} concentration must be a positive number (greater than 0)'
           })
       }).label('PopComponent')
     )
@@ -169,8 +170,8 @@ const hazardousSchema = Joi.object({
         concentration: Joi.custom((value, helpers) => {
           // Check if it's a valid number
           if (typeof value === 'number') {
-            if (value < 0) {
-              return helpers.error('number.min')
+            if (value <= 0) {
+              return helpers.error('number.positive')
             }
             return value
           }
@@ -192,8 +193,8 @@ const hazardousSchema = Joi.object({
         }).messages({
           'any.required':
             'Chemical or Biological concentration is required when hazardous properties are present',
-          'number.min':
-            'Chemical or Biological concentration cannot be negative',
+          'number.positive':
+            'Chemical or Biological concentration must be a positive number (greater than 0)',
           'any.custom':
             'Chemical or Biological concentration must be a valid number or "Not Supplied"'
         })
