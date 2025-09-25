@@ -27,6 +27,13 @@ const UK_POSTCODE_REGEX =
 // Reference: https://www.eircode.ie
 const IRL_POSTCODE_REGEX =
   /^(?:D6W|[AC-FHKNPRTV-Y]\d{2}) ?[0-9AC-FHKNPRTV-Y]{4}$/i
+
+const ENGLAND_CARRIER_REGISTRATION_NUMBER_REGEX = /^CBD(L|U)[\d]{3,}$/
+const SEPA_CARRIER_REGISTRATION_NUMBER_REGEX =
+  /^(WCR|SCO|SEA|SNO|SWE)\/[R/]*[\d]{6,7}$/
+const NRU_CARRIER_REGISTRATION_NUMBER_REGEX =
+  ENGLAND_CARRIER_REGISTRATION_NUMBER_REGEX
+const NI_CARRIER_REGISTRATION_NUMBER_REGEX = /^ROC[\W]*[UT|LT]*[\W]*[\d]{1,5}$/
 // END-NOSCAN
 
 const LONG_STRING_MAX_LENGTH = 5000
@@ -45,7 +52,18 @@ const addressSchema = Joi.object({
 })
 
 const carrierSchema = Joi.object({
-  registrationNumber: Joi.string().allow(null, ''),
+  registrationNumber: Joi.alternatives()
+    .try(
+      Joi.string().pattern(ENGLAND_CARRIER_REGISTRATION_NUMBER_REGEX),
+      Joi.string().pattern(SEPA_CARRIER_REGISTRATION_NUMBER_REGEX),
+      Joi.string().pattern(NRU_CARRIER_REGISTRATION_NUMBER_REGEX),
+      Joi.string().pattern(NI_CARRIER_REGISTRATION_NUMBER_REGEX)
+    )
+    .messages({
+      'alternatives.match':
+        '{{ #label }} must be in valid England, SEPA, NRW or NI format'
+    })
+    .required(),
   reasonForNoRegistrationNumber: Joi.string().allow(null, ''),
   organisationName: Joi.string().required(),
   address: addressSchema,
