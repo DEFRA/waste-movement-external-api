@@ -1,9 +1,8 @@
-import { sourceOfComponentsProvided } from '../constants/source-of-components.js'
+import { testPopsAndHazardousComponentWarnings } from '../../schemas/test-helpers/pops-and-hazardous-components-warnings-test-helpers.js'
 import {
   VALIDATION_ERROR_TYPES,
   generateDisposalRecoveryWarnings,
-  generateAllValidationWarnings,
-  generatePopComponentWarnings
+  generateAllValidationWarnings
 } from './validation-warnings.js'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -346,161 +345,8 @@ describe('Validation Warnings', () => {
     })
   })
 
-  describe('generatePopComponentWarnings', () => {
-    it.each([undefined, null])(
-      'should return empty array when payload is %s',
-      (value) => {
-        const payload = value
-
-        const warnings = generatePopComponentWarnings(payload)
-        expect(warnings).toEqual([])
-      }
-    )
-
-    it.each([undefined, null])(
-      'should return empty array when wasteItems is %s',
-      (value) => {
-        const payload = value
-
-        const warnings = generatePopComponentWarnings(payload)
-        expect(warnings).toEqual([])
-      }
-    )
-
-    it('should return empty array when containsPops is false', () => {
-      const payload = {
-        wasteItems: [
-          {
-            pops: {
-              containsPops: false
-            }
-          }
-        ]
-      }
-
-      const warnings = generatePopComponentWarnings(payload)
-      expect(warnings).toEqual([])
-    })
-
-    it('should return empty array when sourceOfComponents is NOT_PROVIDED', () => {
-      const payload = {
-        wasteItems: [
-          {
-            pops: {
-              containsPops: true,
-              sourceOfComponents: 'NOT_PROVIDED'
-            }
-          }
-        ]
-      }
-
-      const warnings = generatePopComponentWarnings(payload)
-      expect(warnings).toEqual([])
-    })
-
-    it('should return empty array when POP components is provided with name and concentration values', () => {
-      const payload = {
-        wasteItems: [
-          {
-            pops: {
-              containsPops: true,
-              sourceOfComponents: 'CARRIER_SUPPLIED',
-              components: [
-                {
-                  name: 'Aldrin',
-                  concentration: 100
-                },
-                {
-                  name: 'Chlordane',
-                  concentration: 30
-                }
-              ]
-            }
-          }
-        ]
-      }
-
-      const warnings = generatePopComponentWarnings(payload)
-      expect(warnings).toEqual([])
-    })
-
-    it('should generate warning when POP components is an empty array', () => {
-      const payload = {
-        wasteItems: [
-          {
-            pops: {
-              containsPops: true,
-              sourceOfComponents: 'CARRIER_SUPPLIED',
-              components: []
-            }
-          }
-        ]
-      }
-
-      const warnings = generatePopComponentWarnings(payload)
-      expect(warnings).toEqual([
-        {
-          key: 'wasteItems[0].pops.components',
-          errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: `POP components are recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
-        }
-      ])
-    })
-
-    it.each([undefined, null])(
-      'should handle when POP components is not provided: "%s"',
-      (value) => {
-        const payload = {
-          wasteItems: [
-            {
-              pops: {
-                containsPops: true,
-                sourceOfComponents: 'CARRIER_SUPPLIED',
-                components: value
-              }
-            }
-          ]
-        }
-
-        generatePopComponentWarnings(payload)
-      }
-    )
-
-    it.each([undefined, null])(
-      'should generate warning when POP components is provided with a missing concentration value: "%s"',
-      (value) => {
-        const payload = {
-          wasteItems: [
-            {
-              pops: {
-                containsPops: true,
-                sourceOfComponents: 'CARRIER_SUPPLIED',
-                components: [
-                  {
-                    name: 'Aldrin',
-                    concentration: 100
-                  },
-                  {
-                    name: 'Chlordane',
-                    concentration: value
-                  }
-                ]
-              }
-            }
-          ]
-        }
-
-        const warnings = generatePopComponentWarnings(payload)
-        expect(warnings).toEqual([
-          {
-            key: 'wasteItems[0].pops.components',
-            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-            message: `POP concentration is recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
-          }
-        ])
-      }
-    )
-  })
+  testPopsAndHazardousComponentWarnings('POPs')
+  testPopsAndHazardousComponentWarnings('Hazardous')
 
   describe('generateAllValidationWarnings', () => {
     it('should return empty array when no warnings are generated', () => {

@@ -199,7 +199,7 @@ export const generateHazardousConsignmentWarnings = (payload) => {
 }
 
 /**
- * Generate warnings for POP components
+ * Generate warnings for POPs/Hazardous components
  *
  * item   contains<Haz/Pops>	sourceOfComponents	                    components			                          expected outcome
  * 16     TRUE                Other (e.g GUIDANCE, OWN TESTING etc)   []                                        WARNING
@@ -208,39 +208,51 @@ export const generateHazardousConsignmentWarnings = (payload) => {
  * @param {Object} payload - The request payload
  * @returns {Array} Array of validation warnings for POPs
  */
-export const generatePopComponentWarnings = (payload) => {
+export const generatePopAndHazardousComponentWarnings = (
+  payload,
+  popsOrHazardous
+) => {
+  if (!['POPs', 'Hazardous'].includes(popsOrHazardous)) {
+    throw new Error('Expecting popsOrHazardous to be one of: POPs, Hazardous')
+  }
+
   const warnings = []
+  const popsOrHazardousObjectProperty = String(popsOrHazardous).toLowerCase()
+  const containsPopsOrHazardousField = `contains${String(popsOrHazardous).charAt(0).toUpperCase()}${String(popsOrHazardous).toLowerCase().slice(1)}`
 
   if (!Array.isArray(payload?.wasteItems)) {
     return warnings
   }
 
   payload.wasteItems.forEach((wasteItem, index) => {
-    if (!wasteItem.pops?.containsPops) {
+    if (
+      !wasteItem[popsOrHazardousObjectProperty]?.[containsPopsOrHazardousField]
+    ) {
       return
     }
 
-    const sourceOfComponents = wasteItem.pops.sourceOfComponents
-    const components = wasteItem.pops.components
+    const sourceOfComponents =
+      wasteItem[popsOrHazardousObjectProperty].sourceOfComponents
+    const components = wasteItem[popsOrHazardousObjectProperty].components
 
     if (sourceOfComponents === 'NOT_PROVIDED') {
       return
     }
 
     // Check if source is one of the values that expects components
-    if (isPopComponentsEmpty(components)) {
+    if (isPopOrHazardousComponentsEmpty(components)) {
       warnings.push({
-        key: `wasteItems[${index}].pops.components`,
+        key: `wasteItems[${index}].${popsOrHazardousObjectProperty}.components`,
         errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-        message: `POP components are recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+        message: `${popsOrHazardous} components are recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
       })
     }
 
-    if (isPopConcentrationMissing(components)) {
+    if (isPopOrHazardousConcentrationMissing(components)) {
       warnings.push({
-        key: `wasteItems[${index}].pops.components`,
+        key: `wasteItems[${index}].${popsOrHazardousObjectProperty}.components`,
         errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-        message: `POP concentration is recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+        message: `${popsOrHazardous} concentration is recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
       })
     }
   })
@@ -249,11 +261,12 @@ export const generatePopComponentWarnings = (payload) => {
 }
 
 /**
- * Determines if POP components is an empty array
- * @param {Object} components - The POP components
- * @returns {Boolean} True if POP components array is empty, otherwisse false
+ * Determines if POPs/Hazardous components is an empty array
+ * @param {Object} components - The POPs/Hazardous components
+ * @returns {Boolean} True if POPs/Hazardous components array is empty, otherwisse false
  */
-function isPopComponentsEmpty(components) {
+function isPopOrHazardousComponentsEmpty(components) {
+  console.log({ components, isArray: Array.isArray(components) })
   return (
     (Array.isArray(components) && components.length === 0) ||
     !Array.isArray(components)
@@ -261,13 +274,13 @@ function isPopComponentsEmpty(components) {
 }
 
 /**
- * Determines if any of the POP components has a missing concentration value
- * @param {Object} components - The POP components
- * @returns {Boolean} True if any of the POP components has a missing concentration value, otherwise false
+ * Determines if any of the POPs/Hazardous components has a missing concentration value
+ * @param {Object} components - The POPs/Hazardous components
+ * @returns {Boolean} True if any of the POPs/Hazardous components has a missing concentration value, otherwise false
  */
-function isPopConcentrationMissing(components) {
+function isPopOrHazardousConcentrationMissing(components) {
   return (
-    !isPopComponentsEmpty(components) &&
+    !isPopOrHazardousComponentsEmpty(components) &&
     components.some(
       (component) =>
         component.concentration === undefined ||
@@ -292,9 +305,16 @@ export const generateAllValidationWarnings = (payload) => {
   const consignmentWarnings = generateHazardousConsignmentWarnings(payload)
   warnings.push(...consignmentWarnings)
 
-  // Add POP components warnings
-  const popWarnings = generatePopComponentWarnings(payload)
-  warnings.push(...popWarnings)
+  // Add POPs components warnings
+  const popsWarnings = generatePopAndHazardousComponentWarnings(payload, 'POPs')
+  warnings.push(...popsWarnings)
+
+  // Add Hazardous components warnings
+  const hazardousWarnings = generatePopAndHazardousComponentWarnings(
+    payload,
+    'Hazardous'
+  )
+  warnings.push(...hazardousWarnings)
 
   return warnings
 }
