@@ -1,4 +1,4 @@
-import { testPopsAndHazardousComponentWarnings } from '../../schemas/test-helpers/pops-and-hazardous-components-warnings-test-helpers.js'
+import { popsAndHazardousComponentWarningTests } from '../../test/common/pop-and-hazardous-components/pops-and-hazardous-components-warning-tests.js'
 import {
   VALIDATION_ERROR_TYPES,
   generateDisposalRecoveryWarnings,
@@ -345,8 +345,8 @@ describe('Validation Warnings', () => {
     })
   })
 
-  testPopsAndHazardousComponentWarnings('POPs')
-  testPopsAndHazardousComponentWarnings('Hazardous')
+  popsAndHazardousComponentWarningTests('POPs')
+  popsAndHazardousComponentWarningTests('Hazardous')
 
   describe('generateAllValidationWarnings', () => {
     it('should return empty array when no warnings are generated', () => {
