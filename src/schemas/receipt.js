@@ -5,6 +5,14 @@ import {
   hazardousWasteConsignmentCodeSchema,
   reasonForNoConsignmentCodeSchema
 } from './hazardous-waste-consignment.js'
+import {
+  ENGLAND_CARRIER_REGISTRATION_NUMBER_REGEX,
+  IRL_POSTCODE_REGEX,
+  NI_CARRIER_REGISTRATION_NUMBER_REGEX,
+  NRU_CARRIER_REGISTRATION_NUMBER_REGEX,
+  SEPA_CARRIER_REGISTRATION_NUMBER_REGEX,
+  UK_POSTCODE_REGEX
+} from '../common/constants/regexes.js'
 
 const MIN_STRING_LENGTH = 1
 
@@ -18,16 +26,6 @@ const CARRIER_VEHICLE_REG_REQUIRED_FOR_ROAD =
   'If carrier.meansOfTransport is "Road" then carrier.vehicleRegistration is required.'
 const CARRIER_VEHICLE_REG_ONLY_ALLOWED_FOR_ROAD =
   'If carrier.meansOfTransport is not "Road" then carrier.vehicleRegistration is not applicable.'
-
-// RegEx per Gov UK recommendation: https://assets.publishing.service.gov.uk/media/5a7f3ff4ed915d74e33f5438/Bulk_Data_Transfer_-_additional_validation_valid_from_12_November_2015.pdf
-// BEGIN-NOSCAN
-const UK_POSTCODE_REGEX =
-  /^((GIR 0A{2})|((([A-Z]\d{1,2})|(([A-Z][A-HJ-Y]\d{1,2})|(([A-Z]\d[A-Z])|([A-Z][A-HJ-Y]\d?[A-Z])))) \d[A-Z]{2}))$/i // NOSONAR
-// Ireland Eircode regex (routing key + unique identifier)
-// Reference: https://www.eircode.ie
-const IRL_POSTCODE_REGEX =
-  /^(?:D6W|[AC-FHKNPRTV-Y]\d{2}) ?[0-9AC-FHKNPRTV-Y]{4}$/i
-// END-NOSCAN
 
 const LONG_STRING_MAX_LENGTH = 5000
 
@@ -45,7 +43,19 @@ const addressSchema = Joi.object({
 })
 
 const carrierSchema = Joi.object({
-  registrationNumber: Joi.string().allow(null, ''),
+  registrationNumber: Joi.alternatives()
+    .try(
+      Joi.string().pattern(ENGLAND_CARRIER_REGISTRATION_NUMBER_REGEX),
+      Joi.string().pattern(SEPA_CARRIER_REGISTRATION_NUMBER_REGEX),
+      Joi.string().pattern(NRU_CARRIER_REGISTRATION_NUMBER_REGEX),
+      Joi.string().pattern(NI_CARRIER_REGISTRATION_NUMBER_REGEX)
+    )
+    .empty(null)
+    .messages({
+      'alternatives.match':
+        '{{ #label }} must be in a valid England, SEPA, NRW or NI format'
+    })
+    .required(),
   reasonForNoRegistrationNumber: Joi.string().allow(null, ''),
   organisationName: Joi.string().required(),
   address: addressSchema,
