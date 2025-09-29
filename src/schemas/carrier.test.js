@@ -86,6 +86,40 @@ describe('Carrier Registration Validation', () => {
       expect(error).toBeDefined()
       expect(error.message).toBe('"carrier.registrationNumber" is required')
     })
+  })
+
+  describe('Scenario: Invalid submissions', () => {
+    it.each([null, undefined])(
+      'rejects submission with a missing carrier registration number: "%s"',
+      (value) => {
+        const carrier = {
+          registrationNumber: value,
+          organisationName: 'Test Carrier',
+          meansOfTransport: MEANS_OF_TRANSPORT[1]
+        }
+
+        const { error } = validate(carrier)
+        expect(error).toBeDefined()
+        expect(error.message).toBe('"carrier.registrationNumber" is required')
+      }
+    )
+
+    it.each(invalidCarrierRegistrationNumbers)(
+      'rejects submission with an invalid carrier registration number: "%s"',
+      (value) => {
+        const carrier = {
+          registrationNumber: value,
+          organisationName: 'Test Carrier',
+          meansOfTransport: MEANS_OF_TRANSPORT[1]
+        }
+
+        const { error } = validate(carrier)
+        expect(error).toBeDefined()
+        expect(error.message).toBe(
+          '"carrier.registrationNumber" must be in a valid England, SEPA, NRW or NI format'
+        )
+      }
+    )
 
     it.each(invalidCarrierRegistrationNumbers)(
       'rejects submission with an invalid carrier registration number: "%s"',
