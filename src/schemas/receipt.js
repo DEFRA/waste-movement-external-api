@@ -109,7 +109,7 @@ const receiverSchema = Joi.object({
   phoneNumber: Joi.string(),
   authorisationNumbers: Joi.array().items(Joi.string()).min(1).required(),
   regulatoryPositionStatements: Joi.array().items(
-    Joi.number().integer().strict().min(0).greater(0).messages({
+    Joi.number().strict().integer().positive().messages({
       'number.min': '{{ #label }} must be greater than 0',
       'number.greater': '{{ #label }} must be greater than 0',
       'number.integer': '{{ #label }} must be an integer'
