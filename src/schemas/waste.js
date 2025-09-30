@@ -60,11 +60,12 @@ const sourceOfComponentsSchema = (fieldName) =>
     })
 
 const concentrationSchema = () =>
-  Joi.number().strict().min(0).greater(0).allow(null).messages({
+  Joi.number().strict().integer().min(0).greater(0).allow(null).messages({
     'any.required': ANY_REQUIRED_ERROR_MESSAGE,
     'number.base': '{{ #label }} must be a valid number',
     'number.min': '{{ #label }} concentration must be greater than 0',
-    'number.greater': '{{ #label }} concentration must be greater than 0'
+    'number.greater': '{{ #label }} concentration must be greater than 0',
+    'number.integer': '{{ #label }} concentration must be an integer'
   })
 
 const popsSchema = Joi.object({
@@ -224,7 +225,7 @@ export const wasteItemsSchema = Joi.object({
   physicalForm: Joi.string()
     .valid('Gas', 'Liquid', 'Solid', 'Powder', 'Sludge', 'Mixed')
     .required(),
-  numberOfContainers: Joi.number().required().min(0),
+  numberOfContainers: Joi.number().strict().integer().required().min(0),
   typeOfContainers: Joi.string()
     .required()
     .custom(validateContainerType, 'Container type validation')

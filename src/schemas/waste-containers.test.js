@@ -16,13 +16,25 @@ describe('Receipt Schema Validation - Containers', () => {
       )
     })
 
-    it('should accept a positive number', () => {
+    it('should accept a positive integer', () => {
       const payload = createTestPayload({
-        wasteItemOverrides: { numberOfContainers: 0.1 }
+        wasteItemOverrides: { numberOfContainers: 1 }
       })
       const result = receiveMovementRequestSchema.validate(payload)
 
       expect(result.error).toBeUndefined()
+    })
+
+    it('should reject a decimal number', () => {
+      const payload = createTestPayload({
+        wasteItemOverrides: { numberOfContainers: 1.5 }
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
+
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toContain(
+        '"wasteItems[0].numberOfContainers" must be an integer'
+      )
     })
 
     it('should accept zero', () => {
@@ -36,7 +48,7 @@ describe('Receipt Schema Validation - Containers', () => {
 
     it('should reject a negative integer', () => {
       const payload = createTestPayload({
-        wasteItemOverrides: { numberOfContainers: -0.1 }
+        wasteItemOverrides: { numberOfContainers: -1 }
       })
       const result = receiveMovementRequestSchema.validate(payload)
 

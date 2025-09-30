@@ -60,7 +60,7 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
                 code,
                 weight: {
                   metric: 'Tonnes',
-                  amount: 0.1,
+                  amount: 1,
                   isEstimate: false
                 }
               }
@@ -79,7 +79,7 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
               code: 'R1',
               weight: {
                 metric: 'Tonnes',
-                amount: 0.1,
+                amount: 1,
                 isEstimate: false
               }
             },
@@ -87,7 +87,7 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
               code: 'D10',
               weight: {
                 metric: 'Tonnes',
-                amount: 0.0505,
+                amount: 2,
                 isEstimate: false
               }
             },
@@ -95,7 +95,7 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
               code: 'R3',
               weight: {
                 metric: 'Tonnes',
-                amount: 0.02,
+                amount: 3,
                 isEstimate: false
               }
             }
@@ -118,7 +118,7 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
                 code,
                 weight: {
                   metric: 'Tonnes',
-                  amount: 0.1,
+                  amount: 1,
                   isEstimate: false
                 }
               }
@@ -193,7 +193,7 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
               code: 'R1',
               weight: {
                 metric: 'Tonnes',
-                amount: 0.1,
+                amount: 1,
                 isEstimate: false
               }
             }
@@ -237,7 +237,7 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
               code: 'R3',
               weight: {
                 metric: 'Tonnes',
-                amount: 0.02,
+                amount: 2,
                 isEstimate: false
               }
             },
@@ -245,7 +245,7 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
               code: 'D5',
               weight: {
                 metric: 'Tonnes',
-                amount: 0.03,
+                amount: 3,
                 isEstimate: false
               }
             }
@@ -286,7 +286,7 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
               code: 'R1',
               weight: {
                 metric: 'Tonnes',
-                amount: 0.1,
+                amount: 1,
                 isEstimate: false
               }
             }

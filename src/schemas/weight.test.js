@@ -74,10 +74,19 @@ describe('Receipt Schema Validation - Weight', () => {
         )
       })
 
-      it('should accept a positive number', () => {
-        const result = validateWithWeightOverrides({ amount: 0.1 })
+      it('should accept a positive integer', () => {
+        const result = validateWithWeightOverrides({ amount: 1 })
 
         expect(result.error).toBeUndefined()
+      })
+
+      it('should reject a decimal amount', () => {
+        const result = validateWithWeightOverrides({ amount: 1.5 })
+
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          '"wasteItems[0].weight.amount" must be an integer'
+        )
       })
 
       it('should reject zero', () => {
@@ -90,7 +99,7 @@ describe('Receipt Schema Validation - Weight', () => {
       })
 
       it('should reject a negative integer', () => {
-        const result = validateWithWeightOverrides({ amount: -0.1 })
+        const result = validateWithWeightOverrides({ amount: -1 })
 
         expect(result.error).toBeDefined()
         expect(result.error.message).toContain(
@@ -181,10 +190,19 @@ describe('Receipt Schema Validation - Weight', () => {
         )
       })
 
-      it('should accept a positive number', () => {
-        const result = validateWithReceiptWeightOverrides({ amount: 0.1 })
+      it('should accept a positive integer', () => {
+        const result = validateWithReceiptWeightOverrides({ amount: 1 })
 
         expect(result.error).toBeUndefined()
+      })
+
+      it('should reject a decimal amount', () => {
+        const result = validateWithReceiptWeightOverrides({ amount: 1.5 })
+
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          '"wasteItems[0].disposalOrRecoveryCodes[0].weight.amount" must be an integer'
+        )
       })
 
       it('should reject zero', () => {
@@ -197,7 +215,7 @@ describe('Receipt Schema Validation - Weight', () => {
       })
 
       it('should reject a negative integer', () => {
-        const result = validateWithReceiptWeightOverrides({ amount: -0.1 })
+        const result = validateWithReceiptWeightOverrides({ amount: -1 })
 
         expect(result.error).toBeDefined()
         expect(result.error.message).toContain(

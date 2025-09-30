@@ -5,9 +5,8 @@ import {
 import { receiveMovementRequestSchema } from '../../../schemas/receipt.js'
 import { createTestPayload } from '../../../schemas/test-helpers/waste-test-helpers.js'
 
-const TWELVE_POINT_FIVE_NUMBER = 12.5
-const NINE_POINT_ONE_NUMBER = 9.12345678
-const FIVE_HUNDRED_NUMBER = 500
+const VALID_CONCENTRATION_VALUES = [12, 9, 500]
+const DECIMAL_CONCENTRATION = 12.5
 const ZERO_NUMBER = 0
 
 export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
@@ -255,32 +254,31 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
       )
     })
 
-    it.each([
-      TWELVE_POINT_FIVE_NUMBER,
-      NINE_POINT_ONE_NUMBER,
-      FIVE_HUNDRED_NUMBER
-    ])('should accept valid POP concentration value: "%s"', (value) => {
-      const payload = createTestPayload({
-        wasteItemOverrides: {
-          [popsOrHazardousObjectProperty]: {
-            [containsPopsOrHazardousField]: true,
-            sourceOfComponents: 'CARRIER_PROVIDED',
-            components: [
-              {
-                name: 'Aldrin',
-                concentration: 100
-              },
-              {
-                name: 'Aldrin',
-                concentration: value
-              }
-            ]
+    it.each(VALID_CONCENTRATION_VALUES)(
+      'should accept valid POP concentration value: "%s"',
+      (value) => {
+        const payload = createTestPayload({
+          wasteItemOverrides: {
+            [popsOrHazardousObjectProperty]: {
+              [containsPopsOrHazardousField]: true,
+              sourceOfComponents: 'CARRIER_PROVIDED',
+              components: [
+                {
+                  name: 'Aldrin',
+                  concentration: 100
+                },
+                {
+                  name: 'Aldrin',
+                  concentration: value
+                }
+              ]
+            }
           }
-        }
-      })
-      const result = receiveMovementRequestSchema.validate(payload)
-      expect(result.error).toBeUndefined()
-    })
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeUndefined()
+      }
+    )
 
     it(`should reject components when ${containsPopsOrHazardousField} is true and concentration is not a number`, () => {
       const payload = createTestPayload({
@@ -305,6 +303,32 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
       expect(result.error).toBeDefined()
       expect(result.error.message).toBe(
         `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].concentration" must be a valid number`
+      )
+    })
+
+    it(`should reject components when ${containsPopsOrHazardousField} is true and concentration is a decimal`, () => {
+      const payload = createTestPayload({
+        wasteItemOverrides: {
+          [popsOrHazardousObjectProperty]: {
+            [containsPopsOrHazardousField]: true,
+            sourceOfComponents: 'OWN_TESTING',
+            components: [
+              {
+                name: 'Aldrin',
+                concentration: 100
+              },
+              {
+                name: 'Endosulfan',
+                concentration: DECIMAL_CONCENTRATION
+              }
+            ]
+          }
+        }
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toBe(
+        `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].concentration" concentration must be an integer`
       )
     })
 
