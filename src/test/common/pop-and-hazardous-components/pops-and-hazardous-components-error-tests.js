@@ -258,8 +258,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
     it.each([
       TWELVE_POINT_FIVE_NUMBER,
       NINE_POINT_ONE_NUMBER,
-      FIVE_HUNDRED_NUMBER,
-      ZERO_NUMBER
+      FIVE_HUNDRED_NUMBER
     ])('should accept valid POP concentration value: "%s"', (value) => {
       const payload = createTestPayload({
         wasteItemOverrides: {
@@ -309,6 +308,32 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
       )
     })
 
+    it(`should reject components when ${containsPopsOrHazardousField} is true and concentration is zero`, () => {
+      const payload = createTestPayload({
+        wasteItemOverrides: {
+          [popsOrHazardousObjectProperty]: {
+            [containsPopsOrHazardousField]: true,
+            sourceOfComponents: 'OWN_TESTING',
+            components: [
+              {
+                name: 'Aldrin',
+                concentration: 100
+              },
+              {
+                name: 'Endosulfan',
+                concentration: ZERO_NUMBER
+              }
+            ]
+          }
+        }
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toBe(
+        `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].concentration" concentration must be greater than 0`
+      )
+    })
+
     it(`should reject components when ${containsPopsOrHazardousField} is true and concentration is a negative number`, () => {
       const payload = createTestPayload({
         wasteItemOverrides: {
@@ -331,7 +356,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeDefined()
       expect(result.error.message).toBe(
-        `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].concentration" concentration cannot be negative`
+        `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].concentration" concentration must be greater than 0`
       )
     })
 

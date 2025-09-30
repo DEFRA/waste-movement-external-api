@@ -80,10 +80,13 @@ describe('Receipt Schema Validation - Weight', () => {
         expect(result.error).toBeUndefined()
       })
 
-      it('should accept zero', () => {
+      it('should reject zero', () => {
         const result = validateWithWeightOverrides({ amount: 0 })
 
-        expect(result.error).toBeUndefined()
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          '"wasteItems[0].weight.amount" must be greater than 0'
+        )
       })
 
       it('should reject a negative integer', () => {
@@ -91,7 +94,7 @@ describe('Receipt Schema Validation - Weight', () => {
 
         expect(result.error).toBeDefined()
         expect(result.error.message).toContain(
-          '"wasteItems[0].weight.amount" must be greater than or equal to 0'
+          '"wasteItems[0].weight.amount" must be greater than 0'
         )
       })
     })
@@ -184,10 +187,13 @@ describe('Receipt Schema Validation - Weight', () => {
         expect(result.error).toBeUndefined()
       })
 
-      it('should accept zero', () => {
+      it('should reject zero', () => {
         const result = validateWithReceiptWeightOverrides({ amount: 0 })
 
-        expect(result.error).toBeUndefined()
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          '"wasteItems[0].disposalOrRecoveryCodes[0].weight.amount" must be greater than 0'
+        )
       })
 
       it('should reject a negative integer', () => {
@@ -195,7 +201,7 @@ describe('Receipt Schema Validation - Weight', () => {
 
         expect(result.error).toBeDefined()
         expect(result.error.message).toContain(
-          '"wasteItems[0].disposalOrRecoveryCodes[0].weight.amount" must be greater than or equal to 0'
+          '"wasteItems[0].disposalOrRecoveryCodes[0].weight.amount" must be greater than 0'
         )
       })
     })

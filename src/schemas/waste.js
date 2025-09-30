@@ -8,7 +8,6 @@ import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.
 import { validSourceOfComponents } from '../common/constants/source-of-components.js'
 
 const MAX_EWC_CODES_COUNT = 5
-const CUSTOM_ERROR_TYPE = 'any.custom'
 const ANY_REQUIRED_ERROR_MESSAGE = '{{ #label }} is required'
 
 const disposalOrRecoveryCodeSchema = Joi.object({
@@ -61,27 +60,12 @@ const sourceOfComponentsSchema = (fieldName) =>
     })
 
 const concentrationSchema = () =>
-  Joi.custom((value, helpers) => {
-    if (typeof value === 'number') {
-      if (value < 0) {
-        return helpers.error('number.min')
-      }
-      return value
-    }
-
-    if (typeof value === 'string') {
-      return helpers.error(CUSTOM_ERROR_TYPE)
-    }
-
-    // Any other type is invalid
-    return helpers.error(CUSTOM_ERROR_TYPE)
+  Joi.number().strict().min(0).greater(0).allow(null).messages({
+    'any.required': ANY_REQUIRED_ERROR_MESSAGE,
+    'number.base': '{{ #label }} must be a valid number',
+    'number.min': '{{ #label }} concentration must be greater than 0',
+    'number.greater': '{{ #label }} concentration must be greater than 0'
   })
-    .allow(null)
-    .messages({
-      'any.required': ANY_REQUIRED_ERROR_MESSAGE,
-      'any.custom': '{{ #label }} must be a valid number',
-      'number.min': '{{ #label }} concentration cannot be negative'
-    })
 
 const popsSchema = Joi.object({
   containsPops: Joi.boolean().required().messages({

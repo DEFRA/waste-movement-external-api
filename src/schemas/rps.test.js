@@ -152,7 +152,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
 
       const { error } = validate(receiver, receipt)
       expect(error).toBeDefined()
-      expect(error.message).toContain('must be a positive number')
+      expect(error.message).toContain('must be greater than 0')
     })
 
     it('rejects zero', () => {
@@ -168,7 +168,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
 
       const { error } = validate(receiver, receipt)
       expect(error).toBeDefined()
-      expect(error.message).toContain('must be a positive number')
+      expect(error.message).toContain('must be greater than 0')
     })
 
     it('rejects decimal numbers', () => {
