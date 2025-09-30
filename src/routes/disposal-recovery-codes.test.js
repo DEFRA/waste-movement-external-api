@@ -60,7 +60,7 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
                 code,
                 weight: {
                   metric: 'Tonnes',
-                  amount: 1,
+                  amount: 0.1,
                   isEstimate: false
                 }
               }

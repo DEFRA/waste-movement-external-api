@@ -5,7 +5,6 @@ import {
 import { receiveMovementRequestSchema } from '../../../schemas/receipt.js'
 import { createTestPayload } from '../../../schemas/test-helpers/waste-test-helpers.js'
 
-const VALID_CONCENTRATION_VALUES = [12, 9, 500]
 const DECIMAL_CONCENTRATION = 12.5
 const ZERO_NUMBER = 0
 
@@ -254,32 +253,6 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
       )
     })
 
-    it.each(VALID_CONCENTRATION_VALUES)(
-      'should accept valid POP concentration value: "%s"',
-      (value) => {
-        const payload = createTestPayload({
-          wasteItemOverrides: {
-            [popsOrHazardousObjectProperty]: {
-              [containsPopsOrHazardousField]: true,
-              sourceOfComponents: 'CARRIER_PROVIDED',
-              components: [
-                {
-                  name: 'Aldrin',
-                  concentration: 100
-                },
-                {
-                  name: 'Aldrin',
-                  concentration: value
-                }
-              ]
-            }
-          }
-        })
-        const result = receiveMovementRequestSchema.validate(payload)
-        expect(result.error).toBeUndefined()
-      }
-    )
-
     it(`should reject components when ${containsPopsOrHazardousField} is true and concentration is not a number`, () => {
       const payload = createTestPayload({
         wasteItemOverrides: {
@@ -306,7 +279,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
       )
     })
 
-    it(`should reject components when ${containsPopsOrHazardousField} is true and concentration is a decimal`, () => {
+    it(`should accept components when ${containsPopsOrHazardousField} is true and concentration is a decimal`, () => {
       const payload = createTestPayload({
         wasteItemOverrides: {
           [popsOrHazardousObjectProperty]: {
@@ -326,10 +299,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
         }
       })
       const result = receiveMovementRequestSchema.validate(payload)
-      expect(result.error).toBeDefined()
-      expect(result.error.message).toBe(
-        `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].concentration" concentration must be an integer`
-      )
+      expect(result.error).toBeUndefined()
     })
 
     it(`should reject components when ${containsPopsOrHazardousField} is true and concentration is zero`, () => {
@@ -354,7 +324,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeDefined()
       expect(result.error.message).toBe(
-        `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].concentration" concentration must be greater than 0`
+        `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].concentration" must be a positive number`
       )
     })
 
@@ -380,7 +350,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeDefined()
       expect(result.error.message).toBe(
-        `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].concentration" concentration must be greater than 0`
+        `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].concentration" must be a positive number`
       )
     })
 

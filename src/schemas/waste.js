@@ -60,7 +60,7 @@ const sourceOfComponentsSchema = (fieldName) =>
     })
 
 const concentrationSchema = () =>
-  Joi.number().strict().integer().min(0).greater(0).allow(null).messages({
+  Joi.number().strict().positive().allow(null).messages({
     'any.required': ANY_REQUIRED_ERROR_MESSAGE,
     'number.base': '{{ #label }} must be a valid number',
     'number.min': '{{ #label }} concentration must be greater than 0',

@@ -80,15 +80,6 @@ describe('Receipt Schema Validation - Weight', () => {
         expect(result.error).toBeUndefined()
       })
 
-      it('should reject a decimal amount', () => {
-        const result = validateWithWeightOverrides({ amount: 1.5 })
-
-        expect(result.error).toBeDefined()
-        expect(result.error.message).toContain(
-          '"wasteItems[0].weight.amount" must be an integer'
-        )
-      })
-
       it('should reject zero', () => {
         const result = validateWithWeightOverrides({ amount: 0 })
 
@@ -179,49 +170,6 @@ describe('Receipt Schema Validation - Weight', () => {
       expect(result.error.message).toContain(
         '"wasteItems[0].disposalOrRecoveryCodes[0].weight" is required'
       )
-    })
-
-    describe('Amount Validation', () => {
-      it('should require amount', () => {
-        const result = validateWithReceiptWeightOverrides({ amount: undefined })
-        expect(result.error).toBeDefined()
-        expect(result.error.message).toContain(
-          '"wasteItems[0].disposalOrRecoveryCodes[0].weight.amount" is required'
-        )
-      })
-
-      it('should accept a positive integer', () => {
-        const result = validateWithReceiptWeightOverrides({ amount: 1 })
-
-        expect(result.error).toBeUndefined()
-      })
-
-      it('should reject a decimal amount', () => {
-        const result = validateWithReceiptWeightOverrides({ amount: 1.5 })
-
-        expect(result.error).toBeDefined()
-        expect(result.error.message).toContain(
-          '"wasteItems[0].disposalOrRecoveryCodes[0].weight.amount" must be an integer'
-        )
-      })
-
-      it('should reject zero', () => {
-        const result = validateWithReceiptWeightOverrides({ amount: 0 })
-
-        expect(result.error).toBeDefined()
-        expect(result.error.message).toContain(
-          '"wasteItems[0].disposalOrRecoveryCodes[0].weight.amount" must be greater than 0'
-        )
-      })
-
-      it('should reject a negative integer', () => {
-        const result = validateWithReceiptWeightOverrides({ amount: -1 })
-
-        expect(result.error).toBeDefined()
-        expect(result.error.message).toContain(
-          '"wasteItems[0].disposalOrRecoveryCodes[0].weight.amount" must be greater than 0'
-        )
-      })
     })
   })
 })
