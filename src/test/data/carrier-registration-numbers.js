@@ -60,7 +60,6 @@ export const invalidCarrierRegistrationNumbers = [
   'ROC DT 9',
   'ROC UT 999999',
   'ROC LT 999999',
-  '',
   '   ',
   ' CBDL999 '
 ]

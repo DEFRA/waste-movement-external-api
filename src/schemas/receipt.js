@@ -17,15 +17,14 @@ import {
 const MIN_STRING_LENGTH = 1
 
 // Carrier validation error messages
-const CARRIER_REGISTRATION_REQUIRED = 'Carrier registration number is required'
 const CARRIER_REGISTRATION_OR_REASON_REQUIRED =
-  'Either carrier registration number or reason for no registration number is required'
+  'Either carrier.registrationNumber or carrier.reasonForNoRegistrationNumber is required'
 const CARRIER_REASON_ONLY_FOR_NULL =
-  'Reason for no registration number should only be provided when registration number is not provided'
+  'carrier.reasonForNoRegistrationNumber should only be provided when carrier.registrationNumber is not provided'
 const CARRIER_VEHICLE_REG_REQUIRED_FOR_ROAD =
-  'If carrier.meansOfTransport is "Road" then carrier.vehicleRegistration is required.'
+  'If carrier.meansOfTransport is "Road" then carrier.vehicleRegistration is required'
 const CARRIER_VEHICLE_REG_ONLY_ALLOWED_FOR_ROAD =
-  'If carrier.meansOfTransport is not "Road" then carrier.vehicleRegistration is not applicable.'
+  'If carrier.meansOfTransport is not "Road" then carrier.vehicleRegistration is not applicable'
 
 const LONG_STRING_MAX_LENGTH = 5000
 
@@ -50,13 +49,31 @@ const carrierSchema = Joi.object({
       Joi.string().pattern(NRU_CARRIER_REGISTRATION_NUMBER_REGEX),
       Joi.string().pattern(NI_CARRIER_REGISTRATION_NUMBER_REGEX)
     )
-    .empty(null)
+    .allow(null, '')
     .messages({
       'alternatives.match':
         '{{ #label }} must be in a valid England, SEPA, NRW or NI format'
     })
     .required(),
-  reasonForNoRegistrationNumber: Joi.string().allow(null, ''),
+  reasonForNoRegistrationNumber: Joi.string()
+    .when('registrationNumber', {
+      switch: [
+        {
+          is: null,
+          then: Joi.required()
+        },
+        {
+          is: '',
+          then: Joi.required()
+        }
+      ],
+      otherwise: Joi.forbidden()
+    })
+    .messages({
+      'string.empty': CARRIER_REGISTRATION_OR_REASON_REQUIRED,
+      'string.base': CARRIER_REGISTRATION_OR_REASON_REQUIRED,
+      'any.unknown': CARRIER_REASON_ONLY_FOR_NULL
+    }),
   organisationName: Joi.string().required(),
   address: addressSchema,
   emailAddress: Joi.string().email(),
@@ -73,37 +90,7 @@ const carrierSchema = Joi.object({
     .valid(...MEANS_OF_TRANSPORT)
     .required(),
   otherMeansOfTransport: Joi.string()
-})
-  .custom((obj, helpers) => {
-    const { registrationNumber, reasonForNoRegistrationNumber } = obj
-    const isEmpty = (val) =>
-      val === null ||
-      val === undefined ||
-      val === '' ||
-      (typeof val === 'string' && val.trim() === '')
-
-    // If registration is null/empty AND reason is null/empty, fail
-    if (isEmpty(registrationNumber) && isEmpty(reasonForNoRegistrationNumber)) {
-      return helpers.error('carrier.registrationOrReasonRequired')
-    }
-
-    // Reason should only be provided when registration number is null/empty
-    if (
-      !isEmpty(registrationNumber) &&
-      !isEmpty(reasonForNoRegistrationNumber)
-    ) {
-      return helpers.error('carrier.reasonOnlyForNull')
-    }
-
-    return obj
-  })
-  .label('Carrier')
-  .messages({
-    'carrier.registrationRequired': CARRIER_REGISTRATION_REQUIRED,
-    'carrier.registrationOrReasonRequired':
-      CARRIER_REGISTRATION_OR_REASON_REQUIRED,
-    'carrier.reasonOnlyForNull': CARRIER_REASON_ONLY_FOR_NULL
-  })
+}).label('Carrier')
 
 const receiverAddressSchema = addressSchema.keys({
   fullAddress: Joi.string().required(),
