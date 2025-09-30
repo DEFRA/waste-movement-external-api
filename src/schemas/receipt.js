@@ -41,19 +41,21 @@ const addressSchema = Joi.object({
     .required()
 })
 
+const carrierOrBrokerDealerRegistrationNumber = Joi.alternatives()
+  .try(
+    Joi.string().pattern(ENGLAND_CARRIER_REGISTRATION_NUMBER_REGEX),
+    Joi.string().pattern(SEPA_CARRIER_REGISTRATION_NUMBER_REGEX),
+    Joi.string().pattern(NRU_CARRIER_REGISTRATION_NUMBER_REGEX),
+    Joi.string().pattern(NI_CARRIER_REGISTRATION_NUMBER_REGEX)
+  )
+  .messages({
+    'alternatives.match':
+      '{{ #label }} must be in a valid England, SEPA, NRW or NI format'
+  })
+
 const carrierSchema = Joi.object({
-  registrationNumber: Joi.alternatives()
-    .try(
-      Joi.string().pattern(ENGLAND_CARRIER_REGISTRATION_NUMBER_REGEX),
-      Joi.string().pattern(SEPA_CARRIER_REGISTRATION_NUMBER_REGEX),
-      Joi.string().pattern(NRU_CARRIER_REGISTRATION_NUMBER_REGEX),
-      Joi.string().pattern(NI_CARRIER_REGISTRATION_NUMBER_REGEX)
-    )
+  registrationNumber: carrierOrBrokerDealerRegistrationNumber
     .allow(null, '')
-    .messages({
-      'alternatives.match':
-        '{{ #label }} must be in a valid England, SEPA, NRW or NI format'
-    })
     .required(),
   reasonForNoRegistrationNumber: Joi.string()
     .when('registrationNumber', {
@@ -117,7 +119,7 @@ const receiptSchema = Joi.object({
 const brokerOrDealerSchema = Joi.object({
   organisationName: Joi.string().required(),
   address: addressSchema,
-  registrationNumber: Joi.string(),
+  registrationNumber: carrierOrBrokerDealerRegistrationNumber,
   phoneNumber: Joi.string(),
   emailAddress: Joi.string().email()
 }).label('BrokerOrDealer')
