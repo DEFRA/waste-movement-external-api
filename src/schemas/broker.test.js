@@ -1,5 +1,6 @@
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
+import { carrierBrokerDealerRegistrationNumberErrorTests } from '../test/common/carrier-broker-dealer-regisration-number/carrier-broker-dealer-registration-number-error-tests.js'
 
 describe('BrokerOrDealer Validation', () => {
   const basePayload = createMovementRequest()
@@ -7,25 +8,45 @@ describe('BrokerOrDealer Validation', () => {
   const validate = (brokerOrDealer) =>
     receiveMovementRequestSchema.validate({ ...basePayload, brokerOrDealer })
 
-  describe('Broker Registration Number', () => {
-    it('accepts valid broker registration number', () => {
-      const broker = {
-        organisationName: 'Test Broker',
-        registrationNumber: 'CBDU123456'
-      }
+  carrierBrokerDealerRegistrationNumberErrorTests('BrokerOrDealer', {
+    organisationName: 'Test Broker',
+    registrationNumber: undefined
+  })
 
-      const { error } = validate(broker)
-      expect(error).toBeUndefined()
-    })
+  it('accepts submission with an undefined registration number', () => {
+    const broker = {
+      organisationName: 'Test Broker',
+      registrationNumber: undefined
+    }
 
-    it('accepts submission without broker registration number', () => {
-      const broker = {
-        organisationName: 'Test Broker'
-      }
+    const { error } = validate(broker)
+    expect(error).toBeUndefined()
+  })
 
-      const { error } = validate(broker)
-      expect(error).toBeUndefined()
-    })
+  it('rejects submission with a null registration number: "%s"', () => {
+    const broker = {
+      organisationName: 'Test Broker',
+      registrationNumber: null
+    }
+
+    const { error } = validate(broker)
+    expect(error).toBeDefined()
+    expect(error.message).toBe(
+      '"brokerOrDealer.registrationNumber" must be one of [string]'
+    )
+  })
+
+  it('rejects submission with an empty string registration number: "%s"', () => {
+    const broker = {
+      organisationName: 'Test Broker',
+      registrationNumber: ''
+    }
+
+    const { error } = validate(broker)
+    expect(error).toBeDefined()
+    expect(error.message).toBe(
+      '"brokerOrDealer.registrationNumber" must be in a valid England, SEPA, NRW or NI format'
+    )
   })
 
   it('accepts complete broker info with UK postcode, email and phone', () => {
