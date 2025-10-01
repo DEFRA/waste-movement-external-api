@@ -97,6 +97,15 @@ describe('Receipt Schema Validation - Weight', () => {
           '"wasteItems[0].weight.amount" must be greater than 0'
         )
       })
+
+      it('should reject string values', () => {
+        const result = validateWithWeightOverrides({ amount: '123' })
+
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain(
+          '"wasteItems[0].weight.amount" must be a number'
+        )
+      })
     })
   })
 
