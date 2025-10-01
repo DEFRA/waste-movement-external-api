@@ -5,29 +5,26 @@ import {
   hazardousWasteConsignmentCodeSchema,
   reasonForNoConsignmentCodeSchema
 } from './hazardous-waste-consignment.js'
+import {
+  ENGLAND_CARRIER_REGISTRATION_NUMBER_REGEX,
+  IRL_POSTCODE_REGEX,
+  NI_CARRIER_REGISTRATION_NUMBER_REGEX,
+  NRU_CARRIER_REGISTRATION_NUMBER_REGEX,
+  SEPA_CARRIER_REGISTRATION_NUMBER_REGEX,
+  UK_POSTCODE_REGEX
+} from '../common/constants/regexes.js'
 
 const MIN_STRING_LENGTH = 1
 
 // Carrier validation error messages
-const CARRIER_REGISTRATION_REQUIRED = 'Carrier registration number is required'
 const CARRIER_REGISTRATION_OR_REASON_REQUIRED =
-  'Either carrier registration number or reason for no registration number is required'
+  'Either carrier.registrationNumber or carrier.reasonForNoRegistrationNumber is required'
 const CARRIER_REASON_ONLY_FOR_NULL =
-  'Reason for no registration number should only be provided when registration number is not provided'
+  'carrier.reasonForNoRegistrationNumber should only be provided when carrier.registrationNumber is not provided'
 const CARRIER_VEHICLE_REG_REQUIRED_FOR_ROAD =
-  'If carrier.meansOfTransport is "Road" then carrier.vehicleRegistration is required.'
+  'If carrier.meansOfTransport is "Road" then carrier.vehicleRegistration is required'
 const CARRIER_VEHICLE_REG_ONLY_ALLOWED_FOR_ROAD =
-  'If carrier.meansOfTransport is not "Road" then carrier.vehicleRegistration is not applicable.'
-
-// RegEx per Gov UK recommendation: https://assets.publishing.service.gov.uk/media/5a7f3ff4ed915d74e33f5438/Bulk_Data_Transfer_-_additional_validation_valid_from_12_November_2015.pdf
-// BEGIN-NOSCAN
-const UK_POSTCODE_REGEX =
-  /^((GIR 0A{2})|((([A-Z]\d{1,2})|(([A-Z][A-HJ-Y]\d{1,2})|(([A-Z]\d[A-Z])|([A-Z][A-HJ-Y]\d?[A-Z])))) \d[A-Z]{2}))$/i // NOSONAR
-// Ireland Eircode regex (routing key + unique identifier)
-// Reference: https://www.eircode.ie
-const IRL_POSTCODE_REGEX =
-  /^(?:D6W|[AC-FHKNPRTV-Y]\d{2}) ?[0-9AC-FHKNPRTV-Y]{4}$/i
-// END-NOSCAN
+  'If carrier.meansOfTransport is not "Road" then carrier.vehicleRegistration is not applicable'
 
 const LONG_STRING_MAX_LENGTH = 5000
 
@@ -45,8 +42,38 @@ const addressSchema = Joi.object({
 })
 
 const carrierSchema = Joi.object({
-  registrationNumber: Joi.string().allow(null, ''),
-  reasonForNoRegistrationNumber: Joi.string().allow(null, ''),
+  registrationNumber: Joi.alternatives()
+    .try(
+      Joi.string().pattern(ENGLAND_CARRIER_REGISTRATION_NUMBER_REGEX),
+      Joi.string().pattern(SEPA_CARRIER_REGISTRATION_NUMBER_REGEX),
+      Joi.string().pattern(NRU_CARRIER_REGISTRATION_NUMBER_REGEX),
+      Joi.string().pattern(NI_CARRIER_REGISTRATION_NUMBER_REGEX)
+    )
+    .allow(null, '')
+    .messages({
+      'alternatives.match':
+        '{{ #label }} must be in a valid England, SEPA, NRW or NI format'
+    })
+    .required(),
+  reasonForNoRegistrationNumber: Joi.string()
+    .when('registrationNumber', {
+      switch: [
+        {
+          is: null,
+          then: Joi.required()
+        },
+        {
+          is: '',
+          then: Joi.required()
+        }
+      ],
+      otherwise: Joi.forbidden()
+    })
+    .messages({
+      'string.empty': CARRIER_REGISTRATION_OR_REASON_REQUIRED,
+      'string.base': CARRIER_REGISTRATION_OR_REASON_REQUIRED,
+      'any.unknown': CARRIER_REASON_ONLY_FOR_NULL
+    }),
   organisationName: Joi.string().required(),
   address: addressSchema,
   emailAddress: Joi.string().email(),
@@ -63,37 +90,7 @@ const carrierSchema = Joi.object({
     .valid(...MEANS_OF_TRANSPORT)
     .required(),
   otherMeansOfTransport: Joi.string()
-})
-  .custom((obj, helpers) => {
-    const { registrationNumber, reasonForNoRegistrationNumber } = obj
-    const isEmpty = (val) =>
-      val === null ||
-      val === undefined ||
-      val === '' ||
-      (typeof val === 'string' && val.trim() === '')
-
-    // If registration is null/empty AND reason is null/empty, fail
-    if (isEmpty(registrationNumber) && isEmpty(reasonForNoRegistrationNumber)) {
-      return helpers.error('carrier.registrationOrReasonRequired')
-    }
-
-    // Reason should only be provided when registration number is null/empty
-    if (
-      !isEmpty(registrationNumber) &&
-      !isEmpty(reasonForNoRegistrationNumber)
-    ) {
-      return helpers.error('carrier.reasonOnlyForNull')
-    }
-
-    return obj
-  })
-  .label('Carrier')
-  .messages({
-    'carrier.registrationRequired': CARRIER_REGISTRATION_REQUIRED,
-    'carrier.registrationOrReasonRequired':
-      CARRIER_REGISTRATION_OR_REASON_REQUIRED,
-    'carrier.reasonOnlyForNull': CARRIER_REASON_ONLY_FOR_NULL
-  })
+}).label('Carrier')
 
 const receiverAddressSchema = addressSchema.keys({
   fullAddress: Joi.string().required(),
