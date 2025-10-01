@@ -85,7 +85,7 @@ describe('Receipt Schema Validation - Weight', () => {
 
         expect(result.error).toBeDefined()
         expect(result.error.message).toContain(
-          '"wasteItems[0].weight.amount" must be greater than 0'
+          '"wasteItems[0].weight.amount" must be a positive number'
         )
       })
 
@@ -94,7 +94,7 @@ describe('Receipt Schema Validation - Weight', () => {
 
         expect(result.error).toBeDefined()
         expect(result.error.message).toContain(
-          '"wasteItems[0].weight.amount" must be greater than 0'
+          '"wasteItems[0].weight.amount" must be a positive number'
         )
       })
 
