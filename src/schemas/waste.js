@@ -61,11 +61,7 @@ const sourceOfComponentsSchema = (fieldName) =>
 
 const concentrationSchema = () =>
   Joi.number().strict().positive().allow(null).messages({
-    'any.required': ANY_REQUIRED_ERROR_MESSAGE,
-    'number.base': '{{ #label }} must be a valid number',
-    'number.min': '{{ #label }} concentration must be greater than 0',
-    'number.greater': '{{ #label }} concentration must be greater than 0',
-    'number.integer': '{{ #label }} concentration must be an integer'
+    'any.required': ANY_REQUIRED_ERROR_MESSAGE
   })
 
 const popsSchema = Joi.object({

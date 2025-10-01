@@ -275,7 +275,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeDefined()
       expect(result.error.message).toBe(
-        `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].concentration" must be a valid number`
+        `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].concentration" must be a number`
       )
     })
 
