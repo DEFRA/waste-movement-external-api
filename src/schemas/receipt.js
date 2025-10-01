@@ -106,7 +106,7 @@ const receiverSchema = Joi.object({
   phoneNumber: Joi.string(),
   authorisationNumbers: Joi.array().items(Joi.string()).min(1).required(),
   regulatoryPositionStatements: Joi.array().items(
-    Joi.number().integer().positive()
+    Joi.number().strict().integer().positive()
   )
 }).label('Receiver')
 
