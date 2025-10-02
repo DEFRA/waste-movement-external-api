@@ -1,10 +1,10 @@
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import { MEANS_OF_TRANSPORT } from '../common/constants/means-of-transport.js'
+import { carrierBrokerDealerRegistrationNumberErrorTests } from '../test/common/carrier-broker-dealer-regisration-number/carrier-broker-dealer-registration-number-error-tests.js'
 import {
   invalidCarrierRegistrationNumbers,
-  validCarrierRegistrationNumbers,
-  validNiCarrierRegistrationNumbers
+  validCarrierRegistrationNumbers
 } from '../test/data/carrier-registration-numbers.js'
 
 describe('Carrier Registration Validation', () => {
@@ -13,51 +13,13 @@ describe('Carrier Registration Validation', () => {
   const validate = (carrier) =>
     receiveMovementRequestSchema.validate({ ...basePayload, carrier })
 
+  carrierBrokerDealerRegistrationNumberErrorTests('Carrier', {
+    registrationNumber: undefined,
+    organisationName: 'Test Carrier',
+    meansOfTransport: MEANS_OF_TRANSPORT[1]
+  })
+
   describe('Scenario: Valid carrier registration number', () => {
-    it.each(validCarrierRegistrationNumbers)(
-      'accepts submission with valid carrier registration number: "%s"',
-      (value) => {
-        const carrier = {
-          registrationNumber: value,
-          organisationName: 'Test Carrier',
-          meansOfTransport: MEANS_OF_TRANSPORT[1]
-        }
-
-        const { error } = validate(carrier)
-        expect(error).toBeUndefined()
-      }
-    )
-
-    it.each(validCarrierRegistrationNumbers.map((v) => v.toLowerCase()))(
-      'accepts submission with lowercase carrier registration number: "%s"',
-      (value) => {
-        const carrier = {
-          registrationNumber: value,
-          organisationName: 'Test Carrier',
-          meansOfTransport: MEANS_OF_TRANSPORT[1]
-        }
-
-        const { error } = validate(carrier)
-        expect(error).toBeUndefined()
-      }
-    )
-
-    it.each(
-      validNiCarrierRegistrationNumbers.map((v) => v.replaceAll(' ', ''))
-    )(
-      'accepts submission with NI carrier registration number without spaces: "%s"',
-      (value) => {
-        const carrier = {
-          registrationNumber: value,
-          organisationName: 'Test Carrier',
-          meansOfTransport: MEANS_OF_TRANSPORT[1]
-        }
-
-        const { error } = validate(carrier)
-        expect(error).toBeUndefined()
-      }
-    )
-
     it.each([null, ''])(
       'accepts submission when registrationNumber is "%s" and reasonForNoRegistrationNumber is provided',
       (value) => {
