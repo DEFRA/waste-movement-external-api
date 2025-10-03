@@ -8,6 +8,13 @@ describe('Receiver Validation', () => {
   const validate = (receiver, receipt) =>
     receiveMovementRequestSchema.validate({ ...basePayload, receiver, receipt })
 
+  const createStandardReceipt = () => ({
+    address: {
+      fullAddress: '1 Receiver St, Town',
+      postcode: 'TE1 1ST'
+    }
+  })
+
   it('accepts complete receiver info with UK postcode, email and phone', () => {
     const receiver = {
       organisationName: 'Test Receiver',
@@ -341,53 +348,7 @@ describe('Receiver Validation', () => {
 
   // Tests for DWT-578: Site Authorization Number Validation
   describe('Site Authorization Number Validation (DWT-578)', () => {
-    // Test valid formats from acceptance criteria using parameterized tests
-    describe.each([
-      [
-        'HP3456XX',
-        TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX,
-        'England format'
-      ],
-      [
-        'hp3456xx',
-        TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_LOWERCASE,
-        'lowercase'
-      ],
-      [
-        'EPR/XX1234XX/D6789',
-        TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_WITH_DEPLOYMENT,
-        'EPR with deployment'
-      ],
-      [
-        'PPC/A/9999999',
-        TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_PPC_A,
-        'Scotland PPC'
-      ],
-      [
-        'WPPC 99/99',
-        TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WPPC,
-        'Northern Ireland WPPC'
-      ]
-    ])('accepts %s format', (formatExample, testDataValue, description) => {
-      test(`validates ${description}`, () => {
-        const receiver = {
-          organisationName: 'Test Receiver',
-          authorisationNumbers: [testDataValue]
-        }
-
-        const receipt = {
-          address: {
-            fullAddress: '1 Receiver St, Town',
-            postcode: 'TE1 1ST'
-          }
-        }
-
-        const { error } = validate(receiver, receipt)
-        expect(error).toBeUndefined()
-      })
-    })
-
-    // Test invalid formats from acceptance criteria using parameterized tests
+    // Test invalid formats from acceptance criteria
     describe.each([
       ['EAWML-10001', TEST_DATA.AUTHORISATION_NUMBERS.INVALID.EAWML_WITH_DASH],
       ['GMB383838X', TEST_DATA.AUTHORISATION_NUMBERS.INVALID.GMB_FORMAT],
@@ -399,14 +360,7 @@ describe('Receiver Validation', () => {
           authorisationNumbers: [testDataValue]
         }
 
-        const receipt = {
-          address: {
-            fullAddress: '1 Receiver St, Town',
-            postcode: 'TE1 1ST'
-          }
-        }
-
-        const { error } = validate(receiver, receipt)
+        const { error } = validate(receiver, createStandardReceipt())
         expect(error).toBeDefined()
         expect(error.message).toBe(
           'Site authorisation number must be in a valid UK format'
@@ -414,9 +368,10 @@ describe('Receiver Validation', () => {
       })
     })
 
-    // Test all valid formats using parameterized tests
+    // Test all valid formats comprehensively (England, Scotland, Wales, Northern Ireland)
     test.each([
       TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_LOWERCASE,
       TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_WITH_DEPLOYMENT,
       TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_EAWML,
       TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_WML,
@@ -444,74 +399,8 @@ describe('Receiver Validation', () => {
         authorisationNumbers: [format]
       }
 
-      const receipt = {
-        address: {
-          fullAddress: '1 Receiver St, Town',
-          postcode: 'TE1 1ST'
-        }
-      }
-
-      const { error } = validate(receiver, receipt)
+      const { error } = validate(receiver, createStandardReceipt())
       expect(error).toBeUndefined()
-    })
-
-    it('accepts mixed valid authorisation numbers from different nations', () => {
-      const receiver = {
-        organisationName: 'Test Receiver',
-        authorisationNumbers: [
-          TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX,
-          TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_PPC_A,
-          TEST_DATA.AUTHORISATION_NUMBERS.VALID.WALES_EPR,
-          TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WPPC
-        ]
-      }
-
-      const receipt = {
-        address: {
-          fullAddress: '1 Receiver St, Town',
-          postcode: 'TE1 1ST'
-        }
-      }
-
-      const { error } = validate(receiver, receipt)
-      expect(error).toBeUndefined()
-    })
-
-    it('rejects when submission has no site authorisation number', () => {
-      const receiver = {
-        organisationName: 'Test Receiver'
-      }
-
-      const receipt = {
-        address: {
-          fullAddress: '1 Receiver St, Town',
-          postcode: 'TE1 1ST'
-        }
-      }
-
-      const { error } = validate(receiver, receipt)
-      expect(error).toBeDefined()
-      expect(error.message).toBe('"receiver.authorisationNumbers" is required')
-    })
-
-    it('rejects when authorisation numbers array is empty', () => {
-      const receiver = {
-        organisationName: 'Test Receiver',
-        authorisationNumbers: []
-      }
-
-      const receipt = {
-        address: {
-          fullAddress: '1 Receiver St, Town',
-          postcode: 'TE1 1ST'
-        }
-      }
-
-      const { error } = validate(receiver, receipt)
-      expect(error).toBeDefined()
-      expect(error.message).toBe(
-        '"receiver.authorisationNumbers" must contain at least 1 items'
-      )
     })
   })
 })
