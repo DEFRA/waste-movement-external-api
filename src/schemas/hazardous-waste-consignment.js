@@ -28,14 +28,15 @@ export function hasHazardousEwcCodes(payload) {
 
 export const hazardousWasteConsignmentCodeSchema = Joi.custom(
   (value, helpers) => {
-    const hasHazardous = hasHazardousEwcCodes(helpers.state.ancestors[0])
+    const payload = helpers.state.ancestors[0]
+    const hasHazardous = hasHazardousEwcCodes(payload)
 
     // If hazardous EWC codes are present, the field is required if missing (undefined or null)
     if (
       hasHazardous &&
       !value &&
-      !helpers.state.ancestors[0].reasonForNoConsignmentCode &&
-      helpers.state.ancestors[0].hazardousWasteConsignmentCode !== ''
+      !payload.reasonForNoConsignmentCode &&
+      payload.hazardousWasteConsignmentCode !== ''
     ) {
       return helpers.error('hazardousWasteConsignmentCode.required')
     }
@@ -58,17 +59,22 @@ export const hazardousWasteConsignmentCodeSchema = Joi.custom(
 })
 
 export const reasonForNoConsignmentCodeSchema = Joi.custom((value, helpers) => {
-  const hasHazardous = hasHazardousEwcCodes(helpers.state.ancestors[0])
-  if (
-    hasHazardous &&
-    !helpers.state.ancestors[0].hazardousWasteConsignmentCode &&
-    helpers.state.ancestors[0].reasonForNoConsignmentCode !== '' &&
-    !NO_CONSIGNMENT_REASONS.includes(value)
-  ) {
-    return helpers.error('any.only')
+  const payload = helpers.state.ancestors[0]
+  const hasHazardous = hasHazardousEwcCodes(payload)
+
+  if (hasHazardous && !payload.hazardousWasteConsignmentCode) {
+    if (!payload.reasonForNoConsignmentCode) {
+      return helpers.error('reasonForNoConsignmentCode.required')
+    }
+
+    if (!NO_CONSIGNMENT_REASONS.includes(value)) {
+      return helpers.error('any.only')
+    }
   }
+
   return value
 }).messages({
-  'any.only':
-    'Reason for no consignment note code must be one of: Non-Hazardous Waste Transfer | Carrier did not provide documentation | Local Authority Receipt'
+  'any.only': `{{ #label }} must be one of: ${NO_CONSIGNMENT_REASONS.join(', ')}`,
+  'reasonForNoConsignmentCode.required':
+    '{{ #label }} is required when wasteItems[*].ewcCodes contains a hazardous code and hazardousWasteConsignmentCode is not provided'
 })
