@@ -78,8 +78,7 @@ export const reasonForNoConsignmentCodeSchema = Joi.custom((value, helpers) => {
 
   return value
 }).messages({
-  'any.only':
-    'Reason for no consignment note code must be one of: Non-Hazardous Waste Transfer | Carrier did not provide documentation | Local Authority Receipt',
+  'any.only': `{{ #label }} must be one of: ${NO_CONSIGNMENT_REASONS.join(', ')}`,
   'reasonForNoConsignmentCode.required':
     '{{ #label }} is required when wasteItems[*].ewcCodes contains a hazardous code and hazardousWasteConsignmentCode is not provided'
 })
