@@ -1,8 +1,4 @@
 import { receiveMovementRequestSchema } from './receipt.js'
-import {
-  generateAllValidationWarnings,
-  VALIDATION_ERROR_TYPES
-} from '../common/helpers/validation-warnings.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import { validContainerTypes } from '../common/constants/container-types.js'
 
@@ -119,14 +115,9 @@ describe('Hazardous Waste Consignment Note Code rules', () => {
     payload.reasonForNoConsignmentCode = '' // blank
 
     const { error } = receiveMovementRequestSchema.validate(payload)
-    expect(error).toBeUndefined()
-
-    const warnings = generateAllValidationWarnings(payload)
-    expect(warnings).toContainEqual({
-      key: 'receipt.reasonForNoConsignmentCode',
-      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message:
-        'Reason for no Consignment Note Code is required when hazardous EWC codes are present'
-    })
+    expect(error).toBeDefined()
+    expect(error.message).toContain(
+      '"reasonForNoConsignmentCode" is required when wasteItems[*].ewcCodes contains a hazardous code and hazardousWasteConsignmentCode is not provided'
+    )
   })
 })

@@ -59,16 +59,27 @@ export const hazardousWasteConsignmentCodeSchema = Joi.custom(
 
 export const reasonForNoConsignmentCodeSchema = Joi.custom((value, helpers) => {
   const hasHazardous = hasHazardousEwcCodes(helpers.state.ancestors[0])
+
   if (
     hasHazardous &&
-    !helpers.state.ancestors[0].hazardousWasteConsignmentCode &&
-    helpers.state.ancestors[0].reasonForNoConsignmentCode !== '' &&
-    !NO_CONSIGNMENT_REASONS.includes(value)
+    !helpers.state.ancestors[0].hazardousWasteConsignmentCode
   ) {
-    return helpers.error('any.only')
+    if (
+      helpers.state.ancestors[0].reasonForNoConsignmentCode !== '' &&
+      !NO_CONSIGNMENT_REASONS.includes(value)
+    ) {
+      return helpers.error('any.only')
+    }
+
+    if (!helpers.state.ancestors[0].reasonForNoConsignmentCode) {
+      return helpers.error('reasonForNoConsignmentCode.required')
+    }
   }
+
   return value
 }).messages({
   'any.only':
-    'Reason for no consignment note code must be one of: Non-Hazardous Waste Transfer | Carrier did not provide documentation | Local Authority Receipt'
+    'Reason for no consignment note code must be one of: Non-Hazardous Waste Transfer | Carrier did not provide documentation | Local Authority Receipt',
+  'reasonForNoConsignmentCode.required':
+    '{{ #label }} is required when wasteItems[*].ewcCodes contains a hazardous code and hazardousWasteConsignmentCode is not provided'
 })
