@@ -73,7 +73,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       const { error } = validate(receiver, receipt)
       expect(error).toBeDefined()
       expect(error.message).toBe(
-        'At least one site authorisation number is required'
+        '"receiver.authorisationNumbers" must contain at least 1 items'
       )
     })
 
@@ -88,7 +88,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
 
       const { error } = validate(receiver, receipt)
       expect(error).toBeDefined()
-      expect(error.message).toBe('Site authorisation number is required')
+      expect(error.message).toBe('"receiver.authorisationNumbers" is required')
     })
   })
 
@@ -211,7 +211,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
 
       const { error } = validate(receiver, receipt)
       expect(error).toBeDefined()
-      expect(error.message).toBe('Site authorisation number is required')
+      expect(error.message).toBe('"receiver.authorisationNumbers" is required')
     })
 
     it('accepts authorisation numbers without RPS', () => {

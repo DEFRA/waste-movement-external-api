@@ -35,7 +35,16 @@ const WALES_PATTERNS = [
 // Northern Ireland patterns
 const NI_PATTERNS = [
   /^P\d{4}\/\d{2}[A-Z]$/i, // P9999/99X
-  /^WPPC \d{2}\/\d{2}$/i // WPPC 99/99
+  /^P\d{4}\/\d{2}[A-Z]\/V\d+$/i, // P9999/99X/V# (with version)
+  /^WPPC \d{2}\/\d{2}$/i, // WPPC 99/99
+  /^WPPC \d{2}\/\d{2}\/V\d+$/i, // WPPC 99/99/V# (with version)
+  /^WML \d{2}\/\d+$/i, // WML 99/# (file reference)
+  /^WML \d{2}\/\d+\/T$/i, // WML 99/#/T (with transfer)
+  /^LN\/\d{2}\/\d+$/i, // LN/99/# (licence number)
+  /^LN\/\d{2}\/\d+(\/([MTCN]|V\d+))+$/i, // LN/99/# with suffixes (M, V#, T, C, N in any combination)
+  /^PAC\/\d{4}\/WCL\d{3}$/i, // PAC/9999/WCL999 (Planning Appeals Commission)
+  /^WML \d{2}\/\d+(\/T)? LN\/\d{2}\/\d+(\/([MTCN]|V\d+))*$/i, // Combined WML + LN formats (suffixes optional)
+  /^WML \d{2}\/\d+ PAC\/\d{4}\/WCL\d{3}$/i // Combined WML + PAC formats
 ]
 
 // Combine all patterns for validation
@@ -80,7 +89,3 @@ export const authorisationNumbersArraySchema = Joi.array()
   .items(authorisationNumberSchema)
   .min(1)
   .required()
-  .messages({
-    'array.min': 'At least one site authorisation number is required',
-    'any.required': 'Site authorisation number is required'
-  })

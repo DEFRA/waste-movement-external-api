@@ -102,7 +102,7 @@ describe('Receiver Validation', () => {
 
     const { error } = validate(receiver, receipt)
     expect(error).toBeDefined()
-    expect(error.message).toBe('Site authorisation number is required')
+    expect(error.message).toBe('"receiver.authorisationNumbers" is required')
   })
 
   it('rejects when authorisation numbers is an empty array', () => {
@@ -121,7 +121,7 @@ describe('Receiver Validation', () => {
     const { error } = validate(receiver, receipt)
     expect(error).toBeDefined()
     expect(error.message).toBe(
-      'At least one site authorisation number is required'
+      '"receiver.authorisationNumbers" must contain at least 1 items'
     )
   })
 
@@ -427,7 +427,17 @@ describe('Receiver Validation', () => {
       TEST_DATA.AUTHORISATION_NUMBERS.VALID.WALES_XX9999XX,
       TEST_DATA.AUTHORISATION_NUMBERS.VALID.WALES_EPR,
       TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_P_FORMAT,
-      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WPPC
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WPPC,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_P_WITH_VERSION,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WPPC_WITH_VERSION,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WML_FILE_REF,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WML_TRANSFER,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_LN_LICENCE,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_LN_WITH_SUFFIXES,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_PAC_FORMAT,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_COMBINED,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_COMBINED_NO_SUFFIX,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_COMBINED_PAC
     ])('accepts valid format: %s', (format) => {
       const receiver = {
         organisationName: 'Test Receiver',
@@ -481,7 +491,7 @@ describe('Receiver Validation', () => {
 
       const { error } = validate(receiver, receipt)
       expect(error).toBeDefined()
-      expect(error.message).toBe('Site authorisation number is required')
+      expect(error.message).toBe('"receiver.authorisationNumbers" is required')
     })
 
     it('rejects when authorisation numbers array is empty', () => {
@@ -500,7 +510,7 @@ describe('Receiver Validation', () => {
       const { error } = validate(receiver, receipt)
       expect(error).toBeDefined()
       expect(error.message).toBe(
-        'At least one site authorisation number is required'
+        '"receiver.authorisationNumbers" must contain at least 1 items'
       )
     })
   })

@@ -37,7 +37,17 @@ export const TEST_DATA = {
       WALES_XX9999XX: 'NW1234CD',
       WALES_EPR: 'EPR/NW1234CD',
       NI_P_FORMAT: 'P1234/56A',
-      NI_WPPC: 'WPPC 12/34'
+      NI_WPPC: 'WPPC 12/34',
+      NI_P_WITH_VERSION: 'P1234/56A/V1',
+      NI_WPPC_WITH_VERSION: 'WPPC 12/34/V2',
+      NI_WML_FILE_REF: 'WML 07/61',
+      NI_WML_TRANSFER: 'WML 19/36/T',
+      NI_LN_LICENCE: 'LN/13/02',
+      NI_LN_WITH_SUFFIXES: 'LN/13/02/M/V2',
+      NI_PAC_FORMAT: 'PAC/2014/WCL001',
+      NI_COMBINED: 'WML 07/61 LN/13/02/M/V2',
+      NI_COMBINED_NO_SUFFIX: 'WML 07/61 LN/13/02',
+      NI_COMBINED_PAC: 'WML 04/38 PAC/2014/WCL001'
     },
     // Invalid formats from acceptance criteria
     INVALID: {
