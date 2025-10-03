@@ -65,7 +65,9 @@ export const reasonForNoConsignmentCodeSchema = Joi.custom((value, helpers) => {
   if (hasHazardous && !payload.hazardousWasteConsignmentCode) {
     if (!payload.reasonForNoConsignmentCode) {
       return helpers.error('reasonForNoConsignmentCode.required')
-    } else if (!NO_CONSIGNMENT_REASONS.includes(value)) {
+    }
+
+    if (!NO_CONSIGNMENT_REASONS.includes(value)) {
       return helpers.error('any.only')
     }
   }
