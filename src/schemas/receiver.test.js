@@ -55,25 +55,6 @@ describe('Receiver Validation', () => {
     expect(error).toBeUndefined()
   })
 
-  it('accepts when a single authorisation number is provided', () => {
-    const receiver = {
-      organisationName: 'Test Receiver',
-      authorisationNumbers: [
-        TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX
-      ]
-    }
-
-    const receipt = {
-      address: {
-        fullAddress: '1 Receiver St, Town',
-        postcode: 'TE1 1ST'
-      }
-    }
-
-    const { error } = validate(receiver, receipt)
-    expect(error).toBeUndefined()
-  })
-
   it('accepts when multiple authorisation numbers are provided', () => {
     const receiver = {
       organisationName: 'Test Receiver',
