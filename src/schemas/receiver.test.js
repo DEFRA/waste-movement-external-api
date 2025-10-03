@@ -8,12 +8,21 @@ describe('Receiver Validation', () => {
   const validate = (receiver, receipt) =>
     receiveMovementRequestSchema.validate({ ...basePayload, receiver, receipt })
 
+  const createStandardReceipt = () => ({
+    address: {
+      fullAddress: '1 Receiver St, Town',
+      postcode: 'TE1 1ST'
+    }
+  })
+
   it('accepts complete receiver info with UK postcode, email and phone', () => {
     const receiver = {
       organisationName: 'Test Receiver',
       emailAddress: 'receiver@example.com',
       phoneNumber: '01234567890',
-      authorisationNumbers: ['EPR123']
+      authorisationNumbers: [
+        TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX
+      ]
     }
 
     const receipt = {
@@ -30,24 +39,9 @@ describe('Receiver Validation', () => {
   it('accepts when no receiver tel/email are provided', () => {
     const receiver = {
       organisationName: 'Test Receiver',
-      authorisationNumbers: ['EPR123']
-    }
-
-    const receipt = {
-      address: {
-        fullAddress: '1 Receiver St, Town',
-        postcode: 'TE1 1ST'
-      }
-    }
-
-    const { error } = validate(receiver, receipt)
-    expect(error).toBeUndefined()
-  })
-
-  it('accepts when a single authorisation number is provided', () => {
-    const receiver = {
-      organisationName: 'Test Receiver',
-      authorisationNumbers: ['A1']
+      authorisationNumbers: [
+        TEST_DATA.AUTHORISATION_NUMBERS.VALID.WALES_XX9999XX
+      ]
     }
 
     const receipt = {
@@ -64,7 +58,11 @@ describe('Receiver Validation', () => {
   it('accepts when multiple authorisation numbers are provided', () => {
     const receiver = {
       organisationName: 'Test Receiver',
-      authorisationNumbers: ['A1', 'B2', 'C3']
+      authorisationNumbers: [
+        TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX,
+        TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_PPC_A,
+        TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WPPC
+      ]
     }
 
     const receipt = {
@@ -137,7 +135,9 @@ describe('Receiver Validation', () => {
       organisationName: 'Test Receiver',
       emailAddress: 'receiver@example.com',
       phoneNumber: '01234567890',
-      authorisationNumbers: ['EPR123']
+      authorisationNumbers: [
+        TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_PPC_A
+      ]
     }
 
     const receipt = {}
@@ -150,7 +150,7 @@ describe('Receiver Validation', () => {
   it('rejects incomplete receiver address without postcode', () => {
     const receiver = {
       organisationName: 'Test Receiver',
-      authorisationNumbers: ['EPR123']
+      authorisationNumbers: [TEST_DATA.AUTHORISATION_NUMBERS.VALID.WALES_EPR]
     }
 
     const receipt = {
@@ -165,7 +165,7 @@ describe('Receiver Validation', () => {
   it('rejects incomplete receiver address without fullAddress', () => {
     const receiver = {
       organisationName: 'Test Receiver',
-      authorisationNumbers: ['EPR123']
+      authorisationNumbers: [TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WPPC]
     }
 
     const receipt = {
@@ -180,7 +180,9 @@ describe('Receiver Validation', () => {
   it('rejects invalid UK postcode', () => {
     const receiver = {
       organisationName: 'Invalid Postcode Receiver',
-      authorisationNumbers: ['EPR123']
+      authorisationNumbers: [
+        TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_EAWML
+      ]
     }
 
     const receipt = {
@@ -198,7 +200,7 @@ describe('Receiver Validation', () => {
   it('rejects valid Ireland Eircode', () => {
     const receiver = {
       organisationName: 'Invalid Eircode Receiver',
-      authorisationNumbers: ['EPR123']
+      authorisationNumbers: [TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_WML]
     }
 
     const receipt = {
@@ -217,7 +219,9 @@ describe('Receiver Validation', () => {
     const receiver = {
       organisationName: 'Invalid Email Receiver',
       emailAddress: 'not-an-email',
-      authorisationNumbers: ['EPR123']
+      authorisationNumbers: [
+        TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_WML_L
+      ]
     }
 
     const receipt = {
@@ -286,7 +290,9 @@ describe('Receiver Validation', () => {
   it('accepts receiver with only regulatory position statements', () => {
     const receiver = {
       organisationName: 'Test Receiver',
-      authorisationNumbers: ['EPR123'],
+      authorisationNumbers: [
+        TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_SEPA
+      ],
       regulatoryPositionStatements: [123, 456, 789]
     }
 
@@ -304,7 +310,10 @@ describe('Receiver Validation', () => {
   it('accepts receiver with only authorisation numbers', () => {
     const receiver = {
       organisationName: 'Test Receiver',
-      authorisationNumbers: ['EPR123', 'EPR456']
+      authorisationNumbers: [
+        TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX,
+        TEST_DATA.AUTHORISATION_NUMBERS.VALID.WALES_EPR
+      ]
     }
 
     const receipt = {
@@ -316,5 +325,63 @@ describe('Receiver Validation', () => {
 
     const { error } = validate(receiver, receipt)
     expect(error).toBeUndefined()
+  })
+
+  // Tests for DWT-578: Site Authorization Number Validation
+  describe('Site Authorization Number Validation (DWT-578)', () => {
+    // Test invalid formats from acceptance criteria
+    describe.each([
+      ['EAWML-10001', TEST_DATA.AUTHORISATION_NUMBERS.INVALID.EAWML_WITH_DASH],
+      ['GMB383838X', TEST_DATA.AUTHORISATION_NUMBERS.INVALID.GMB_FORMAT],
+      ['WEF1234567', TEST_DATA.AUTHORISATION_NUMBERS.INVALID.WEF_FORMAT]
+    ])('rejects %s format', (formatExample, testDataValue) => {
+      test(`invalidates ${formatExample}`, () => {
+        const receiver = {
+          organisationName: 'Test Receiver',
+          authorisationNumbers: [testDataValue]
+        }
+
+        const { error } = validate(receiver, createStandardReceipt())
+        expect(error).toBeDefined()
+        expect(error.message).toBe(
+          'Site authorisation number must be in a valid UK format'
+        )
+      })
+    })
+
+    // Test all valid formats comprehensively (England, Scotland, Wales, Northern Ireland)
+    test.each([
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_LOWERCASE,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_WITH_DEPLOYMENT,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_EAWML,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_WML,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_PPC_A,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_WML_L,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_SEPA,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_EAS,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.WALES_XX9999XX,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.WALES_EPR,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_P_FORMAT,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WPPC,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_P_WITH_VERSION,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WPPC_WITH_VERSION,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WML_FILE_REF,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WML_TRANSFER,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_LN_LICENCE,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_LN_WITH_SUFFIXES,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_PAC_FORMAT,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_COMBINED,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_COMBINED_NO_SUFFIX,
+      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_COMBINED_PAC
+    ])('accepts valid format: %s', (format) => {
+      const receiver = {
+        organisationName: 'Test Receiver',
+        authorisationNumbers: [format]
+      }
+
+      const { error } = validate(receiver, createStandardReceipt())
+      expect(error).toBeUndefined()
+    })
   })
 })
