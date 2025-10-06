@@ -1,10 +1,7 @@
 import { receiveMovementRequestSchema } from './receipt.js'
-import {
-  generateAllValidationWarnings,
-  VALIDATION_ERROR_TYPES
-} from '../common/helpers/validation-warnings.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import { validContainerTypes } from '../common/constants/container-types.js'
+import { NO_CONSIGNMENT_REASONS } from './hazardous-waste-consignment.js'
 
 // Helper to build a base valid payload
 const buildBasePayload = () => ({
@@ -107,8 +104,8 @@ describe('Hazardous Waste Consignment Note Code rules', () => {
 
     const { error } = receiveMovementRequestSchema.validate(payload)
     expect(error).toBeDefined()
-    expect(error.message).toContain(
-      'Reason for no consignment note code must be one of: Non-Hazardous Waste Transfer | Carrier did not provide documentation | Local Authority Receipt'
+    expect(error.message).toBe(
+      `"reasonForNoConsignmentCode" must be one of: ${NO_CONSIGNMENT_REASONS.join(', ')}`
     )
   })
 
@@ -119,14 +116,9 @@ describe('Hazardous Waste Consignment Note Code rules', () => {
     payload.reasonForNoConsignmentCode = '' // blank
 
     const { error } = receiveMovementRequestSchema.validate(payload)
-    expect(error).toBeUndefined()
-
-    const warnings = generateAllValidationWarnings(payload)
-    expect(warnings).toContainEqual({
-      key: 'receipt.reasonForNoConsignmentCode',
-      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message:
-        'Reason for no Consignment Note Code is required when hazardous EWC codes are present'
-    })
+    expect(error).toBeDefined()
+    expect(error.message).toContain(
+      '"reasonForNoConsignmentCode" is required when wasteItems[*].ewcCodes contains a hazardous code and hazardousWasteConsignmentCode is not provided'
+    )
   })
 })
