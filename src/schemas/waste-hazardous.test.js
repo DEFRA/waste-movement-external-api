@@ -47,20 +47,45 @@ describe('Receipt Schema Validation - Hazardous', () => {
         expect(result3.error).toBeUndefined()
       })
 
-      it('should accept empty hazCodes array when containsHazardous is true with valid components', () => {
+      it('should reject empty hazCodes array when containsHazardous is true', () => {
         const result = validateHazardous({
           containsHazardous: true,
           sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
           hazCodes: [],
           components: [{ name: 'Mercury', concentration: 15 }]
         })
-        expect(result.error).toBeUndefined()
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain('must contain at least 1 items')
       })
 
-      it('should accept hazardous indicator without components or hazCodes', () => {
+      it('should reject when containsHazardous is true and hazCodes not provided', () => {
         const result = validateHazardous({
           containsHazardous: true,
           sourceOfComponents: sourceOfComponentsNotProvided.NOT_PROVIDED
+        })
+        expect(result.error).toBeDefined()
+        expect(result.error.message).toContain('is required')
+      })
+
+      it('should accept when containsHazardous is false and no hazCodes provided', () => {
+        const result = validateHazardous({
+          containsHazardous: false
+        })
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should accept when containsHazardous is false and hazCodes provided', () => {
+        const result = validateHazardous({
+          containsHazardous: false,
+          hazCodes: ['HP_1', 'HP_3']
+        })
+        expect(result.error).toBeUndefined()
+      })
+
+      it('should accept when containsHazardous is false and empty hazCodes array provided', () => {
+        const result = validateHazardous({
+          containsHazardous: false,
+          hazCodes: []
         })
         expect(result.error).toBeUndefined()
       })

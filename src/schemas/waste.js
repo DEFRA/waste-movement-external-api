@@ -120,23 +120,33 @@ const popsSchema = Joi.object({
   })
   .label('Pops')
 
+const deduplicateHazCodes = (value) => {
+  // Automatically deduplicate HP codes if duplicates exist
+  if (value && value.length > 0) {
+    return [...new Set(value)]
+  }
+  return value
+}
+
 const hazardousSchema = Joi.object({
   containsHazardous: Joi.boolean().required().messages({
     'any.required':
       'Hazardous waste is any waste that is potentially harmful to human health or the environment.'
   }),
   sourceOfComponents: sourceOfComponentsSchema('containsHazardous'),
-  hazCodes: Joi.array()
-    .items(Joi.string().valid(...validHazCodes))
-    .custom((value) => {
-      // Automatically deduplicate HP codes if duplicates exist
-      if (value && value.length > 0) {
-        return [...new Set(value)]
-      }
-      return value
-    }, 'HP codes deduplication')
-    .optional()
-    .label('HazardCodes'),
+  hazCodes: Joi.when('containsHazardous', {
+    is: true,
+    then: Joi.array()
+      .items(Joi.string().valid(...validHazCodes))
+      .min(1)
+      .required()
+      .custom(deduplicateHazCodes, 'HP codes deduplication')
+      .label('HazardCodes'),
+    otherwise: Joi.array()
+      .items(Joi.string().valid(...validHazCodes))
+      .custom(deduplicateHazCodes, 'HP codes deduplication')
+      .label('HazardCodes')
+  }),
   components: Joi.array()
     .items(
       Joi.object({
