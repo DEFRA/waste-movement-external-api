@@ -82,6 +82,14 @@ describe('Receipt Schema Validation - Hazardous', () => {
         expect(result.error).toBeUndefined()
       })
 
+      it('should accept when containsHazardous is false and empty hazCodes array provided', () => {
+        const result = validateHazardous({
+          containsHazardous: false,
+          hazCodes: []
+        })
+        expect(result.error).toBeUndefined()
+      })
+
       it.each(validHazCodes)(
         'should accept all valid HP codes with components',
         (hazCode) => {
