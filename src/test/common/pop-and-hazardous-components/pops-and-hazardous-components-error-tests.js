@@ -15,6 +15,30 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
 
   const popsOrHazardousObjectProperty = String(popsOrHazardous).toLowerCase()
   const containsPopsOrHazardousField = `contains${String(popsOrHazardous).charAt(0).toUpperCase()}${String(popsOrHazardous).toLowerCase().slice(1)}`
+  const isHazardous = popsOrHazardous === 'Hazardous'
+
+  // Helper to add hazCodes when testing Hazardous and containsHazardous is true
+  const createTestPayloadWithHazCodes = (overrides) => {
+    const wasteItemOverrides = overrides.wasteItemOverrides || {}
+    const hazardousData = wasteItemOverrides[popsOrHazardousObjectProperty]
+
+    // If testing Hazardous and containsHazardous is true, add hazCodes
+    if (
+      isHazardous &&
+      hazardousData &&
+      hazardousData[containsPopsOrHazardousField] === true
+    ) {
+      wasteItemOverrides[popsOrHazardousObjectProperty] = {
+        ...hazardousData,
+        hazCodes: hazardousData.hazCodes || ['HP_1']
+      }
+    }
+
+    return createTestPayload({
+      ...overrides,
+      wasteItemOverrides
+    })
+  }
 
   describe(`${popsOrHazardous} Components Validation`, () => {
     for (const containsHazardousValue of [true, false]) {
@@ -28,7 +52,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
       it.each(Object.values(validSourceOfComponents))(
         `should accept components when components is [], ${containsPopsOrHazardousField} is ${containsHazardousValue} and sourceOfComponents is %s`,
         (value) => {
-          const payload = createTestPayload({
+          const payload = createTestPayloadWithHazCodes({
             wasteItemOverrides: {
               [popsOrHazardousObjectProperty]: {
                 [containsPopsOrHazardousField]: containsHazardousValue,
@@ -52,7 +76,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
       it.each(Object.values(validSourceOfComponents))(
         `should reject components when an empty component is provided, ${containsPopsOrHazardousField} is ${containsHazardousValue} and sourceOfComponents is %s`,
         (value) => {
-          const payload = createTestPayload({
+          const payload = createTestPayloadWithHazCodes({
             wasteItemOverrides: {
               [popsOrHazardousObjectProperty]: {
                 [containsPopsOrHazardousField]: containsHazardousValue,
@@ -88,7 +112,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
     it.each(Object.values(validSourceOfComponents))(
       `should reject when components are provided, ${containsPopsOrHazardousField} is false and sourceOfComponents is %s`,
       (value) => {
-        const payload = createTestPayload({
+        const payload = createTestPayloadWithHazCodes({
           wasteItemOverrides: {
             [popsOrHazardousObjectProperty]: {
               [containsPopsOrHazardousField]: false,
@@ -117,7 +141,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
      * 15     TRUE                NOT_PROVIDED                            [{ name: 'Aldrin', concentration: 1.8 }]  REJECT
      */
     it(`should reject when components are provided, ${containsPopsOrHazardousField} is true and sourceOfComponents is "NOT_PROVIDED`, () => {
-      const payload = createTestPayload({
+      const payload = createTestPayloadWithHazCodes({
         wasteItemOverrides: {
           [popsOrHazardousObjectProperty]: {
             [containsPopsOrHazardousField]: true,
@@ -145,7 +169,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
     it.each(Object.values(sourceOfComponentsProvided))(
       `should accept when components are provided, ${containsPopsOrHazardousField} is true and sourceOfComponents is %s`,
       (value) => {
-        const payload = createTestPayload({
+        const payload = createTestPayloadWithHazCodes({
           wasteItemOverrides: {
             [popsOrHazardousObjectProperty]: {
               [containsPopsOrHazardousField]: true,
@@ -171,7 +195,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
     it.each([undefined, null])(
       `should reject when components are provided without a name, ${containsPopsOrHazardousField} is true and sourceOfComponents is other than NOT_PROVIDED`,
       (value) => {
-        const payload = createTestPayload({
+        const payload = createTestPayloadWithHazCodes({
           wasteItemOverrides: {
             [popsOrHazardousObjectProperty]: {
               [containsPopsOrHazardousField]: true,
@@ -204,7 +228,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
     it.each([undefined, null])(
       `should accept when components are provided without a concentration, ${containsPopsOrHazardousField} is true and sourceOfComponents is other than NOT_PROVIDED`,
       (value) => {
-        const payload = createTestPayload({
+        const payload = createTestPayloadWithHazCodes({
           wasteItemOverrides: {
             [popsOrHazardousObjectProperty]: {
               [containsPopsOrHazardousField]: true,
@@ -228,7 +252,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
     )
 
     it('should reject invalid POP name: ""', () => {
-      const payload = createTestPayload({
+      const payload = createTestPayloadWithHazCodes({
         wasteItemOverrides: {
           [popsOrHazardousObjectProperty]: {
             [containsPopsOrHazardousField]: true,
@@ -254,7 +278,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
     })
 
     it(`should reject components when ${containsPopsOrHazardousField} is true and concentration is not a number`, () => {
-      const payload = createTestPayload({
+      const payload = createTestPayloadWithHazCodes({
         wasteItemOverrides: {
           [popsOrHazardousObjectProperty]: {
             [containsPopsOrHazardousField]: true,
@@ -280,7 +304,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
     })
 
     it(`should accept components when ${containsPopsOrHazardousField} is true and concentration is a decimal`, () => {
-      const payload = createTestPayload({
+      const payload = createTestPayloadWithHazCodes({
         wasteItemOverrides: {
           [popsOrHazardousObjectProperty]: {
             [containsPopsOrHazardousField]: true,
@@ -303,7 +327,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
     })
 
     it(`should reject components when ${containsPopsOrHazardousField} is true and concentration is zero`, () => {
-      const payload = createTestPayload({
+      const payload = createTestPayloadWithHazCodes({
         wasteItemOverrides: {
           [popsOrHazardousObjectProperty]: {
             [containsPopsOrHazardousField]: true,
@@ -329,7 +353,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
     })
 
     it(`should reject components when ${containsPopsOrHazardousField} is true and concentration is a negative number`, () => {
-      const payload = createTestPayload({
+      const payload = createTestPayloadWithHazCodes({
         wasteItemOverrides: {
           [popsOrHazardousObjectProperty]: {
             [containsPopsOrHazardousField]: true,
@@ -355,7 +379,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
     })
 
     it(`should reject components when ${containsPopsOrHazardousField} is true and sourceOfComponents is missing`, () => {
-      const payload = createTestPayload({
+      const payload = createTestPayloadWithHazCodes({
         wasteItemOverrides: {
           [popsOrHazardousObjectProperty]: {
             [containsPopsOrHazardousField]: true
@@ -370,7 +394,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
     })
 
     it(`should reject components when ${containsPopsOrHazardousField} is true and sourceOfComponents is invalid`, () => {
-      const payload = createTestPayload({
+      const payload = createTestPayloadWithHazCodes({
         wasteItemOverrides: {
           [popsOrHazardousObjectProperty]: {
             [containsPopsOrHazardousField]: true,
@@ -394,7 +418,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
     it.each([undefined, null])(
       `should accept components when ${containsPopsOrHazardousField} is false and no components are provided: "%s"`,
       (value) => {
-        const payload = createTestPayload({
+        const payload = createTestPayloadWithHazCodes({
           wasteItemOverrides: {
             [popsOrHazardousObjectProperty]: {
               [containsPopsOrHazardousField]: false,
@@ -410,7 +434,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
     it.each([undefined, null])(
       `should reject components when ${containsPopsOrHazardousField} is true, sourceOfComponents is other than NOT_PROVIDED and no components are provided: "%s"`,
       (value) => {
-        const payload = createTestPayload({
+        const payload = createTestPayloadWithHazCodes({
           wasteItemOverrides: {
             [popsOrHazardousObjectProperty]: {
               [containsPopsOrHazardousField]: true,
@@ -430,7 +454,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
     it.each([undefined, null])(
       `should accept components when ${containsPopsOrHazardousField} is true, sourceOfComponents is NOT_PROVIDED and no components are provided: "%s"`,
       (value) => {
-        const payload = createTestPayload({
+        const payload = createTestPayloadWithHazCodes({
           wasteItemOverrides: {
             [popsOrHazardousObjectProperty]: {
               [containsPopsOrHazardousField]: true,
@@ -447,7 +471,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
     it.each([undefined, null])(
       `should accept components when ${containsPopsOrHazardousField} is not provided: "%s"`,
       (value) => {
-        const payload = createTestPayload({
+        const payload = createTestPayloadWithHazCodes({
           wasteItemOverrides: {
             [popsOrHazardousObjectProperty]: value
           }
