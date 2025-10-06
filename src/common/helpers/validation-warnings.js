@@ -266,7 +266,6 @@ export const generatePopAndHazardousComponentWarnings = (
  * @returns {Boolean} True if POPs/Hazardous components array is empty, otherwisse false
  */
 function isPopOrHazardousComponentsEmpty(components) {
-  console.log({ components, isArray: Array.isArray(components) })
   return (
     (Array.isArray(components) && components.length === 0) ||
     !Array.isArray(components)

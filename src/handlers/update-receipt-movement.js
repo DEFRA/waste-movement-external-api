@@ -2,6 +2,9 @@ import Boom from '@hapi/boom'
 import { httpClients } from '../common/helpers/http-client.js'
 import { handleBackendResponse } from './handle-backend-response.js'
 import { generateAllValidationWarnings } from '../common/helpers/validation-warnings.js'
+import { createLogger } from '../common/helpers/logging/logger.js'
+
+const logger = createLogger()
 
 /**
  * Handler for updating a receipt movement
@@ -11,10 +14,7 @@ import { generateAllValidationWarnings } from '../common/helpers/validation-warn
  */
 export const handleUpdateReceiptMovement = async (request, h) => {
   try {
-    // const { clientId } = request.auth.credentials
-    // console.debug('Client id:', clientId)
-    console.debug('Auth Info:', request?.auth)
-    console.debug('Auth Header:', request?.headers?.authorization)
+    logger.info('Auth Info:', request?.auth)
 
     const { wasteTrackingId } = request.params
     const movement = request.payload
