@@ -27,6 +27,7 @@ describe('GET EWC Codes', () => {
       }
     })
 
-    expect(response).toStrictEqual(expectedResponse)
+    expect(response.statusCode).toBe(200)
+    expect(response.result).toStrictEqual(expectedResponse)
   })
 })
