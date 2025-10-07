@@ -5,10 +5,8 @@ import {
 import { HTTP_STATUS } from '../../common/constants/http-status-codes.js'
 import { handleBackendResponse } from '../handle-backend-response.js'
 
-export const handleGetEwcCodes = async (request, h) => {
+export const handleGetEwcCodes = async (_request, h) => {
   try {
-    console.debug('Auth Info:', request?.auth)
-
     const response = {
       statusCode: HTTP_STATUS.OK
     }

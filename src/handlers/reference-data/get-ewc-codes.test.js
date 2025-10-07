@@ -1,5 +1,6 @@
 import { describe, jest } from '@jest/globals'
 import { handleGetEwcCodes, mapGetEwcCodesResponse } from './get-ewc-codes.js'
+import * as handler from '../handle-backend-response.js'
 
 describe('GET EWC Codes', () => {
   describe('Get EWC Codes Handler', () => {
@@ -25,7 +26,7 @@ describe('GET EWC Codes', () => {
     })
 
     it('should return 500 when request to get EWC codes fails', async () => {
-      jest.spyOn(console, 'debug').mockImplementation(() => {
+      jest.spyOn(handler, 'handleBackendResponse').mockImplementation(() => {
         throw new Error('Internal Server Error')
       })
 
