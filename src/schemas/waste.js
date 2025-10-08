@@ -6,9 +6,14 @@ import { isValidContainerType } from '../common/constants/container-types.js'
 import { validHazCodes } from '../common/constants/haz-codes.js'
 import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
 import { validSourceOfComponents } from '../common/constants/source-of-components.js'
+import {
+  GENERIC_ERRORS,
+  POPS_ERRORS,
+  HAZARDOUS_ERRORS,
+  WASTE_ERRORS
+} from './validation-error-messages.js'
 
 const MAX_EWC_CODES_COUNT = 5
-const ANY_REQUIRED_ERROR_MESSAGE = '{{ #label }} is required'
 
 const disposalOrRecoveryCodeSchema = Joi.object({
   code: Joi.string()
@@ -55,19 +60,14 @@ const sourceOfComponentsSchema = (fieldName) =>
     .when(fieldName, {
       is: true,
       then: Joi.required().messages({
-        'any.required': '{{ #label }} is required when components are present'
+        'any.required': POPS_ERRORS.SOURCE_REQUIRED_WHEN_PRESENT
       })
     })
 
-const concentrationSchema = () =>
-  Joi.number().strict().positive().allow(null).messages({
-    'any.required': ANY_REQUIRED_ERROR_MESSAGE
-  })
+const concentrationSchema = () => Joi.number().strict().positive().allow(null)
 
 const popsSchema = Joi.object({
-  containsPops: Joi.boolean().required().messages({
-    'any.required': ANY_REQUIRED_ERROR_MESSAGE
-  }),
+  containsPops: Joi.boolean().required(),
   sourceOfComponents: sourceOfComponentsSchema('containsPops'),
   components: Joi.array()
     .items(
@@ -83,8 +83,8 @@ const popsSchema = Joi.object({
           })
           .required()
           .messages({
-            'any.required': ANY_REQUIRED_ERROR_MESSAGE,
-            'any.invalid': '{{ #label }} is not valid'
+            'any.invalid': GENERIC_ERRORS.INVALID,
+            'any.required': '{{#label}} is required' // Override to prevent parent message inheritance
           }),
         concentration: concentrationSchema()
       }).label('PopComponent')
@@ -96,8 +96,7 @@ const popsSchema = Joi.object({
         is: 'NOT_PROVIDED',
         then: Joi.optional(),
         otherwise: Joi.required().messages({
-          'any.required':
-            '{{ #label }} is required when POPs components are present'
+          'any.required': POPS_ERRORS.COMPONENTS_REQUIRED
         })
       })
     })
@@ -110,13 +109,10 @@ const popsSchema = Joi.object({
       : validatePopOrHazardousAbsence(value, helpers)
   })
   .messages({
-    'any.invalid': '{{ #label }} cannot be provided when POPs are not present',
-    'any.componentsNotAllowed':
-      'POPs components must not be provided when the source of components is NOT_PROVIDED',
-    'pops.sourceNotAllowed':
-      'Source of {{ #label }} can only be provided when POPs are present',
-    'any.containsPopsHazardousFalse':
-      'POPs components must not be provided when POPs components are not present'
+    'any.invalid': POPS_ERRORS.COMPONENTS_INVALID_WHEN_NOT_PRESENT,
+    'any.componentsNotAllowed': POPS_ERRORS.COMPONENTS_NOT_ALLOWED_NOT_PROVIDED,
+    'pops.sourceNotAllowed': POPS_ERRORS.SOURCE_NOT_ALLOWED,
+    'any.containsPopsHazardousFalse': POPS_ERRORS.COMPONENTS_NOT_ALLOWED_FALSE
   })
   .label('Pops')
 
@@ -130,8 +126,7 @@ const deduplicateHazCodes = (value) => {
 
 const hazardousSchema = Joi.object({
   containsHazardous: Joi.boolean().required().messages({
-    'any.required':
-      'Hazardous waste is any waste that is potentially harmful to human health or the environment.'
+    'any.required': HAZARDOUS_ERRORS.CONTAINS_HAZARDOUS_REQUIRED
   }),
   sourceOfComponents: sourceOfComponentsSchema('containsHazardous'),
   hazCodes: Joi.when('containsHazardous', {
@@ -151,8 +146,8 @@ const hazardousSchema = Joi.object({
     .items(
       Joi.object({
         name: Joi.string().empty('').empty(null).required().messages({
-          'any.required': ANY_REQUIRED_ERROR_MESSAGE,
-          'any.invalid': '{{ #label }} is not valid'
+          'any.invalid': GENERIC_ERRORS.INVALID,
+          'any.required': '{{#label}} is required' // Override to prevent parent message inheritance
         }),
         concentration: concentrationSchema()
       }).label('ComponentItem')
@@ -164,8 +159,7 @@ const hazardousSchema = Joi.object({
         is: 'NOT_PROVIDED',
         then: Joi.optional(),
         otherwise: Joi.required().messages({
-          'any.required':
-            '{{ #label }} is required when Hazardous components are present'
+          'any.required': HAZARDOUS_ERRORS.COMPONENTS_REQUIRED
         })
       })
     })
@@ -178,14 +172,12 @@ const hazardousSchema = Joi.object({
       : validatePopOrHazardousAbsence(value, helpers)
   })
   .messages({
-    'any.invalid':
-      '{{ #label }} cannot be provided when Hazardous components are not present',
+    'any.invalid': HAZARDOUS_ERRORS.COMPONENTS_INVALID_WHEN_NOT_PRESENT,
     'any.componentsNotAllowed':
-      'Hazardous components must not be provided when the source of components is NOT_PROVIDED',
-    'pops.sourceNotAllowed':
-      '{{ #label }} can only be provided when Hazardous components are present',
+      HAZARDOUS_ERRORS.COMPONENTS_NOT_ALLOWED_NOT_PROVIDED,
+    'pops.sourceNotAllowed': HAZARDOUS_ERRORS.SOURCE_NOT_ALLOWED,
     'any.containsPopsHazardousFalse':
-      'Hazardous components must not be provided when Hazardous components are not present'
+      HAZARDOUS_ERRORS.COMPONENTS_NOT_ALLOWED_FALSE
   })
   .label('Hazardous')
 
@@ -216,16 +208,14 @@ export const wasteItemsSchema = Joi.object({
   ewcCodes: Joi.array()
     .items(
       Joi.string().custom(validateEwcCode, 'EWC code validation').messages({
-        'string.ewcCodeFormat':
-          '{{#label}} must be a valid 6-digit numeric code',
-        'string.ewcCodeInvalid':
-          '{{#label}} must be a valid EWC code from the official list'
+        'string.ewcCodeFormat': WASTE_ERRORS.EWC_CODE_FORMAT,
+        'string.ewcCodeInvalid': WASTE_ERRORS.EWC_CODE_INVALID
       })
     )
     .required()
     .max(MAX_EWC_CODES_COUNT)
     .messages({
-      'array.max': '{{#label}} must contain no more than 5 EWC codes'
+      'array.max': WASTE_ERRORS.EWC_CODES_MAX
     }),
   wasteDescription: Joi.string().required(),
   physicalForm: Joi.string()
@@ -236,7 +226,7 @@ export const wasteItemsSchema = Joi.object({
     .required()
     .custom(validateContainerType, 'Container type validation')
     .messages({
-      'string.containerTypeInvalid': '{{#label}} must be a valid container type'
+      'string.containerTypeInvalid': WASTE_ERRORS.CONTAINER_TYPE_INVALID
     }),
   weight: weightSchema,
   pops: popsSchema,
