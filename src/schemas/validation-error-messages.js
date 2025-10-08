@@ -43,8 +43,6 @@ export const WASTE_ERRORS = {
 export const POPS_ERRORS = {
   SOURCE_REQUIRED_WHEN_PRESENT:
     '{{#label}} is required when components are present',
-  COMPONENTS_REQUIRED:
-    '{{#label}} is required when POPs components are present',
   COMPONENTS_INVALID_WHEN_NOT_PRESENT:
     'POPs components cannot be provided when POPs are not present',
   COMPONENTS_NOT_ALLOWED_NOT_PROVIDED:
@@ -60,8 +58,6 @@ export const HAZARDOUS_ERRORS = {
     'Hazardous waste is any waste that is potentially harmful to human health or the environment.',
   SOURCE_REQUIRED_WHEN_PRESENT:
     '{{#label}} is required when components are present',
-  COMPONENTS_REQUIRED:
-    '{{#label}} is required when Hazardous components are present',
   COMPONENTS_INVALID_WHEN_NOT_PRESENT:
     'Hazardous components cannot be provided when Hazardous components are not present',
   COMPONENTS_NOT_ALLOWED_NOT_PROVIDED:

@@ -66,38 +66,35 @@ const sourceOfComponentsSchema = (fieldName) =>
 
 const concentrationSchema = () => Joi.number().strict().positive().allow(null)
 
+const popComponentSchema = Joi.object({
+  name: Joi.string()
+    .empty('')
+    .empty(null)
+    .custom((value, helpers) => {
+      if (!isValidPopName(value)) {
+        return helpers.error('any.invalid')
+      }
+      return value
+    })
+    .required()
+    .messages({
+      'any.invalid': GENERIC_ERRORS.INVALID
+    }),
+  concentration: concentrationSchema()
+}).label('PopComponent')
+
 const popsSchema = Joi.object({
   containsPops: Joi.boolean().required(),
   sourceOfComponents: sourceOfComponentsSchema('containsPops'),
   components: Joi.array()
-    .items(
-      Joi.object({
-        name: Joi.string()
-          .empty('')
-          .empty(null)
-          .custom((value, helpers) => {
-            if (!isValidPopName(value)) {
-              return helpers.error('any.invalid')
-            }
-            return value
-          })
-          .required()
-          .messages({
-            'any.invalid': GENERIC_ERRORS.INVALID,
-            'any.required': '{{#label}} is required' // Override to prevent parent message inheritance
-          }),
-        concentration: concentrationSchema()
-      }).label('PopComponent')
-    )
+    .items(popComponentSchema)
     .empty(null)
     .when('containsPops', {
       is: true,
       then: Joi.when('sourceOfComponents', {
         is: 'NOT_PROVIDED',
         then: Joi.optional(),
-        otherwise: Joi.required().messages({
-          'any.required': POPS_ERRORS.COMPONENTS_REQUIRED
-        })
+        otherwise: Joi.required()
       })
     })
 })
@@ -124,6 +121,13 @@ const deduplicateHazCodes = (value) => {
   return value
 }
 
+const hazardousComponentSchema = Joi.object({
+  name: Joi.string().empty('').empty(null).required().messages({
+    'any.invalid': GENERIC_ERRORS.INVALID
+  }),
+  concentration: concentrationSchema()
+}).label('ComponentItem')
+
 const hazardousSchema = Joi.object({
   containsHazardous: Joi.boolean().required().messages({
     'any.required': HAZARDOUS_ERRORS.CONTAINS_HAZARDOUS_REQUIRED
@@ -143,24 +147,14 @@ const hazardousSchema = Joi.object({
       .label('HazardCodes')
   }),
   components: Joi.array()
-    .items(
-      Joi.object({
-        name: Joi.string().empty('').empty(null).required().messages({
-          'any.invalid': GENERIC_ERRORS.INVALID,
-          'any.required': '{{#label}} is required' // Override to prevent parent message inheritance
-        }),
-        concentration: concentrationSchema()
-      }).label('ComponentItem')
-    )
+    .items(hazardousComponentSchema)
     .empty(null)
     .when('containsHazardous', {
       is: true,
       then: Joi.when('sourceOfComponents', {
         is: 'NOT_PROVIDED',
         then: Joi.optional(),
-        otherwise: Joi.required().messages({
-          'any.required': HAZARDOUS_ERRORS.COMPONENTS_REQUIRED
-        })
+        otherwise: Joi.required()
       })
     })
 })
