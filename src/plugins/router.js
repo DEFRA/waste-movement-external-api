@@ -3,6 +3,7 @@ import { createReceiptMovement } from '../routes/create-receipt-movement.js'
 import { updateReceiptMovement } from '../routes/update-receipt-movement.js'
 import { getEwcCodes } from '../routes/reference-data/get-ewc-codes.js'
 import { getDisposalOrRecoveryCodes } from '../routes/reference-data/get-disposal-or-recovery-codes.js'
+import { getHazardousPropertyCodes } from '../routes/reference-data/get-hazardous-property-codes.js'
 
 const router = {
   plugin: {
@@ -14,7 +15,8 @@ const router = {
         createReceiptMovement,
         updateReceiptMovement,
         getEwcCodes,
-        getDisposalOrRecoveryCodes
+        getDisposalOrRecoveryCodes,
+        getHazardousPropertyCodes
       ]
 
       // Register routes directly
