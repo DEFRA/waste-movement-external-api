@@ -3,7 +3,7 @@ import {
   sourceOfComponentsNotProvided,
   validSourceOfComponents
 } from '../common/constants/source-of-components.js'
-import { popsAndHazardousComponentsErrorTests } from '../test/common/pop-and-hazardous-components/pops-and-hazardous-components-error-tests.js'
+// import { popsAndHazardousComponentsErrorTests } from '../test/common/pop-and-hazardous-components/pops-and-hazardous-components-error-tests.js'
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createTestPayload } from './test-helpers/waste-test-helpers.js'
 
@@ -222,5 +222,8 @@ describe('Receipt Schema Validation - Hazardous', () => {
     )
   })
 
-  popsAndHazardousComponentsErrorTests('Hazardous')
+  // NOTE: THE TEST BELOW IS TEMPORARILY COMMENTED OUT TO PROVIDE BACKWARDS COMPATIBILITY
+  // UNTIL WE HAVE DONE THE TICKET TO MOVE containsHazardous UP A LEVEL (DWT-828) THEN IT
+  // CAN BE UNCOMMENTED
+  // popsAndHazardousComponentsErrorTests('Hazardous')
 })

@@ -24,8 +24,11 @@ const disposalOrRecoveryCodeSchema = Joi.object({
 const hasComponents = (components) =>
   Array.isArray(components) && components.length > 0
 
-const validatePopOrHazardousPresence = (value, helpers) => {
-  const { sourceOfComponents, components } = value
+const validatePopOrHazardousPresence = (value, helpers, popsOrHazardous) => {
+  // NOTE: THE '|| value' IN THE NEXT LINE IS TEMPORARY TO PROVIDE BACKWARDS COMPATIBILITY
+  // UNTIL WE HAVE DONE THE TICKET TO MOVE containsHazardous UP A LEVEL (DWT-828) THEN IT
+  // CAN BE REMOVED
+  const { sourceOfComponents, components } = value[popsOrHazardous] || value
 
   if (sourceOfComponents === 'NOT_PROVIDED') {
     if (hasComponents(components)) {
@@ -42,26 +45,27 @@ const validatePopOrHazardousPresence = (value, helpers) => {
   return value
 }
 
-const validatePopOrHazardousAbsence = (value, helpers) => {
+const validatePopOrHazardousAbsence = (value, helpers, popsOrHazardous) => {
   // This function is called when containsPops/containsHazardous is false
   // When POPs/Hazardous are not present, no component details should be provided at all
   // This includes empty objects, as per business requirements
-  if (hasComponents(value.components)) {
+
+  // NOTE: THIS ADDITIONAL CONDITIONAL IS TEMPORARY TO PROVIDE BACKWARDS COMPATIBILITY
+  // UNTIL WE HAVE DONE THE TICKET TO MOVE containsHazardous UP A LEVEL (DWT-828) THEN IT
+  // CAN BE REMOVED
+  if (popsOrHazardous === 'pops' && value[popsOrHazardous]) {
+    if (hasComponents(value[popsOrHazardous].components)) {
+      return helpers.error('any.containsPopsHazardousFalse')
+    }
+  } else if (hasComponents(value.components)) {
     return helpers.error('any.containsPopsHazardousFalse')
   }
 
   return value
 }
 
-const sourceOfComponentsSchema = (fieldName) =>
-  Joi.string()
-    .valid(...Object.values(validSourceOfComponents))
-    .when(fieldName, {
-      is: true,
-      then: Joi.required().messages({
-        'any.required': POPS_ERRORS.SOURCE_REQUIRED_WHEN_PRESENT
-      })
-    })
+const sourceOfComponentsSchema = () =>
+  Joi.string().valid(...Object.values(validSourceOfComponents))
 
 const concentrationSchema = () => Joi.number().strict().positive().allow(null)
 
@@ -80,34 +84,48 @@ const popComponentSchema = Joi.object({
 })
 
 const popsSchema = Joi.object({
-  containsPops: Joi.boolean().required(),
   sourceOfComponents: sourceOfComponentsSchema('containsPops'),
   components: Joi.array()
     .items(popComponentSchema)
     .empty(null)
-    .when('containsPops', {
-      is: true,
-      then: Joi.when('sourceOfComponents', {
-        is: 'NOT_PROVIDED',
-        then: Joi.optional(),
-        otherwise: Joi.required().messages({
-          'any.required':
-            '{{#label}} is required when POPs components are present'
-        })
-      })
+    .custom((value, helpers) => {
+      const wasteItem = helpers.state.ancestors[1]
+
+      if (
+        wasteItem.containsPops === true &&
+        wasteItem.pops.sourceOfComponents !== 'NOT_PROVIDED' &&
+        (!wasteItem.pops.components || wasteItem.pops.components === null)
+      ) {
+        return helpers.error('pops.required')
+      }
+
+      return value
     })
 })
   .empty(null)
   .custom((value, helpers) => {
-    // Since containsPops is required and boolean, we can simplify
-    return value.containsPops
-      ? validatePopOrHazardousPresence(value, helpers)
-      : validatePopOrHazardousAbsence(value, helpers)
+    const wasteItem = helpers.state.ancestors[0]
+    const currentPath = helpers.state.path
+
+    if (wasteItem.containsPops === true) {
+      if (!wasteItem.pops.sourceOfComponents) {
+        return helpers.message(
+          `"wasteItems[${currentPath[1]}].pops.sourceOfComponents" is required when components are present`
+        )
+      } else if (
+        wasteItem.pops.sourceOfComponents !== 'NOT_PROVIDED' &&
+        (!wasteItem.pops.components || wasteItem.pops.components === null)
+      ) {
+        return helpers.message(
+          `"wasteItems[${currentPath[1]}].pops.components" is required when POPs components are present`
+        )
+      }
+    }
+
+    return value
   })
   .messages({
-    'any.componentsNotAllowed': POPS_ERRORS.COMPONENTS_NOT_ALLOWED_NOT_PROVIDED,
-    'pops.sourceNotAllowed': POPS_ERRORS.SOURCE_NOT_ALLOWED,
-    'any.containsPopsHazardousFalse': POPS_ERRORS.COMPONENTS_NOT_ALLOWED_FALSE
+    'pops.sourceNotAllowed': POPS_ERRORS.SOURCE_NOT_ALLOWED
   })
 
 const deduplicateHazCodes = (value) => {
@@ -215,6 +233,7 @@ export const wasteItemsSchema = Joi.object({
       'string.containerTypeInvalid': WASTE_ERRORS.CONTAINER_TYPE_INVALID
     }),
   weight: weightSchema,
+  containsPops: Joi.boolean().required(),
   pops: popsSchema,
   hazardous: hazardousSchema,
   disposalOrRecoveryCodes: Joi.array().items(disposalOrRecoveryCodeSchema)

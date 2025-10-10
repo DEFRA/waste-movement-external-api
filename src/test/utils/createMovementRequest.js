@@ -42,9 +42,8 @@ export function createMovementRequest(overrides) {
           amount: 1.0,
           isEstimate: false
         },
-        pops: {
-          containsPops: false
-        },
+        containsPops: false,
+        pops: {},
         hazardous: {
           containsHazardous: false,
           sourceOfComponents: sourceOfComponentsNotProvided.NOT_PROVIDED
