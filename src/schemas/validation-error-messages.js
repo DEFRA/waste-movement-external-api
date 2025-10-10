@@ -26,8 +26,9 @@ export const CARRIER_ERRORS = {
 
 // Address validation messages
 export const ADDRESS_ERRORS = {
-  POSTCODE_UK_IRELAND_FORMAT: 'Postcode must be in valid UK or Ireland format',
-  POSTCODE_UK_FORMAT: 'Postcode must be in valid UK format'
+  POSTCODE_UK_IRELAND_FORMAT:
+    '{{#label}} must be in valid UK or Ireland format',
+  POSTCODE_UK_FORMAT: '{{#label}} must be in valid UK format'
 }
 
 // Waste validation messages
@@ -71,9 +72,8 @@ export const HAZARDOUS_ERRORS = {
 // Hazardous waste consignment messages
 export const CONSIGNMENT_ERRORS = {
   CODE_FORMAT:
-    'consignment note code must be in one of the valid formats: EA/NRW (e.g. CJTILE/A0001), SEPA (SA|SB|SC followed by 7 digits), or NIEA (DA|DB|DC followed by 7 digits)',
-  CODE_REQUIRED:
-    'hazardousWasteConsignmentCode is required when hazardous EWC codes are present',
+    '{{#label}} must be in one of the valid formats: EA/NRW (e.g. CJTILE/A0001), SEPA (SA|SB|SC followed by 7 digits), or NIEA (DA|DB|DC followed by 7 digits)',
+  CODE_REQUIRED: '{{#label}} is required when hazardous EWC codes are present',
   REASON_REQUIRED:
     '{{#label}} is required when wasteItems[*].ewcCodes contains a hazardous code and hazardousWasteConsignmentCode is not provided',
   REASON_INVALID_PREFIX: '{{#label}} must be one of:'
@@ -81,13 +81,13 @@ export const CONSIGNMENT_ERRORS = {
 
 // Authorisation number messages
 export const AUTHORISATION_ERRORS = {
-  INVALID: 'Site authorisation number must be in a valid UK format'
+  INVALID: '{{#label}} must be in a valid UK format'
 }
 
 // Weight validation messages
 export const WEIGHT_ERRORS = {
   IS_ESTIMATE_REQUIRED:
-    'isEstimate is required. Please indicate whether the quantity is an estimate (true) or actual measurement (false)',
+    '{{#label}} is required. Please indicate whether the quantity is an estimate (true) or actual measurement (false)',
   IS_ESTIMATE_BOOLEAN:
-    'isEstimate must be either true or false. Please indicate whether the quantity is an estimate (true) or actual measurement (false)'
+    '{{#label}} must be either true or false. Please indicate whether the quantity is an estimate (true) or actual measurement (false)'
 }

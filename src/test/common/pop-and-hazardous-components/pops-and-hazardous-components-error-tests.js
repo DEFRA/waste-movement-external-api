@@ -446,7 +446,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
         const result = receiveMovementRequestSchema.validate(payload)
         expect(result.error).toBeDefined()
         expect(result.error.message).toBe(
-          `"wasteItems[0].${popsOrHazardousObjectProperty}.components" is required`
+          `"wasteItems[0].${popsOrHazardousObjectProperty}.components" is required when ${popsOrHazardous} components are present`
         )
       }
     )
