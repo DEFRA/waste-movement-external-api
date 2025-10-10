@@ -40,7 +40,7 @@ describe('Hazardous Waste Consignment Note Code rules', () => {
       const { error } = receiveMovementRequestSchema.validate(payload)
       expect(error).toBeDefined()
       expect(error.message).toBe(
-        'hazardousWasteConsignmentCode is required when hazardous EWC codes are present'
+        '"hazardousWasteConsignmentCode" is required when hazardous EWC codes are present'
       )
     }
   )
@@ -60,7 +60,7 @@ describe('Hazardous Waste Consignment Note Code rules', () => {
       const { error } = receiveMovementRequestSchema.validate(payload)
       expect(error).toBeDefined()
       expect(error.message).toBe(
-        'hazardousWasteConsignmentCode is required when hazardous EWC codes are present'
+        '"hazardousWasteConsignmentCode" is required when hazardous EWC codes are present'
       )
     }
   )
@@ -91,7 +91,7 @@ describe('Hazardous Waste Consignment Note Code rules', () => {
     const { error } = receiveMovementRequestSchema.validate(payload)
     expect(error).toBeDefined()
     expect(error.message).toContain(
-      'consignment note code must be in one of the valid formats'
+      '"hazardousWasteConsignmentCode" must be in one of the valid formats'
     )
   })
 

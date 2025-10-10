@@ -127,7 +127,9 @@ describe('BrokerOrDealer Validation', () => {
 
     const { error } = validate(broker)
     expect(error).toBeDefined()
-    expect(error.message).toBe('Postcode must be in valid UK or Ireland format')
+    expect(error.message).toBe(
+      '"brokerOrDealer.address.postcode" must be in valid UK or Ireland format'
+    )
   })
 
   it('rejects invalid broker email address', () => {

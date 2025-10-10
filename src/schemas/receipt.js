@@ -14,19 +14,9 @@ import {
   UK_POSTCODE_REGEX
 } from '../common/constants/regexes.js'
 import { authorisationNumbersArraySchema } from './authorisation-number.js'
+import { CARRIER_ERRORS, ADDRESS_ERRORS } from './validation-error-messages.js'
 
 const MIN_STRING_LENGTH = 1
-
-// Carrier validation error messages
-const CARRIER_REGISTRATION_OR_REASON_REQUIRED =
-  'Either carrier.registrationNumber or carrier.reasonForNoRegistrationNumber is required'
-const CARRIER_REASON_ONLY_FOR_NULL =
-  'carrier.reasonForNoRegistrationNumber should only be provided when carrier.registrationNumber is not provided'
-const CARRIER_VEHICLE_REG_REQUIRED_FOR_ROAD =
-  'If carrier.meansOfTransport is "Road" then carrier.vehicleRegistration is required'
-const CARRIER_VEHICLE_REG_ONLY_ALLOWED_FOR_ROAD =
-  'If carrier.meansOfTransport is not "Road" then carrier.vehicleRegistration is not applicable'
-
 const LONG_STRING_MAX_LENGTH = 5000
 
 const addressSchema = Joi.object({
@@ -37,7 +27,7 @@ const addressSchema = Joi.object({
       Joi.string().pattern(IRL_POSTCODE_REGEX)
     )
     .messages({
-      'alternatives.match': 'Postcode must be in valid UK or Ireland format'
+      'alternatives.match': ADDRESS_ERRORS.POSTCODE_UK_IRELAND_FORMAT
     })
     .required()
 })
@@ -50,8 +40,7 @@ const carrierOrBrokerDealerRegistrationNumber = Joi.alternatives()
     Joi.string().pattern(NI_CARRIER_REGISTRATION_NUMBER_REGEX)
   )
   .messages({
-    'alternatives.match':
-      '{{ #label }} must be in a valid England, SEPA, NRW or NI format'
+    'alternatives.match': CARRIER_ERRORS.REGISTRATION_NUMBER_FORMAT
   })
 
 const carrierSchema = Joi.object({
@@ -73,9 +62,9 @@ const carrierSchema = Joi.object({
       otherwise: Joi.forbidden()
     })
     .messages({
-      'string.empty': CARRIER_REGISTRATION_OR_REASON_REQUIRED,
-      'string.base': CARRIER_REGISTRATION_OR_REASON_REQUIRED,
-      'any.unknown': CARRIER_REASON_ONLY_FOR_NULL
+      'string.empty': CARRIER_ERRORS.REGISTRATION_OR_REASON_REQUIRED,
+      'string.base': CARRIER_ERRORS.REGISTRATION_OR_REASON_REQUIRED,
+      'any.unknown': CARRIER_ERRORS.REASON_ONLY_FOR_NULL
     }),
   organisationName: Joi.string().required(),
   address: addressSchema,
@@ -86,8 +75,8 @@ const carrierSchema = Joi.object({
     then: Joi.string().required(),
     otherwise: Joi.forbidden()
   }).messages({
-    'any.required': CARRIER_VEHICLE_REG_REQUIRED_FOR_ROAD,
-    'any.unknown': CARRIER_VEHICLE_REG_ONLY_ALLOWED_FOR_ROAD
+    'any.required': CARRIER_ERRORS.VEHICLE_REG_REQUIRED_FOR_ROAD,
+    'any.unknown': CARRIER_ERRORS.VEHICLE_REG_ONLY_ALLOWED_FOR_ROAD
   }),
   meansOfTransport: Joi.string()
     .valid(...MEANS_OF_TRANSPORT)
@@ -99,7 +88,7 @@ const receiverAddressSchema = addressSchema.keys({
   fullAddress: Joi.string().required(),
   postcode: Joi.string()
     .pattern(UK_POSTCODE_REGEX)
-    .message('Postcode must be in valid UK format')
+    .message(ADDRESS_ERRORS.POSTCODE_UK_FORMAT)
     .required()
 })
 

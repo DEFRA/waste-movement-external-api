@@ -1,5 +1,6 @@
 import Joi from 'joi'
 import { isValidHazardousEwcCode } from '../common/constants/ewc-codes.js'
+import { CONSIGNMENT_ERRORS } from './validation-error-messages.js'
 
 export const NO_CONSIGNMENT_REASONS = [
   'Non-Hazardous Waste Transfer',
@@ -52,10 +53,8 @@ export const hazardousWasteConsignmentCodeSchema = Joi.custom(
     return value
   }
 ).messages({
-  'string.consignmentFormat':
-    'consignment note code must be in one of the valid formats: EA/NRW (e.g. CJTILE/A0001), SEPA (SA|SB|SC followed by 7 digits), or NIEA (DA|DB|DC followed by 7 digits)',
-  'hazardousWasteConsignmentCode.required':
-    'hazardousWasteConsignmentCode is required when hazardous EWC codes are present'
+  'string.consignmentFormat': CONSIGNMENT_ERRORS.CODE_FORMAT,
+  'hazardousWasteConsignmentCode.required': CONSIGNMENT_ERRORS.CODE_REQUIRED
 })
 
 export const reasonForNoConsignmentCodeSchema = Joi.custom((value, helpers) => {
@@ -74,7 +73,6 @@ export const reasonForNoConsignmentCodeSchema = Joi.custom((value, helpers) => {
 
   return value
 }).messages({
-  'any.only': `{{ #label }} must be one of: ${NO_CONSIGNMENT_REASONS.join(', ')}`,
-  'reasonForNoConsignmentCode.required':
-    '{{ #label }} is required when wasteItems[*].ewcCodes contains a hazardous code and hazardousWasteConsignmentCode is not provided'
+  'any.only': `${CONSIGNMENT_ERRORS.REASON_INVALID_PREFIX} ${NO_CONSIGNMENT_REASONS.join(', ')}`,
+  'reasonForNoConsignmentCode.required': CONSIGNMENT_ERRORS.REASON_REQUIRED
 })
