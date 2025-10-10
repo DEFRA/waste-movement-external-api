@@ -28,158 +28,331 @@ export const VALIDATION_MESSAGES = {
     'Disposal or Recovery codes are required for proper waste tracking and compliance'
 }
 
-/**
- * Helper function to check if disposal/recovery codes exist for a waste item
- * @param {Object} wasteItem - The waste item to check
- * @returns {boolean} Whether the waste item has valid disposal/recovery codes
- */
-const hasValidDisposalRecoveryCodes = (wasteItem) => {
-  return (
-    wasteItem.disposalOrRecoveryCodes &&
-    Array.isArray(wasteItem.disposalOrRecoveryCodes) &&
-    wasteItem.disposalOrRecoveryCodes.length > 0
-  )
+export const hazardousComponentsWarningValidators = {
+  key: 'wasteItems.hazardous.components',
+  validators: [
+    {
+      field: undefined,
+      validator: (wasteItem) =>
+        isPopOrHazardousComponentsValid(wasteItem, 'Hazardous'),
+      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      message: `Hazardous components are recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+    },
+    {
+      field: 'concentration',
+      validator: (wasteItem) =>
+        isPopOrHazardousConcentrationValid(wasteItem, 'Hazardous'),
+      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      message: `Hazardous concentration is recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+    }
+  ]
 }
 
-/**
- * Validate weight fields for a disposal/recovery code entry
- * @param {Object} codeEntry - The disposal/recovery code entry
- * @param {string} codeKeyBase - The base key path for warnings
- * @returns {Array} Array of validation warnings for weight fields
- */
-const validateWeightFields = (codeEntry, codeKeyBase) => {
-  const warnings = []
-
-  if (!codeEntry.weight) {
-    warnings.push({
-      key: `${codeKeyBase}.weight`,
+export const popsComponentsWarningValidators = {
+  key: 'wasteItems.pops.components',
+  validators: [
+    {
+      field: undefined,
+      validator: (wasteItem) =>
+        isPopOrHazardousComponentsValid(wasteItem, 'POPs'),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: `Weight is required for Disposal/Recovery code: ${codeEntry.code || 'UNKNOWN'}`
-    })
-    return warnings
-  }
+      message: `POPs components are recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+    },
+    {
+      field: 'concentration',
+      validator: (wasteItem) =>
+        isPopOrHazardousConcentrationValid(wasteItem, 'POPs'),
+      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      message: `POPs concentration is recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+    }
+  ]
+}
 
-  // Check individual weight fields
-  if (!codeEntry.weight.metric) {
-    warnings.push({
-      key: `${codeKeyBase}.weight.metric`,
+export const disposalOrRecoveryCodesWarningValidators = {
+  key: 'wasteItems.disposalOrRecoveryCodes',
+  validators: [
+    {
+      field: 'code',
+      validator: (wasteItem) => isDisposalOrRecoveryCodeMissing(wasteItem),
+      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      message:
+        'Disposal or Recovery codes are required for proper waste tracking and compliance'
+    },
+    {
+      field: 'weight',
+      validator: (wasteItem) => isDisposalOrRecoveryWeightMissing(wasteItem),
+      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      message: 'Weight is required'
+    },
+    {
+      field: 'weight.metric',
+      validator: (wasteItem) =>
+        isDisposalOrRecoveryWeightMetricMissing(wasteItem),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message: 'Weight metric is required'
-    })
-  }
-
-  if (
-    codeEntry.weight.amount === undefined ||
-    codeEntry.weight.amount === null
-  ) {
-    warnings.push({
-      key: `${codeKeyBase}.weight.amount`,
+    },
+    {
+      field: 'weight.amount',
+      validator: (wasteItem) =>
+        isDisposalOrRecoveryWeightAmountMissing(wasteItem),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message: 'Weight amount is required'
-    })
-  }
-
-  if (
-    codeEntry.weight.isEstimate === undefined ||
-    codeEntry.weight.isEstimate === null
-  ) {
-    warnings.push({
-      key: `${codeKeyBase}.weight.isEstimate`,
+    },
+    {
+      field: 'weight.isEstimate',
+      validator: (wasteItem) =>
+        isDisposalOrRecoveryWeightIsEstimateMissing(wasteItem),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message: 'Weight estimate flag is required'
-    })
-  }
-
-  return warnings
-}
-
-/**
- * Generate validation warnings for disposal/recovery codes
- * @param {Object} payload - The request payload
- * @returns {Array} Array of validation warnings
- */
-export const generateDisposalRecoveryWarnings = (payload) => {
-  const warnings = []
-
-  // Check if wasteItems exist
-  if (!payload.wasteItems || !Array.isArray(payload.wasteItems)) {
-    warnings.push({
-      key: 'wasteItems[0].disposalOrRecoveryCodes',
-      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: VALIDATION_MESSAGES.DISPOSAL_RECOVERY_REQUIRED
-    })
-    return warnings
-  }
-
-  // Check if any waste item has disposal/recovery codes
-  let hasAnyDisposalOrRecoveryCodes = false
-
-  payload.wasteItems.forEach((wasteItem, wasteItemIndex) => {
-    // Check if this waste item has valid disposal/recovery codes
-    if (!hasValidDisposalRecoveryCodes(wasteItem)) {
-      const message = !wasteItem.disposalOrRecoveryCodes
-        ? VALIDATION_MESSAGES.DISPOSAL_RECOVERY_REQUIRED
-        : 'At least one Disposal or Recovery code must be specified with associated weight'
-
-      warnings.push({
-        key: `wasteItems[${wasteItemIndex}].disposalOrRecoveryCodes`,
-        errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-        message
-      })
-      return
     }
+  ]
+}
 
-    hasAnyDisposalOrRecoveryCodes = true
-
-    // Check each disposal/recovery code entry for this waste item
-    // Note: Missing codes and quantities are handled by schema validation (rejection)
-    // This warning logic only handles cases where the request passes schema validation
-    // but still has business rule violations that should generate warnings
-    wasteItem.disposalOrRecoveryCodes.forEach((codeEntry, codeIndex) => {
-      const codeKeyBase = `wasteItems[${wasteItemIndex}].disposalOrRecoveryCodes[${codeIndex}]`
-
-      // Check if code is missing (this should be caught by schema validation)
-      if (!codeEntry.code) {
-        warnings.push({
-          key: `${codeKeyBase}.code`,
-          errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Disposal or Recovery code is required for each entry'
-        })
-      }
-
-      // Validate weight fields
-      warnings.push(...validateWeightFields(codeEntry, codeKeyBase))
-    })
-  })
-
-  // If no waste items have disposal/recovery codes at all, add a general warning
-  if (!hasAnyDisposalOrRecoveryCodes && warnings.length === 0) {
-    warnings.push({
-      key: VALIDATION_KEYS.RECEIPT_DISPOSAL_RECOVERY_CODES,
+export const hazardousConsignmentWarningValidators = {
+  key: 'reasonForNoConsignmentCode',
+  validators: [
+    {
+      field: undefined,
+      validator: (payload) => isHazardousConsignmentCodeFieldsMissing(payload),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: VALIDATION_MESSAGES.DISPOSAL_RECOVERY_REQUIRED
-    })
-  }
-
-  return warnings
+      message:
+        'Reason for no Consignment Note Code is required when hazardous EWC codes are present'
+    }
+  ]
 }
 
 /**
- * Generate warnings for hazardous consignment code conditions.
- * If any EWC code is hazardous and hazardousWasteConsignmentCode is blank,
- * then reasonForNoConsignmentCode must be provided; otherwise add a warning.
- * @param {Object} payload
- * @returns {Array}
+ * Process validation warnings
+ * @param {Object} payload - The request payload
+ * @param {Object} warningValidators - The validators to use
+ * @returns {Array} Array of warning messages
  */
-export const generateHazardousConsignmentWarnings = (payload) => {
-  const warnings = []
+export function processValidationWarnings(payload, warningValidators) {
+  const validationWarnings = []
 
+  if (!payload) {
+    return validationWarnings
+  }
+
+  const topLevelItem = warningValidators.key.split('.')[0]
+
+  if (Array.isArray(payload[topLevelItem])) {
+    payload[topLevelItem].forEach((field, topLevelIndex) =>
+      validationWarnings.push(
+        ...validateField(field, warningValidators, topLevelIndex, topLevelItem)
+      )
+    )
+  } else {
+    validationWarnings.push(
+      ...validateField(payload, warningValidators, 0, topLevelItem)
+    )
+  }
+
+  return validationWarnings
+}
+
+/**
+ * Validates a field
+ * @param {Object} currentField - The field to validate
+ * @param {Object} warningValidators - The validators to use
+ * @param {Object} topLevelIndex - The index of the top level item
+ * @param {Object} topLevelItem - The top level item
+ * @returns {Array} Array of warning messages
+ */
+function validateField(
+  currentField,
+  warningValidators,
+  topLevelIndex,
+  topLevelItem
+) {
+  const fieldWarnings = []
+  const baseKey = `${warningValidators.key.replace(topLevelItem, `${topLevelItem}[${topLevelIndex}]`)}`
+
+  warningValidators.validators.forEach(
+    ({ field, validator, errorType, message }) => {
+      const { isValid, invalidIndices } = validator(currentField)
+
+      if (isValid === false) {
+        if (invalidIndices && invalidIndices.length > 0) {
+          fieldWarnings.push(
+            ...invalidIndices.map((invalidIndex) => ({
+              key: `${baseKey.replace(
+                warningValidators.key.split('.').at(-1),
+                `${warningValidators.key.split('.').at(-1)}[${invalidIndex}]`
+              )}${field ? `.${field}` : ''}`,
+              errorType,
+              message
+            }))
+          )
+        } else {
+          fieldWarnings.push({
+            key:
+              topLevelItem === 'wasteItems'
+                ? baseKey
+                : `receipt.${topLevelItem}`,
+            errorType,
+            message
+          })
+        }
+      }
+    }
+  )
+
+  return fieldWarnings
+}
+
+/**
+ * Determines if Disposal or Recovery weight is missing
+ * @param {Object} wasteItem - The waste item
+ * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array}
+ */
+const isDisposalOrRecoveryWeightMissing = (wasteItem) => {
+  if (!wasteItem) {
+    return { isValid: true }
+  }
+
+  const { disposalOrRecoveryCodes } = wasteItem
+
+  if (!disposalOrRecoveryCodes || disposalOrRecoveryCodes.length === 0) {
+    return { isValid: true }
+  }
+
+  let invalidIndices = []
+
+  invalidIndices = disposalOrRecoveryCodes?.reduce((indices, item, index) => {
+    if (!item?.weight) {
+      indices.push(index)
+    }
+    return indices
+  }, [])
+
+  return { isValid: invalidIndices.length === 0, invalidIndices }
+}
+
+/**
+ * Determines if Disposal or Recovery weight is missing
+ * @param {Object} wasteItem - The waste item
+ * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array}
+ */
+const isDisposalOrRecoveryWeightMetricMissing = (wasteItem) => {
+  if (!wasteItem) {
+    return { isValid: true }
+  }
+
+  const { disposalOrRecoveryCodes } = wasteItem
+
+  if (!disposalOrRecoveryCodes || disposalOrRecoveryCodes.length === 0) {
+    return { isValid: true }
+  }
+
+  let invalidIndices = []
+
+  invalidIndices = disposalOrRecoveryCodes?.reduce((indices, item, index) => {
+    if (item?.weight && !item.weight.metric) {
+      indices.push(index)
+    }
+    return indices
+  }, [])
+
+  return { isValid: invalidIndices.length === 0, invalidIndices }
+}
+
+/**
+ * Determines if Disposal or Recovery weight amount is missing
+ * @param {Object} wasteItem - The waste item
+ * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array}
+ */
+const isDisposalOrRecoveryWeightAmountMissing = (wasteItem) => {
+  if (!wasteItem) {
+    return { isValid: true }
+  }
+
+  const { disposalOrRecoveryCodes } = wasteItem
+
+  if (!disposalOrRecoveryCodes || disposalOrRecoveryCodes.length === 0) {
+    return { isValid: true }
+  }
+
+  let invalidIndices = []
+
+  invalidIndices = disposalOrRecoveryCodes?.reduce((indices, item, index) => {
+    if (item?.weight && !item.weight.amount) {
+      indices.push(index)
+    }
+    return indices
+  }, [])
+
+  return { isValid: invalidIndices.length === 0, invalidIndices }
+}
+
+/**
+ * Determines if Disposal or Recovery weight isEstimate flag is missing
+ * @param {Object} wasteItem - The waste item
+ * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array}
+ */
+const isDisposalOrRecoveryWeightIsEstimateMissing = (wasteItem) => {
+  if (!wasteItem) {
+    return { isValid: true }
+  }
+
+  const { disposalOrRecoveryCodes } = wasteItem
+
+  if (!disposalOrRecoveryCodes || disposalOrRecoveryCodes.length === 0) {
+    return { isValid: true }
+  }
+
+  let invalidIndices = []
+
+  invalidIndices = disposalOrRecoveryCodes?.reduce((indices, item, index) => {
+    if (item?.weight && ![true, false].includes(item.weight.isEstimate)) {
+      indices.push(index)
+    }
+    return indices
+  }, [])
+
+  return { isValid: invalidIndices.length === 0, invalidIndices }
+}
+
+/**
+ * Determines if Disposal or Recovery code is missing
+ * @param {Object} wasteItem - The waste item
+ * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array}
+ */
+const isDisposalOrRecoveryCodeMissing = (wasteItem) => {
+  if (!wasteItem) {
+    return { isValid: false }
+  }
+
+  const { disposalOrRecoveryCodes } = wasteItem
+
+  if (!disposalOrRecoveryCodes || disposalOrRecoveryCodes.length === 0) {
+    return { isValid: false }
+  }
+
+  let invalidIndices = []
+
+  invalidIndices = disposalOrRecoveryCodes?.reduce((indices, item, index) => {
+    if (!item.code) {
+      indices.push(index)
+    }
+    return indices
+  }, [])
+
+  return { isValid: invalidIndices.length === 0, invalidIndices }
+}
+
+/**
+ * Determines if Hazardous consignment code is missing
+ * @param {Object} payload - The request payload
+ * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array}
+ */
+const isHazardousConsignmentCodeFieldsMissing = (payload) => {
   if (!Array.isArray(payload?.wasteItems)) {
-    return warnings
+    return { isValid: true }
   }
 
   if (!hasHazardousEwcCodes(payload)) {
-    return warnings
+    return { isValid: true }
   }
 
   const code = payload.hazardousWasteConsignmentCode
@@ -187,83 +360,14 @@ export const generateHazardousConsignmentWarnings = (payload) => {
 
   // If consignment code is blank, reason must be provided
   if (!code && !reason) {
-    warnings.push({
-      key: VALIDATION_KEYS.REASON_NO_CONSIGNMENT_CODE,
-      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message:
-        'Reason for no Consignment Note Code is required when hazardous EWC codes are present'
-    })
+    return { isValid: false }
   }
-
-  return warnings
-}
-
-/**
- * Generate warnings for POPs/Hazardous components
- *
- * item   contains<Haz/Pops>	sourceOfComponents	                    components			                          expected outcome
- * 16     TRUE                Other (e.g GUIDANCE, OWN TESTING etc)   []                                        WARNING
- * 18     TRUE                Other (e.g GUIDANCE, OWN TESTING etc)   [{ name: 'Aldrin' }]                      WARNING
- *
- * @param {Object} payload - The request payload
- * @returns {Array} Array of validation warnings for POPs
- */
-export const generatePopAndHazardousComponentWarnings = (
-  payload,
-  popsOrHazardous
-) => {
-  if (!['POPs', 'Hazardous'].includes(popsOrHazardous)) {
-    throw new Error('Expecting popsOrHazardous to be one of: POPs, Hazardous')
-  }
-
-  const warnings = []
-  const popsOrHazardousObjectProperty = String(popsOrHazardous).toLowerCase()
-  const containsPopsOrHazardousField = `contains${String(popsOrHazardous).charAt(0).toUpperCase()}${String(popsOrHazardous).toLowerCase().slice(1)}`
-
-  if (!Array.isArray(payload?.wasteItems)) {
-    return warnings
-  }
-
-  payload.wasteItems.forEach((wasteItem, index) => {
-    if (
-      !wasteItem[popsOrHazardousObjectProperty]?.[containsPopsOrHazardousField]
-    ) {
-      return
-    }
-
-    const sourceOfComponents =
-      wasteItem[popsOrHazardousObjectProperty].sourceOfComponents
-    const components = wasteItem[popsOrHazardousObjectProperty].components
-
-    if (sourceOfComponents === 'NOT_PROVIDED') {
-      return
-    }
-
-    // Check if source is one of the values that expects components
-    if (isPopOrHazardousComponentsEmpty(components)) {
-      warnings.push({
-        key: `wasteItems[${index}].${popsOrHazardousObjectProperty}.components`,
-        errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-        message: `${popsOrHazardous} components are recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
-      })
-    }
-
-    if (isPopOrHazardousConcentrationMissing(components)) {
-      warnings.push({
-        key: `wasteItems[${index}].${popsOrHazardousObjectProperty}.components`,
-        errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-        message: `${popsOrHazardous} concentration is recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
-      })
-    }
-  })
-
-  return warnings
 }
 
 /**
  * Determines if POPs/Hazardous components is an empty array
  * @param {Object} components - The POPs/Hazardous components
- * @returns {Boolean} True if POPs/Hazardous components array is empty, otherwisse false
+ * @returns {Boolean} True if POPs/Hazardous components array is empty, otherwise false
  */
 function isPopOrHazardousComponentsEmpty(components) {
   return (
@@ -273,19 +377,86 @@ function isPopOrHazardousComponentsEmpty(components) {
 }
 
 /**
- * Determines if any of the POPs/Hazardous components has a missing concentration value
- * @param {Object} components - The POPs/Hazardous components
- * @returns {Boolean} True if any of the POPs/Hazardous components has a missing concentration value, otherwise false
+ * Determines if POPs/Hazardous components is an empty array
+ * @param {Object} wasteItem - The waste item
+ * @param {Object} popsOrHazardous - One of: POPs, Hazardous
+ * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array}
  */
-function isPopOrHazardousConcentrationMissing(components) {
-  return (
-    !isPopOrHazardousComponentsEmpty(components) &&
-    components.some(
-      (component) =>
-        component.concentration === undefined ||
-        component.concentration === null
-    )
-  )
+function isPopOrHazardousComponentsValid(wasteItem, popsOrHazardous) {
+  if (!wasteItem) {
+    return { isValid: true }
+  }
+
+  if (!['POPs', 'Hazardous'].includes(popsOrHazardous)) {
+    throw new Error('Expecting popsOrHazardous to be one of: POPs, Hazardous')
+  }
+
+  const popsOrHazardousObjectProperty = String(popsOrHazardous).toLowerCase()
+  const containsPopsOrHazardousField = `contains${String(popsOrHazardous).charAt(0).toUpperCase()}${String(popsOrHazardous).toLowerCase().slice(1)}`
+
+  if (!wasteItem[popsOrHazardousObjectProperty]) {
+    return { isValid: true }
+  }
+
+  const { sourceOfComponents, components } =
+    wasteItem[popsOrHazardousObjectProperty]
+
+  if (
+    wasteItem[popsOrHazardousObjectProperty][containsPopsOrHazardousField] ===
+      false ||
+    sourceOfComponents === 'NOT_PROVIDED'
+  ) {
+    return { isValid: true }
+  }
+
+  return { isValid: Array.isArray(components) && components.length > 0 }
+}
+
+/**
+ * Determines if any of the POPs/Hazardous components has a missing concentration value
+ * @param {Object} wasteItem - The waste item
+ * @param {Object} popsOrHazardous - One of: POPs, Hazardous
+ * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array}
+ */
+function isPopOrHazardousConcentrationValid(wasteItem, popsOrHazardous) {
+  if (!wasteItem) {
+    return { isValid: true }
+  }
+
+  if (!['POPs', 'Hazardous'].includes(popsOrHazardous)) {
+    throw new Error('Expecting popsOrHazardous to be one of: POPs, Hazardous')
+  }
+
+  const popsOrHazardousObjectProperty = String(popsOrHazardous).toLowerCase()
+  const containsPopsOrHazardousField = `contains${String(popsOrHazardous).charAt(0).toUpperCase()}${String(popsOrHazardous).toLowerCase().slice(1)}`
+
+  if (!wasteItem[popsOrHazardousObjectProperty]) {
+    return { isValid: true }
+  }
+
+  const { sourceOfComponents, components } =
+    wasteItem[popsOrHazardousObjectProperty]
+
+  if (
+    wasteItem[popsOrHazardousObjectProperty][containsPopsOrHazardousField] ===
+      false ||
+    sourceOfComponents === 'NOT_PROVIDED'
+  ) {
+    return { isValid: true }
+  }
+
+  let invalidIndices = []
+
+  if (!isPopOrHazardousComponentsEmpty(components)) {
+    invalidIndices = components.reduce((indices, item, index) => {
+      if (item.concentration === undefined || item.concentration === null) {
+        indices.push(index)
+      }
+      return indices
+    }, [])
+  }
+
+  return { isValid: invalidIndices.length === 0, invalidIndices }
 }
 
 /**
@@ -297,21 +468,30 @@ export const generateAllValidationWarnings = (payload) => {
   const warnings = []
 
   // Add disposal/recovery code warnings
-  const disposalRecoveryWarnings = generateDisposalRecoveryWarnings(payload)
+  const disposalRecoveryWarnings = processValidationWarnings(
+    payload,
+    disposalOrRecoveryCodesWarningValidators
+  )
   warnings.push(...disposalRecoveryWarnings)
 
   // Add hazardous consignment related warnings
-  const consignmentWarnings = generateHazardousConsignmentWarnings(payload)
+  const consignmentWarnings = processValidationWarnings(
+    payload,
+    hazardousConsignmentWarningValidators
+  )
   warnings.push(...consignmentWarnings)
 
   // Add POPs components warnings
-  const popsWarnings = generatePopAndHazardousComponentWarnings(payload, 'POPs')
+  const popsWarnings = processValidationWarnings(
+    payload,
+    popsComponentsWarningValidators
+  )
   warnings.push(...popsWarnings)
 
   // Add Hazardous components warnings
-  const hazardousWarnings = generatePopAndHazardousComponentWarnings(
+  const hazardousWarnings = processValidationWarnings(
     payload,
-    'Hazardous'
+    hazardousComponentsWarningValidators
   )
   warnings.push(...hazardousWarnings)
 

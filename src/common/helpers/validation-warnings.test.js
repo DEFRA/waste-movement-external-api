@@ -1,8 +1,13 @@
 import { popsAndHazardousComponentWarningTests } from '../../test/common/pop-and-hazardous-components/pops-and-hazardous-components-warning-tests.js'
+import { validEwcCodes } from '../constants/ewc-codes.js'
 import {
   VALIDATION_ERROR_TYPES,
-  generateDisposalRecoveryWarnings,
-  generateAllValidationWarnings
+  generateAllValidationWarnings,
+  hazardousComponentsWarningValidators,
+  popsComponentsWarningValidators,
+  processValidationWarnings,
+  disposalOrRecoveryCodesWarningValidators,
+  hazardousConsignmentWarningValidators
 } from './validation-warnings.js'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -12,7 +17,8 @@ const TEST_MESSAGES = {
     'Disposal or Recovery codes are required for proper waste tracking and compliance',
   AT_LEAST_ONE_REQUIRED:
     'At least one Disposal or Recovery code must be specified with associated weight',
-  CODE_REQUIRED: 'Disposal or Recovery code is required for each entry',
+  CODE_REQUIRED:
+    'Disposal or Recovery codes are required for proper waste tracking and compliance',
   WEIGHT_METRIC_REQUIRED: 'Weight metric is required',
   WEIGHT_AMOUNT_REQUIRED: 'Weight amount is required',
   WEIGHT_ESTIMATE_FLAG_REQUIRED: 'Weight estimate flag is required'
@@ -50,7 +56,7 @@ describe('Validation Warnings', () => {
     })
   })
 
-  describe('generateDisposalRecoveryWarnings', () => {
+  describe('Disposal or Recovery Code Warnings', () => {
     it('should return empty array when payload has valid disposal/recovery codes', () => {
       const payload = createDisposalRecoveryPayload([
         {
@@ -59,7 +65,10 @@ describe('Validation Warnings', () => {
         }
       ])
 
-      const warnings = generateDisposalRecoveryWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([])
     })
 
@@ -69,7 +78,10 @@ describe('Validation Warnings', () => {
         // No wasteItems section
       }
 
-      const warnings = generateDisposalRecoveryWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
           key: 'wasteItems[0].disposalOrRecoveryCodes',
@@ -91,7 +103,10 @@ describe('Validation Warnings', () => {
         ]
       }
 
-      const warnings = generateDisposalRecoveryWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
           key: 'wasteItems[0].disposalOrRecoveryCodes',
@@ -105,13 +120,16 @@ describe('Validation Warnings', () => {
     it('should generate warning when disposalOrRecoveryCodes array is empty', () => {
       const payload = createDisposalRecoveryPayload([])
 
-      const warnings = generateDisposalRecoveryWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
           key: 'wasteItems[0].disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
-            'At least one Disposal or Recovery code must be specified with associated weight'
+            'Disposal or Recovery codes are required for proper waste tracking and compliance'
         }
       ])
     })
@@ -124,12 +142,16 @@ describe('Validation Warnings', () => {
         }
       ])
 
-      const warnings = generateDisposalRecoveryWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
           key: 'wasteItems[0].disposalOrRecoveryCodes[0].code',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Disposal or Recovery code is required for each entry'
+          message:
+            'Disposal or Recovery codes are required for proper waste tracking and compliance'
         }
       ])
     })
@@ -142,12 +164,15 @@ describe('Validation Warnings', () => {
         }
       ])
 
-      const warnings = generateDisposalRecoveryWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
           key: 'wasteItems[0].disposalOrRecoveryCodes[0].weight',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight is required for Disposal/Recovery code: R1'
+          message: 'Weight is required'
         }
       ])
     })
@@ -168,17 +193,21 @@ describe('Validation Warnings', () => {
         ]
       }
 
-      const warnings = generateDisposalRecoveryWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
           key: 'wasteItems[0].disposalOrRecoveryCodes[0].code',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Disposal or Recovery code is required for each entry'
+          message:
+            'Disposal or Recovery codes are required for proper waste tracking and compliance'
         },
         {
           key: 'wasteItems[0].disposalOrRecoveryCodes[0].weight',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight is required for Disposal/Recovery code: UNKNOWN'
+          message: 'Weight is required'
         }
       ])
     })
@@ -203,7 +232,10 @@ describe('Validation Warnings', () => {
         ]
       }
 
-      const warnings = generateDisposalRecoveryWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
           key: 'wasteItems[0].disposalOrRecoveryCodes[0].weight.metric',
@@ -245,7 +277,10 @@ describe('Validation Warnings', () => {
           }
         ])
 
-        const warnings = generateDisposalRecoveryWarnings(payload)
+        const warnings = processValidationWarnings(
+          payload,
+          disposalOrRecoveryCodesWarningValidators
+        )
         expect(warnings).toEqual([
           createExpectedWarning(
             `wasteItems[0].disposalOrRecoveryCodes[0].weight.${field}`,
@@ -286,17 +321,21 @@ describe('Validation Warnings', () => {
         ]
       }
 
-      const warnings = generateDisposalRecoveryWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
           key: 'wasteItems[0].disposalOrRecoveryCodes[1].code',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Disposal or Recovery code is required for each entry'
+          message:
+            'Disposal or Recovery codes are required for proper waste tracking and compliance'
         },
         {
           key: 'wasteItems[0].disposalOrRecoveryCodes[1].weight',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight is required for Disposal/Recovery code: UNKNOWN'
+          message: 'Weight is required'
         },
         {
           key: 'wasteItems[0].disposalOrRecoveryCodes[2].weight.amount',
@@ -324,7 +363,10 @@ describe('Validation Warnings', () => {
         ]
       }
 
-      const warnings = generateDisposalRecoveryWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
           key: 'wasteItems[0].disposalOrRecoveryCodes[0].weight.metric',
@@ -345,8 +387,52 @@ describe('Validation Warnings', () => {
     })
   })
 
-  popsAndHazardousComponentWarningTests('POPs')
-  popsAndHazardousComponentWarningTests('Hazardous')
+  popsAndHazardousComponentWarningTests('POPs', popsComponentsWarningValidators)
+  popsAndHazardousComponentWarningTests(
+    'Hazardous',
+    hazardousComponentsWarningValidators
+  )
+
+  describe('generateHazardousConsignmentWarnings', () => {
+    it('should retrn an empty array when provided with a non hazardous code', () => {
+      const payload = {
+        wasteItems: [
+          {
+            ewcCodes: [validEwcCodes[0]]
+          }
+        ]
+      }
+
+      const warnings = processValidationWarnings(
+        payload,
+        hazardousConsignmentWarningValidators
+      )
+      expect(warnings).toEqual([])
+    })
+
+    it('should generate warning when both hazardousWasteConsignmentCode and reasonForNoConsignmentCode are missing', () => {
+      const payload = {
+        wasteItems: [
+          {
+            ewcCodes: ['010304']
+          }
+        ]
+      }
+
+      const warnings = processValidationWarnings(
+        payload,
+        hazardousConsignmentWarningValidators
+      )
+      expect(warnings).toEqual([
+        {
+          key: 'receipt.reasonForNoConsignmentCode',
+          errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+          message:
+            'Reason for no Consignment Note Code is required when hazardous EWC codes are present'
+        }
+      ])
+    })
+  })
 
   describe('generateAllValidationWarnings', () => {
     it('should return empty array when no warnings are generated', () => {
@@ -384,13 +470,16 @@ describe('Validation Warnings', () => {
         ]
       }
 
-      const warnings = generateAllValidationWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
           key: 'wasteItems[0].disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
-            'At least one Disposal or Recovery code must be specified with associated weight'
+            'Disposal or Recovery codes are required for proper waste tracking and compliance'
         }
       ])
     })
@@ -400,7 +489,10 @@ describe('Validation Warnings', () => {
         organisationApiId: uuidv4()
       }
 
-      const warnings = generateAllValidationWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
           key: 'wasteItems[0].disposalOrRecoveryCodes',
@@ -427,7 +519,10 @@ describe('Validation Warnings', () => {
         ]
       }
 
-      const warnings = generateAllValidationWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
           key: 'wasteItems[0].disposalOrRecoveryCodes',
