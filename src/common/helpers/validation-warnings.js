@@ -191,32 +191,40 @@ function validateField(
     const { isValid, invalidIndices } = validator(currentField)
 
     if (isValid === false) {
-      let baseKeyJsonPath = warningValidators.key.replace(
+      let baseKeyJsonPath = replaceJsonPathIndex(
+        warningValidators.key,
         topLevelItem,
-        `${topLevelItem}.${topLevelIndex}`
+        topLevelIndex
       )
-      let baseKeyIndexed = warningValidators.key.replace(
+      let baseKeyIndexed = replaceIndexedPathIndex(
+        warningValidators.key,
         topLevelItem,
-        `${topLevelItem}[${topLevelIndex}]`
+        topLevelIndex
       )
 
       if (invalidIndices && invalidIndices.length > 0) {
+        const keyLastItem = warningValidators.key.split('.').at(-1)
+        const keyFieldItem = field ? `.${field}` : ''
+
         fieldWarnings.push(
           ...invalidIndices.map((invalidIndex) => {
-            baseKeyJsonPath = baseKeyJsonPath.replace(
-              warningValidators.key.split('.').at(-1),
-              `${warningValidators.key.split('.').at(-1)}.${invalidIndex}`
+            baseKeyJsonPath = replaceJsonPathIndex(
+              baseKeyJsonPath,
+              keyLastItem,
+              invalidIndex
             )
-            baseKeyIndexed = baseKeyIndexed.replace(
-              warningValidators.key.split('.').at(-1),
-              `${warningValidators.key.split('.').at(-1)}[${invalidIndex}]`
+            baseKeyIndexed = replaceIndexedPathIndex(
+              baseKeyIndexed,
+              keyLastItem,
+              invalidIndex
             )
-            baseKeyJsonPath += field ? `.${field}` : ''
-            baseKeyIndexed += field ? `.${field}` : ''
             return {
-              key: baseKeyJsonPath,
+              key: baseKeyJsonPath + keyFieldItem,
               errorType,
-              message: message.replace('{{ #label }}', baseKeyIndexed)
+              message: message.replace(
+                '{{ #label }}',
+                baseKeyIndexed + keyFieldItem
+              )
             }
           })
         )
@@ -240,6 +248,26 @@ function validateField(
 
   return fieldWarnings
 }
+
+/**
+ * Replaces a key item with a JSON path index item
+ * @param {string} key - The key with item to be replaced
+ * @param {string} item - The item to replace
+ * @param {string} index - The index to use in the replacement
+ * @returns {string} The key with the replaced item
+ */
+const replaceJsonPathIndex = (key, item, index) =>
+  key.replace(item, `${item}.${index}`)
+
+/**
+ * Replaces a key item with an indexed path index item
+ * @param {string} key - The key with item to be replaced
+ * @param {string} item - The item to replace
+ * @param {string} index - The index to use in the replacement
+ * @returns {string} The key with the replaced item
+ */
+const replaceIndexedPathIndex = (key, item, index) =>
+  key.replace(item, `${item}[${index}]`)
 
 /**
  * Determines if Disposal or Recovery weight is missing
