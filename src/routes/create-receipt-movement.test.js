@@ -36,7 +36,7 @@ describe('Create Receipt Movement Route', () => {
   // Common validation warnings
   const disposalOrRecoveryCodesWarning = {
     errorType: 'NotProvided',
-    key: 'wasteItems[0].disposalOrRecoveryCodes',
+    key: 'wasteItems.0.disposalOrRecoveryCodes',
     message:
       'Disposal or Recovery codes are required for proper waste tracking and compliance'
   }

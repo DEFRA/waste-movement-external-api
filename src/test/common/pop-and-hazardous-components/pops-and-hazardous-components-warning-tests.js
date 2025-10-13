@@ -109,7 +109,7 @@ export function popsAndHazardousComponentWarningTests(
       const warnings = processValidationWarnings(payload, validationWarnings)
       expect(warnings).toEqual([
         {
-          key: `wasteItems[0].${popsOrHazardousObjectProperty}.components`,
+          key: `wasteItems.0.${popsOrHazardousObjectProperty}.components`,
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message: `${popsOrHazardous} components are recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
         }
@@ -162,7 +162,7 @@ export function popsAndHazardousComponentWarningTests(
         const warnings = processValidationWarnings(payload, validationWarnings)
         expect(warnings).toEqual([
           {
-            key: `wasteItems[0].${popsOrHazardousObjectProperty}.components[1].concentration`,
+            key: `wasteItems.0.${popsOrHazardousObjectProperty}.components.1.concentration`,
             errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
             message: `${popsOrHazardous} concentration is recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
           }

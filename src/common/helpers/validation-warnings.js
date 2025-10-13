@@ -192,7 +192,11 @@ function validateField(
     const { isValid, invalidIndices } = validator(currentField)
 
     if (isValid === false) {
-      let baseKey = warningValidators.key.replace(
+      let baseKeyJsonPath = warningValidators.key.replace(
+        topLevelItem,
+        `${topLevelItem}.${topLevelIndex}`
+      )
+      let baseKeyIndexed = warningValidators.key.replace(
         topLevelItem,
         `${topLevelItem}[${topLevelIndex}]`
       )
@@ -200,18 +204,25 @@ function validateField(
       if (invalidIndices && invalidIndices.length > 0) {
         fieldWarnings.push(
           ...invalidIndices.map((invalidIndex) => {
-            baseKey = baseKey.replace(
+            baseKeyJsonPath = baseKeyJsonPath.replace(
+              warningValidators.key.split('.').at(-1),
+              `${warningValidators.key.split('.').at(-1)}.${invalidIndex}`
+            )
+            baseKeyIndexed = baseKeyIndexed.replace(
               warningValidators.key.split('.').at(-1),
               `${warningValidators.key.split('.').at(-1)}[${invalidIndex}]`
             )
-            baseKey += field ? `.${field}` : ''
-            return { key: baseKey, errorType, message }
+            baseKeyJsonPath += field ? `.${field}` : ''
+            baseKeyIndexed += field ? `.${field}` : ''
+            return { key: baseKeyJsonPath, errorType, message }
           })
         )
       } else {
         fieldWarnings.push({
           key:
-            topLevelItem === 'wasteItems' ? baseKey : `receipt.${topLevelItem}`,
+            topLevelItem === 'wasteItems'
+              ? baseKeyJsonPath
+              : `receipt.${topLevelItem}`,
           errorType,
           message
         })

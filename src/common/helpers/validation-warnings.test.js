@@ -84,7 +84,7 @@ describe('Validation Warnings', () => {
       )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes',
+          key: 'wasteItems.0.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
             'Disposal or Recovery codes are required for proper waste tracking and compliance'
@@ -109,7 +109,7 @@ describe('Validation Warnings', () => {
       )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes',
+          key: 'wasteItems.0.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
             'Disposal or Recovery codes are required for proper waste tracking and compliance'
@@ -126,7 +126,7 @@ describe('Validation Warnings', () => {
       )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes',
+          key: 'wasteItems.0.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
             'Disposal or Recovery codes are required for proper waste tracking and compliance'
@@ -148,7 +148,7 @@ describe('Validation Warnings', () => {
       )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[0].code',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.0.code',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
             'Disposal or Recovery codes are required for proper waste tracking and compliance'
@@ -170,7 +170,7 @@ describe('Validation Warnings', () => {
       )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[0].weight',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message: 'Weight is required'
         }
@@ -199,13 +199,13 @@ describe('Validation Warnings', () => {
       )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[0].code',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.0.code',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
             'Disposal or Recovery codes are required for proper waste tracking and compliance'
         },
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[0].weight',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message: 'Weight is required'
         }
@@ -238,7 +238,7 @@ describe('Validation Warnings', () => {
       )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[0].weight.metric',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight.metric',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message: 'Weight metric is required'
         }
@@ -283,7 +283,7 @@ describe('Validation Warnings', () => {
         )
         expect(warnings).toEqual([
           createExpectedWarning(
-            `wasteItems[0].disposalOrRecoveryCodes[0].weight.${field}`,
+            `wasteItems.0.disposalOrRecoveryCodes.0.weight.${field}`,
             message
           )
         ])
@@ -327,18 +327,18 @@ describe('Validation Warnings', () => {
       )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[1].code',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.1.code',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
             'Disposal or Recovery codes are required for proper waste tracking and compliance'
         },
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[1].weight',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.1.weight',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message: 'Weight is required'
         },
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[2].weight.amount',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.2.weight.amount',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message: 'Weight amount is required'
         }
@@ -369,17 +369,17 @@ describe('Validation Warnings', () => {
       )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[0].weight.metric',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight.metric',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message: 'Weight metric is required'
         },
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[0].weight.amount',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight.amount',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message: 'Weight amount is required'
         },
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[0].weight.isEstimate',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight.isEstimate',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message: 'Weight estimate flag is required'
         }
@@ -476,7 +476,7 @@ describe('Validation Warnings', () => {
       )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes',
+          key: 'wasteItems.0.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
             'Disposal or Recovery codes are required for proper waste tracking and compliance'
@@ -495,7 +495,7 @@ describe('Validation Warnings', () => {
       )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes',
+          key: 'wasteItems.0.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
             'Disposal or Recovery codes are required for proper waste tracking and compliance'
@@ -525,13 +525,13 @@ describe('Validation Warnings', () => {
       )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes',
+          key: 'wasteItems.0.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
             'Disposal or Recovery codes are required for proper waste tracking and compliance'
         },
         {
-          key: 'wasteItems[1].disposalOrRecoveryCodes',
+          key: 'wasteItems.1.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
             'Disposal or Recovery codes are required for proper waste tracking and compliance'
