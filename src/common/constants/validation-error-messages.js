@@ -55,8 +55,6 @@ export const POPS_ERRORS = {
 
 // Hazardous waste validation messages
 export const HAZARDOUS_ERRORS = {
-  CONTAINS_HAZARDOUS_REQUIRED:
-    'Hazardous waste is any waste that is potentially harmful to human health or the environment.',
   SOURCE_REQUIRED_WHEN_PRESENT:
     '{{#label}} is required when components are present',
   COMPONENTS_INVALID_WHEN_NOT_PRESENT:
@@ -82,12 +80,4 @@ export const CONSIGNMENT_ERRORS = {
 // Authorisation number messages
 export const AUTHORISATION_ERRORS = {
   INVALID: '{{#label}} must be in a valid UK format'
-}
-
-// Weight validation messages
-export const WEIGHT_ERRORS = {
-  IS_ESTIMATE_REQUIRED:
-    '{{#label}} is required. Please indicate whether the quantity is an estimate (true) or actual measurement (false)',
-  IS_ESTIMATE_BOOLEAN:
-    '{{#label}} must be either true or false. Please indicate whether the quantity is an estimate (true) or actual measurement (false)'
 }

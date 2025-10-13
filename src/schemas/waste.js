@@ -134,9 +134,7 @@ const hazardousComponentSchema = Joi.object({
 }).label('ComponentItem')
 
 const hazardousSchema = Joi.object({
-  containsHazardous: Joi.boolean().required().messages({
-    'any.required': HAZARDOUS_ERRORS.CONTAINS_HAZARDOUS_REQUIRED
-  }),
+  containsHazardous: Joi.boolean().required(),
   sourceOfComponents: sourceOfComponentsSchema('containsHazardous'),
   hazCodes: Joi.when('containsHazardous', {
     is: true,
