@@ -5,11 +5,6 @@
  * Messages use {{ #label }} to reference the field name at the beginning where appropriate.
  */
 
-// Generic validation messages
-export const GENERIC_ERRORS = {
-  INVALID: '{{#label}} is not valid'
-}
-
 // Carrier validation messages
 export const CARRIER_ERRORS = {
   REGISTRATION_OR_REASON_REQUIRED:
@@ -44,8 +39,6 @@ export const WASTE_ERRORS = {
 export const POPS_ERRORS = {
   SOURCE_REQUIRED_WHEN_PRESENT:
     '{{#label}} is required when components are present',
-  COMPONENTS_INVALID_WHEN_NOT_PRESENT:
-    'POPs components cannot be provided when POPs are not present',
   COMPONENTS_NOT_ALLOWED_NOT_PROVIDED:
     'POPs components must not be provided when the source of components is NOT_PROVIDED',
   SOURCE_NOT_ALLOWED: '{{#label}} can only be provided when POPs are present',
@@ -57,8 +50,6 @@ export const POPS_ERRORS = {
 export const HAZARDOUS_ERRORS = {
   SOURCE_REQUIRED_WHEN_PRESENT:
     '{{#label}} is required when components are present',
-  COMPONENTS_INVALID_WHEN_NOT_PRESENT:
-    'Hazardous components cannot be provided when Hazardous components are not present',
   COMPONENTS_NOT_ALLOWED_NOT_PROVIDED:
     'Hazardous components must not be provided when the source of components is NOT_PROVIDED',
   SOURCE_NOT_ALLOWED:

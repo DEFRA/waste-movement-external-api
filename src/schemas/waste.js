@@ -7,7 +7,6 @@ import { validHazCodes } from '../common/constants/haz-codes.js'
 import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
 import { validSourceOfComponents } from '../common/constants/source-of-components.js'
 import {
-  GENERIC_ERRORS,
   POPS_ERRORS,
   HAZARDOUS_ERRORS,
   WASTE_ERRORS
@@ -76,10 +75,7 @@ const popComponentSchema = Joi.object({
       }
       return value
     })
-    .required()
-    .messages({
-      'any.invalid': GENERIC_ERRORS.INVALID
-    }),
+    .required(),
   concentration: concentrationSchema()
 }).label('PopComponent')
 
@@ -109,7 +105,6 @@ const popsSchema = Joi.object({
       : validatePopOrHazardousAbsence(value, helpers)
   })
   .messages({
-    'any.invalid': POPS_ERRORS.COMPONENTS_INVALID_WHEN_NOT_PRESENT,
     'any.componentsNotAllowed': POPS_ERRORS.COMPONENTS_NOT_ALLOWED_NOT_PROVIDED,
     'pops.sourceNotAllowed': POPS_ERRORS.SOURCE_NOT_ALLOWED,
     'any.containsPopsHazardousFalse': POPS_ERRORS.COMPONENTS_NOT_ALLOWED_FALSE
@@ -168,7 +163,6 @@ const hazardousSchema = Joi.object({
       : validatePopOrHazardousAbsence(value, helpers)
   })
   .messages({
-    'any.invalid': HAZARDOUS_ERRORS.COMPONENTS_INVALID_WHEN_NOT_PRESENT,
     'any.componentsNotAllowed':
       HAZARDOUS_ERRORS.COMPONENTS_NOT_ALLOWED_NOT_PROVIDED,
     'pops.sourceNotAllowed': HAZARDOUS_ERRORS.SOURCE_NOT_ALLOWED,
