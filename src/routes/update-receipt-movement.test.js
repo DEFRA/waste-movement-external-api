@@ -62,7 +62,7 @@ describe('handleUpdateReceiptMovement', () => {
           errorType: 'NotProvided',
           key: 'wasteItems.0.disposalOrRecoveryCodes',
           message:
-            'Disposal or Recovery codes are required for proper waste tracking and compliance'
+            'wasteItems[0].disposalOrRecoveryCodes is required for proper waste tracking and compliance'
         }
       ]
     }

@@ -40,7 +40,7 @@ export const hazardousComponentsWarningValidators = {
           hasPopsOrHazardousComponents
         ),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: `Hazardous components are recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+      message: `{{ #label }} are recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
     },
     {
       field: 'concentration',
@@ -51,7 +51,7 @@ export const hazardousComponentsWarningValidators = {
           isPopOrHazardousConcentrationValid
         ),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: `Hazardous concentration is recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+      message: `{{ #label }} is recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
     }
   ]
 }
@@ -68,7 +68,7 @@ export const popsComponentsWarningValidators = {
           hasPopsOrHazardousComponents
         ),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: `POPs components are recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+      message: `{{ #label }} are recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
     },
     {
       field: 'concentration',
@@ -79,7 +79,7 @@ export const popsComponentsWarningValidators = {
           isPopOrHazardousConcentrationValid
         ),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: `POPs concentration is recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+      message: `{{ #label }} is recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
     }
   ]
 }
@@ -92,34 +92,34 @@ export const disposalOrRecoveryCodesWarningValidators = {
       validator: (wasteItem) => isDisposalOrRecoveryCodeMissing(wasteItem),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message:
-        'Disposal or Recovery codes are required for proper waste tracking and compliance'
+        '{{ #label }} is required for proper waste tracking and compliance'
     },
     {
       field: 'weight',
       validator: (wasteItem) => isDisposalOrRecoveryWeightMissing(wasteItem),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: 'Weight is required'
+      message: '{{ #label }} is required'
     },
     {
       field: 'weight.metric',
       validator: (wasteItem) =>
         isDisposalOrRecoveryWeightMetricMissing(wasteItem),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: 'Weight metric is required'
+      message: '{{ #label }} is required'
     },
     {
       field: 'weight.amount',
       validator: (wasteItem) =>
         isDisposalOrRecoveryWeightAmountMissing(wasteItem),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: 'Weight amount is required'
+      message: '{{ #label }} is required'
     },
     {
       field: 'weight.isEstimate',
       validator: (wasteItem) =>
         isDisposalOrRecoveryWeightIsEstimateMissing(wasteItem),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: 'Weight estimate flag is required'
+      message: '{{ #label }} flag is required'
     }
   ]
 }
@@ -131,8 +131,7 @@ export const hazardousConsignmentWarningValidators = {
       field: null,
       validator: (payload) => isHazardousConsignmentCodeFieldsMissing(payload),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message:
-        'Reason for no Consignment Note Code is required when hazardous EWC codes are present'
+      message: '{{ #label }} is required when hazardous EWC codes are present'
     }
   ]
 }
@@ -214,7 +213,11 @@ function validateField(
             )
             baseKeyJsonPath += field ? `.${field}` : ''
             baseKeyIndexed += field ? `.${field}` : ''
-            return { key: baseKeyJsonPath, errorType, message }
+            return {
+              key: baseKeyJsonPath,
+              errorType,
+              message: message.replace('{{ #label }}', baseKeyIndexed)
+            }
           })
         )
       } else {
@@ -224,7 +227,12 @@ function validateField(
               ? baseKeyJsonPath
               : `receipt.${topLevelItem}`,
           errorType,
-          message
+          message: message.replace(
+            '{{ #label }}',
+            topLevelItem === 'wasteItems'
+              ? baseKeyIndexed
+              : `receipt.${topLevelItem}`
+          )
         })
       }
     }

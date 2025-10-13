@@ -11,19 +11,6 @@ import {
 } from './validation-warnings.js'
 import { v4 as uuidv4 } from 'uuid'
 
-// Test constants
-const TEST_MESSAGES = {
-  DISPOSAL_RECOVERY_REQUIRED:
-    'Disposal or Recovery codes are required for proper waste tracking and compliance',
-  AT_LEAST_ONE_REQUIRED:
-    'At least one Disposal or Recovery code must be specified with associated weight',
-  CODE_REQUIRED:
-    'Disposal or Recovery codes are required for proper waste tracking and compliance',
-  WEIGHT_METRIC_REQUIRED: 'Weight metric is required',
-  WEIGHT_AMOUNT_REQUIRED: 'Weight amount is required',
-  WEIGHT_ESTIMATE_FLAG_REQUIRED: 'Weight estimate flag is required'
-}
-
 // Test helpers
 const createDisposalRecoveryPayload = (disposalOrRecoveryCodes) => ({
   wasteItems: [
@@ -87,7 +74,7 @@ describe('Validation Warnings', () => {
           key: 'wasteItems.0.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
-            'Disposal or Recovery codes are required for proper waste tracking and compliance'
+            'wasteItems[0].disposalOrRecoveryCodes is required for proper waste tracking and compliance'
         }
       ])
     })
@@ -112,7 +99,7 @@ describe('Validation Warnings', () => {
           key: 'wasteItems.0.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
-            'Disposal or Recovery codes are required for proper waste tracking and compliance'
+            'wasteItems[0].disposalOrRecoveryCodes is required for proper waste tracking and compliance'
         }
       ])
     })
@@ -129,7 +116,7 @@ describe('Validation Warnings', () => {
           key: 'wasteItems.0.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
-            'Disposal or Recovery codes are required for proper waste tracking and compliance'
+            'wasteItems[0].disposalOrRecoveryCodes is required for proper waste tracking and compliance'
         }
       ])
     })
@@ -151,7 +138,7 @@ describe('Validation Warnings', () => {
           key: 'wasteItems.0.disposalOrRecoveryCodes.0.code',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
-            'Disposal or Recovery codes are required for proper waste tracking and compliance'
+            'wasteItems[0].disposalOrRecoveryCodes[0].code is required for proper waste tracking and compliance'
         }
       ])
     })
@@ -172,7 +159,7 @@ describe('Validation Warnings', () => {
         {
           key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight is required'
+          message: 'wasteItems[0].disposalOrRecoveryCodes[0].weight is required'
         }
       ])
     })
@@ -202,12 +189,12 @@ describe('Validation Warnings', () => {
           key: 'wasteItems.0.disposalOrRecoveryCodes.0.code',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
-            'Disposal or Recovery codes are required for proper waste tracking and compliance'
+            'wasteItems[0].disposalOrRecoveryCodes[0].code is required for proper waste tracking and compliance'
         },
         {
           key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight is required'
+          message: 'wasteItems[0].disposalOrRecoveryCodes[0].weight is required'
         }
       ])
     })
@@ -240,7 +227,8 @@ describe('Validation Warnings', () => {
         {
           key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight.metric',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight metric is required'
+          message:
+            'wasteItems[0].disposalOrRecoveryCodes[0].weight.metric is required'
         }
       ])
     })
@@ -250,22 +238,26 @@ describe('Validation Warnings', () => {
       {
         field: 'amount',
         value: undefined,
-        message: TEST_MESSAGES.WEIGHT_AMOUNT_REQUIRED
+        message:
+          'wasteItems[0].disposalOrRecoveryCodes[0].weight.amount is required'
       },
       {
         field: 'amount',
         value: null,
-        message: TEST_MESSAGES.WEIGHT_AMOUNT_REQUIRED
+        message:
+          'wasteItems[0].disposalOrRecoveryCodes[0].weight.amount is required'
       },
       {
         field: 'isEstimate',
         value: undefined,
-        message: TEST_MESSAGES.WEIGHT_ESTIMATE_FLAG_REQUIRED
+        message:
+          'wasteItems[0].disposalOrRecoveryCodes[0].weight.isEstimate flag is required'
       },
       {
         field: 'isEstimate',
         value: null,
-        message: TEST_MESSAGES.WEIGHT_ESTIMATE_FLAG_REQUIRED
+        message:
+          'wasteItems[0].disposalOrRecoveryCodes[0].weight.isEstimate flag is required'
       }
     ])(
       'should generate warning when weight $field is $value',
@@ -330,17 +322,18 @@ describe('Validation Warnings', () => {
           key: 'wasteItems.0.disposalOrRecoveryCodes.1.code',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
-            'Disposal or Recovery codes are required for proper waste tracking and compliance'
+            'wasteItems[0].disposalOrRecoveryCodes[1].code is required for proper waste tracking and compliance'
         },
         {
           key: 'wasteItems.0.disposalOrRecoveryCodes.1.weight',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight is required'
+          message: 'wasteItems[0].disposalOrRecoveryCodes[1].weight is required'
         },
         {
           key: 'wasteItems.0.disposalOrRecoveryCodes.2.weight.amount',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight amount is required'
+          message:
+            'wasteItems[0].disposalOrRecoveryCodes[2].weight.amount is required'
         }
       ])
     })
@@ -371,17 +364,20 @@ describe('Validation Warnings', () => {
         {
           key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight.metric',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight metric is required'
+          message:
+            'wasteItems[0].disposalOrRecoveryCodes[0].weight.metric is required'
         },
         {
           key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight.amount',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight amount is required'
+          message:
+            'wasteItems[0].disposalOrRecoveryCodes[0].weight.amount is required'
         },
         {
           key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight.isEstimate',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight estimate flag is required'
+          message:
+            'wasteItems[0].disposalOrRecoveryCodes[0].weight.isEstimate flag is required'
         }
       ])
     })
@@ -428,7 +424,7 @@ describe('Validation Warnings', () => {
           key: 'receipt.reasonForNoConsignmentCode',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
-            'Reason for no Consignment Note Code is required when hazardous EWC codes are present'
+            'receipt.reasonForNoConsignmentCode is required when hazardous EWC codes are present'
         }
       ])
     })
@@ -479,7 +475,7 @@ describe('Validation Warnings', () => {
           key: 'wasteItems.0.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
-            'Disposal or Recovery codes are required for proper waste tracking and compliance'
+            'wasteItems[0].disposalOrRecoveryCodes is required for proper waste tracking and compliance'
         }
       ])
     })
@@ -498,7 +494,7 @@ describe('Validation Warnings', () => {
           key: 'wasteItems.0.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
-            'Disposal or Recovery codes are required for proper waste tracking and compliance'
+            'wasteItems[0].disposalOrRecoveryCodes is required for proper waste tracking and compliance'
         }
       ])
     })
@@ -528,13 +524,13 @@ describe('Validation Warnings', () => {
           key: 'wasteItems.0.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
-            'Disposal or Recovery codes are required for proper waste tracking and compliance'
+            'wasteItems[0].disposalOrRecoveryCodes is required for proper waste tracking and compliance'
         },
         {
           key: 'wasteItems.1.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
-            'Disposal or Recovery codes are required for proper waste tracking and compliance'
+            'wasteItems[1].disposalOrRecoveryCodes is required for proper waste tracking and compliance'
         }
       ])
     })
