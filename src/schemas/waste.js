@@ -78,8 +78,7 @@ const popComponentSchema = Joi.object({
     })
     .required()
     .messages({
-      'any.invalid': GENERIC_ERRORS.INVALID,
-      'any.required': '{{#label}} is required'
+      'any.invalid': GENERIC_ERRORS.INVALID
     }),
   concentration: concentrationSchema()
 }).label('PopComponent')
@@ -126,10 +125,7 @@ const deduplicateHazCodes = (value) => {
 }
 
 const hazardousComponentSchema = Joi.object({
-  name: Joi.string().empty('').empty(null).required().messages({
-    'any.invalid': GENERIC_ERRORS.INVALID,
-    'any.required': '{{#label}} is required'
-  }),
+  name: Joi.string().empty('').empty(null).required(),
   concentration: concentrationSchema()
 }).label('ComponentItem')
 

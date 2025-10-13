@@ -93,9 +93,15 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
           })
           const result = receiveMovementRequestSchema.validate(payload)
           expect(result.error).toBeDefined()
-          expect(result.error.message).toBe(
-            `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].name" is required`
-          )
+
+          // When containsHazardous/containsPops is true and sourceOfComponents is not NOT_PROVIDED,
+          // the components array has a conditional requirement message that cascades to child fields
+          const expectedMessage =
+            containsHazardousValue && value !== 'NOT_PROVIDED'
+              ? `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].name" is required when ${popsOrHazardous} components are present`
+              : `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].name" is required`
+
+          expect(result.error.message).toBe(expectedMessage)
         }
       )
     }
@@ -215,8 +221,10 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
         })
         const result = receiveMovementRequestSchema.validate(payload)
         expect(result.error).toBeDefined()
+        // When containsHazardous/containsPops is true and sourceOfComponents is not NOT_PROVIDED,
+        // the conditional requirement message cascades to child fields
         expect(result.error.message).toBe(
-          `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].name" is required`
+          `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].name" is required when ${popsOrHazardous} components are present`
         )
       }
     )
