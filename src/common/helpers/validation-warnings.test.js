@@ -1,22 +1,15 @@
 import { popsAndHazardousComponentWarningTests } from '../../test/common/pop-and-hazardous-components/pops-and-hazardous-components-warning-tests.js'
+import { validEwcCodes } from '../constants/ewc-codes.js'
 import {
   VALIDATION_ERROR_TYPES,
-  generateDisposalRecoveryWarnings,
-  generateAllValidationWarnings
+  generateAllValidationWarnings,
+  hazardousComponentsWarningValidators,
+  popsComponentsWarningValidators,
+  processValidationWarnings,
+  disposalOrRecoveryCodesWarningValidators,
+  hazardousConsignmentWarningValidators
 } from './validation-warnings.js'
 import { v4 as uuidv4 } from 'uuid'
-
-// Test constants
-const TEST_MESSAGES = {
-  DISPOSAL_RECOVERY_REQUIRED:
-    'Disposal or Recovery codes are required for proper waste tracking and compliance',
-  AT_LEAST_ONE_REQUIRED:
-    'At least one Disposal or Recovery code must be specified with associated weight',
-  CODE_REQUIRED: 'Disposal or Recovery code is required for each entry',
-  WEIGHT_METRIC_REQUIRED: 'Weight metric is required',
-  WEIGHT_AMOUNT_REQUIRED: 'Weight amount is required',
-  WEIGHT_ESTIMATE_FLAG_REQUIRED: 'Weight estimate flag is required'
-}
 
 // Test helpers
 const createDisposalRecoveryPayload = (disposalOrRecoveryCodes) => ({
@@ -50,7 +43,7 @@ describe('Validation Warnings', () => {
     })
   })
 
-  describe('generateDisposalRecoveryWarnings', () => {
+  describe('Disposal or Recovery Code Warnings', () => {
     it('should return empty array when payload has valid disposal/recovery codes', () => {
       const payload = createDisposalRecoveryPayload([
         {
@@ -59,7 +52,10 @@ describe('Validation Warnings', () => {
         }
       ])
 
-      const warnings = generateDisposalRecoveryWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([])
     })
 
@@ -69,13 +65,16 @@ describe('Validation Warnings', () => {
         // No wasteItems section
       }
 
-      const warnings = generateDisposalRecoveryWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes',
+          key: 'wasteItems.0.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
-            'Disposal or Recovery codes are required for proper waste tracking and compliance'
+            'wasteItems[0].disposalOrRecoveryCodes is required for proper waste tracking and compliance'
         }
       ])
     })
@@ -91,13 +90,16 @@ describe('Validation Warnings', () => {
         ]
       }
 
-      const warnings = generateDisposalRecoveryWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes',
+          key: 'wasteItems.0.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
-            'Disposal or Recovery codes are required for proper waste tracking and compliance'
+            'wasteItems[0].disposalOrRecoveryCodes is required for proper waste tracking and compliance'
         }
       ])
     })
@@ -105,13 +107,16 @@ describe('Validation Warnings', () => {
     it('should generate warning when disposalOrRecoveryCodes array is empty', () => {
       const payload = createDisposalRecoveryPayload([])
 
-      const warnings = generateDisposalRecoveryWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes',
+          key: 'wasteItems.0.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
-            'At least one Disposal or Recovery code must be specified with associated weight'
+            'wasteItems[0].disposalOrRecoveryCodes is required for proper waste tracking and compliance'
         }
       ])
     })
@@ -124,12 +129,16 @@ describe('Validation Warnings', () => {
         }
       ])
 
-      const warnings = generateDisposalRecoveryWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[0].code',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.0.code',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Disposal or Recovery code is required for each entry'
+          message:
+            'wasteItems[0].disposalOrRecoveryCodes[0].code is required for proper waste tracking and compliance'
         }
       ])
     })
@@ -142,12 +151,15 @@ describe('Validation Warnings', () => {
         }
       ])
 
-      const warnings = generateDisposalRecoveryWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[0].weight',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight is required for Disposal/Recovery code: R1'
+          message: 'wasteItems[0].disposalOrRecoveryCodes[0].weight is required'
         }
       ])
     })
@@ -168,17 +180,21 @@ describe('Validation Warnings', () => {
         ]
       }
 
-      const warnings = generateDisposalRecoveryWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[0].code',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.0.code',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Disposal or Recovery code is required for each entry'
+          message:
+            'wasteItems[0].disposalOrRecoveryCodes[0].code is required for proper waste tracking and compliance'
         },
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[0].weight',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight is required for Disposal/Recovery code: UNKNOWN'
+          message: 'wasteItems[0].disposalOrRecoveryCodes[0].weight is required'
         }
       ])
     })
@@ -203,12 +219,16 @@ describe('Validation Warnings', () => {
         ]
       }
 
-      const warnings = generateDisposalRecoveryWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[0].weight.metric',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight.metric',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight metric is required'
+          message:
+            'wasteItems[0].disposalOrRecoveryCodes[0].weight.metric is required'
         }
       ])
     })
@@ -218,22 +238,26 @@ describe('Validation Warnings', () => {
       {
         field: 'amount',
         value: undefined,
-        message: TEST_MESSAGES.WEIGHT_AMOUNT_REQUIRED
+        message:
+          'wasteItems[0].disposalOrRecoveryCodes[0].weight.amount is required'
       },
       {
         field: 'amount',
         value: null,
-        message: TEST_MESSAGES.WEIGHT_AMOUNT_REQUIRED
+        message:
+          'wasteItems[0].disposalOrRecoveryCodes[0].weight.amount is required'
       },
       {
         field: 'isEstimate',
         value: undefined,
-        message: TEST_MESSAGES.WEIGHT_ESTIMATE_FLAG_REQUIRED
+        message:
+          'wasteItems[0].disposalOrRecoveryCodes[0].weight.isEstimate flag is required'
       },
       {
         field: 'isEstimate',
         value: null,
-        message: TEST_MESSAGES.WEIGHT_ESTIMATE_FLAG_REQUIRED
+        message:
+          'wasteItems[0].disposalOrRecoveryCodes[0].weight.isEstimate flag is required'
       }
     ])(
       'should generate warning when weight $field is $value',
@@ -245,10 +269,13 @@ describe('Validation Warnings', () => {
           }
         ])
 
-        const warnings = generateDisposalRecoveryWarnings(payload)
+        const warnings = processValidationWarnings(
+          payload,
+          disposalOrRecoveryCodesWarningValidators
+        )
         expect(warnings).toEqual([
           createExpectedWarning(
-            `wasteItems[0].disposalOrRecoveryCodes[0].weight.${field}`,
+            `wasteItems.0.disposalOrRecoveryCodes.0.weight.${field}`,
             message
           )
         ])
@@ -286,22 +313,27 @@ describe('Validation Warnings', () => {
         ]
       }
 
-      const warnings = generateDisposalRecoveryWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[1].code',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.1.code',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Disposal or Recovery code is required for each entry'
+          message:
+            'wasteItems[0].disposalOrRecoveryCodes[1].code is required for proper waste tracking and compliance'
         },
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[1].weight',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.1.weight',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight is required for Disposal/Recovery code: UNKNOWN'
+          message: 'wasteItems[0].disposalOrRecoveryCodes[1].weight is required'
         },
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[2].weight.amount',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.2.weight.amount',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight amount is required'
+          message:
+            'wasteItems[0].disposalOrRecoveryCodes[2].weight.amount is required'
         }
       ])
     })
@@ -324,29 +356,79 @@ describe('Validation Warnings', () => {
         ]
       }
 
-      const warnings = generateDisposalRecoveryWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[0].weight.metric',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight.metric',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight metric is required'
+          message:
+            'wasteItems[0].disposalOrRecoveryCodes[0].weight.metric is required'
         },
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[0].weight.amount',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight.amount',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight amount is required'
+          message:
+            'wasteItems[0].disposalOrRecoveryCodes[0].weight.amount is required'
         },
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes[0].weight.isEstimate',
+          key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight.isEstimate',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: 'Weight estimate flag is required'
+          message:
+            'wasteItems[0].disposalOrRecoveryCodes[0].weight.isEstimate flag is required'
         }
       ])
     })
   })
 
-  popsAndHazardousComponentWarningTests('POPs')
-  popsAndHazardousComponentWarningTests('Hazardous')
+  popsAndHazardousComponentWarningTests('POPs', popsComponentsWarningValidators)
+  popsAndHazardousComponentWarningTests(
+    'Hazardous',
+    hazardousComponentsWarningValidators
+  )
+
+  describe('generateHazardousConsignmentWarnings', () => {
+    it('should retrn an empty array when provided with a non hazardous code', () => {
+      const payload = {
+        wasteItems: [
+          {
+            ewcCodes: [validEwcCodes[0]]
+          }
+        ]
+      }
+
+      const warnings = processValidationWarnings(
+        payload,
+        hazardousConsignmentWarningValidators
+      )
+      expect(warnings).toEqual([])
+    })
+
+    it('should generate warning when both hazardousWasteConsignmentCode and reasonForNoConsignmentCode are missing', () => {
+      const payload = {
+        wasteItems: [
+          {
+            ewcCodes: ['010304']
+          }
+        ]
+      }
+
+      const warnings = processValidationWarnings(
+        payload,
+        hazardousConsignmentWarningValidators
+      )
+      expect(warnings).toEqual([
+        {
+          key: 'receipt.reasonForNoConsignmentCode',
+          errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+          message:
+            'receipt.reasonForNoConsignmentCode is required when hazardous EWC codes are present'
+        }
+      ])
+    })
+  })
 
   describe('generateAllValidationWarnings', () => {
     it('should return empty array when no warnings are generated', () => {
@@ -384,13 +466,16 @@ describe('Validation Warnings', () => {
         ]
       }
 
-      const warnings = generateAllValidationWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes',
+          key: 'wasteItems.0.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
-            'At least one Disposal or Recovery code must be specified with associated weight'
+            'wasteItems[0].disposalOrRecoveryCodes is required for proper waste tracking and compliance'
         }
       ])
     })
@@ -400,13 +485,16 @@ describe('Validation Warnings', () => {
         organisationApiId: uuidv4()
       }
 
-      const warnings = generateAllValidationWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes',
+          key: 'wasteItems.0.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
-            'Disposal or Recovery codes are required for proper waste tracking and compliance'
+            'wasteItems[0].disposalOrRecoveryCodes is required for proper waste tracking and compliance'
         }
       ])
     })
@@ -427,19 +515,22 @@ describe('Validation Warnings', () => {
         ]
       }
 
-      const warnings = generateAllValidationWarnings(payload)
+      const warnings = processValidationWarnings(
+        payload,
+        disposalOrRecoveryCodesWarningValidators
+      )
       expect(warnings).toEqual([
         {
-          key: 'wasteItems[0].disposalOrRecoveryCodes',
+          key: 'wasteItems.0.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
-            'Disposal or Recovery codes are required for proper waste tracking and compliance'
+            'wasteItems[0].disposalOrRecoveryCodes is required for proper waste tracking and compliance'
         },
         {
-          key: 'wasteItems[1].disposalOrRecoveryCodes',
+          key: 'wasteItems.1.disposalOrRecoveryCodes',
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
           message:
-            'Disposal or Recovery codes are required for proper waste tracking and compliance'
+            'wasteItems[1].disposalOrRecoveryCodes is required for proper waste tracking and compliance'
         }
       ])
     })

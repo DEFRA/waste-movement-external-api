@@ -1,10 +1,13 @@
 import { sourceOfComponentsProvided } from '../../../common/constants/source-of-components.js'
 import {
-  generatePopAndHazardousComponentWarnings,
+  processValidationWarnings,
   VALIDATION_ERROR_TYPES
 } from '../../../common/helpers/validation-warnings.js'
 
-export function popsAndHazardousComponentWarningTests(popsOrHazardous) {
+export function popsAndHazardousComponentWarningTests(
+  popsOrHazardous,
+  validationWarnings
+) {
   if (!['POPs', 'Hazardous'].includes(popsOrHazardous)) {
     throw new Error('Expecting popsOrHazardous to be one of: POPs, Hazardous')
   }
@@ -12,16 +15,13 @@ export function popsAndHazardousComponentWarningTests(popsOrHazardous) {
   const popsOrHazardousObjectProperty = String(popsOrHazardous).toLowerCase()
   const containsPopsOrHazardousField = `contains${String(popsOrHazardous).charAt(0).toUpperCase()}${String(popsOrHazardous).toLowerCase().slice(1)}`
 
-  describe(`generatePopAndHazardousComponentWarnings: "${popsOrHazardous}"`, () => {
+  describe(`"${popsOrHazardous}" Components Warnings`, () => {
     it.each([undefined, null])(
       'should return empty array when payload is %s',
       (value) => {
         const payload = value
 
-        const warnings = generatePopAndHazardousComponentWarnings(
-          payload,
-          popsOrHazardous
-        )
+        const warnings = processValidationWarnings(payload, validationWarnings)
         expect(warnings).toEqual([])
       }
     )
@@ -31,10 +31,7 @@ export function popsAndHazardousComponentWarningTests(popsOrHazardous) {
       (value) => {
         const payload = value
 
-        const warnings = generatePopAndHazardousComponentWarnings(
-          payload,
-          popsOrHazardous
-        )
+        const warnings = processValidationWarnings(payload, validationWarnings)
         expect(warnings).toEqual([])
       }
     )
@@ -50,10 +47,7 @@ export function popsAndHazardousComponentWarningTests(popsOrHazardous) {
         ]
       }
 
-      const warnings = generatePopAndHazardousComponentWarnings(
-        payload,
-        popsOrHazardous
-      )
+      const warnings = processValidationWarnings(payload, validationWarnings)
       expect(warnings).toEqual([])
     })
 
@@ -69,10 +63,7 @@ export function popsAndHazardousComponentWarningTests(popsOrHazardous) {
         ]
       }
 
-      const warnings = generatePopAndHazardousComponentWarnings(
-        payload,
-        popsOrHazardous
-      )
+      const warnings = processValidationWarnings(payload, validationWarnings)
       expect(warnings).toEqual([])
     })
 
@@ -98,10 +89,7 @@ export function popsAndHazardousComponentWarningTests(popsOrHazardous) {
         ]
       }
 
-      const warnings = generatePopAndHazardousComponentWarnings(
-        payload,
-        popsOrHazardous
-      )
+      const warnings = processValidationWarnings(payload, validationWarnings)
       expect(warnings).toEqual([])
     })
 
@@ -118,15 +106,12 @@ export function popsAndHazardousComponentWarningTests(popsOrHazardous) {
         ]
       }
 
-      const warnings = generatePopAndHazardousComponentWarnings(
-        payload,
-        popsOrHazardous
-      )
+      const warnings = processValidationWarnings(payload, validationWarnings)
       expect(warnings).toEqual([
         {
-          key: `wasteItems[0].${popsOrHazardousObjectProperty}.components`,
+          key: `wasteItems.0.${popsOrHazardousObjectProperty}.components`,
           errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message: `${popsOrHazardous} components are recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+          message: `wasteItems[0].${popsOrHazardousObjectProperty}.components are recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
         }
       ])
     })
@@ -146,7 +131,7 @@ export function popsAndHazardousComponentWarningTests(popsOrHazardous) {
           ]
         }
 
-        generatePopAndHazardousComponentWarnings(payload, popsOrHazardous)
+        processValidationWarnings(payload, validationWarnings)
       }
     )
 
@@ -174,15 +159,12 @@ export function popsAndHazardousComponentWarningTests(popsOrHazardous) {
           ]
         }
 
-        const warnings = generatePopAndHazardousComponentWarnings(
-          payload,
-          popsOrHazardous
-        )
+        const warnings = processValidationWarnings(payload, validationWarnings)
         expect(warnings).toEqual([
           {
-            key: `wasteItems[0].${popsOrHazardousObjectProperty}.components`,
+            key: `wasteItems.0.${popsOrHazardousObjectProperty}.components.1.concentration`,
             errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-            message: `${popsOrHazardous} concentration is recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+            message: `wasteItems[0].${popsOrHazardousObjectProperty}.components[1].concentration is recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
           }
         ])
       }
