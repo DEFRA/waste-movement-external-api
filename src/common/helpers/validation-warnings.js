@@ -28,6 +28,10 @@ export const VALIDATION_MESSAGES = {
     'Disposal or Recovery codes are required for proper waste tracking and compliance'
 }
 
+const VALIDATION_WARNINGS = {
+  IS_REQUIRED: '{{ #label }} is required'
+}
+
 export const hazardousComponentsWarningValidators = {
   key: 'wasteItems.hazardous.components',
   validators: [
@@ -98,21 +102,21 @@ export const disposalOrRecoveryCodesWarningValidators = {
       field: 'weight',
       validator: (wasteItem) => isDisposalOrRecoveryWeightMissing(wasteItem),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: '{{ #label }} is required'
+      message: VALIDATION_WARNINGS.IS_REQUIRED
     },
     {
       field: 'weight.metric',
       validator: (wasteItem) =>
         isDisposalOrRecoveryWeightMetricMissing(wasteItem),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: '{{ #label }} is required'
+      message: VALIDATION_WARNINGS.IS_REQUIRED
     },
     {
       field: 'weight.amount',
       validator: (wasteItem) =>
         isDisposalOrRecoveryWeightAmountMissing(wasteItem),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: '{{ #label }} is required'
+      message: VALIDATION_WARNINGS.IS_REQUIRED
     },
     {
       field: 'weight.isEstimate',
@@ -191,63 +195,113 @@ function validateField(
     const { isValid, invalidIndices } = validator(currentField)
 
     if (isValid === false) {
-      let baseKeyJsonPath = replaceJsonPathIndex(
+      const baseKeyJsonPath = replaceJsonPathIndex(
         warningValidators.key,
         topLevelItem,
         topLevelIndex
       )
-      let baseKeyIndexed = replaceIndexedPathIndex(
+      const baseKeyIndexed = replaceIndexedPathIndex(
         warningValidators.key,
         topLevelItem,
         topLevelIndex
       )
 
       if (invalidIndices && invalidIndices.length > 0) {
-        const keyLastItem = warningValidators.key.split('.').at(-1)
-        const keyFieldItem = field ? `.${field}` : ''
-
         fieldWarnings.push(
-          ...invalidIndices.map((invalidIndex) => {
-            baseKeyJsonPath = replaceJsonPathIndex(
-              baseKeyJsonPath,
-              keyLastItem,
-              invalidIndex
-            )
-            baseKeyIndexed = replaceIndexedPathIndex(
-              baseKeyIndexed,
-              keyLastItem,
-              invalidIndex
-            )
-            return {
-              key: baseKeyJsonPath + keyFieldItem,
-              errorType,
-              message: message.replace(
-                '{{ #label }}',
-                baseKeyIndexed + keyFieldItem
-              )
-            }
-          })
+          ...formatIndexedKeyWarning(
+            warningValidators.key,
+            field,
+            invalidIndices,
+            baseKeyJsonPath,
+            baseKeyIndexed,
+            errorType,
+            message
+          )
         )
       } else {
-        fieldWarnings.push({
-          key:
-            topLevelItem === 'wasteItems'
-              ? baseKeyJsonPath
-              : `receipt.${topLevelItem}`,
-          errorType,
-          message: message.replace(
-            '{{ #label }}',
-            topLevelItem === 'wasteItems'
-              ? baseKeyIndexed
-              : `receipt.${topLevelItem}`
+        fieldWarnings.push(
+          formatNonIndexedKeyWarning(
+            baseKeyJsonPath,
+            message,
+            baseKeyIndexed,
+            topLevelItem,
+            errorType
           )
-        })
+        )
       }
     }
   }
 
   return fieldWarnings
 }
+
+/**
+ * Formats the warning messages for indexed fields
+ * @param {String} key - The validation key
+ * @param {String} field - The key of the field being validated
+ * @param {Array} invalidIndices - The indices of fields failing validation
+ * @param {String} baseKeyJsonPath - The validation key in JSON path format
+ * @param {String} baseKeyIndexed - The validation key in indexed format
+ * @param {String} errorType - The error type
+ * @param {String} message - The validation message
+ * @returns {Array} Array of warning messages
+ */
+const formatIndexedKeyWarning = (
+  key,
+  field,
+  invalidIndices,
+  baseKeyJsonPath,
+  baseKeyIndexed,
+  errorType,
+  message
+) => {
+  const keyLastItem = String(key).split('.').at(-1)
+  const keyFieldItem = field ? `.${field}` : ''
+
+  return invalidIndices.map((invalidIndex) => {
+    console.log({ baseKeyJsonPath, keyLastItem, invalidIndex })
+    baseKeyJsonPath = replaceJsonPathIndex(
+      baseKeyJsonPath,
+      keyLastItem,
+      invalidIndex
+    )
+    baseKeyIndexed = replaceIndexedPathIndex(
+      baseKeyIndexed,
+      keyLastItem,
+      invalidIndex
+    )
+    return {
+      key: baseKeyJsonPath + keyFieldItem,
+      errorType,
+      message: message.replace('{{ #label }}', baseKeyIndexed + keyFieldItem)
+    }
+  })
+}
+
+/**
+ * Formats the warning messages for non-indexed fields
+ * @param {String} baseKeyJsonPath - The validation key in JSON path format
+ * @param {String} message - The validation message
+ * @param {String} baseKeyIndexed - The validation key in indexed format
+ * @param {String} topLevelItem - The key of the top level item
+ * @param {String} errorType - The error type
+ * @returns {Array} Array of warning messages
+ */
+const formatNonIndexedKeyWarning = (
+  baseKeyJsonPath,
+  message,
+  baseKeyIndexed,
+  topLevelItem,
+  errorType
+) => ({
+  key:
+    topLevelItem === 'wasteItems' ? baseKeyJsonPath : `receipt.${topLevelItem}`,
+  errorType,
+  message: message.replace(
+    '{{ #label }}',
+    topLevelItem === 'wasteItems' ? baseKeyIndexed : `receipt.${topLevelItem}`
+  )
+})
 
 /**
  * Replaces a key item with a JSON path index item
