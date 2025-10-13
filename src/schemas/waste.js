@@ -11,7 +11,7 @@ import {
   POPS_ERRORS,
   HAZARDOUS_ERRORS,
   WASTE_ERRORS
-} from './validation-error-messages.js'
+} from '../common/constants/validation-error-messages.js'
 
 const MAX_EWC_CODES_COUNT = 5
 

@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import { AUTHORISATION_ERRORS } from './validation-error-messages.js'
+import { AUTHORISATION_ERRORS } from '../common/constants/validation-error-messages.js'
 
 /**
  * UK Site Authorization Number Validation

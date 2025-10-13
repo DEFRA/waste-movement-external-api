@@ -14,7 +14,10 @@ import {
   UK_POSTCODE_REGEX
 } from '../common/constants/regexes.js'
 import { authorisationNumbersArraySchema } from './authorisation-number.js'
-import { CARRIER_ERRORS, ADDRESS_ERRORS } from './validation-error-messages.js'
+import {
+  CARRIER_ERRORS,
+  ADDRESS_ERRORS
+} from '../common/constants/validation-error-messages.js'
 
 const MIN_STRING_LENGTH = 1
 const LONG_STRING_MAX_LENGTH = 5000

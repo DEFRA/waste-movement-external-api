@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import { WEIGHT_ERRORS } from './validation-error-messages.js'
+import { WEIGHT_ERRORS } from '../common/constants/validation-error-messages.js'
 
 export const weightSchema = Joi.object({
   metric: Joi.string().valid('Grams', 'Kilograms', 'Tonnes').required(),

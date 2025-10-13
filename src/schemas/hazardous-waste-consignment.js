@@ -1,6 +1,6 @@
 import Joi from 'joi'
 import { isValidHazardousEwcCode } from '../common/constants/ewc-codes.js'
-import { CONSIGNMENT_ERRORS } from './validation-error-messages.js'
+import { CONSIGNMENT_ERRORS } from '../common/constants/validation-error-messages.js'
 
 export const NO_CONSIGNMENT_REASONS = [
   'Non-Hazardous Waste Transfer',
