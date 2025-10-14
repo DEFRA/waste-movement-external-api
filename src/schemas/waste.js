@@ -26,10 +26,16 @@ const disposalOrRecoveryCodeSchema = Joi.object({
 
 const hasArrayItems = (array) => Array.isArray(array) && array.length > 0
 
+export const formatPopsOrHazardousFields = (popsOrHazardous) => ({
+  popsOrHazardousObjectProperty: popsOrHazardous.toLowerCase(),
+  containsPopsOrHazardousField: `contains${popsOrHazardous.charAt(0).toUpperCase()}${popsOrHazardous.toLowerCase().slice(1)}`
+})
+
 const validatePopOrHazardousPresence = (value, helpers, popsOrHazardous) => {
   const { sourceOfComponents, components } = value[popsOrHazardous]
   const currentIndex = helpers.state.path[1]
-  const containsPopsOrHazardousField = `contains${String(popsOrHazardous).charAt(0).toUpperCase()}${String(popsOrHazardous).toLowerCase().slice(1)}`
+  const { containsPopsOrHazardousField } =
+    formatPopsOrHazardousFields(popsOrHazardous)
 
   if (!sourceOfComponents) {
     return helpers.message(
@@ -74,7 +80,8 @@ const validatePopOrHazardousAbsence = (value, helpers, popsOrHazardous) => {
   // When POPs/Hazardous are not present, no component details should be provided at all
   // This includes empty objects, as per business requirements
   const currentIndex = helpers.state.path[1]
-  const containsPopsOrHazardousField = `contains${String(popsOrHazardous).charAt(0).toUpperCase()}${String(popsOrHazardous).toLowerCase().slice(1)}`
+  const { containsPopsOrHazardousField } =
+    formatPopsOrHazardousFields(popsOrHazardous)
 
   if (
     value[popsOrHazardous] &&

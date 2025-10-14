@@ -4,6 +4,7 @@ import {
 } from '../../../common/constants/source-of-components.js'
 import { receiveMovementRequestSchema } from '../../../schemas/receipt.js'
 import { createTestPayload } from '../../../schemas/test-helpers/waste-test-helpers.js'
+import { formatPopsOrHazardousFields } from '../../../schemas/waste.js'
 
 const DECIMAL_CONCENTRATION = 12.5
 const ZERO_NUMBER = 0
@@ -16,8 +17,8 @@ export function popsAndHazardousComponentsErrorTests(
     throw new Error('Expecting popsOrHazardous to be one of: POPs, Hazardous')
   }
 
-  const popsOrHazardousObjectProperty = String(popsOrHazardous).toLowerCase()
-  const containsPopsOrHazardousField = `contains${String(popsOrHazardous).charAt(0).toUpperCase()}${String(popsOrHazardous).toLowerCase().slice(1)}`
+  const { popsOrHazardousObjectProperty, containsPopsOrHazardousField } =
+    formatPopsOrHazardousFields(popsOrHazardous)
   const isHazardous = popsOrHazardous === 'Hazardous'
 
   // Helper to add hazCodes when testing Hazardous and containsHazardous is true
