@@ -78,7 +78,7 @@ describe('Receipt Schema Validation - POPs', () => {
     const result = receiveMovementRequestSchema.validate(payload)
     expect(result.error).toBeDefined()
     expect(result.error.message).toBe(
-      `"wasteItems[0].pops.components[0].name" is not valid`
+      `"wasteItems[0].pops.components[0].name" contains an invalid value`
     )
   })
 

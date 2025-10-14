@@ -61,7 +61,9 @@ describe('Receipt Schema Validation - Weight', () => {
       it('should require isEstimate', () => {
         const result = validateWithWeightOverrides({ isEstimate: undefined })
         expect(result.error).toBeDefined()
-        expect(result.error.message).toContain('isEstimate is required')
+        expect(result.error.message).toContain(
+          '"wasteItems[0].weight.isEstimate" is required'
+        )
       })
     })
 

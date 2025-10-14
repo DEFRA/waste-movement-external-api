@@ -194,7 +194,9 @@ describe('Receiver Validation', () => {
 
     const { error } = validate(receiver, receipt)
     expect(error).toBeDefined()
-    expect(error.message).toBe('Postcode must be in valid UK format')
+    expect(error.message).toBe(
+      '"receipt.address.postcode" must be in valid UK format'
+    )
   })
 
   it('rejects valid Ireland Eircode', () => {
@@ -212,7 +214,9 @@ describe('Receiver Validation', () => {
 
     const { error } = validate(receiver, receipt)
     expect(error).toBeDefined()
-    expect(error.message).toBe('Postcode must be in valid UK format')
+    expect(error.message).toBe(
+      '"receipt.address.postcode" must be in valid UK format'
+    )
   })
 
   it('rejects invalid receiver email address', () => {
@@ -344,7 +348,7 @@ describe('Receiver Validation', () => {
         const { error } = validate(receiver, createStandardReceipt())
         expect(error).toBeDefined()
         expect(error.message).toBe(
-          'Site authorisation number must be in a valid UK format'
+          '"receiver.authorisationNumbers[0]" must be in a valid UK format'
         )
       })
     })
