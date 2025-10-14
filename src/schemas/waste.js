@@ -5,7 +5,11 @@ import { weightSchema } from './weight.js'
 import { isValidContainerType } from '../common/constants/container-types.js'
 import { validHazCodes } from '../common/constants/haz-codes.js'
 import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
-import { WASTE_ERRORS } from '../common/constants/validation-error-messages.js'
+import {
+  HAZARDOUS_ERRORS,
+  POPS_OR_HAZARDOUS_ERRORS,
+  WASTE_ERRORS
+} from '../common/constants/validation-error-messages.js'
 import {
   sourceOfComponentsProvided,
   validSourceOfComponents
@@ -29,12 +33,18 @@ const validatePopOrHazardousPresence = (value, helpers, popsOrHazardous) => {
 
   if (!sourceOfComponents) {
     return helpers.message(
-      `"wasteItems[${currentIndex}].${popsOrHazardous}.sourceOfComponents" is required when ${containsPopsOrHazardousField} is true`
+      POPS_OR_HAZARDOUS_ERRORS.SOURCE_OF_COMPONENTS_REQUIRED(
+        `wasteItems[${currentIndex}].${popsOrHazardous}.sourceOfComponents`,
+        containsPopsOrHazardousField
+      )
     )
   } else if (sourceOfComponents === 'NOT_PROVIDED') {
     if (hasArrayItems(components)) {
       return helpers.message(
-        `"wasteItems[${currentIndex}].${popsOrHazardous}" must not be provided when the source of components is NOT_PROVIDED`
+        POPS_OR_HAZARDOUS_ERRORS.COMPONENTS_NOT_ALLOWED_NOT_PROVIDED(
+          `wasteItems[${currentIndex}].${popsOrHazardous}.components`,
+          `wasteItems[${currentIndex}].${popsOrHazardous}.sourceOfComponents`
+        )
       )
     }
   } else if (
@@ -45,7 +55,10 @@ const validatePopOrHazardousPresence = (value, helpers, popsOrHazardous) => {
       value[popsOrHazardous].components === null)
   ) {
     return helpers.message(
-      `"wasteItems[${currentIndex}].${popsOrHazardous}.components" is required when ${containsPopsOrHazardousField} is true`
+      POPS_OR_HAZARDOUS_ERRORS.SOURCE_OF_COMPONENTS_REQUIRED(
+        `wasteItems[${currentIndex}].${popsOrHazardous}.components`,
+        containsPopsOrHazardousField
+      )
     )
   }
 
@@ -60,7 +73,7 @@ const validatePopOrHazardousAbsence = (value, helpers, popsOrHazardous) => {
   // This function is called when containsPops/containsHazardous is false
   // When POPs/Hazardous are not present, no component details should be provided at all
   // This includes empty objects, as per business requirements
-  const currentPath = helpers.state.path
+  const currentIndex = helpers.state.path[1]
   const containsPopsOrHazardousField = `contains${String(popsOrHazardous).charAt(0).toUpperCase()}${String(popsOrHazardous).toLowerCase().slice(1)}`
 
   if (
@@ -68,7 +81,10 @@ const validatePopOrHazardousAbsence = (value, helpers, popsOrHazardous) => {
     hasArrayItems(value[popsOrHazardous].components)
   ) {
     return helpers.message(
-      `"wasteItems[${currentPath[1]}].${popsOrHazardous}" must not be provided when ${containsPopsOrHazardousField} is true`
+      POPS_OR_HAZARDOUS_ERRORS.COMPONENTS_NOT_ALLOWED_FALSE(
+        `wasteItems[${currentIndex}].${popsOrHazardous}.components`,
+        `wasteItems[${currentIndex}].${containsPopsOrHazardousField}`
+      )
     )
   }
 
@@ -130,7 +146,10 @@ const hazardousSchema = Joi.object({
       !hasArrayItems(wasteItem.hazardous.hazCodes)
     ) {
       return helpers.message(
-        `"wasteItems[${wasteItemIndex}].hazardous.hazCodes" is required when containsHazardous is true`
+        HAZARDOUS_ERRORS.HAZ_CODES_REQUIRED.replace(
+          '{{#label}}',
+          `"wasteItems[${wasteItemIndex}].hazardous.hazCodes"`
+        )
       )
     }
 

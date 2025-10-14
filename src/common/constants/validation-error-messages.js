@@ -35,6 +35,19 @@ export const WASTE_ERRORS = {
   CONTAINER_TYPE_INVALID: '{{#label}} must be a valid container type'
 }
 
+export const POPS_OR_HAZARDOUS_ERRORS = {
+  SOURCE_OF_COMPONENTS_REQUIRED: (label, containsPopsOrHazardousField) =>
+    `"${label}" is required when ${containsPopsOrHazardousField} is true`,
+  COMPONENTS_NOT_ALLOWED_NOT_PROVIDED: (label, sourceOfComponentsField) =>
+    `"${label}" must not be provided when ${sourceOfComponentsField} is NOT_PROVIDED`,
+  COMPONENTS_NOT_ALLOWED_FALSE: (label, containsPopsOrHazardousField) =>
+    `"${label}" must not be provided when ${containsPopsOrHazardousField} is false`
+}
+
+export const HAZARDOUS_ERRORS = {
+  HAZ_CODES_REQUIRED: '{{#label}} is required when containsHazardous is true'
+}
+
 // Hazardous waste consignment messages
 export const CONSIGNMENT_ERRORS = {
   CODE_FORMAT:
