@@ -1,6 +1,10 @@
 import { v4 as uuidv4 } from 'uuid'
-import { sourceOfComponentsNotProvided } from '../../common/constants/source-of-components.js'
+import {
+  sourceOfComponentsNotProvided,
+  sourceOfComponentsProvided
+} from '../../common/constants/source-of-components.js'
 import { TEST_DATA } from '../../schemas/test-constants.js'
+import { validPopNames } from '../../common/constants/pop-names.js'
 
 export function createMovementRequest(overrides) {
   const defaultMovementRequest = {
@@ -42,9 +46,17 @@ export function createMovementRequest(overrides) {
           amount: 1.0,
           isEstimate: false
         },
-        containsPops: false,
+        containsPops: true,
+        pops: {
+          sourceOfComponents: sourceOfComponentsProvided.CARRIER_PROVIDED,
+          components: [
+            {
+              name: validPopNames[0],
+              concentration: 10
+            }
+          ]
+        },
         containsHazardous: false,
-        pops: {},
         hazardous: {
           sourceOfComponents: sourceOfComponentsNotProvided.NOT_PROVIDED
         }
