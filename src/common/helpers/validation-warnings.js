@@ -1,8 +1,5 @@
 import { hasHazardousEwcCodes } from '../../schemas/hazardous-waste-consignment.js'
 import { sourceOfComponentsProvided } from '../constants/source-of-components.js'
-import { createLogger } from './logging/logger.js'
-
-const logger = createLogger()
 
 /**
  * Validation warning types as defined in the API specification
@@ -262,7 +259,6 @@ const formatIndexedKeyWarning = (
   const keyFieldItem = field ? `.${field}` : ''
 
   return invalidIndices.map((invalidIndex) => {
-    logger.debug({ baseKeyJsonPath, keyLastItem, invalidIndex })
     baseKeyJsonPath = replaceJsonPathIndex(
       baseKeyJsonPath,
       keyLastItem,
