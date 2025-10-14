@@ -75,11 +75,7 @@ async function createServer() {
 
   // Register JWT authentication before routes
   // TODO - decide if this is needed after we have api gateway auth in place
-  // if (config.get('cdpEnvironment') === 'local') {
-  //   console.log(
-  //     'WARNING: Local environment detected. JWT authentication is disabled.'
-  //   )
-  // } else {
+  // if (config.get('cdpEnvironment') !== 'local') {
   //   await server.register(jwtAuth)
   // }
 

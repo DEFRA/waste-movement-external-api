@@ -37,8 +37,7 @@ export const handleCreateReceiptMovement = async (request, h) => {
 
     return handleBackendResponse(response, h, () => responseData)
   } catch (error) {
-    logger.error('Error creating waste movement:')
-    logger.error(error)
+    logger.error({ err: error }, 'Error creating waste movement')
     return h
       .response({
         statusCode: HTTP_STATUS.INTERNAL_SERVER_ERROR,
