@@ -5,10 +5,7 @@ import { weightSchema } from './weight.js'
 import { isValidContainerType } from '../common/constants/container-types.js'
 import { validHazCodes } from '../common/constants/haz-codes.js'
 import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
-import {
-  HAZARDOUS_ERRORS,
-  WASTE_ERRORS
-} from '../common/constants/validation-error-messages.js'
+import { WASTE_ERRORS } from '../common/constants/validation-error-messages.js'
 import {
   sourceOfComponentsProvided,
   validSourceOfComponents
@@ -138,15 +135,6 @@ const hazardousSchema = Joi.object({
     }
 
     return value
-  })
-  .messages({
-    'any.componentsNotAllowed':
-      HAZARDOUS_ERRORS.COMPONENTS_NOT_ALLOWED_NOT_PROVIDED,
-    'pops.sourceNotAllowed': HAZARDOUS_ERRORS.SOURCE_NOT_ALLOWED,
-    'any.containsPopsHazardousFalse':
-      HAZARDOUS_ERRORS.COMPONENTS_NOT_ALLOWED_FALSE,
-    'any.invalid':
-      '{{ #label }} cannot be provided when Hazardous components are not present'
   })
 
 function validateEwcCode(value, helpers) {
