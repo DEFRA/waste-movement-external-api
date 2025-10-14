@@ -6,7 +6,6 @@ import { isValidContainerType } from '../common/constants/container-types.js'
 import { validHazCodes } from '../common/constants/haz-codes.js'
 import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
 import {
-  POPS_ERRORS,
   HAZARDOUS_ERRORS,
   WASTE_ERRORS
 } from '../common/constants/validation-error-messages.js'
@@ -28,21 +27,29 @@ const hasArrayItems = (array) => Array.isArray(array) && array.length > 0
 
 const validatePopOrHazardousPresence = (value, helpers, popsOrHazardous) => {
   const { sourceOfComponents, components } = value[popsOrHazardous]
-  const currentPath = helpers.state.path
+  const currentIndex = helpers.state.path[1]
   const containsPopsOrHazardousField = `contains${String(popsOrHazardous).charAt(0).toUpperCase()}${String(popsOrHazardous).toLowerCase().slice(1)}`
 
   if (!sourceOfComponents) {
     return helpers.message(
-      `"wasteItems[${currentPath[1]}].${popsOrHazardous}.sourceOfComponents" is required when ${containsPopsOrHazardousField} is true`
+      `"wasteItems[${currentIndex}].${popsOrHazardous}.sourceOfComponents" is required when ${containsPopsOrHazardousField} is true`
     )
   } else if (sourceOfComponents === 'NOT_PROVIDED') {
     if (hasArrayItems(components)) {
       return helpers.message(
-        `"wasteItems[${currentPath[1]}].${popsOrHazardous}" must not be provided when the source of components is NOT_PROVIDED`
+        `"wasteItems[${currentIndex}].${popsOrHazardous}" must not be provided when the source of components is NOT_PROVIDED`
       )
     }
-
-    return value
+  } else if (
+    Object.values(sourceOfComponentsProvided).includes(
+      value[popsOrHazardous].sourceOfComponents
+    ) &&
+    (!value[popsOrHazardous].components ||
+      value[popsOrHazardous].components === null)
+  ) {
+    return helpers.message(
+      `"wasteItems[${currentIndex}].${popsOrHazardous}.components" is required when ${containsPopsOrHazardousField} is true`
+    )
   }
 
   // For other sources (CARRIER_PROVIDED, GUIDANCE, OWN_TESTING),
@@ -93,37 +100,7 @@ const popComponentSchema = Joi.object({
 const popsSchema = Joi.object({
   sourceOfComponents: sourceOfComponentsSchema(),
   components: Joi.array().items(popComponentSchema).empty(null)
-})
-  .empty(null)
-  .custom((value, helpers) => {
-    const wasteItems = helpers.state.ancestors[1]
-    const currentPath = helpers.state.path
-    const wasteItemIndex = currentPath[1]
-    const wasteItem = wasteItems[wasteItemIndex]
-
-    if (wasteItem.containsPops === true) {
-      if (!wasteItem.pops.sourceOfComponents) {
-        return helpers.message(
-          `"wasteItems[${wasteItemIndex}].pops.sourceOfComponents" is required when containsPops is true`
-        )
-      } else if (
-        Object.values(sourceOfComponentsProvided).includes(
-          wasteItem.pops.sourceOfComponents
-        ) &&
-        (!wasteItem.pops.components || wasteItem.pops.components === null)
-      ) {
-        return helpers.message(
-          `"wasteItems[${wasteItemIndex}].pops.components" is required when containsPops is true`
-        )
-      }
-    }
-
-    return value
-  })
-  .messages({
-    'pops.sourceNotAllowed': POPS_ERRORS.SOURCE_NOT_ALLOWED,
-    'any.invalid': '{{ #label }} cannot be provided when POPs are not present'
-  })
+}).empty(null)
 
 const deduplicateHazCodes = (value) => {
   // Automatically deduplicate HP codes if duplicates exist
@@ -147,34 +124,17 @@ const hazardousSchema = Joi.object({
 })
   .empty(null)
   .custom((value, helpers) => {
-    const wasteItems = helpers.state.ancestors[1]
-    const currentPath = helpers.state.path
-    const wasteItemIndex = currentPath[1]
-    const wasteItem = wasteItems[wasteItemIndex]
+    const wasteItemIndex = helpers.state.path[1]
+    const wasteItem = helpers.state.ancestors[1][wasteItemIndex]
 
     if (
-      wasteItem.containsHazardous === true &&
-      wasteItem.hazardous.sourceOfComponents
+      wasteItem.containsHazardous &&
+      wasteItem.hazardous.sourceOfComponents &&
+      !hasArrayItems(wasteItem.hazardous.hazCodes)
     ) {
-      const deduplicatedHazCodes = deduplicateHazCodes(
-        wasteItem.hazardous.hazCodes
+      return helpers.message(
+        `"wasteItems[${wasteItemIndex}].hazardous.hazCodes" is required when containsHazardous is true`
       )
-
-      if (
-        Object.values(sourceOfComponentsProvided).includes(
-          wasteItem.hazardous.sourceOfComponents
-        ) &&
-        (!wasteItem.hazardous.components ||
-          wasteItem.hazardous.components === null)
-      ) {
-        return helpers.message(
-          `"wasteItems[${wasteItemIndex}].hazardous.components" is required when containsHazardous is true`
-        )
-      } else if (!hasArrayItems(deduplicatedHazCodes)) {
-        return helpers.message(
-          `"wasteItems[${wasteItemIndex}].hazardous.hazCodes" is required when containsHazardous is true`
-        )
-      }
     }
 
     return value
@@ -261,4 +221,3 @@ export const wasteItemsSchema = Joi.object({
 
     return value
   })
-  .label('Waste')
