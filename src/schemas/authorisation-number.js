@@ -1,4 +1,5 @@
 import Joi from 'joi'
+import { AUTHORISATION_ERRORS } from '../common/constants/validation-error-messages.js'
 
 /**
  * UK Site Authorization Number Validation
@@ -78,8 +79,7 @@ export const authorisationNumberSchema = Joi.string()
     return helpers.error('authorisation.invalid')
   })
   .messages({
-    'authorisation.invalid':
-      'Site authorisation number must be in a valid UK format'
+    'authorisation.invalid': AUTHORISATION_ERRORS.INVALID
   })
 
 /**

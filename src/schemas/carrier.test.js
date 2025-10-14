@@ -203,7 +203,7 @@ describe('Carrier Registration Validation', () => {
       const { error } = validate(carrier)
       expect(error).toBeDefined()
       expect(error.message).toBe(
-        'Postcode must be in valid UK or Ireland format'
+        '"carrier.address.postcode" must be in valid UK or Ireland format'
       )
     })
 
