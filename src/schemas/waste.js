@@ -31,40 +31,36 @@ export const formatPopsOrHazardousFields = (popsOrHazardous) => ({
   containsPopsOrHazardousField: `contains${popsOrHazardous.charAt(0).toUpperCase()}${popsOrHazardous.toLowerCase().slice(1)}`
 })
 
-const validatePopOrHazardousPresence = (value, helpers, popsOrHazardous) => {
-  const { sourceOfComponents, components } = value[popsOrHazardous]
+const validatePopOrHazardousPresence = (
+  wasteItem,
+  helpers,
+  popsOrHazardous
+) => {
+  const { sourceOfComponents, components } =
+    helpers.state.ancestors[0][popsOrHazardous]
   const currentIndex = helpers.state.path[1]
   const { containsPopsOrHazardousField } =
     formatPopsOrHazardousFields(popsOrHazardous)
 
   if (!sourceOfComponents) {
-    return helpers.message(
-      POPS_OR_HAZARDOUS_ERRORS.SOURCE_OF_COMPONENTS_REQUIRED(
-        `wasteItems[${currentIndex}].${popsOrHazardous}.sourceOfComponents`,
-        containsPopsOrHazardousField
-      )
+    return POPS_OR_HAZARDOUS_ERRORS.SOURCE_OF_COMPONENTS_REQUIRED(
+      `wasteItems[${currentIndex}].${popsOrHazardous}.sourceOfComponents`,
+      containsPopsOrHazardousField
     )
   } else if (sourceOfComponents === 'NOT_PROVIDED') {
     if (hasArrayItems(components)) {
-      return helpers.message(
-        POPS_OR_HAZARDOUS_ERRORS.COMPONENTS_NOT_ALLOWED_NOT_PROVIDED(
-          `wasteItems[${currentIndex}].${popsOrHazardous}.components`,
-          `wasteItems[${currentIndex}].${popsOrHazardous}.sourceOfComponents`
-        )
+      return POPS_OR_HAZARDOUS_ERRORS.COMPONENTS_NOT_ALLOWED_NOT_PROVIDED(
+        `wasteItems[${currentIndex}].${popsOrHazardous}.components`,
+        `wasteItems[${currentIndex}].${popsOrHazardous}.sourceOfComponents`
       )
     }
   } else if (
-    Object.values(sourceOfComponentsProvided).includes(
-      value[popsOrHazardous].sourceOfComponents
-    ) &&
-    (!value[popsOrHazardous].components ||
-      value[popsOrHazardous].components === null)
+    Object.values(sourceOfComponentsProvided).includes(sourceOfComponents) &&
+    (!components || components === null)
   ) {
-    return helpers.message(
-      POPS_OR_HAZARDOUS_ERRORS.SOURCE_OF_COMPONENTS_REQUIRED(
-        `wasteItems[${currentIndex}].${popsOrHazardous}.components`,
-        containsPopsOrHazardousField
-      )
+    return POPS_OR_HAZARDOUS_ERRORS.SOURCE_OF_COMPONENTS_REQUIRED(
+      `wasteItems[${currentIndex}].${popsOrHazardous}.components`,
+      containsPopsOrHazardousField
     )
   }
 
@@ -72,7 +68,7 @@ const validatePopOrHazardousPresence = (value, helpers, popsOrHazardous) => {
   // components are recommended but not required - warnings are handled separately
   // This allows the submission to pass validation even without components
 
-  return value
+  return undefined
 }
 
 const validatePopOrHazardousAbsence = (value, helpers, popsOrHazardous) => {
@@ -84,18 +80,16 @@ const validatePopOrHazardousAbsence = (value, helpers, popsOrHazardous) => {
     formatPopsOrHazardousFields(popsOrHazardous)
 
   if (
-    value[popsOrHazardous] &&
-    hasArrayItems(value[popsOrHazardous].components)
+    helpers.state.ancestors[0][popsOrHazardous] &&
+    hasArrayItems(helpers.state.ancestors[0][popsOrHazardous].components)
   ) {
-    return helpers.message(
-      POPS_OR_HAZARDOUS_ERRORS.COMPONENTS_NOT_ALLOWED_FALSE(
-        `wasteItems[${currentIndex}].${popsOrHazardous}.components`,
-        `wasteItems[${currentIndex}].${containsPopsOrHazardousField}`
-      )
+    return POPS_OR_HAZARDOUS_ERRORS.COMPONENTS_NOT_ALLOWED_FALSE(
+      `wasteItems[${currentIndex}].${popsOrHazardous}.components`,
+      `wasteItems[${currentIndex}].${containsPopsOrHazardousField}`
     )
   }
 
-  return value
+  return undefined
 }
 
 const sourceOfComponentsSchema = () =>
@@ -120,7 +114,20 @@ const popComponentSchema = Joi.object({
 const popsSchema = Joi.object({
   sourceOfComponents: sourceOfComponentsSchema(),
   components: Joi.array().items(popComponentSchema).empty(null)
-}).empty(null)
+})
+  .empty(null)
+  .custom((value, helpers) => {
+    const wasteItem = helpers.state.ancestors[0]
+    let error
+
+    if (wasteItem.containsPops) {
+      error = validatePopOrHazardousPresence(value, helpers, 'pops')
+    } else if (!wasteItem.containsPops) {
+      error = validatePopOrHazardousAbsence(value, helpers, 'pops')
+    }
+
+    return error ? helpers.message(error) : value
+  })
 
 const deduplicateHazCodes = (value) => {
   // Automatically deduplicate HP codes if duplicates exist
@@ -161,6 +168,18 @@ const hazardousSchema = Joi.object({
     }
 
     return value
+  })
+  .custom((value, helpers) => {
+    const wasteItem = helpers.state.ancestors[0]
+    let error
+
+    if (wasteItem.containsHazardous) {
+      error = validatePopOrHazardousPresence(value, helpers, 'hazardous')
+    } else if (!wasteItem.containsHazardous) {
+      error = validatePopOrHazardousAbsence(value, helpers, 'hazardous')
+    }
+
+    return error ? helpers.message(error) : value
   })
 
 function validateEwcCode(value, helpers) {
@@ -217,21 +236,3 @@ export const wasteItemsSchema = Joi.object({
   hazardous: hazardousSchema,
   disposalOrRecoveryCodes: Joi.array().items(disposalOrRecoveryCodeSchema)
 })
-  .custom((value, helpers) => {
-    if (value.containsPops) {
-      return validatePopOrHazardousPresence(value, helpers, 'pops')
-    } else if (!value.containsPops) {
-      return validatePopOrHazardousAbsence(value, helpers, 'pops')
-    }
-
-    return value
-  })
-  .custom((value, helpers) => {
-    if (value.containsHazardous) {
-      return validatePopOrHazardousPresence(value, helpers, 'hazardous')
-    } else if (!value.containsHazardous) {
-      return validatePopOrHazardousAbsence(value, helpers, 'hazardous')
-    }
-
-    return value
-  })
