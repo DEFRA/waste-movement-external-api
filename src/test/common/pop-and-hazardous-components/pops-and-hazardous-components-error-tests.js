@@ -8,7 +8,10 @@ import { createTestPayload } from '../../../schemas/test-helpers/waste-test-help
 const DECIMAL_CONCENTRATION = 12.5
 const ZERO_NUMBER = 0
 
-export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
+export function popsAndHazardousComponentsErrorTests(
+  popsOrHazardous,
+  overrides
+) {
   if (!['POPs', 'Hazardous'].includes(popsOrHazardous)) {
     throw new Error('Expecting popsOrHazardous to be one of: POPs, Hazardous')
   }
@@ -57,7 +60,8 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
               [containsPopsOrHazardousField]: containsPopsOrHazardousValue,
               [popsOrHazardousObjectProperty]: {
                 sourceOfComponents: value,
-                components: []
+                components: [],
+                ...overrides
               }
             }
           })
@@ -135,7 +139,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
         const result = receiveMovementRequestSchema.validate(payload)
         expect(result.error).toBeDefined()
         expect(result.error.message).toBe(
-          `${popsOrHazardous} components must not be provided when ${popsOrHazardous} components are not present`
+          `"wasteItems[0].${popsOrHazardousObjectProperty}" must not be provided when ${containsPopsOrHazardousField} is true`
         )
       }
     )
@@ -157,14 +161,15 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
                 name: 'Aldrin',
                 concentration: 100
               }
-            ]
+            ],
+            ...overrides
           }
         }
       })
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeDefined()
       expect(result.error.message).toBe(
-        `${popsOrHazardous} components must not be provided when the source of components is NOT_PROVIDED`
+        `"wasteItems[0].${popsOrHazardousObjectProperty}" must not be provided when the source of components is NOT_PROVIDED`
       )
     })
 
@@ -185,7 +190,8 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
                   name: 'Aldrin',
                   concentration: 100
                 }
-              ]
+              ],
+              ...overrides
             }
           }
         })
@@ -250,7 +256,8 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
                   name: 'Chlordane',
                   concentration: value
                 }
-              ]
+              ],
+              ...overrides
             }
           }
         })
@@ -326,7 +333,8 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
                 name: 'Endosulfan',
                 concentration: DECIMAL_CONCENTRATION
               }
-            ]
+            ],
+            ...overrides
           }
         }
       })
@@ -396,7 +404,7 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeDefined()
       expect(result.error.message).toBe(
-        `"wasteItems[0].${popsOrHazardousObjectProperty}.sourceOfComponents" is required when components are present`
+        `"wasteItems[0].${popsOrHazardousObjectProperty}.sourceOfComponents" is required when ${containsPopsOrHazardousField} is true`
       )
     })
 
@@ -446,15 +454,15 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
             [containsPopsOrHazardousField]: true,
             [popsOrHazardousObjectProperty]: {
               sourceOfComponents: 'CARRIER_PROVIDED',
-              components: value
+              components: value,
+              ...overrides
             }
           }
         })
-        console.dir({ payloadInTest: payload }, { depth: null })
         const result = receiveMovementRequestSchema.validate(payload)
         expect(result.error).toBeDefined()
         expect(result.error.message).toBe(
-          `"wasteItems[0].${popsOrHazardousObjectProperty}.components" is required when ${popsOrHazardous} components are present`
+          `"wasteItems[0].${popsOrHazardousObjectProperty}.components" is required when ${containsPopsOrHazardousField} is true`
         )
       }
     )
@@ -467,7 +475,8 @@ export function popsAndHazardousComponentsErrorTests(popsOrHazardous) {
             [containsPopsOrHazardousField]: true,
             [popsOrHazardousObjectProperty]: {
               sourceOfComponents: 'NOT_PROVIDED',
-              components: value
+              components: value,
+              ...overrides
             }
           }
         })

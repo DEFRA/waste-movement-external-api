@@ -43,9 +43,9 @@ export function createMovementRequest(overrides) {
           isEstimate: false
         },
         containsPops: false,
+        containsHazardous: false,
         pops: {},
         hazardous: {
-          containsHazardous: false,
           sourceOfComponents: sourceOfComponentsNotProvided.NOT_PROVIDED
         }
       }

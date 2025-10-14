@@ -27,7 +27,8 @@ export const createTestPayload = (overrides = {}) => {
     },
     numberOfContainers: 1,
     typeOfContainers: validContainerTypes[0],
-    containsPops: false
+    containsPops: false,
+    containsHazardous: false
   }
 
   // Merge waste item overrides

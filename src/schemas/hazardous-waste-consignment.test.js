@@ -18,7 +18,8 @@ const buildBasePayload = () => ({
       },
       numberOfContainers: 1,
       typeOfContainers: validContainerTypes[0],
-      containsPops: false
+      containsPops: false,
+      containsHazardous: false
     }
   ]
 })
