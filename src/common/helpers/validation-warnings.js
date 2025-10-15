@@ -259,7 +259,6 @@ const formatIndexedKeyWarning = (
   const keyFieldItem = field ? `.${field}` : ''
 
   return invalidIndices.map((invalidIndex) => {
-    console.log({ baseKeyJsonPath, keyLastItem, invalidIndex })
     baseKeyJsonPath = replaceJsonPathIndex(
       baseKeyJsonPath,
       keyLastItem,

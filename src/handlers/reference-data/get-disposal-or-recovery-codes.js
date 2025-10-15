@@ -1,6 +1,9 @@
 import { DISPOSAL_OR_RECOVERY_CODES } from '../../common/constants/treatment-codes.js'
 import { HTTP_STATUS } from '../../common/constants/http-status-codes.js'
 import { handleBackendResponse } from '../handle-backend-response.js'
+import { createLogger } from '../../common/helpers/logging/logger.js'
+
+const logger = createLogger()
 
 export const handleGetDisposalOrRecoveryCodes = async (_request, h) => {
   try {
@@ -11,7 +14,7 @@ export const handleGetDisposalOrRecoveryCodes = async (_request, h) => {
 
     return handleBackendResponse(response, h, () => responseData)
   } catch (error) {
-    console.error('Error getting disposal or recovery codes:', error)
+    logger.error({ err: error }, 'Error getting disposal or recovery codes')
     return h
       .response({
         statusCode: HTTP_STATUS.INTERNAL_SERVER_ERROR,
