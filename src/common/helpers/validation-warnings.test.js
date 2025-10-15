@@ -1,13 +1,11 @@
 import { popsAndHazardousComponentWarningTests } from '../../test/common/pop-and-hazardous-components/pops-and-hazardous-components-warning-tests.js'
-import { validEwcCodes } from '../constants/ewc-codes.js'
 import {
   VALIDATION_ERROR_TYPES,
   generateAllValidationWarnings,
   hazardousComponentsWarningValidators,
   popsComponentsWarningValidators,
   processValidationWarnings,
-  disposalOrRecoveryCodesWarningValidators,
-  hazardousConsignmentWarningValidators
+  disposalOrRecoveryCodesWarningValidators
 } from './validation-warnings.js'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -388,47 +386,6 @@ describe('Validation Warnings', () => {
     'Hazardous',
     hazardousComponentsWarningValidators
   )
-
-  describe('generateHazardousConsignmentWarnings', () => {
-    it('should retrn an empty array when provided with a non hazardous code', () => {
-      const payload = {
-        wasteItems: [
-          {
-            ewcCodes: [validEwcCodes[0]]
-          }
-        ]
-      }
-
-      const warnings = processValidationWarnings(
-        payload,
-        hazardousConsignmentWarningValidators
-      )
-      expect(warnings).toEqual([])
-    })
-
-    it('should generate warning when both hazardousWasteConsignmentCode and reasonForNoConsignmentCode are missing', () => {
-      const payload = {
-        wasteItems: [
-          {
-            ewcCodes: ['010304']
-          }
-        ]
-      }
-
-      const warnings = processValidationWarnings(
-        payload,
-        hazardousConsignmentWarningValidators
-      )
-      expect(warnings).toEqual([
-        {
-          key: 'receipt.reasonForNoConsignmentCode',
-          errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-          message:
-            'receipt.reasonForNoConsignmentCode is required when hazardous EWC codes are present'
-        }
-      ])
-    })
-  })
 
   describe('generateAllValidationWarnings', () => {
     it('should return empty array when no warnings are generated', () => {

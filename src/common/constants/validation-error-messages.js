@@ -64,8 +64,8 @@ export const CONSIGNMENT_ERRORS = {
     '{{#label}} must be in one of the valid formats: EA/NRW (e.g. CJTILE/A0001), SEPA (SA|SB|SC followed by 7 digits), or NIEA (DA|DB|DC followed by 7 digits)',
   CODE_REQUIRED: '{{#label}} is required when hazardous EWC codes are present',
   REASON_REQUIRED:
-    '{{#label}} is required when wasteItems[*].ewcCodes contains a hazardous code and hazardousWasteConsignmentCode is not provided',
-  REASON_INVALID_PREFIX: '{{#label}} must be one of:'
+    '"reasonForNoConsignmentCode" is required when wasteItems[*].ewcCodes contains a hazardous code and hazardousWasteConsignmentCode is not provided',
+  REASON_INVALID_PREFIX: `"reasonForNoConsignmentCode" must be one of:`
 }
 
 // Authorisation number messages

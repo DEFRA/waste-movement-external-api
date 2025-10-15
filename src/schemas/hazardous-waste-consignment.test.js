@@ -82,6 +82,30 @@ describe('Hazardous Waste Consignment Note Code rules', () => {
     }
   )
 
+  it('Allow both hazardousWasteConsignmentCode and reasonForNoConsignmentCode to be missing when non-hazardous EWC codes are present', () => {
+    const payload = buildBasePayload()
+    // Keep non-hazardous EWC
+    payload.hazardousWasteConsignmentCode = undefined
+    payload.reasonForNoConsignmentCode = undefined
+
+    const { error } = receiveMovementRequestSchema.validate(payload)
+    expect(error).toBeUndefined()
+  })
+
+  it('Require either hazardousWasteConsignmentCode or reasonForNoConsignmentCode to be present when hazardous EWC codes are present', () => {
+    const payload = buildBasePayload()
+    // Use a hazardous EWC code (from constants list)
+    payload.wasteItems[0].ewcCodes = ['030104']
+    payload.hazardousWasteConsignmentCode = undefined
+    payload.reasonForNoConsignmentCode = undefined
+
+    const { error } = receiveMovementRequestSchema.validate(payload)
+    expect(error).toBeDefined()
+    expect(error.message).toBe(
+      '"reasonForNoConsignmentCode" is required when wasteItems[*].ewcCodes contains a hazardous code and hazardousWasteConsignmentCode is not provided'
+    )
+  })
+
   it('Consignment Note Code supplied in incorrect format causes rejection (hazardous context)', () => {
     const payload = buildBasePayload()
     payload.wasteItems[0].ewcCodes = ['030104'] // hazardous

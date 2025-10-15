@@ -1,4 +1,3 @@
-import { hasHazardousEwcCodes } from '../../schemas/hazardous-waste-consignment.js'
 import { sourceOfComponentsProvided } from '../constants/source-of-components.js'
 
 /**
@@ -124,18 +123,6 @@ export const disposalOrRecoveryCodesWarningValidators = {
         isDisposalOrRecoveryWeightIsEstimateMissing(wasteItem),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message: '{{ #label }} flag is required'
-    }
-  ]
-}
-
-export const hazardousConsignmentWarningValidators = {
-  key: 'reasonForNoConsignmentCode',
-  validators: [
-    {
-      field: null,
-      validator: (payload) => isHazardousConsignmentCodeFieldsMissing(payload),
-      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: '{{ #label }} is required when hazardous EWC codes are present'
     }
   ]
 }
@@ -463,31 +450,6 @@ const isDisposalOrRecoveryCodeMissing = (wasteItem) => {
 }
 
 /**
- * Determines if Hazardous consignment code is missing
- * @param {Object} payload - The request payload
- * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array }
- */
-const isHazardousConsignmentCodeFieldsMissing = (payload) => {
-  if (!Array.isArray(payload?.wasteItems)) {
-    return { isValid: true }
-  }
-
-  if (!hasHazardousEwcCodes(payload)) {
-    return { isValid: true }
-  }
-
-  const code = payload.hazardousWasteConsignmentCode
-  const reason = payload.reasonForNoConsignmentCode
-
-  // If consignment code is blank, reason must be provided
-  if (!code && !reason) {
-    return { isValid: false }
-  }
-
-  return { isValid: true }
-}
-
-/**
  * Determines if POPs/Hazardous components is an empty array
  * @param {Object} components - The POPs/Hazardous components
  * @returns {Boolean} True if POPs/Hazardous components array is empty, otherwise false
@@ -583,13 +545,6 @@ export const generateAllValidationWarnings = (payload) => {
     disposalOrRecoveryCodesWarningValidators
   )
   warnings.push(...disposalRecoveryWarnings)
-
-  // Add hazardous consignment related warnings
-  const consignmentWarnings = processValidationWarnings(
-    payload,
-    hazardousConsignmentWarningValidators
-  )
-  warnings.push(...consignmentWarnings)
 
   // Add POPs components warnings
   const popsWarnings = processValidationWarnings(

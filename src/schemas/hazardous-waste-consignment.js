@@ -56,23 +56,3 @@ export const hazardousWasteConsignmentCodeSchema = Joi.custom(
   'string.consignmentFormat': CONSIGNMENT_ERRORS.CODE_FORMAT,
   'hazardousWasteConsignmentCode.required': CONSIGNMENT_ERRORS.CODE_REQUIRED
 })
-
-export const reasonForNoConsignmentCodeSchema = Joi.custom((value, helpers) => {
-  const payload = helpers.state.ancestors[0]
-  const hasHazardous = hasHazardousEwcCodes(payload)
-
-  if (hasHazardous && !payload.hazardousWasteConsignmentCode) {
-    if (!payload.reasonForNoConsignmentCode) {
-      return helpers.error('reasonForNoConsignmentCode.required')
-    }
-
-    if (!NO_CONSIGNMENT_REASONS.includes(value)) {
-      return helpers.error('any.only')
-    }
-  }
-
-  return value
-}).messages({
-  'any.only': `${CONSIGNMENT_ERRORS.REASON_INVALID_PREFIX} ${NO_CONSIGNMENT_REASONS.join(', ')}`,
-  'reasonForNoConsignmentCode.required': CONSIGNMENT_ERRORS.REASON_REQUIRED
-})

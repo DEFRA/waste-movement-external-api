@@ -2,8 +2,9 @@ import Joi from 'joi'
 import { MEANS_OF_TRANSPORT } from '../common/constants/means-of-transport.js'
 import { wasteItemsSchema } from './waste.js'
 import {
+  hasHazardousEwcCodes,
   hazardousWasteConsignmentCodeSchema,
-  reasonForNoConsignmentCodeSchema
+  NO_CONSIGNMENT_REASONS
 } from './hazardous-waste-consignment.js'
 import {
   ENGLAND_CARRIER_REGISTRATION_NUMBER_REGEX,
@@ -16,7 +17,8 @@ import {
 import { authorisationNumbersArraySchema } from './authorisation-number.js'
 import {
   CARRIER_ERRORS,
-  ADDRESS_ERRORS
+  ADDRESS_ERRORS,
+  CONSIGNMENT_ERRORS
 } from '../common/constants/validation-error-messages.js'
 
 const MIN_STRING_LENGTH = 1
@@ -121,7 +123,7 @@ export const receiveMovementRequestSchema = Joi.object({
   organisationApiId: Joi.string().required().uuid(),
   dateTimeReceived: Joi.date().iso().required(),
   hazardousWasteConsignmentCode: hazardousWasteConsignmentCodeSchema,
-  reasonForNoConsignmentCode: reasonForNoConsignmentCodeSchema,
+  reasonForNoConsignmentCode: Joi.string().allow(null).allow(''),
   yourUniqueReference: Joi.string(),
   otherReferencesForMovement: Joi.array().items(
     Joi.object({
@@ -135,4 +137,24 @@ export const receiveMovementRequestSchema = Joi.object({
   brokerOrDealer: brokerOrDealerSchema,
   receiver: receiverSchema.required(),
   receipt: receiptSchema.required()
-}).label('Movement')
+})
+  .custom((value, helpers) => {
+    const hasHazardous = hasHazardousEwcCodes(value)
+
+    if (hasHazardous && !value.hazardousWasteConsignmentCode) {
+      if (!value.reasonForNoConsignmentCode) {
+        return helpers.error('reasonForNoConsignmentCode.required')
+      }
+
+      if (!NO_CONSIGNMENT_REASONS.includes(value)) {
+        return helpers.error('reasonForNoConsignmentCode.only')
+      }
+    }
+
+    return value
+  })
+  .messages({
+    'reasonForNoConsignmentCode.only': `${CONSIGNMENT_ERRORS.REASON_INVALID_PREFIX} ${NO_CONSIGNMENT_REASONS.join(', ')}`,
+    'reasonForNoConsignmentCode.required': CONSIGNMENT_ERRORS.REASON_REQUIRED
+  })
+  .label('Movement')
