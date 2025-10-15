@@ -198,7 +198,8 @@ describe('Receipt Schema Validation - Hazardous', () => {
           sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
           hazCodes: [undefined]
         },
-        errorMessage: '"HazardCodes" must not be a sparse array item'
+        errorMessage:
+          '"wasteItems[0].hazardous.hazCodes[0]" must not be a sparse array item'
       },
       {
         description: 'invalid hazCodes types (null)',

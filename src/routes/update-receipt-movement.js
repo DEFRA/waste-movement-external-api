@@ -38,7 +38,7 @@ const updateReceiptMovement = {
               statusCode: Joi.number().valid(HTTP_STATUS.NOT_FOUND),
               error: Joi.string(),
               message: Joi.string()
-            }).label('NotFoundResponse')
+            })
           }
         }
       }

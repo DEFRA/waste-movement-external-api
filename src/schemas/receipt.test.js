@@ -190,7 +190,7 @@ describe('receiveMovementRequestSchema - otherReferencesForMovement validation',
       }
       const { error } = receiveMovementRequestSchema.validate(payload)
       expect(error).toBeDefined()
-      expect(error.message).toContain('"Receiver" is required')
+      expect(error.message).toContain('"receiver" is required')
     })
 
     it('should reject when receipt is missing', () => {
@@ -200,7 +200,7 @@ describe('receiveMovementRequestSchema - otherReferencesForMovement validation',
       }
       const { error } = receiveMovementRequestSchema.validate(payload)
       expect(error).toBeDefined()
-      expect(error.message).toContain('"Receipt" is required')
+      expect(error.message).toContain('"receipt" is required')
     })
   })
 })

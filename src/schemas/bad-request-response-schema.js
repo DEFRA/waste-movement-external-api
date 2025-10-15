@@ -14,4 +14,4 @@ export const badRequestResponseSchema = Joi.object({
       })
     )
   })
-}).label('ValidationErrorResponse')
+})
