@@ -143,11 +143,15 @@ export const receiveMovementRequestSchema = Joi.object({
 
     if (hasHazardous && !value.hazardousWasteConsignmentCode) {
       if (!value.reasonForNoConsignmentCode) {
-        return helpers.error('reasonForNoConsignmentCode.required')
+        return helpers.error('reasonForNoConsignmentCode.required', {
+          path: ['reasonForNoConsignmentCodes']
+        })
       }
 
       if (!NO_CONSIGNMENT_REASONS.includes(value)) {
-        return helpers.error('reasonForNoConsignmentCode.only')
+        return helpers.error('reasonForNoConsignmentCode.only', {
+          path: ['reasonForNoConsignmentCodes']
+        })
       }
     }
 
