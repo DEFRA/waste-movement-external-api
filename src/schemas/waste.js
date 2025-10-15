@@ -19,7 +19,7 @@ const disposalOrRecoveryCodeSchema = Joi.object({
     .valid(...DISPOSAL_OR_RECOVERY_CODES)
     .required(),
   weight: weightSchema.required()
-}).label('DisposalOrRecoveryCode')
+})
 
 const hasComponents = (components) =>
   Array.isArray(components) && components.length > 0
@@ -77,7 +77,7 @@ const popComponentSchema = Joi.object({
     })
     .required(),
   concentration: concentrationSchema()
-}).label('PopComponent')
+})
 
 const popsSchema = Joi.object({
   containsPops: Joi.boolean().required(),
@@ -109,7 +109,6 @@ const popsSchema = Joi.object({
     'pops.sourceNotAllowed': POPS_ERRORS.SOURCE_NOT_ALLOWED,
     'any.containsPopsHazardousFalse': POPS_ERRORS.COMPONENTS_NOT_ALLOWED_FALSE
   })
-  .label('Pops')
 
 const deduplicateHazCodes = (value) => {
   // Automatically deduplicate HP codes if duplicates exist
@@ -122,7 +121,7 @@ const deduplicateHazCodes = (value) => {
 const hazardousComponentSchema = Joi.object({
   name: Joi.string().empty('').empty(null).required(),
   concentration: concentrationSchema()
-}).label('ComponentItem')
+})
 
 const hazardousSchema = Joi.object({
   containsHazardous: Joi.boolean().required(),
@@ -133,12 +132,10 @@ const hazardousSchema = Joi.object({
       .items(Joi.string().valid(...validHazCodes))
       .min(1)
       .required()
-      .custom(deduplicateHazCodes, 'HP codes deduplication')
-      .label('HazardCodes'),
+      .custom(deduplicateHazCodes, 'HP codes deduplication'),
     otherwise: Joi.array()
       .items(Joi.string().valid(...validHazCodes))
       .custom(deduplicateHazCodes, 'HP codes deduplication')
-      .label('HazardCodes')
   }),
   components: Joi.array()
     .items(hazardousComponentSchema)
@@ -169,7 +166,6 @@ const hazardousSchema = Joi.object({
     'any.containsPopsHazardousFalse':
       HAZARDOUS_ERRORS.COMPONENTS_NOT_ALLOWED_FALSE
   })
-  .label('Hazardous')
 
 function validateEwcCode(value, helpers) {
   // Check if it's a 6-digit numeric code
@@ -222,4 +218,4 @@ export const wasteItemsSchema = Joi.object({
   pops: popsSchema,
   hazardous: hazardousSchema,
   disposalOrRecoveryCodes: Joi.array().items(disposalOrRecoveryCodeSchema)
-}).label('Waste')
+})

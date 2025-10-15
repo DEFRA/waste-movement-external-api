@@ -12,7 +12,7 @@ const health = {
       status: {
         200: Joi.object({
           message: Joi.string().description('Health status message')
-        }).label('HealthResponse')
+        })
       }
     }
   },

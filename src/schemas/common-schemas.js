@@ -6,11 +6,11 @@ export const errorResponseSchema = (statusCode) =>
     statusCode: Joi.number().valid(statusCode),
     error: Joi.string(),
     message: Joi.string()
-  }).label(`${statusCode}Response`)
+  })
 
 export const successResponseSchema = Joi.object({
   message: Joi.string().description('Success message')
-}).label('SuccessResponse')
+})
 
 export const commonSwaggerResponses = {
   [HTTP_STATUS.OK]: {

@@ -87,7 +87,7 @@ const carrierSchema = Joi.object({
     .valid(...MEANS_OF_TRANSPORT)
     .required(),
   otherMeansOfTransport: Joi.string()
-}).label('Carrier')
+})
 
 const receiverAddressSchema = addressSchema.keys({
   fullAddress: Joi.string().required(),
@@ -105,11 +105,11 @@ const receiverSchema = Joi.object({
   regulatoryPositionStatements: Joi.array().items(
     Joi.number().strict().integer().positive()
   )
-}).label('Receiver')
+})
 
 const receiptSchema = Joi.object({
   address: receiverAddressSchema.required()
-}).label('Receipt')
+})
 
 const brokerOrDealerSchema = Joi.object({
   organisationName: Joi.string().required(),
@@ -117,7 +117,7 @@ const brokerOrDealerSchema = Joi.object({
   registrationNumber: carrierOrBrokerDealerRegistrationNumber,
   phoneNumber: Joi.string(),
   emailAddress: Joi.string().email()
-}).label('BrokerOrDealer')
+})
 
 export const receiveMovementRequestSchema = Joi.object({
   organisationApiId: Joi.string().required().uuid(),
@@ -157,4 +157,3 @@ export const receiveMovementRequestSchema = Joi.object({
     'reasonForNoConsignmentCode.only': `${CONSIGNMENT_ERRORS.REASON_INVALID_PREFIX} ${NO_CONSIGNMENT_REASONS.join(', ')}`,
     'reasonForNoConsignmentCode.required': CONSIGNMENT_ERRORS.REASON_REQUIRED
   })
-  .label('Movement')
