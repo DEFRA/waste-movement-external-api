@@ -134,7 +134,7 @@ export function popsAndHazardousComponentsErrorTests(
         const result = receiveMovementRequestSchema.validate(payload)
         expect(result.error).toBeDefined()
         expect(result.error.message).toBe(
-          `"wasteItems[0].${popsOrHazardousObjectProperty}.components" must not be provided when wasteItems[0].${containsPopsOrHazardousField} is false`
+          `"wasteItems[0].${popsOrHazardousObjectProperty}.components" must not be provided when ${containsPopsOrHazardousField} is false`
         )
       }
     )
@@ -164,7 +164,7 @@ export function popsAndHazardousComponentsErrorTests(
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeDefined()
       expect(result.error.message).toBe(
-        `"wasteItems[0].${popsOrHazardousObjectProperty}.components" must not be provided when wasteItems[0].${popsOrHazardousObjectProperty}.sourceOfComponents is NOT_PROVIDED`
+        `"wasteItems[0].${popsOrHazardousObjectProperty}.components" must not be provided when sourceOfComponents is NOT_PROVIDED`
       )
     })
 

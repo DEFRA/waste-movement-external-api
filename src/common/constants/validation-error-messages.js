@@ -36,16 +36,23 @@ export const WASTE_ERRORS = {
 }
 
 export const POPS_OR_HAZARDOUS_ERRORS = {
-  SOURCE_OF_COMPONENTS_REQUIRED: (label, containsPopsOrHazardousField) =>
-    `"${label}" is required when ${containsPopsOrHazardousField} is true`,
-  COMPONENTS_NOT_ALLOWED_NOT_PROVIDED: (label, sourceOfComponentsField) =>
-    `"${label}" must not be provided when ${sourceOfComponentsField} is NOT_PROVIDED`,
-  COMPONENTS_NOT_ALLOWED_FALSE: (label, containsPopsOrHazardousField) =>
-    `"${label}" must not be provided when ${containsPopsOrHazardousField} is false`
+  COMPONENTS_NOT_ALLOWED_NOT_PROVIDED:
+    '{{#label}} must not be provided when sourceOfComponents is NOT_PROVIDED'
+}
+
+export const POPS_ERRORS = {
+  REQUIRED_WHEN_CONTAINS_POPS_TRUE:
+    '{{#label}} is required when containsPops is true',
+  COMPONENTS_NOT_ALLOWED_FALSE:
+    '{{#label}} must not be provided when containsPops is false'
 }
 
 export const HAZARDOUS_ERRORS = {
-  HAZ_CODES_REQUIRED: '{{#label}} is required when containsHazardous is true'
+  REQUIRED_WHEN_CONTAINS_HAZARDOUS_TRUE:
+    '{{#label}} is required when containsHazardous is true',
+  COMPONENTS_NOT_ALLOWED_FALSE:
+    '{{#label}} must not be provided when containsHazardous is false',
+  HAZ_CODES_REQUIRED: '{{#label}} is required when containsHazardous is trues'
 }
 
 // Hazardous waste consignment messages

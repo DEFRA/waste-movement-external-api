@@ -7,6 +7,7 @@ import { validHazCodes } from '../common/constants/haz-codes.js'
 import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
 import {
   HAZARDOUS_ERRORS,
+  POPS_ERRORS,
   POPS_OR_HAZARDOUS_ERRORS,
   WASTE_ERRORS
 } from '../common/constants/validation-error-messages.js'
@@ -31,69 +32,75 @@ export const formatPopsOrHazardousFields = (popsOrHazardous) => ({
   containsPopsOrHazardousField: `contains${popsOrHazardous.charAt(0).toUpperCase()}${popsOrHazardous.toLowerCase().slice(1)}`
 })
 
-const validatePopOrHazardousPresence = (
-  wasteItem,
-  helpers,
-  popsOrHazardous
-) => {
-  const { sourceOfComponents, components } =
-    helpers.state.ancestors[0][popsOrHazardous]
+const validatePopOrHazardousPresence = (value, helpers, popsOrHazardous) => {
+  const wasteItem = helpers.state.ancestors[0]
+  const { sourceOfComponents, components } = wasteItem[popsOrHazardous]
   const currentIndex = helpers.state.path[1]
   const { containsPopsOrHazardousField } =
     formatPopsOrHazardousFields(popsOrHazardous)
+  // Joi doesn't run custom functions on undefined fields so this can't be attached
+  // to the components/sourceOfComponents fields and needs to set {{#label}} dynamically
+  const validationMessage = (field) =>
+    (popsOrHazardous === 'pops'
+      ? POPS_ERRORS.REQUIRED_WHEN_CONTAINS_POPS_TRUE
+      : HAZARDOUS_ERRORS.REQUIRED_WHEN_CONTAINS_HAZARDOUS_TRUE
+    ).replace(
+      '{{#label}}',
+      `"wasteItems[${currentIndex}].${popsOrHazardous}.${field}"`
+    )
 
-  if (!sourceOfComponents) {
-    return POPS_OR_HAZARDOUS_ERRORS.SOURCE_OF_COMPONENTS_REQUIRED(
-      `wasteItems[${currentIndex}].${popsOrHazardous}.sourceOfComponents`,
-      containsPopsOrHazardousField
-    )
-  } else if (sourceOfComponents === 'NOT_PROVIDED') {
-    if (hasArrayItems(components)) {
-      return POPS_OR_HAZARDOUS_ERRORS.COMPONENTS_NOT_ALLOWED_NOT_PROVIDED(
-        `wasteItems[${currentIndex}].${popsOrHazardous}.components`,
-        `wasteItems[${currentIndex}].${popsOrHazardous}.sourceOfComponents`
-      )
+  if (wasteItem[containsPopsOrHazardousField] === true) {
+    if (!sourceOfComponents) {
+      return helpers.message(validationMessage('sourceOfComponents'))
     }
-  } else if (
-    Object.values(sourceOfComponentsProvided).includes(sourceOfComponents) &&
-    (!components || components === null)
-  ) {
-    return POPS_OR_HAZARDOUS_ERRORS.SOURCE_OF_COMPONENTS_REQUIRED(
-      `wasteItems[${currentIndex}].${popsOrHazardous}.components`,
-      containsPopsOrHazardousField
-    )
+
+    if (
+      Object.values(sourceOfComponentsProvided).includes(sourceOfComponents) &&
+      [undefined, null].includes(components)
+    ) {
+      return helpers.message(validationMessage('components'))
+    }
   }
 
   // For other sources (CARRIER_PROVIDED, GUIDANCE, OWN_TESTING),
   // components are recommended but not required - warnings are handled separately
   // This allows the submission to pass validation even without components
-
-  return undefined
+  return value
 }
 
-const validatePopOrHazardousAbsence = (value, helpers, popsOrHazardous) => {
-  // This function is called when containsPops/containsHazardous is false
-  // When POPs/Hazardous are not present, no component details should be provided at all
-  // This includes empty objects, as per business requirements
-  const currentIndex = helpers.state.path[1]
+const validatePopsOrHazardousComponents = (value, helpers, popsOrHazardous) => {
+  const wasteItem = helpers.state.ancestors[1]
+  const { sourceOfComponents, components } = wasteItem[popsOrHazardous]
   const { containsPopsOrHazardousField } =
     formatPopsOrHazardousFields(popsOrHazardous)
 
   if (
-    helpers.state.ancestors[0][popsOrHazardous] &&
-    hasArrayItems(helpers.state.ancestors[0][popsOrHazardous].components)
+    wasteItem[containsPopsOrHazardousField] === true &&
+    sourceOfComponents === 'NOT_PROVIDED' &&
+    hasArrayItems(components)
   ) {
-    return POPS_OR_HAZARDOUS_ERRORS.COMPONENTS_NOT_ALLOWED_FALSE(
-      `wasteItems[${currentIndex}].${popsOrHazardous}.components`,
-      `wasteItems[${currentIndex}].${containsPopsOrHazardousField}`
+    return helpers.message(
+      POPS_OR_HAZARDOUS_ERRORS.COMPONENTS_NOT_ALLOWED_NOT_PROVIDED
     )
   }
 
-  return undefined
+  if (
+    wasteItem[containsPopsOrHazardousField] === false &&
+    hasArrayItems(components)
+  ) {
+    return helpers.message(
+      popsOrHazardous === 'pops'
+        ? POPS_ERRORS.COMPONENTS_NOT_ALLOWED_FALSE
+        : HAZARDOUS_ERRORS.COMPONENTS_NOT_ALLOWED_FALSE
+    )
+  }
+
+  return value
 }
 
-const sourceOfComponentsSchema = () =>
-  Joi.string().valid(...Object.values(validSourceOfComponents))
+const sourceOfComponentsSchema = Joi.string().valid(
+  ...Object.values(validSourceOfComponents)
+)
 
 const concentrationSchema = () => Joi.number().strict().positive().allow(null)
 
@@ -112,22 +119,18 @@ const popComponentSchema = Joi.object({
 })
 
 const popsSchema = Joi.object({
-  sourceOfComponents: sourceOfComponentsSchema(),
-  components: Joi.array().items(popComponentSchema).empty(null)
+  sourceOfComponents: sourceOfComponentsSchema,
+  components: Joi.array()
+    .items(popComponentSchema)
+    .empty(null)
+    .custom((value, helpers) =>
+      validatePopsOrHazardousComponents(value, helpers, 'pops')
+    )
 })
   .empty(null)
-  .custom((value, helpers) => {
-    const wasteItem = helpers.state.ancestors[0]
-    let error
-
-    if (wasteItem.containsPops) {
-      error = validatePopOrHazardousPresence(value, helpers, 'pops')
-    } else if (!wasteItem.containsPops) {
-      error = validatePopOrHazardousAbsence(value, helpers, 'pops')
-    }
-
-    return error ? helpers.message(error) : value
-  })
+  .custom((value, helpers) =>
+    validatePopOrHazardousPresence(value, helpers, 'pops')
+  )
 
 const deduplicateHazCodes = (value) => {
   // Automatically deduplicate HP codes if duplicates exist
@@ -143,11 +146,16 @@ const hazardousComponentSchema = Joi.object({
 })
 
 const hazardousSchema = Joi.object({
-  sourceOfComponents: sourceOfComponentsSchema(),
+  sourceOfComponents: sourceOfComponentsSchema,
   hazCodes: Joi.array()
     .items(Joi.string().valid(...validHazCodes))
     .custom(deduplicateHazCodes, 'HP codes deduplication'),
-  components: Joi.array().items(hazardousComponentSchema).empty(null)
+  components: Joi.array()
+    .items(hazardousComponentSchema)
+    .empty(null)
+    .custom((value, helpers) =>
+      validatePopsOrHazardousComponents(value, helpers, 'hazardous')
+    )
 })
   .empty(null)
   .custom((value, helpers) => {
@@ -160,6 +168,8 @@ const hazardousSchema = Joi.object({
       !hasArrayItems(wasteItem.hazardous.hazCodes)
     ) {
       return helpers.message(
+        // Joi doesn't run custom functions on undefined fields so this can't be attached
+        // to the hazCodes field and needs to set {{#label}} dynamically
         HAZARDOUS_ERRORS.HAZ_CODES_REQUIRED.replace(
           '{{#label}}',
           `"wasteItems[${wasteItemIndex}].hazardous.hazCodes"`
@@ -169,18 +179,9 @@ const hazardousSchema = Joi.object({
 
     return value
   })
-  .custom((value, helpers) => {
-    const wasteItem = helpers.state.ancestors[0]
-    let error
-
-    if (wasteItem.containsHazardous) {
-      error = validatePopOrHazardousPresence(value, helpers, 'hazardous')
-    } else if (!wasteItem.containsHazardous) {
-      error = validatePopOrHazardousAbsence(value, helpers, 'hazardous')
-    }
-
-    return error ? helpers.message(error) : value
-  })
+  .custom((value, helpers) =>
+    validatePopOrHazardousPresence(value, helpers, 'hazardous')
+  )
 
 function validateEwcCode(value, helpers) {
   // Check if it's a 6-digit numeric code
