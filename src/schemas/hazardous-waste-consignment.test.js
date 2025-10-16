@@ -119,7 +119,7 @@ describe('Hazardous Waste Consignment Note Code rules', () => {
     )
   })
 
-  it('Prompt reason if consignment number blank - reason must be from allowed list when provided', () => {
+  it('Prompt reason if consignment number blank - reject if reason is not from the valid reason list', () => {
     const payload = buildBasePayload()
     payload.wasteItems[0].ewcCodes = ['030104'] // hazardous
     payload.hazardousWasteConsignmentCode = ''
@@ -131,6 +131,17 @@ describe('Hazardous Waste Consignment Note Code rules', () => {
     expect(error.message).toBe(
       `"reasonForNoConsignmentCode" must be one of: ${NO_CONSIGNMENT_REASONS.join(', ')}`
     )
+  })
+
+  it('Prompt reason if consignment number blank - accept if the reason is from the valid reason list', () => {
+    const payload = buildBasePayload()
+    payload.wasteItems[0].ewcCodes = ['030104'] // hazardous
+    payload.hazardousWasteConsignmentCode = ''
+    // Provide a valid reason value (in allowed list)
+    payload.reasonForNoConsignmentCode = NO_CONSIGNMENT_REASONS[0]
+
+    const { error } = receiveMovementRequestSchema.validate(payload)
+    expect(error).toBeUndefined()
   })
 
   it('Reason is left blank when required - generates a warning (not a rejection)', () => {
