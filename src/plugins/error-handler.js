@@ -27,7 +27,8 @@ export const errorHandler = {
                 break
               default:
                 logger.error(
-                  `Unexpected error returned from the library, mapping to default UnexpectedError ${err}`
+                  { err },
+                  'Unexpected error returned from the library, mapping to default UnexpectedError'
                 )
                 errorType = 'UnexpectedError'
             }
