@@ -370,11 +370,6 @@ describe('Receiver Validation', () => {
       TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WPPC,
       TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_P_WITH_VERSION,
       TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WPPC_WITH_VERSION,
-      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WML_FILE_REF,
-      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WML_TRANSFER,
-      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_LN_LICENCE,
-      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_LN_WITH_SUFFIXES,
-      TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_PAC_FORMAT,
       TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_COMBINED,
       TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_COMBINED_NO_SUFFIX,
       TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_COMBINED_PAC
@@ -386,6 +381,34 @@ describe('Receiver Validation', () => {
 
       const { error } = validate(receiver, createStandardReceipt())
       expect(error).toBeUndefined()
+    })
+
+    // Test NI standalone formats are rejected (must be combined with WML reference)
+    describe.each([
+      ['WML 07/61', TEST_DATA.AUTHORISATION_NUMBERS.INVALID.NI_WML_ALONE],
+      [
+        'WML 19/36/T',
+        TEST_DATA.AUTHORISATION_NUMBERS.INVALID.NI_WML_TRANSFER_ALONE
+      ],
+      ['LN/13/02', TEST_DATA.AUTHORISATION_NUMBERS.INVALID.NI_LN_ALONE],
+      [
+        'LN/13/02/M/V2',
+        TEST_DATA.AUTHORISATION_NUMBERS.INVALID.NI_LN_WITH_SUFFIXES_ALONE
+      ],
+      ['PAC/2014/WCL001', TEST_DATA.AUTHORISATION_NUMBERS.INVALID.NI_PAC_ALONE]
+    ])('rejects NI standalone format: %s', (formatExample, testDataValue) => {
+      test(`invalidates ${formatExample}`, () => {
+        const receiver = {
+          organisationName: 'Test Receiver',
+          authorisationNumbers: [testDataValue]
+        }
+
+        const { error } = validate(receiver, createStandardReceipt())
+        expect(error).toBeDefined()
+        expect(error.message).toBe(
+          '"receiver.authorisationNumbers[0]" must be in a valid UK format'
+        )
+      })
     })
   })
 })
