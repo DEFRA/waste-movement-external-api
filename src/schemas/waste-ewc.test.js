@@ -12,7 +12,8 @@ describe('Receipt Schema Validation - EWC', () => {
       const payload = createTestPayload({
         wasteItemOverrides: {
           ewcCodes: ewcCodeArray,
-          pops: { containsPops: false }
+          containsPops: false,
+          pops: {}
         }
       })
       return receiveMovementRequestSchema.validate(payload)

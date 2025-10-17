@@ -10,10 +10,8 @@ import { createTestPayload } from './test-helpers/waste-test-helpers.js'
 describe('Receipt Schema Validation - Hazardous', () => {
   describe('Hazardous Waste Validation', () => {
     // Helper function to validate a payload with hazardous waste data
-    const validateHazardous = (hazardous) => {
-      const payload = createTestPayload({
-        wasteItemOverrides: { hazardous }
-      })
+    const validateHazardous = (wasteItemOverrides) => {
+      const payload = createTestPayload({ wasteItemOverrides })
       return receiveMovementRequestSchema.validate(payload)
     }
 
@@ -23,26 +21,32 @@ describe('Receipt Schema Validation - Hazardous', () => {
         // Single HP code with components
         const result1 = validateHazardous({
           containsHazardous: true,
-          sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
-          hazCodes: ['HP_15'],
-          components: [{ name: 'Mercury', concentration: 10 }]
+          hazardous: {
+            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            hazCodes: ['HP_15'],
+            components: [{ name: 'Mercury', concentration: 10 }]
+          }
         })
         expect(result1.error).toBeUndefined()
 
         // Multiple HP codes without components
         const result2 = validateHazardous({
           containsHazardous: true,
-          sourceOfComponents: sourceOfComponentsNotProvided.NOT_PROVIDED,
-          hazCodes: ['HP_1', 'HP_3']
+          hazardous: {
+            sourceOfComponents: sourceOfComponentsNotProvided.NOT_PROVIDED,
+            hazCodes: ['HP_1', 'HP_3']
+          }
         })
         expect(result2.error).toBeUndefined()
 
         // Multiple HP codes with components
         const result3 = validateHazardous({
           containsHazardous: true,
-          sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
-          hazCodes: ['HP_5', 'HP_10', 'HP_12'],
-          components: [{ name: 'Lead compounds', concentration: 15 }]
+          hazardous: {
+            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            hazCodes: ['HP_5', 'HP_10', 'HP_12'],
+            components: [{ name: 'Lead compounds', concentration: 15 }]
+          }
         })
         expect(result3.error).toBeUndefined()
       })
@@ -50,21 +54,29 @@ describe('Receipt Schema Validation - Hazardous', () => {
       it('should reject empty hazCodes array when containsHazardous is true', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
-          hazCodes: [],
-          components: [{ name: 'Mercury', concentration: 15 }]
+          hazardous: {
+            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            hazCodes: [],
+            components: [{ name: 'Mercury', concentration: 15 }]
+          }
         })
         expect(result.error).toBeDefined()
-        expect(result.error.message).toContain('must contain at least 1 items')
+        expect(result.error.message).toContain(
+          '"wasteItems[0].hazardous.hazCodes" is required when containsHazardous is true'
+        )
       })
 
       it('should reject when containsHazardous is true and hazCodes not provided', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          sourceOfComponents: sourceOfComponentsNotProvided.NOT_PROVIDED
+          hazardous: {
+            sourceOfComponents: sourceOfComponentsNotProvided.NOT_PROVIDED
+          }
         })
         expect(result.error).toBeDefined()
-        expect(result.error.message).toContain('is required')
+        expect(result.error.message).toContain(
+          '"wasteItems[0].hazardous.hazCodes" is required when containsHazardous is true'
+        )
       })
 
       it('should accept when containsHazardous is false and no hazCodes provided', () => {
@@ -77,7 +89,9 @@ describe('Receipt Schema Validation - Hazardous', () => {
       it('should accept when containsHazardous is false and hazCodes provided', () => {
         const result = validateHazardous({
           containsHazardous: false,
-          hazCodes: ['HP_1', 'HP_3']
+          hazardous: {
+            hazCodes: ['HP_1', 'HP_3']
+          }
         })
         expect(result.error).toBeUndefined()
       })
@@ -85,7 +99,9 @@ describe('Receipt Schema Validation - Hazardous', () => {
       it('should accept when containsHazardous is false and empty hazCodes array provided', () => {
         const result = validateHazardous({
           containsHazardous: false,
-          hazCodes: []
+          hazardous: {
+            hazCodes: []
+          }
         })
         expect(result.error).toBeUndefined()
       })
@@ -95,9 +111,11 @@ describe('Receipt Schema Validation - Hazardous', () => {
         (hazCode) => {
           const result = validateHazardous({
             containsHazardous: true,
-            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
-            hazCodes: [hazCode],
-            components: [{ name: 'Mercury', concentration: 30 }]
+            hazardous: {
+              sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+              hazCodes: [hazCode],
+              components: [{ name: 'Mercury', concentration: 30 }]
+            }
           })
           expect(result.error).toBeUndefined()
         }
@@ -106,9 +124,11 @@ describe('Receipt Schema Validation - Hazardous', () => {
       it('should accept duplicate HP codes and deduplicate them with components', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
-          hazCodes: ['HP_1', 'HP_1', 'HP_2', 'HP_2'],
-          components: [{ name: 'Mercury', concentration: 30 }]
+          hazardous: {
+            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            hazCodes: ['HP_1', 'HP_1', 'HP_2', 'HP_2'],
+            components: [{ name: 'Mercury', concentration: 30 }]
+          }
         })
         expect(result.error).toBeUndefined()
         // Get the validated hazardous object
@@ -119,9 +139,11 @@ describe('Receipt Schema Validation - Hazardous', () => {
       it('should deduplicate HP codes with different values with components', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
-          hazCodes: ['HP_3', 'HP_5', 'HP_3', 'HP_7', 'HP_5'],
-          components: [{ name: 'Lead compounds', concentration: 20 }]
+          hazardous: {
+            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            hazCodes: ['HP_3', 'HP_5', 'HP_3', 'HP_7', 'HP_5'],
+            components: [{ name: 'Lead compounds', concentration: 20 }]
+          }
         })
         expect(result.error).toBeUndefined()
         const validatedHazardous = result.value.wasteItems[0].hazardous
@@ -131,9 +153,11 @@ describe('Receipt Schema Validation - Hazardous', () => {
       it('should deduplicate HP codes even with valid range with components', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
-          hazCodes: ['HP_15', 'HP_15', 'HP_1', 'HP_1'],
-          components: [{ name: 'Arsenic compounds', concentration: 25 }]
+          hazardous: {
+            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            hazCodes: ['HP_15', 'HP_15', 'HP_1', 'HP_1'],
+            components: [{ name: 'Arsenic compounds', concentration: 25 }]
+          }
         })
         expect(result.error).toBeUndefined()
         const validatedHazardous = result.value.wasteItems[0].hazardous
@@ -143,19 +167,21 @@ describe('Receipt Schema Validation - Hazardous', () => {
       it('should deduplicate complex HP codes array with components', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
-          hazCodes: [
-            'HP_1',
-            'HP_2',
-            'HP_3',
-            'HP_1',
-            'HP_2',
-            'HP_3',
-            'HP_4',
-            'HP_5',
-            'HP_4'
-          ],
-          components: [{ name: 'Mercury', concentration: 15 }]
+          hazardous: {
+            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            hazCodes: [
+              'HP_1',
+              'HP_2',
+              'HP_3',
+              'HP_1',
+              'HP_2',
+              'HP_3',
+              'HP_4',
+              'HP_5',
+              'HP_4'
+            ],
+            components: [{ name: 'Mercury', concentration: 15 }]
+          }
         })
         expect(result.error).toBeUndefined()
         const validatedHazardous = result.value.wasteItems[0].hazardous
@@ -171,8 +197,10 @@ describe('Receipt Schema Validation - Hazardous', () => {
       it('should reject mix of valid and invalid HP codes', () => {
         const result = validateHazardous({
           containsHazardous: true,
-          sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
-          hazCodes: ['HP_1', 'HP_2', 'HP_16']
+          hazardous: {
+            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            hazCodes: ['HP_1', 'HP_2', 'HP_16']
+          }
         })
         expect(result.error).toBeDefined()
         expect(result.error.message).toBe(
@@ -186,8 +214,10 @@ describe('Receipt Schema Validation - Hazardous', () => {
         description: 'invalid hazCodes types (string)',
         input: {
           containsHazardous: true,
-          sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
-          hazCodes: ['HP 1', 'HP2']
+          hazardous: {
+            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            hazCodes: ['HP 1', 'HP2']
+          }
         },
         errorMessage: `"wasteItems[0].hazardous.hazCodes[0]" must be one of [${validHazCodes.join(', ')}]`
       },
@@ -195,8 +225,10 @@ describe('Receipt Schema Validation - Hazardous', () => {
         description: 'invalid hazCodes types (undefined)',
         input: {
           containsHazardous: true,
-          sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
-          hazCodes: [undefined]
+          hazardous: {
+            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            hazCodes: [undefined]
+          }
         },
         errorMessage:
           '"wasteItems[0].hazardous.hazCodes[0]" must not be a sparse array item'
@@ -205,8 +237,10 @@ describe('Receipt Schema Validation - Hazardous', () => {
         description: 'invalid hazCodes types (null)',
         input: {
           containsHazardous: true,
-          sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
-          hazCodes: [null]
+          hazardous: {
+            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            hazCodes: [null]
+          }
         },
         errorMessage: `"wasteItems[0].hazardous.hazCodes[0]" must be one of [${validHazCodes.join(', ')}]`
       }
@@ -222,5 +256,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
     )
   })
 
-  popsAndHazardousComponentsErrorTests('Hazardous')
+  popsAndHazardousComponentsErrorTests('Hazardous', {
+    hazCodes: [validHazCodes[0]]
+  })
 })

@@ -35,27 +35,24 @@ export const WASTE_ERRORS = {
   CONTAINER_TYPE_INVALID: '{{#label}} must be a valid container type'
 }
 
-// POPs validation messages
-export const POPS_ERRORS = {
-  SOURCE_REQUIRED_WHEN_PRESENT:
-    '{{#label}} is required when components are present',
+export const POPS_OR_HAZARDOUS_ERRORS = {
   COMPONENTS_NOT_ALLOWED_NOT_PROVIDED:
-    'POPs components must not be provided when the source of components is NOT_PROVIDED',
-  SOURCE_NOT_ALLOWED: '{{#label}} can only be provided when POPs are present',
-  COMPONENTS_NOT_ALLOWED_FALSE:
-    'POPs components must not be provided when POPs components are not present'
+    '{{#label}} must not be provided when sourceOfComponents is NOT_PROVIDED'
 }
 
-// Hazardous waste validation messages
-export const HAZARDOUS_ERRORS = {
-  SOURCE_REQUIRED_WHEN_PRESENT:
-    '{{#label}} is required when components are present',
-  COMPONENTS_NOT_ALLOWED_NOT_PROVIDED:
-    'Hazardous components must not be provided when the source of components is NOT_PROVIDED',
-  SOURCE_NOT_ALLOWED:
-    '{{#label}} can only be provided when Hazardous components are present',
+export const POPS_ERRORS = {
+  REQUIRED_WHEN_CONTAINS_POPS_TRUE:
+    '{{#label}} is required when containsPops is true',
   COMPONENTS_NOT_ALLOWED_FALSE:
-    'Hazardous components must not be provided when Hazardous components are not present'
+    '{{#label}} must not be provided when containsPops is false'
+}
+
+export const HAZARDOUS_ERRORS = {
+  REQUIRED_WHEN_CONTAINS_HAZARDOUS_TRUE:
+    '{{#label}} is required when containsHazardous is true',
+  COMPONENTS_NOT_ALLOWED_FALSE:
+    '{{#label}} must not be provided when containsHazardous is false',
+  HAZ_CODES_REQUIRED: '{{#label}} is required when containsHazardous is trues'
 }
 
 // Hazardous waste consignment messages

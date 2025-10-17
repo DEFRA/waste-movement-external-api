@@ -9,7 +9,7 @@ describe('Receipt Schema Validation - Physical Form', () => {
   describe('Physical Form Validation', () => {
     it('should accept valid physical form', () => {
       const payload = createTestPayload({
-        wasteItemOverrides: { physicalForm: 'Solid' }
+        wasteItemOverrides: { physicalForm: 'Solid', containsPops: false }
       })
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeUndefined()

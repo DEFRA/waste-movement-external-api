@@ -3,6 +3,7 @@ import {
   processValidationWarnings,
   VALIDATION_ERROR_TYPES
 } from '../../../common/helpers/validation-warnings.js'
+import { formatPopsOrHazardousFields } from '../../../schemas/waste.js'
 
 export function popsAndHazardousComponentWarningTests(
   popsOrHazardous,
@@ -12,8 +13,8 @@ export function popsAndHazardousComponentWarningTests(
     throw new Error('Expecting popsOrHazardous to be one of: POPs, Hazardous')
   }
 
-  const popsOrHazardousObjectProperty = String(popsOrHazardous).toLowerCase()
-  const containsPopsOrHazardousField = `contains${String(popsOrHazardous).charAt(0).toUpperCase()}${String(popsOrHazardous).toLowerCase().slice(1)}`
+  const { popsOrHazardousObjectProperty, containsPopsOrHazardousField } =
+    formatPopsOrHazardousFields(popsOrHazardous)
 
   describe(`"${popsOrHazardous}" Components Warnings`, () => {
     it.each([undefined, null])(

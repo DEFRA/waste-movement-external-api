@@ -18,7 +18,7 @@ describe('Receipt Schema Validation - Containers', () => {
 
     it('should accept a positive integer', () => {
       const payload = createTestPayload({
-        wasteItemOverrides: { numberOfContainers: 1 }
+        wasteItemOverrides: { numberOfContainers: 1, containsPops: false }
       })
       const result = receiveMovementRequestSchema.validate(payload)
 
@@ -39,7 +39,7 @@ describe('Receipt Schema Validation - Containers', () => {
 
     it('should accept zero', () => {
       const payload = createTestPayload({
-        wasteItemOverrides: { numberOfContainers: 0 }
+        wasteItemOverrides: { numberOfContainers: 0, containsPops: false }
       })
       const result = receiveMovementRequestSchema.validate(payload)
 
@@ -75,7 +75,10 @@ describe('Receipt Schema Validation - Containers', () => {
       'valid container types are accepted - %s',
       (containerType) => {
         const payload = createTestPayload({
-          wasteItemOverrides: { typeOfContainers: containerType }
+          wasteItemOverrides: {
+            typeOfContainers: containerType,
+            containsPops: false
+          }
         })
 
         const result = receiveMovementRequestSchema.validate(payload)
