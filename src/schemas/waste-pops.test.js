@@ -8,8 +8,8 @@ describe('Receipt Schema Validation - POPs', () => {
     it('should accept valid POPs indicator (true)', () => {
       const payload = createTestPayload({
         wasteItemOverrides: {
+          containsPops: true,
           pops: {
-            containsPops: true,
             sourceOfComponents: 'CARRIER_PROVIDED',
             components: [
               {
@@ -26,7 +26,7 @@ describe('Receipt Schema Validation - POPs', () => {
 
     it('should accept valid POPs indicator (false)', () => {
       const payload = createTestPayload({
-        wasteItemOverrides: { pops: { containsPops: false } }
+        wasteItemOverrides: { containsPops: false }
       })
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeUndefined()
@@ -48,12 +48,12 @@ describe('Receipt Schema Validation - POPs', () => {
 
     it('should reject missing containsPops field', () => {
       const payload = createTestPayload({
-        wasteItemOverrides: { pops: {} } // Empty pops object without containsPops
+        wasteItemOverrides: { containsPops: undefined, pops: {} } // Empty pops object without containsPops
       })
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeDefined()
       expect(result.error.message).toBe(
-        '"wasteItems[0].pops.containsPops" is required'
+        '"wasteItems[0].containsPops" is required'
       )
     })
   })
@@ -63,8 +63,8 @@ describe('Receipt Schema Validation - POPs', () => {
   it('should reject POP name with an invalid value', () => {
     const payload = createTestPayload({
       wasteItemOverrides: {
+        containsPops: true,
         pops: {
-          containsPops: true,
           sourceOfComponents: 'CARRIER_PROVIDED',
           components: [
             {
@@ -85,8 +85,8 @@ describe('Receipt Schema Validation - POPs', () => {
   it.each(validPopNames)('should accept valid POP name: "%s"', (popName) => {
     const payload = createTestPayload({
       wasteItemOverrides: {
+        containsPops: true,
         pops: {
-          containsPops: true,
           sourceOfComponents: 'CARRIER_PROVIDED',
           components: [
             {

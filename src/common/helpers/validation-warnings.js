@@ -1,3 +1,4 @@
+import { formatPopsOrHazardousFields } from '../../schemas/waste.js'
 import { sourceOfComponentsProvided } from '../constants/source-of-components.js'
 
 /**
@@ -481,8 +482,8 @@ function validatePopOrHazardousComponents(
     throw new Error('Expecting popsOrHazardous to be one of: POPs, Hazardous')
   }
 
-  const popsOrHazardousObjectProperty = String(popsOrHazardous).toLowerCase()
-  const containsPopsOrHazardousField = `contains${String(popsOrHazardous).charAt(0).toUpperCase()}${String(popsOrHazardous).toLowerCase().slice(1)}`
+  const { popsOrHazardousObjectProperty, containsPopsOrHazardousField } =
+    formatPopsOrHazardousFields(popsOrHazardous)
 
   if (!wasteItem[popsOrHazardousObjectProperty]) {
     return { isValid: true }
