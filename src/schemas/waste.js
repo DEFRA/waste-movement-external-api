@@ -231,9 +231,9 @@ export const wasteItemsSchema = Joi.object({
       'string.containerTypeInvalid': WASTE_ERRORS.CONTAINER_TYPE_INVALID
     }),
   weight: weightSchema,
-  containsPops: Joi.boolean().required(),
+  containsPops: Joi.boolean().strict().required(),
   pops: popsSchema,
-  containsHazardous: Joi.boolean().required(),
+  containsHazardous: Joi.boolean().strict().required(),
   hazardous: hazardousSchema,
   disposalOrRecoveryCodes: Joi.array().items(disposalOrRecoveryCodeSchema)
 })

@@ -49,12 +49,24 @@ describe('Receipt Schema Validation - Weight', () => {
     })
 
     describe('IsEstimate Validation', () => {
-      it.each(['True', 'False', 'true', 'false', true, false])(
+      it.each([true, false])(
         'should accept valid isEstimate - %s',
         (isEstimate) => {
           const result = validateWithWeightOverrides({ isEstimate })
 
           expect(result.error).toBeUndefined()
+        }
+      )
+
+      it.each(['True', 'False', 'true', 'false'])(
+        'should reject string boolean values - %s',
+        (isEstimate) => {
+          const result = validateWithWeightOverrides({ isEstimate })
+
+          expect(result.error).toBeDefined()
+          expect(result.error.message).toContain(
+            '"wasteItems[0].weight.isEstimate" must be a boolean'
+          )
         }
       )
 
