@@ -13,6 +13,7 @@ export const errorHandler = {
         if (response.isBoom && response.output.statusCode === 400) {
           // Access the validation error details
           const validationErrors = response.details || []
+          const unexpectedErrors = []
 
           // Transform validation errors to the required format
           const formattedErrors = validationErrors.map((err) => {
@@ -26,11 +27,8 @@ export const errorHandler = {
                 errorType = 'NotAllowed'
                 break
               default:
-                logger.error(
-                  { err },
-                  'Unexpected error returned from the library, mapping to default UnexpectedError'
-                )
                 errorType = 'UnexpectedError'
+                unexpectedErrors.push(err)
             }
 
             return {
@@ -47,7 +45,20 @@ export const errorHandler = {
             }
           }
 
-          logger.debug({ validationErrors }, 'Formatted validation errors')
+          // Log all validation errors in a single consolidated entry
+          if (unexpectedErrors.length > 0) {
+            logger.warn(
+              {
+                validationErrors: formattedErrors,
+                unexpectedErrors,
+                totalErrors: formattedErrors.length,
+                unexpectedCount: unexpectedErrors.length
+              },
+              `Validation failed with unexpected error types, mapped to UnexpectedError`
+            )
+          } else {
+            logger.warn({ errors: formattedErrors }, 'Validation failed')
+          }
 
           // Return the custom formatted error
           return h.response(customError).code(400)
