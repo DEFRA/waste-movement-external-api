@@ -5,6 +5,7 @@ import { getEwcCodes } from '../routes/reference-data/get-ewc-codes.js'
 import { getDisposalOrRecoveryCodes } from '../routes/reference-data/get-disposal-or-recovery-codes.js'
 import { getHazardousPropertyCodes } from '../routes/reference-data/get-hazardous-property-codes.js'
 import { getContainerTypes } from '../routes/reference-data/get-container-types.js'
+import { getPopNames } from '../routes/reference-data/get-pop-names.js'
 
 const router = {
   plugin: {
@@ -18,7 +19,8 @@ const router = {
         getEwcCodes,
         getDisposalOrRecoveryCodes,
         getHazardousPropertyCodes,
-        getContainerTypes
+        getContainerTypes,
+        getPopNames
       ]
 
       // Register routes directly
