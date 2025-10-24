@@ -51,8 +51,7 @@ describe('GET POP Names', () => {
       const popNamesResponse = mapGetPopNamesResponse()
 
       expect(popNamesResponse[0]).toStrictEqual({
-        code: 'END',
-        name: 'Endosulfan'
+        code: 'END'
       })
     })
 
@@ -60,19 +59,6 @@ describe('GET POP Names', () => {
       const popNamesResponse = mapGetPopNamesResponse()
 
       expect(popNamesResponse.length).toBe(31)
-    })
-
-    it('should include both code and name for each POP', () => {
-      const popNamesResponse = mapGetPopNamesResponse()
-
-      popNamesResponse.forEach((pop) => {
-        expect(pop).toHaveProperty('code')
-        expect(pop).toHaveProperty('name')
-        expect(typeof pop.code).toBe('string')
-        expect(typeof pop.name).toBe('string')
-        expect(pop.code.length).toBeGreaterThan(0)
-        expect(pop.name.length).toBeGreaterThan(0)
-      })
     })
   })
 })
