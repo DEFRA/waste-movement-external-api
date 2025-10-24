@@ -51,7 +51,7 @@ export function createMovementRequest(overrides) {
           sourceOfComponents: sourceOfComponentsProvided.CARRIER_PROVIDED,
           components: [
             {
-              name: validPopNames[0],
+              name: validPopNames[0].name,
               concentration: 10
             }
           ]
