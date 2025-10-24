@@ -17,8 +17,7 @@ export const errorHandler = {
 
           // Transform validation errors to the required format
           const formattedErrors = validationErrors.map((err) => {
-            // Determine error type - default to TBC if we can't determine it's NotProvided
-            let errorType = 'Unexpected' // Default value
+            let errorType
             switch (err.type) {
               case 'any.required':
                 errorType = 'NotProvided'
@@ -47,7 +46,7 @@ export const errorHandler = {
 
           // Log all validation errors in a single consolidated entry
           if (unexpectedErrors.length > 0) {
-            logger.warn(
+            logger.error(
               {
                 validationErrors: formattedErrors,
                 unexpectedErrors,
@@ -57,7 +56,7 @@ export const errorHandler = {
               `Validation failed with unexpected error types, mapped to UnexpectedError`
             )
           } else {
-            logger.warn({ errors: formattedErrors }, 'Validation failed')
+            logger.error({ errors: formattedErrors }, 'Validation failed')
           }
 
           // Return the custom formatted error
