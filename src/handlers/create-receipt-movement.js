@@ -10,11 +10,9 @@ export const handleCreateReceiptMovement = async (request, h) => {
   let wasteTrackingId
   try {
     // const { clientId } = request.auth.credentials
-    logger.info('Auth Info:', request?.auth)
 
     wasteTrackingId = (await httpClients.wasteTracking.get('/next')).payload
       .wasteTrackingId
-    logger.info('Waste Tracking ID:', wasteTrackingId)
     const response = await httpClients.wasteMovement.post(
       `/movements/${wasteTrackingId}/receive`,
       { movement: request.payload }
