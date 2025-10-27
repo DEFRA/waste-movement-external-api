@@ -166,7 +166,7 @@ describe('Disposal/Recovery Code Migration Integration Tests', () => {
   describe('End-to-end migration compatibility', () => {
     it('should successfully process complete movement with new nested structure', async () => {
       const completePayload = createMovementRequest({
-        organisationApiId: uuidv4(),
+        apiCode: uuidv4(),
         wasteItems: [
           {
             ewcCodes: ['200101'],

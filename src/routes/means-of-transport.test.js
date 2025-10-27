@@ -91,7 +91,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
       invalidMeansOfTransport.forEach((meansOfTransport) => {
         it(`should reject invalid means of transport: ${meansOfTransport}`, () => {
           const invalidPayload = {
-            organisationApiId: uuidv4(),
+            apiCode: uuidv4(),
             dateTimeReceived: '2024-01-15T14:30:00Z',
             carrier: {
               registrationNumber: 'CBDU123456',
@@ -130,7 +130,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
     describe('Successful submissions with valid means of transport', () => {
       it('should successfully create movement with Road transport', async () => {
         const payload = {
-          organisationApiId: uuidv4(),
+          apiCode: uuidv4(),
           carrier: {
             organisationName: 'Test Carrier',
             meansOfTransport: 'Road'
@@ -156,7 +156,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
 
       it('should successfully create movement with Rail transport', async () => {
         const validPayload = {
-          organisationApiId: uuidv4(),
+          apiCode: uuidv4(),
           carrier: {
             organisationName: 'Test Carrier',
             meansOfTransport: 'Rail'
@@ -199,7 +199,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
 
       it('should successfully create movement with Sea transport', async () => {
         const validPayload = {
-          organisationApiId: uuidv4(),
+          apiCode: uuidv4(),
           carrier: {
             organisationName: 'Test Carrier',
             meansOfTransport: 'Sea'
@@ -244,7 +244,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
     describe('Handler error handling', () => {
       it('should handle backend errors', async () => {
         const validPayload = {
-          organisationApiId: uuidv4(),
+          apiCode: uuidv4(),
           carrier: {
             organisationName: 'Test Carrier',
             meansOfTransport: 'Road'

@@ -59,7 +59,7 @@ describe('Validation Warnings', () => {
 
     it('should generate warning when wasteItems are missing', () => {
       const payload = {
-        organisationApiId: uuidv4()
+        apiCode: uuidv4()
         // No wasteItems section
       }
 
@@ -439,7 +439,7 @@ describe('Validation Warnings', () => {
 
     it('should handle payload without wasteItems section', () => {
       const payload = {
-        organisationApiId: uuidv4()
+        apiCode: uuidv4()
       }
 
       const warnings = processValidationWarnings(

@@ -97,7 +97,7 @@ describe('Receipt Schema Validation - EWC', () => {
     it('should require the EWC code field', () => {
       // Test with missing EWC code - need to build manually as ewcCodes is required
       const payload = {
-        organisationApiId: uuidv4(),
+        apiCode: uuidv4(),
         dateTimeReceived: '2021-01-01T00:00:00.000Z',
         wasteItems: [
           {

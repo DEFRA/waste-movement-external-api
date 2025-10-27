@@ -44,7 +44,7 @@ describe('Error Handler', () => {
 
     // Check that the required field error has errorType 'NotProvided'
     const requiredFieldError = responseBody.validation.errors.find(
-      (err) => err.key === 'organisationApiId'
+      (err) => err.key === 'apiCode'
     )
     expect(requiredFieldError).toBeDefined()
     expect(requiredFieldError.errorType).toBe('NotProvided')
