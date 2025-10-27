@@ -63,7 +63,6 @@ describe('Create Receipt Movement Route', () => {
     await createReceiptMovement.handler(request, h)
 
     expect(h.response).toHaveBeenCalledWith({
-      statusCode: 200,
       wasteTrackingId: mockWasteTrackingId,
       validation: {
         warnings: [disposalOrRecoveryCodesWarning]
@@ -102,7 +101,6 @@ describe('Create Receipt Movement Route', () => {
     await createReceiptMovement.handler(request, h)
 
     expect(h.response).toHaveBeenCalledWith({
-      statusCode: 500,
       error: 'Internal Server Error',
       message: 'Failed to create waste movement'
     })
@@ -129,7 +127,6 @@ describe('Create Receipt Movement Route', () => {
     await createReceiptMovement.handler(request, h)
 
     expect(h.response).toHaveBeenCalledWith({
-      statusCode: 500,
       error: 'Internal Server Error',
       message: 'Failed to create waste movement'
     })

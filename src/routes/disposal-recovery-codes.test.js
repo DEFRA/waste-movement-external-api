@@ -220,7 +220,6 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
         await createReceiptMovement.handler(request, h)
 
         expect(h.response).toHaveBeenCalledWith({
-          statusCode: 200,
           wasteTrackingId: mockWasteTrackingId
         })
 
@@ -272,7 +271,6 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
         await createReceiptMovement.handler(request, h)
 
         expect(h.response).toHaveBeenCalledWith({
-          statusCode: 200,
           wasteTrackingId: mockWasteTrackingId
         })
       })
@@ -313,7 +311,6 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
         await createReceiptMovement.handler(request, h)
 
         expect(h.response).toHaveBeenCalledWith({
-          statusCode: 500,
           error: 'Internal Server Error',
           message: 'Failed to create waste movement'
         })

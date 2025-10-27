@@ -44,7 +44,6 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
 
   const expectSuccessfulResponse = (h) => {
     expect(h.response).toHaveBeenCalledWith({
-      statusCode: 200,
       wasteTrackingId: mockWasteTrackingId,
       validation: {
         warnings: [
@@ -181,7 +180,6 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
         await createReceiptMovement.handler(request, h)
 
         expect(h.response).toHaveBeenCalledWith({
-          statusCode: 200,
           wasteTrackingId: mockWasteTrackingId,
           validation: {
             warnings: [
@@ -225,7 +223,6 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
         await createReceiptMovement.handler(request, h)
 
         expect(h.response).toHaveBeenCalledWith({
-          statusCode: 200,
           wasteTrackingId: mockWasteTrackingId,
           validation: {
             warnings: [
@@ -264,7 +261,6 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
         await createReceiptMovement.handler(request, h)
 
         expect(h.response).toHaveBeenCalledWith({
-          statusCode: 500,
           error: 'Internal Server Error',
           message: 'Failed to create waste movement'
         })

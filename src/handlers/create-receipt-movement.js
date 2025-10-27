@@ -22,7 +22,6 @@ export const handleCreateReceiptMovement = async (request, h) => {
     const warnings = generateAllValidationWarnings(request.payload)
 
     const responseData = {
-      statusCode: HTTP_STATUS.OK,
       wasteTrackingId
     }
 
@@ -38,7 +37,6 @@ export const handleCreateReceiptMovement = async (request, h) => {
     logger.error({ err: error }, 'Error creating waste movement')
     return h
       .response({
-        statusCode: HTTP_STATUS.INTERNAL_SERVER_ERROR,
         error: 'Internal Server Error',
         message: 'Failed to create waste movement'
       })

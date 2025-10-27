@@ -17,7 +17,6 @@ export const handleGetDisposalOrRecoveryCodes = async (_request, h) => {
     logger.error({ err: error }, 'Error getting disposal or recovery codes')
     return h
       .response({
-        statusCode: HTTP_STATUS.INTERNAL_SERVER_ERROR,
         error: 'Internal Server Error',
         message: 'Failed to get disposal or recovery codes'
       })

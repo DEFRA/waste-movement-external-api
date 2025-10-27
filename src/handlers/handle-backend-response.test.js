@@ -22,7 +22,6 @@ describe('handleBackendResponse', () => {
     handleBackendResponse(response, mockH)
 
     expect(mockH.response).toHaveBeenCalledWith({
-      statusCode: HTTP_STATUS.BAD_REQUEST,
       error: 'Bad Request',
       message: 'Invalid input'
     })
@@ -39,7 +38,6 @@ describe('handleBackendResponse', () => {
     handleBackendResponse(response, mockH)
 
     expect(mockH.response).toHaveBeenCalledWith({
-      statusCode: 450,
       error: 'Custom Error',
       message: 'Custom error message'
     })
@@ -56,7 +54,6 @@ describe('handleBackendResponse', () => {
     handleBackendResponse(response, mockH)
 
     expect(mockH.response).toHaveBeenCalledWith({
-      statusCode: HTTP_STATUS.INTERNAL_SERVER_ERROR,
       error: 'Internal Server Error',
       message: 'Server error occurred'
     })
@@ -97,7 +94,6 @@ describe('handleBackendResponse', () => {
     handleBackendResponse(response, mockH)
 
     expect(mockH.response).toHaveBeenCalledWith({
-      statusCode: HTTP_STATUS.NOT_FOUND,
       error: 'Not Found',
       message: 'Resource not found'
     })
@@ -114,7 +110,6 @@ describe('handleBackendResponse', () => {
     handleBackendResponse(response, mockH)
 
     expect(mockH.response).toHaveBeenCalledWith({
-      statusCode: HTTP_STATUS.FORBIDDEN,
       error: 'Forbidden',
       message: 'Access denied'
     })

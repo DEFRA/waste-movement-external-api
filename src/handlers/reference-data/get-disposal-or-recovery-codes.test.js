@@ -41,7 +41,6 @@ describe('GET Disposal or Recovery Codes', () => {
       await handleGetDisposalOrRecoveryCodes(request, h)
 
       expect(h.response).toHaveBeenCalledWith({
-        statusCode: 500,
         error: 'Internal Server Error',
         message: 'Failed to get disposal or recovery codes'
       })

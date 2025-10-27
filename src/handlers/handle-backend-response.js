@@ -11,7 +11,6 @@ export function handleBackendResponse(response, h, responseBodyFn) {
   } else {
     return h
       .response({
-        statusCode: response.statusCode,
         error: response.error,
         message: response.message
       })
