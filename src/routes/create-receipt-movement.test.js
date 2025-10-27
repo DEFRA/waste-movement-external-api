@@ -2,6 +2,7 @@ import { jest } from '@jest/globals'
 import { httpClients } from '../common/helpers/http-client.js'
 import { createReceiptMovement } from './create-receipt-movement.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
+import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -44,7 +45,7 @@ describe('Create Receipt Movement Route', () => {
   it('should successfully create a waste movement', async () => {
     // Mock successful waste movement creation
     httpClients.wasteMovement.post.mockResolvedValue({
-      statusCode: 200
+      statusCode: HTTP_STATUS.CREATED
     })
 
     const request = {

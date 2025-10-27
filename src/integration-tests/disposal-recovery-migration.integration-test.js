@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
 import { createServer } from '../server.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import { v4 as uuidv4 } from 'uuid'
@@ -58,7 +59,7 @@ describe('Disposal/Recovery Code Migration Integration Tests', () => {
         }
       })
 
-      expect(response.statusCode).toBe(200)
+      expect(response.statusCode).toBe(HTTP_STATUS.CREATED)
       expect(response.result.wasteTrackingId).toBeDefined()
     })
   })
@@ -79,7 +80,7 @@ describe('Disposal/Recovery Code Migration Integration Tests', () => {
         }
       })
 
-      expect(response.statusCode).toBe(200)
+      expect(response.statusCode).toBe(HTTP_STATUS.CREATED)
       expect(response.result.validation.warnings).toHaveLength(1)
       expect(response.result.validation.warnings[0]).toEqual({
         key: 'wasteItems[0].disposalOrRecoveryCodes',
@@ -109,7 +110,7 @@ describe('Disposal/Recovery Code Migration Integration Tests', () => {
         }
       })
 
-      expect(response.statusCode).toBe(200)
+      expect(response.statusCode).toBe(HTTP_STATUS.CREATED)
       expect(response.result.validation.warnings).toContainEqual({
         key: 'wasteItems[0].disposalOrRecoveryCodes[0].weight.amount',
         errorType: 'NotProvided',
@@ -152,7 +153,7 @@ describe('Disposal/Recovery Code Migration Integration Tests', () => {
         }
       })
 
-      expect(response.statusCode).toBe(200)
+      expect(response.statusCode).toBe(HTTP_STATUS.CREATED)
       expect(response.result.validation.warnings).toContainEqual({
         key: 'wasteItems[1].disposalOrRecoveryCodes',
         errorType: 'NotProvided',
@@ -199,7 +200,7 @@ describe('Disposal/Recovery Code Migration Integration Tests', () => {
         }
       })
 
-      expect(response.statusCode).toBe(200)
+      expect(response.statusCode).toBe(HTTP_STATUS.CREATED)
       expect(response.result.wasteTrackingId).toBeDefined()
       expect(response.result.validation.warnings).toHaveLength(0)
     })

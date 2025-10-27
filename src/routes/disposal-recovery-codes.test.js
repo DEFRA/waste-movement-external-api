@@ -4,6 +4,7 @@ import { createReceiptMovement } from './create-receipt-movement.js'
 import { receiveMovementRequestSchema } from '../schemas/receipt.js'
 import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
+import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -201,7 +202,7 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
         })
 
         httpClients.wasteMovement.post.mockResolvedValue({
-          statusCode: 200
+          statusCode: HTTP_STATUS.CREATED
         })
 
         const request = {
@@ -252,7 +253,7 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
         })
 
         httpClients.wasteMovement.post.mockResolvedValue({
-          statusCode: 200
+          statusCode: HTTP_STATUS.CREATED
         })
 
         const request = {

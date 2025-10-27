@@ -17,7 +17,7 @@ const createReceiptMovement = {
     plugins: {
       'hapi-swagger': {
         responses: {
-          [HTTP_STATUS.OK]: {
+          [HTTP_STATUS.CREATED]: {
             description: 'The waste movement has been stored',
             schema: Joi.object({
               carrierMovementId: Joi.string().description(

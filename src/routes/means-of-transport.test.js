@@ -5,6 +5,7 @@ import { receiveMovementRequestSchema } from '../schemas/receipt.js'
 import { MEANS_OF_TRANSPORT } from '../common/constants/means-of-transport.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import { v4 as uuidv4 } from 'uuid'
+import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -136,7 +137,9 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
           }
         }
 
-        httpClients.wasteMovement.post.mockResolvedValue({ statusCode: 200 })
+        httpClients.wasteMovement.post.mockResolvedValue({
+          statusCode: HTTP_STATUS.CREATED
+        })
 
         const request = createTestRequest(payload)
         const h = createMockResponse()
@@ -161,7 +164,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
         }
 
         httpClients.wasteMovement.post.mockResolvedValue({
-          statusCode: 200
+          statusCode: HTTP_STATUS.CREATED
         })
 
         const request = {
@@ -204,7 +207,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
         }
 
         httpClients.wasteMovement.post.mockResolvedValue({
-          statusCode: 200
+          statusCode: HTTP_STATUS.CREATED
         })
 
         const request = {
