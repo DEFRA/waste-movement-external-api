@@ -99,7 +99,7 @@ describe('Create Receipt Movement Handler', () => {
 
     expect(h.response).toHaveBeenCalledWith({
       statusCode: 200,
-      globalMovementId: mockWasteTrackingId
+      wasteTrackingId: mockWasteTrackingId
     })
 
     // Verify waste tracking ID was requested

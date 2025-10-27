@@ -221,7 +221,7 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
 
         expect(h.response).toHaveBeenCalledWith({
           statusCode: 200,
-          globalMovementId: mockWasteTrackingId
+          wasteTrackingId: mockWasteTrackingId
         })
 
         expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
@@ -273,7 +273,7 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
 
         expect(h.response).toHaveBeenCalledWith({
           statusCode: 200,
-          globalMovementId: mockWasteTrackingId
+          wasteTrackingId: mockWasteTrackingId
         })
       })
     })

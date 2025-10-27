@@ -16,5 +16,5 @@ export async function createMovement(server) {
   logger.debug(response.payload)
   expect(response.statusCode).toEqual(200)
 
-  return response.result.globalMovementId
+  return response.result.wasteTrackingId
 }

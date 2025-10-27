@@ -23,7 +23,7 @@ export const handleCreateReceiptMovement = async (request, h) => {
 
     const responseData = {
       statusCode: HTTP_STATUS.OK,
-      globalMovementId: wasteTrackingId
+      wasteTrackingId
     }
 
     // Only include validation object if there are warnings

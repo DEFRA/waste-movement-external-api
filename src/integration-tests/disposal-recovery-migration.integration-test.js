@@ -59,7 +59,7 @@ describe('Disposal/Recovery Code Migration Integration Tests', () => {
       })
 
       expect(response.statusCode).toBe(200)
-      expect(response.result.globalMovementId).toBeDefined()
+      expect(response.result.wasteTrackingId).toBeDefined()
     })
   })
 
@@ -200,7 +200,7 @@ describe('Disposal/Recovery Code Migration Integration Tests', () => {
       })
 
       expect(response.statusCode).toBe(200)
-      expect(response.result.globalMovementId).toBeDefined()
+      expect(response.result.wasteTrackingId).toBeDefined()
       expect(response.result.validation.warnings).toHaveLength(0)
     })
   })

@@ -64,7 +64,7 @@ describe('Create Receipt Movement Route', () => {
 
     expect(h.response).toHaveBeenCalledWith({
       statusCode: 200,
-      globalMovementId: mockWasteTrackingId,
+      wasteTrackingId: mockWasteTrackingId,
       validation: {
         warnings: [disposalOrRecoveryCodesWarning]
       }

@@ -45,7 +45,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
   const expectSuccessfulResponse = (h) => {
     expect(h.response).toHaveBeenCalledWith({
       statusCode: 200,
-      globalMovementId: mockWasteTrackingId,
+      wasteTrackingId: mockWasteTrackingId,
       validation: {
         warnings: [
           {
@@ -182,7 +182,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
 
         expect(h.response).toHaveBeenCalledWith({
           statusCode: 200,
-          globalMovementId: mockWasteTrackingId,
+          wasteTrackingId: mockWasteTrackingId,
           validation: {
             warnings: [
               {
@@ -226,7 +226,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
 
         expect(h.response).toHaveBeenCalledWith({
           statusCode: 200,
-          globalMovementId: mockWasteTrackingId,
+          wasteTrackingId: mockWasteTrackingId,
           validation: {
             warnings: [
               {
