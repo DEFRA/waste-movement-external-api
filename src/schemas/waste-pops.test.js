@@ -82,30 +82,36 @@ describe('Receipt Schema Validation - POPs', () => {
     )
   })
 
-  it.each(validPopNames)('should accept valid POP name: "%s"', (popName) => {
-    const payload = createTestPayload({
-      wasteItemOverrides: {
-        containsPops: true,
-        pops: {
-          sourceOfComponents: 'CARRIER_PROVIDED',
-          components: [
-            {
-              name: popName,
-              concentration: 100
-            }
-          ]
+  it.each(validPopNames.map((pop) => pop.name))(
+    'should accept valid POP name: "%s"',
+    (popName) => {
+      const payload = createTestPayload({
+        wasteItemOverrides: {
+          containsPops: true,
+          pops: {
+            sourceOfComponents: 'CARRIER_PROVIDED',
+            components: [
+              {
+                name: popName,
+                concentration: 100
+              }
+            ]
+          }
         }
-      }
-    })
-    const result = receiveMovementRequestSchema.validate(payload)
-    expect(result.error).toBeUndefined()
-  })
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
+      expect(result.error).toBeUndefined()
+    }
+  )
 
   describe('isValidPopName function unit tests', () => {
     describe('returns true for valid POP names', () => {
-      it.each(validPopNames)('should return true for: "%s"', (popName) => {
-        expect(isValidPopName(popName)).toBe(true)
-      })
+      it.each(validPopNames.map((pop) => pop.name))(
+        'should return true for: "%s"',
+        (popName) => {
+          expect(isValidPopName(popName)).toBe(true)
+        }
+      )
     })
 
     describe('returns false for invalid inputs', () => {
