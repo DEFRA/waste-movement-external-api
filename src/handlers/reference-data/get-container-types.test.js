@@ -41,7 +41,6 @@ describe('GET Container Types', () => {
       await handleGetContainerTypes(request, h)
 
       expect(h.response).toHaveBeenCalledWith({
-        statusCode: 500,
         error: 'Internal Server Error',
         message: 'Failed to get container types'
       })

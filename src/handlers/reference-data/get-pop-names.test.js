@@ -38,7 +38,6 @@ describe('GET POP Names', () => {
       await handleGetPopNames(request, h)
 
       expect(h.response).toHaveBeenCalledWith({
-        statusCode: 500,
         error: 'Internal Server Error',
         message: 'Failed to get POP names'
       })

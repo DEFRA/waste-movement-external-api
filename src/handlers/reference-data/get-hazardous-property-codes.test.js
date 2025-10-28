@@ -41,7 +41,6 @@ describe('GET Hazardous Property Codes', () => {
       await handleGetHazardousPropertyCodes(request, h)
 
       expect(h.response).toHaveBeenCalledWith({
-        statusCode: 500,
         error: 'Internal Server Error',
         message: 'Failed to get hazardous property codes'
       })
