@@ -37,16 +37,6 @@ export const validPopNames = [
 ]
 
 /**
- * Validates if the provided POP name is in the list of valid names
- *
- * @param {string} name - The POP name to validate
- * @returns {boolean} - True if the name is valid, false otherwise
- */
-export const isValidPopName = (name) => {
-  return validPopNames.some((pop) => pop.name === name)
-}
-
-/**
  * Validates if the provided POP code is in the list of valid codes
  *
  * @param {string} code - The POP code to validate
