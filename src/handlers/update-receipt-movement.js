@@ -24,15 +24,11 @@ export const handleUpdateReceiptMovement = async (request, h) => {
     // Generate validation warnings
     const warnings = generateAllValidationWarnings(movement)
 
-    const responseData = {
-      message: 'Receipt movement updated successfully'
-    }
+    const responseData = {}
 
-    // Only include validation object if there are warnings
+    // Only include warnings if there are any
     if (warnings.length > 0) {
-      responseData.validation = {
-        warnings
-      }
+      responseData.warnings = warnings
     }
 
     return handleBackendResponse(response, h, () => responseData)
