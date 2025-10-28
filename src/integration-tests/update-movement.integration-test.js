@@ -25,7 +25,7 @@ describe('Update Movement', () => {
     const wasteTrackingId = await createMovement(server)
 
     const movementUpdate = createMovementRequest({
-      organisationApiId: uuidv4()
+      apiCode: uuidv4()
     })
 
     const response = await server.inject({

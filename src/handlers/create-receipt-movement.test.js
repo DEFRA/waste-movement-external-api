@@ -32,7 +32,7 @@ describe('Create Receipt Movement Handler', () => {
   })
 
   const validPayload = {
-    organisationApiId: uuidv4(),
+    apiCode: uuidv4(),
     receiverReference: 'ref123',
     specialHandlingRequirements: 'Handle with care',
     wasteItems: [
@@ -98,8 +98,7 @@ describe('Create Receipt Movement Handler', () => {
     await handleCreateReceiptMovement(request, h)
 
     expect(h.response).toHaveBeenCalledWith({
-      statusCode: 200,
-      globalMovementId: mockWasteTrackingId
+      wasteTrackingId: mockWasteTrackingId
     })
 
     // Verify waste tracking ID was requested
@@ -126,7 +125,6 @@ describe('Create Receipt Movement Handler', () => {
     await handleCreateReceiptMovement(request, h)
 
     expect(h.response).toHaveBeenCalledWith({
-      statusCode: 500,
       error: 'Internal Server Error',
       message: 'Failed to create waste movement'
     })
@@ -145,7 +143,6 @@ describe('Create Receipt Movement Handler', () => {
     await handleCreateReceiptMovement(request, h)
 
     expect(h.response).toHaveBeenCalledWith({
-      statusCode: 500,
       error: 'Internal Server Error',
       message: 'Failed to create waste movement'
     })

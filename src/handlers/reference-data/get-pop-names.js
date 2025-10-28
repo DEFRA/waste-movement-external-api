@@ -17,7 +17,6 @@ export const handleGetPopNames = async (_request, h) => {
     logger.error({ err: error }, 'Error getting POP names')
     return h
       .response({
-        statusCode: HTTP_STATUS.INTERNAL_SERVER_ERROR,
         error: 'Internal Server Error',
         message: 'Failed to get POP names'
       })

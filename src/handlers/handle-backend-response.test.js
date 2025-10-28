@@ -8,6 +8,25 @@ describe('handleBackendResponse', () => {
     code: jest.fn().mockReturnThis()
   }
 
+  const successStatusCodeMap = [
+    {
+      statusCode: HTTP_STATUS.OK,
+      expectedStatusCode: HTTP_STATUS.OK
+    },
+    {
+      statusCode: HTTP_STATUS.ACCEPTED,
+      expectedStatusCode: HTTP_STATUS.OK
+    },
+    {
+      statusCode: HTTP_STATUS.NO_CONTENT,
+      expectedStatusCode: HTTP_STATUS.OK
+    },
+    {
+      statusCode: HTTP_STATUS.CREATED,
+      expectedStatusCode: HTTP_STATUS.CREATED
+    }
+  ]
+
   beforeEach(() => {
     jest.clearAllMocks()
   })
@@ -22,7 +41,6 @@ describe('handleBackendResponse', () => {
     handleBackendResponse(response, mockH)
 
     expect(mockH.response).toHaveBeenCalledWith({
-      statusCode: HTTP_STATUS.BAD_REQUEST,
       error: 'Bad Request',
       message: 'Invalid input'
     })
@@ -39,7 +57,6 @@ describe('handleBackendResponse', () => {
     handleBackendResponse(response, mockH)
 
     expect(mockH.response).toHaveBeenCalledWith({
-      statusCode: 450,
       error: 'Custom Error',
       message: 'Custom error message'
     })
@@ -56,36 +73,41 @@ describe('handleBackendResponse', () => {
     handleBackendResponse(response, mockH)
 
     expect(mockH.response).toHaveBeenCalledWith({
-      statusCode: HTTP_STATUS.INTERNAL_SERVER_ERROR,
       error: 'Internal Server Error',
       message: 'Server error occurred'
     })
     expect(mockH.code).toHaveBeenCalledWith(HTTP_STATUS.INTERNAL_SERVER_ERROR)
   })
 
-  it('should return response with body when responseBodyFn is provided', () => {
-    const response = {
-      statusCode: HTTP_STATUS.OK
+  it.each(successStatusCodeMap)(
+    'should return response with body when responseBodyFn is provided and statusCode is "$statusCode"',
+    ({ statusCode, expectedStatusCode }) => {
+      const response = {
+        statusCode
+      }
+      const responseBodyFn = jest.fn().mockReturnValue({ data: 'test data' })
+
+      handleBackendResponse(response, mockH, responseBodyFn)
+
+      expect(responseBodyFn).toHaveBeenCalled()
+      expect(mockH.response).toHaveBeenCalledWith({ data: 'test data' })
+      expect(mockH.code).toHaveBeenCalledWith(expectedStatusCode)
     }
-    const responseBodyFn = jest.fn().mockReturnValue({ data: 'test data' })
+  )
 
-    handleBackendResponse(response, mockH, responseBodyFn)
+  it.each(successStatusCodeMap)(
+    'should return empty response when responseBodyFn is not provided and statusCode is "$statusCode"',
+    ({ statusCode, expectedStatusCode }) => {
+      const response = {
+        statusCode
+      }
 
-    expect(responseBodyFn).toHaveBeenCalled()
-    expect(mockH.response).toHaveBeenCalledWith({ data: 'test data' })
-    expect(mockH.code).toHaveBeenCalledWith(HTTP_STATUS.OK)
-  })
+      handleBackendResponse(response, mockH)
 
-  it('should return empty response when responseBodyFn is not provided', () => {
-    const response = {
-      statusCode: HTTP_STATUS.OK
+      expect(mockH.response).not.toHaveBeenCalled()
+      expect(mockH.code).toHaveBeenCalledWith(expectedStatusCode)
     }
-
-    handleBackendResponse(response, mockH)
-
-    expect(mockH.response).not.toHaveBeenCalled()
-    expect(mockH.code).toHaveBeenCalledWith(HTTP_STATUS.OK)
-  })
+  )
 
   it('should handle NOT_FOUND error response', () => {
     const response = {
@@ -97,7 +119,6 @@ describe('handleBackendResponse', () => {
     handleBackendResponse(response, mockH)
 
     expect(mockH.response).toHaveBeenCalledWith({
-      statusCode: HTTP_STATUS.NOT_FOUND,
       error: 'Not Found',
       message: 'Resource not found'
     })
@@ -114,7 +135,6 @@ describe('handleBackendResponse', () => {
     handleBackendResponse(response, mockH)
 
     expect(mockH.response).toHaveBeenCalledWith({
-      statusCode: HTTP_STATUS.FORBIDDEN,
       error: 'Forbidden',
       message: 'Access denied'
     })

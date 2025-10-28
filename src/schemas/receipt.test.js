@@ -51,26 +51,24 @@ describe('receiveMovementRequestSchema - otherReferencesForMovement validation',
   })
 
   describe('invalid payloads', () => {
-    it('should reject when organisation API ID is missing', () => {
+    it('should reject when apiCode is missing', () => {
       const payload = {
         ...basePayload,
-        organisationApiId: undefined
+        apiCode: undefined
       }
       const { error } = receiveMovementRequestSchema.validate(payload)
       expect(error).toBeDefined()
-      expect(error.message).toContain('"organisationApiId" is required')
+      expect(error.message).toContain('"apiCode" is required')
     })
 
-    it('should reject when organisation API ID is not a guid', () => {
+    it('should reject when apiCode is not a guid', () => {
       const payload = {
         ...basePayload,
-        organisationApiId: 'notaguid'
+        apiCode: 'notaguid'
       }
       const { error } = receiveMovementRequestSchema.validate(payload)
       expect(error).toBeDefined()
-      expect(error.message).toContain(
-        '"organisationApiId" must be a valid GUID'
-      )
+      expect(error.message).toContain('"apiCode" must be a valid GUID')
     })
 
     it('should reject when label is missing', () => {

@@ -17,13 +17,13 @@ const createReceiptMovement = {
     plugins: {
       'hapi-swagger': {
         responses: {
-          [HTTP_STATUS.OK]: {
+          [HTTP_STATUS.CREATED]: {
             description: 'The waste movement has been stored',
             schema: Joi.object({
               carrierMovementId: Joi.string().description(
                 'An identifier of the movement, unique for the carrier only. This field will only be returned if the carrier is known to the service and should be provided to the carrier by the receiver.'
               ),
-              globalMovementId: Joi.string()
+              wasteTrackingId: Joi.string()
                 .uuid()
                 .description(
                   'Globally unique identifier of the movement. This id should be stored and used for any subsequent updates of the movement.'

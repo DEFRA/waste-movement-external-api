@@ -31,7 +31,7 @@ describe('Create Receipt Movement - Date and Time Received Validation', () => {
 
     it('should reject when receipt is provided without dateTimeReceived', () => {
       const payload = {
-        organisationApiId: uuidv4()
+        apiCode: uuidv4()
       }
 
       const { error } = receiveMovementRequestSchema.validate(payload)

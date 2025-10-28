@@ -120,7 +120,7 @@ const brokerOrDealerSchema = Joi.object({
 })
 
 export const receiveMovementRequestSchema = Joi.object({
-  organisationApiId: Joi.string().required().uuid(),
+  apiCode: Joi.string().required().uuid(),
   dateTimeReceived: Joi.date().iso().required(),
   hazardousWasteConsignmentCode: hazardousWasteConsignmentCodeSchema,
   reasonForNoConsignmentCode: Joi.string().allow(null, ''),
