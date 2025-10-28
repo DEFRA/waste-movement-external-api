@@ -15,14 +15,14 @@ export function popsAndHazardousComponentWarningTests(
 
   const { popsOrHazardousObjectProperty, containsPopsOrHazardousField } =
     formatPopsOrHazardousFields(popsOrHazardous)
+  const isHazardous = popsOrHazardous === 'Hazardous'
+  const componentNameField = isHazardous ? 'name' : 'code'
 
   describe(`"${popsOrHazardous}" Components Warnings`, () => {
     it.each([undefined, null])(
       'should return empty array when payload is %s',
       (value) => {
-        const payload = value
-
-        const warnings = processValidationWarnings(payload, validationWarnings)
+        const warnings = processValidationWarnings(value, validationWarnings)
         expect(warnings).toEqual([])
       }
     )
@@ -30,9 +30,7 @@ export function popsAndHazardousComponentWarningTests(
     it.each([undefined, null])(
       'should return empty array when wasteItems is %s',
       (value) => {
-        const payload = value
-
-        const warnings = processValidationWarnings(payload, validationWarnings)
+        const warnings = processValidationWarnings(value, validationWarnings)
         expect(warnings).toEqual([])
       }
     )
@@ -68,7 +66,7 @@ export function popsAndHazardousComponentWarningTests(
       expect(warnings).toEqual([])
     })
 
-    it(`should return empty array when ${popsOrHazardous} components is provided with name and concentration values`, () => {
+    it(`should return empty array when ${popsOrHazardous} components is provided with ${componentNameField} and concentration values`, () => {
       const payload = {
         wasteItems: [
           {
@@ -77,11 +75,11 @@ export function popsAndHazardousComponentWarningTests(
               sourceOfComponents: 'CARRIER_SUPPLIED',
               components: [
                 {
-                  name: 'Aldrin',
+                  [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
                   concentration: 100
                 },
                 {
-                  name: 'Chlordane',
+                  [componentNameField]: isHazardous ? 'Chlordane' : 'CHL',
                   concentration: 30
                 }
               ]
@@ -147,11 +145,11 @@ export function popsAndHazardousComponentWarningTests(
                 sourceOfComponents: 'CARRIER_SUPPLIED',
                 components: [
                   {
-                    name: 'Aldrin',
+                    [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
                     concentration: 100
                   },
                   {
-                    name: 'Chlordane',
+                    [componentNameField]: isHazardous ? 'Chlordane' : 'CHL',
                     concentration: value
                   }
                 ]
