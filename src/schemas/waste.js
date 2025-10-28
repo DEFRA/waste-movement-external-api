@@ -1,6 +1,6 @@
 import Joi from 'joi'
 import { isValidEwcCode } from '../common/constants/ewc-codes.js'
-import { isValidPopName } from '../common/constants/pop-names.js'
+import { isValidPopCode } from '../common/constants/pop-names.js'
 import { weightSchema } from './weight.js'
 import { isValidContainerType } from '../common/constants/container-types.js'
 import { validHazCodes } from '../common/constants/haz-codes.js'
@@ -105,16 +105,19 @@ const sourceOfComponentsSchema = Joi.string().valid(
 const concentrationSchema = () => Joi.number().strict().positive().allow(null)
 
 const popComponentSchema = Joi.object({
-  name: Joi.string()
+  code: Joi.string()
     .empty('')
     .empty(null)
     .custom((value, helpers) => {
-      if (!isValidPopName(value)) {
+      if (!isValidPopCode(value)) {
         return helpers.error('any.invalid')
       }
       return value
     })
-    .required(),
+    .required()
+    .messages({
+      'any.invalid': POPS_ERRORS.POP_CODE_INVALID
+    }),
   concentration: concentrationSchema()
 })
 

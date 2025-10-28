@@ -20,6 +20,7 @@ export function popsAndHazardousComponentsErrorTests(
   const { popsOrHazardousObjectProperty, containsPopsOrHazardousField } =
     formatPopsOrHazardousFields(popsOrHazardous)
   const isHazardous = popsOrHazardous === 'Hazardous'
+  const componentNameField = isHazardous ? 'name' : 'code'
 
   // Helper to add hazCodes when testing Hazardous and containsHazardous is true
   const createTestPayloadWithHazCodes = (overrides) => {
@@ -88,7 +89,7 @@ export function popsAndHazardousComponentsErrorTests(
                 sourceOfComponents: value,
                 components: [
                   {
-                    name: 'Aldrin',
+                    [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
                     concentration: 100
                   },
                   {}
@@ -99,7 +100,7 @@ export function popsAndHazardousComponentsErrorTests(
           const result = receiveMovementRequestSchema.validate(payload)
           expect(result.error).toBeDefined()
           expect(result.error.message).toBe(
-            `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].name" is required`
+            `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].${componentNameField}" is required`
           )
         }
       )
@@ -124,7 +125,7 @@ export function popsAndHazardousComponentsErrorTests(
               sourceOfComponents: value,
               components: [
                 {
-                  name: 'Aldrin',
+                  [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
                   concentration: 100
                 }
               ]
@@ -153,7 +154,7 @@ export function popsAndHazardousComponentsErrorTests(
             sourceOfComponents: 'NOT_PROVIDED',
             components: [
               {
-                name: 'Aldrin',
+                [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
                 concentration: 100
               }
             ],
@@ -182,7 +183,7 @@ export function popsAndHazardousComponentsErrorTests(
               sourceOfComponents: value,
               components: [
                 {
-                  name: 'Aldrin',
+                  [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
                   concentration: 100
                 }
               ],
@@ -200,7 +201,7 @@ export function popsAndHazardousComponentsErrorTests(
      * 19     TRUE                Other (e.g GUIDANCE, OWN TESTING etc)   [{ concentration: 1.8 }]  REJECT
      */
     it.each([undefined, null])(
-      `should reject when components are provided without a name, ${containsPopsOrHazardousField} is true and sourceOfComponents is other than NOT_PROVIDED`,
+      `should reject when components are provided without a ${componentNameField}, ${containsPopsOrHazardousField} is true and sourceOfComponents is other than NOT_PROVIDED`,
       (value) => {
         const payload = createTestPayloadWithHazCodes({
           wasteItemOverrides: {
@@ -209,11 +210,11 @@ export function popsAndHazardousComponentsErrorTests(
               sourceOfComponents: 'CARRIER_PROVIDED',
               components: [
                 {
-                  name: 'Aldrin',
+                  [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
                   concentration: 100
                 },
                 {
-                  name: value,
+                  [componentNameField]: value,
                   concentration: 30
                 }
               ]
@@ -225,7 +226,7 @@ export function popsAndHazardousComponentsErrorTests(
         // When containsHazardous/containsPops is true and sourceOfComponents is not NOT_PROVIDED,
         // the conditional requirement message cascades to child fields
         expect(result.error.message).toBe(
-          `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].name" is required`
+          `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].${componentNameField}" is required`
         )
       }
     )
@@ -244,11 +245,11 @@ export function popsAndHazardousComponentsErrorTests(
               sourceOfComponents: 'CARRIER_PROVIDED',
               components: [
                 {
-                  name: 'Aldrin',
+                  [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
                   concentration: 100
                 },
                 {
-                  name: 'Chlordane',
+                  [componentNameField]: isHazardous ? 'Chlordane' : 'CHL',
                   concentration: value
                 }
               ],
@@ -261,7 +262,7 @@ export function popsAndHazardousComponentsErrorTests(
       }
     )
 
-    it('should reject invalid POP name: ""', () => {
+    it(`should reject invalid ${popsOrHazardous} ${componentNameField}: ""`, () => {
       const payload = createTestPayloadWithHazCodes({
         wasteItemOverrides: {
           [containsPopsOrHazardousField]: true,
@@ -269,11 +270,11 @@ export function popsAndHazardousComponentsErrorTests(
             sourceOfComponents: 'CARRIER_PROVIDED',
             components: [
               {
-                name: 'Aldrin',
+                [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
                 concentration: 100
               },
               {
-                name: '',
+                [componentNameField]: '',
                 concentration: 100
               }
             ]
@@ -283,7 +284,7 @@ export function popsAndHazardousComponentsErrorTests(
       const result = receiveMovementRequestSchema.validate(payload)
       expect(result.error).toBeDefined()
       expect(result.error.message).toBe(
-        `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].name" is not allowed to be empty`
+        `"wasteItems[0].${popsOrHazardousObjectProperty}.components[1].${componentNameField}" is not allowed to be empty`
       )
     })
 
@@ -295,11 +296,11 @@ export function popsAndHazardousComponentsErrorTests(
             sourceOfComponents: 'OWN_TESTING',
             components: [
               {
-                name: 'Aldrin',
+                [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
                 concentration: 100
               },
               {
-                name: 'Endosulfan',
+                [componentNameField]: isHazardous ? 'Endosulfan' : 'END',
                 concentration: 'ten'
               }
             ]
@@ -321,11 +322,11 @@ export function popsAndHazardousComponentsErrorTests(
             sourceOfComponents: 'OWN_TESTING',
             components: [
               {
-                name: 'Aldrin',
+                [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
                 concentration: 100
               },
               {
-                name: 'Endosulfan',
+                [componentNameField]: isHazardous ? 'Endosulfan' : 'END',
                 concentration: DECIMAL_CONCENTRATION
               }
             ],
@@ -345,11 +346,11 @@ export function popsAndHazardousComponentsErrorTests(
             sourceOfComponents: 'OWN_TESTING',
             components: [
               {
-                name: 'Aldrin',
+                [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
                 concentration: 100
               },
               {
-                name: 'Endosulfan',
+                [componentNameField]: isHazardous ? 'Endosulfan' : 'END',
                 concentration: ZERO_NUMBER
               }
             ]
@@ -371,11 +372,11 @@ export function popsAndHazardousComponentsErrorTests(
             sourceOfComponents: 'OWN_TESTING',
             components: [
               {
-                name: 'Aldrin',
+                [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
                 concentration: 100
               },
               {
-                name: 'Endosulfan',
+                [componentNameField]: isHazardous ? 'Endosulfan' : 'END',
                 concentration: -10
               }
             ]
@@ -411,7 +412,7 @@ export function popsAndHazardousComponentsErrorTests(
             sourceOfComponents: 'INVALID_SOURCE',
             components: [
               {
-                name: 'Aldrin',
+                [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
                 concentration: 100
               }
             ]

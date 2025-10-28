@@ -44,7 +44,8 @@ export const POPS_ERRORS = {
   REQUIRED_WHEN_CONTAINS_POPS_TRUE:
     '{{#label}} is required when containsPops is true',
   COMPONENTS_NOT_ALLOWED_FALSE:
-    '{{#label}} must not be provided when containsPops is false'
+    '{{#label}} must not be provided when containsPops is false',
+  POP_CODE_INVALID: '{{#label}} contains an invalid POP code'
 }
 
 export const HAZARDOUS_ERRORS = {
