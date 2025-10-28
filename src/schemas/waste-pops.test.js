@@ -1,6 +1,6 @@
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createTestPayload } from './test-helpers/waste-test-helpers.js'
-import { isValidPopName, validPopNames } from '../common/constants/pop-names.js'
+import { isValidPopCode, validPopNames } from '../common/constants/pop-names.js'
 import { popsAndHazardousComponentsErrorTests } from '../test/common/pop-and-hazardous-components/pops-and-hazardous-components-error-tests.js'
 
 describe('Receipt Schema Validation - POPs', () => {
@@ -13,7 +13,7 @@ describe('Receipt Schema Validation - POPs', () => {
             sourceOfComponents: 'CARRIER_PROVIDED',
             components: [
               {
-                name: 'Aldrin',
+                code: 'ALD',
                 concentration: 30
               }
             ]
@@ -60,7 +60,7 @@ describe('Receipt Schema Validation - POPs', () => {
 
   popsAndHazardousComponentsErrorTests('POPs')
 
-  it('should reject POP name with an invalid value', () => {
+  it('should reject POP code with an invalid value', () => {
     const payload = createTestPayload({
       wasteItemOverrides: {
         containsPops: true,
@@ -68,7 +68,7 @@ describe('Receipt Schema Validation - POPs', () => {
           sourceOfComponents: 'CARRIER_PROVIDED',
           components: [
             {
-              name: 'Invalid POP Name',
+              code: 'ABC',
               concentration: 100
             }
           ]
@@ -78,13 +78,13 @@ describe('Receipt Schema Validation - POPs', () => {
     const result = receiveMovementRequestSchema.validate(payload)
     expect(result.error).toBeDefined()
     expect(result.error.message).toBe(
-      `"wasteItems[0].pops.components[0].name" contains an invalid value`
+      `"wasteItems[0].pops.components[0].code" contains an invalid POP code`
     )
   })
 
-  it.each(validPopNames.map((pop) => pop.name))(
-    'should accept valid POP name: "%s"',
-    (popName) => {
+  it.each(validPopNames.map((pop) => pop.code))(
+    'should accept valid POP code: "%s"',
+    (popCode) => {
       const payload = createTestPayload({
         wasteItemOverrides: {
           containsPops: true,
@@ -92,7 +92,7 @@ describe('Receipt Schema Validation - POPs', () => {
             sourceOfComponents: 'CARRIER_PROVIDED',
             components: [
               {
-                name: popName,
+                code: popCode,
                 concentration: 100
               }
             ]
@@ -104,12 +104,12 @@ describe('Receipt Schema Validation - POPs', () => {
     }
   )
 
-  describe('isValidPopName function unit tests', () => {
-    describe('returns true for valid POP names', () => {
-      it.each(validPopNames.map((pop) => pop.name))(
+  describe('isValidPopCode function unit tests', () => {
+    describe('returns true for valid POP codes', () => {
+      it.each(validPopNames.map((pop) => pop.code))(
         'should return true for: "%s"',
-        (popName) => {
-          expect(isValidPopName(popName)).toBe(true)
+        (popCode) => {
+          expect(isValidPopCode(popCode)).toBe(true)
         }
       )
     })
@@ -118,17 +118,18 @@ describe('Receipt Schema Validation - POPs', () => {
       const invalidInputs = [
         [null, 'null'],
         [undefined, 'undefined'],
-        ['Invalid POP Name', 'invalid string'],
-        ['Carrier did not provide detail', 'deprecated entry'],
+        ['ABC', 'invalid code'],
+        ['WXYZ', 'invalid code'],
+        ['PQRSTUVW', 'invalid code'],
         [123, 'number'],
         [true, 'boolean'],
         [{}, 'object'],
         [[], 'array'],
-        ['pfos', 'wrong case']
+        ['end', 'wrong case']
       ]
 
       it.each(invalidInputs)('should return false for %s (%s)', (input) => {
-        expect(isValidPopName(input)).toBe(false)
+        expect(isValidPopCode(input)).toBe(false)
       })
     })
   })

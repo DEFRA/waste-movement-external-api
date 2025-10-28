@@ -17,7 +17,7 @@ export const VALIDATION_KEYS = {
   REASON_NO_CONSIGNMENT_CODE: 'receipt.reasonForNoConsignmentCode',
   HAZARDOUS_COMPONENTS: 'wasteItems.hazardous.components',
   POP_COMPONENTS: 'wasteItems.pops.components',
-  POP_NAME: 'wasteItems.pops.components.name'
+  POP_CODE: 'wasteItems.pops.components.code'
 }
 
 /**
@@ -326,14 +326,15 @@ const isDisposalOrRecoveryWeightMissing = (wasteItem) => {
     return { isValid: true }
   }
 
-  let invalidIndices = []
-
-  invalidIndices = disposalOrRecoveryCodes?.reduce((indices, item, index) => {
-    if (!item?.weight) {
-      indices.push(index)
-    }
-    return indices
-  }, [])
+  const invalidIndices = disposalOrRecoveryCodes?.reduce(
+    (indices, item, index) => {
+      if (!item?.weight) {
+        indices.push(index)
+      }
+      return indices
+    },
+    []
+  )
 
   return { isValid: invalidIndices.length === 0, invalidIndices }
 }
@@ -354,14 +355,15 @@ const isDisposalOrRecoveryWeightMetricMissing = (wasteItem) => {
     return { isValid: true }
   }
 
-  let invalidIndices = []
-
-  invalidIndices = disposalOrRecoveryCodes?.reduce((indices, item, index) => {
-    if (item?.weight && !item.weight.metric) {
-      indices.push(index)
-    }
-    return indices
-  }, [])
+  const invalidIndices = disposalOrRecoveryCodes?.reduce(
+    (indices, item, index) => {
+      if (item?.weight && !item.weight.metric) {
+        indices.push(index)
+      }
+      return indices
+    },
+    []
+  )
 
   return { isValid: invalidIndices.length === 0, invalidIndices }
 }
@@ -382,14 +384,15 @@ const isDisposalOrRecoveryWeightAmountMissing = (wasteItem) => {
     return { isValid: true }
   }
 
-  let invalidIndices = []
-
-  invalidIndices = disposalOrRecoveryCodes?.reduce((indices, item, index) => {
-    if (item?.weight && !item.weight.amount) {
-      indices.push(index)
-    }
-    return indices
-  }, [])
+  const invalidIndices = disposalOrRecoveryCodes?.reduce(
+    (indices, item, index) => {
+      if (item?.weight && !item.weight.amount) {
+        indices.push(index)
+      }
+      return indices
+    },
+    []
+  )
 
   return { isValid: invalidIndices.length === 0, invalidIndices }
 }
@@ -410,14 +413,15 @@ const isDisposalOrRecoveryWeightIsEstimateMissing = (wasteItem) => {
     return { isValid: true }
   }
 
-  let invalidIndices = []
-
-  invalidIndices = disposalOrRecoveryCodes?.reduce((indices, item, index) => {
-    if (item?.weight && ![true, false].includes(item.weight.isEstimate)) {
-      indices.push(index)
-    }
-    return indices
-  }, [])
+  const invalidIndices = disposalOrRecoveryCodes?.reduce(
+    (indices, item, index) => {
+      if (item?.weight && ![true, false].includes(item.weight.isEstimate)) {
+        indices.push(index)
+      }
+      return indices
+    },
+    []
+  )
 
   return { isValid: invalidIndices.length === 0, invalidIndices }
 }
@@ -438,14 +442,15 @@ const isDisposalOrRecoveryCodeMissing = (wasteItem) => {
     return { isValid: false }
   }
 
-  let invalidIndices = []
-
-  invalidIndices = disposalOrRecoveryCodes?.reduce((indices, item, index) => {
-    if (!item.code) {
-      indices.push(index)
-    }
-    return indices
-  }, [])
+  const invalidIndices = disposalOrRecoveryCodes?.reduce(
+    (indices, item, index) => {
+      if (!item.code) {
+        indices.push(index)
+      }
+      return indices
+    },
+    []
+  )
 
   return { isValid: invalidIndices.length === 0, invalidIndices }
 }
