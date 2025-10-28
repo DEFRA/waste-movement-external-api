@@ -5,9 +5,14 @@ export function handleBackendResponse(response, h, responseBodyFn) {
     response.statusCode >= HTTP_STATUS.OK &&
     response.statusCode < HTTP_STATUS.BAD_REQUEST
   ) {
+    const successStatusCode =
+      response.statusCode === HTTP_STATUS.CREATED
+        ? HTTP_STATUS.CREATED
+        : HTTP_STATUS.OK
+
     return responseBodyFn
-      ? h.response(responseBodyFn()).code(HTTP_STATUS.OK)
-      : h.code(HTTP_STATUS.OK)
+      ? h.response(responseBodyFn()).code(successStatusCode)
+      : h.code(successStatusCode)
   } else {
     return h
       .response({
