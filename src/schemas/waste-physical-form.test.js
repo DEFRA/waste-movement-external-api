@@ -1,11 +1,14 @@
+import { apiCodes } from '../test/data/api-codes.js'
+import { mockProcessEnv } from '../test/helpers/mock-process-env.js'
 import { receiveMovementRequestSchema } from './receipt.js'
 import {
   createTestPayload,
   TEST_CONSTANTS
 } from './test-helpers/waste-test-helpers.js'
-import { v4 as uuidv4 } from 'uuid'
 
 describe('Receipt Schema Validation - Physical Form', () => {
+  mockProcessEnv()
+
   describe('Physical Form Validation', () => {
     it('should accept valid physical form', () => {
       const payload = createTestPayload({
@@ -29,7 +32,7 @@ describe('Receipt Schema Validation - Physical Form', () => {
     it('should reject empty physical form', () => {
       // Need to build manually as physicalForm is required in defaults
       const payload = {
-        apiCode: uuidv4(),
+        apiCode: apiCodes[0],
         dateTimeReceived: '2021-01-01T00:00:00.000Z',
         wasteItems: [
           {

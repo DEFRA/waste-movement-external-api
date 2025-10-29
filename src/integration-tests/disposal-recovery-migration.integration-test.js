@@ -1,7 +1,7 @@
 import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
 import { createServer } from '../server.js'
+import { apiCodes } from '../test/data/api-codes.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
-import { v4 as uuidv4 } from 'uuid'
 
 describe('Disposal/Recovery Code Migration Integration Tests', () => {
   let server
@@ -166,7 +166,7 @@ describe('Disposal/Recovery Code Migration Integration Tests', () => {
   describe('End-to-end migration compatibility', () => {
     it('should successfully process complete movement with new nested structure', async () => {
       const completePayload = createMovementRequest({
-        apiCode: uuidv4(),
+        apiCode: apiCodes[0],
         wasteItems: [
           {
             ewcCodes: ['200101'],

@@ -4,10 +4,13 @@ import {
   validSourceOfComponents
 } from '../common/constants/source-of-components.js'
 import { popsAndHazardousComponentsErrorTests } from '../test/common/pop-and-hazardous-components/pops-and-hazardous-components-error-tests.js'
+import { mockProcessEnv } from '../test/helpers/mock-process-env.js'
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createTestPayload } from './test-helpers/waste-test-helpers.js'
 
 describe('Receipt Schema Validation - Hazardous', () => {
+  mockProcessEnv()
+
   describe('Hazardous Waste Validation', () => {
     // Helper function to validate a payload with hazardous waste data
     const validateHazardous = (wasteItemOverrides) => {

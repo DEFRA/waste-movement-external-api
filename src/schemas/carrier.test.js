@@ -6,8 +6,11 @@ import {
   invalidCarrierRegistrationNumbers,
   validCarrierRegistrationNumbers
 } from '../test/data/carrier-registration-numbers.js'
+import { mockProcessEnv } from '../test/helpers/mock-process-env.js'
 
 describe('Carrier Registration Validation', () => {
+  mockProcessEnv()
+
   const basePayload = createMovementRequest()
 
   const validate = (carrier) =>

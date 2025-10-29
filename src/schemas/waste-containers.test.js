@@ -1,8 +1,11 @@
 import { validContainerTypes } from '../common/constants/container-types.js'
+import { mockProcessEnv } from '../test/helpers/mock-process-env.js'
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createTestPayload } from './test-helpers/waste-test-helpers.js'
 
 describe('Receipt Schema Validation - Containers', () => {
+  mockProcessEnv()
+
   describe('Number of Containers Validation', () => {
     it('should require amount', () => {
       const payload = createTestPayload({

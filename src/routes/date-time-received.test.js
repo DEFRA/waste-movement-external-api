@@ -1,8 +1,11 @@
 import { receiveMovementRequestSchema } from '../schemas/receipt.js'
+import { apiCodes } from '../test/data/api-codes.js'
+import { mockProcessEnv } from '../test/helpers/mock-process-env.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
-import { v4 as uuidv4 } from 'uuid'
 
 describe('Create Receipt Movement - Date and Time Received Validation', () => {
+  mockProcessEnv()
+
   describe('Schema Validation Tests for dateTimeReceived', () => {
     it('should accept a valid ISO date-time for dateTimeReceived', () => {
       const payload = {
@@ -31,7 +34,7 @@ describe('Create Receipt Movement - Date and Time Received Validation', () => {
 
     it('should reject when receipt is provided without dateTimeReceived', () => {
       const payload = {
-        apiCode: uuidv4()
+        apiCode: apiCodes[0]
       }
 
       const { error } = receiveMovementRequestSchema.validate(payload)

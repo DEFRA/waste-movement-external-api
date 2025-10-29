@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals'
 import { httpClients } from '../common/helpers/http-client.js'
 import { handleCreateReceiptMovement } from './create-receipt-movement.js'
-import { v4 as uuidv4 } from 'uuid'
+import { apiCodes } from '../test/data/api-codes.js'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -32,7 +32,7 @@ describe('Create Receipt Movement Handler', () => {
   })
 
   const validPayload = {
-    apiCode: uuidv4(),
+    apiCode: apiCodes[0],
     receiverReference: 'ref123',
     specialHandlingRequirements: 'Handle with care',
     wasteItems: [
