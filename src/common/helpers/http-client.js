@@ -1,6 +1,5 @@
 import Wreck from '@hapi/wreck'
 import { config } from '../../config.js'
-import { HTTP_STATUS } from '../constants/http-status-codes.js'
 
 /**
  * Base configuration for the HTTP clients
@@ -98,7 +97,7 @@ function createServiceClient(baseUrl, httpClient) {
      * @returns {Promise<Object>} Response object
      */
     async post(path, payload, headers = {}) {
-      const response = await makeRequest(
+      return makeRequest(
         {
           url: `${baseUrl}${path}`,
           method: 'POST',
@@ -107,14 +106,6 @@ function createServiceClient(baseUrl, httpClient) {
         },
         httpClient
       )
-
-      return {
-        ...response,
-        statusCode:
-          response.statusCode === HTTP_STATUS.OK
-            ? HTTP_STATUS.CREATED
-            : response.statusCode
-      }
     },
 
     /**
