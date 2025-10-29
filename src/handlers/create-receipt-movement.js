@@ -3,6 +3,7 @@ import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
 import { handleBackendResponse } from './handle-backend-response.js'
 import { generateAllValidationWarnings } from '../common/helpers/validation-warnings.js'
 import { createLogger } from '../common/helpers/logging/logger.js'
+import { isSuccessStatusCode } from '../common/helpers/utils.js'
 
 const logger = createLogger()
 
@@ -34,10 +35,9 @@ export const handleCreateReceiptMovement = async (request, h) => {
 
     response = {
       ...response,
-      statusCode:
-        response.statusCode === HTTP_STATUS.OK
-          ? HTTP_STATUS.CREATED
-          : response.statusCode
+      statusCode: isSuccessStatusCode(response.statusCode)
+        ? HTTP_STATUS.CREATED
+        : response.statusCode
     }
 
     logger.debug(
