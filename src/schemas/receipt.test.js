@@ -1,10 +1,14 @@
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
+import { apiCodes } from '../test/data/api-codes.js'
+import { mockProcessEnv } from '../test/helpers/mock-process-env.js'
 
 describe('receiveMovementRequestSchema - otherReferencesForMovement validation', () => {
   const basePayload = createMovementRequest({
     dateTimeReceived: new Date().toISOString()
   })
+
+  mockProcessEnv()
 
   describe('valid payloads', () => {
     it('should accept valid array of label-reference pairs', () => {
@@ -61,15 +65,30 @@ describe('receiveMovementRequestSchema - otherReferencesForMovement validation',
       expect(error.message).toContain('"apiCode" is required')
     })
 
-    it('should reject when apiCode is not a guid', () => {
+    it('should reject when apiCode is not a valid api code', () => {
       const payload = {
         ...basePayload,
         apiCode: 'notaguid'
       }
       const { error } = receiveMovementRequestSchema.validate(payload)
       expect(error).toBeDefined()
-      expect(error.message).toContain('"apiCode" must be a valid GUID')
+      expect(error.message).toContain('"apiCode" must be a valid API Code')
     })
+
+    it.each(['', undefined, null])(
+      'should reject when no api codes are stored in the secret to check against: "%s"',
+      (value) => {
+        process.env.API_CODES = value
+
+        const payload = {
+          ...basePayload,
+          apiCode: apiCodes[0]
+        }
+        const { error } = receiveMovementRequestSchema.validate(payload)
+        expect(error).toBeDefined()
+        expect(error.message).toContain('"apiCode" must be a valid API Code')
+      }
+    )
 
     it('should reject when label is missing', () => {
       const payload = {

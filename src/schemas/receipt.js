@@ -18,7 +18,8 @@ import { authorisationNumbersArraySchema } from './authorisation-number.js'
 import {
   CARRIER_ERRORS,
   ADDRESS_ERRORS,
-  CONSIGNMENT_ERRORS
+  CONSIGNMENT_ERRORS,
+  RECEIPT_ERRORS
 } from '../common/constants/validation-error-messages.js'
 
 const MIN_STRING_LENGTH = 1
@@ -120,7 +121,25 @@ const brokerOrDealerSchema = Joi.object({
 })
 
 export const receiveMovementRequestSchema = Joi.object({
-  apiCode: Joi.string().required().uuid(),
+  apiCode: Joi.string()
+    .required()
+    .custom((value, helpers) => {
+      if (!process.env.API_CODES || process.env.API_CODES.length === 0) {
+        return helpers.error('apiCode.invalid')
+      }
+
+      // API Codes are stored as a comma separated base64 encoded secret
+      const apiCodes = atob(process.env.API_CODES).split(',')
+
+      if (!apiCodes.includes(value)) {
+        return helpers.error('apiCode.invalid')
+      }
+
+      return value
+    })
+    .messages({
+      'apiCode.invalid': RECEIPT_ERRORS.API_CODE_INVALID
+    }),
   dateTimeReceived: Joi.date().iso().required(),
   hazardousWasteConsignmentCode: hazardousWasteConsignmentCodeSchema,
   reasonForNoConsignmentCode: Joi.string().allow(null, ''),
