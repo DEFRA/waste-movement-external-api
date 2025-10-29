@@ -53,26 +53,23 @@ describe('handleUpdateReceiptMovement', () => {
     code: jest.fn().mockReturnThis()
   }
 
-  // Common expected response with validation warnings
+  // Common expected response with warnings
   const expectedResponseWithWarnings = {
-    message: 'Receipt movement updated successfully',
-    validation: {
-      warnings: [
-        {
-          errorType: 'NotProvided',
-          key: 'wasteItems.0.disposalOrRecoveryCodes',
-          message:
-            'wasteItems[0].disposalOrRecoveryCodes is required for proper waste tracking and compliance'
-        }
-      ]
-    }
+    warnings: [
+      {
+        errorType: 'NotProvided',
+        key: 'wasteItems.0.disposalOrRecoveryCodes',
+        message:
+          'wasteItems[0].disposalOrRecoveryCodes is required for proper waste tracking and compliance'
+      }
+    ]
   }
 
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  it('should successfully update a receipt movement', async () => {
+  it('should successfully update a receipt movement with warnings', async () => {
     httpClients.wasteMovement.put.mockResolvedValueOnce({
       statusCode: 200
     })
@@ -84,6 +81,45 @@ describe('handleUpdateReceiptMovement', () => {
       { movement: mockRequest.payload }
     )
     expect(mockH.response).toHaveBeenCalledWith(expectedResponseWithWarnings)
+
+    expect(mockH.code).toHaveBeenCalledWith(200)
+  })
+
+  it('should successfully update a receipt movement without warnings', async () => {
+    // Create a complete payload with all required fields to avoid warnings
+    const completePayload = {
+      ...mockRequest.payload,
+      wasteItems: mockRequest.payload.wasteItems.map((item) => ({
+        ...item,
+        disposalOrRecoveryCodes: [
+          {
+            code: 'R1',
+            weight: {
+              metric: 'Tonnes',
+              amount: 10,
+              isEstimate: false
+            }
+          }
+        ]
+      }))
+    }
+
+    const completeRequest = {
+      ...mockRequest,
+      payload: completePayload
+    }
+
+    httpClients.wasteMovement.put.mockResolvedValueOnce({
+      statusCode: 200
+    })
+
+    await handleUpdateReceiptMovement(completeRequest, mockH)
+
+    expect(httpClients.wasteMovement.put).toHaveBeenCalledWith(
+      `/movements/${mockRequest.params.wasteTrackingId}/receive`,
+      { movement: completePayload }
+    )
+    expect(mockH.response).toHaveBeenCalledWith({})
 
     expect(mockH.code).toHaveBeenCalledWith(200)
   })

@@ -25,8 +25,23 @@ const updateReceiptMovement = {
           [HTTP_STATUS.OK]: {
             description: 'The waste movement receipt has been processed',
             schema: Joi.object({
-              message: Joi.string().description('Success message')
+              warnings: Joi.array()
+                .items(
+                  Joi.object({
+                    key: Joi.string().description(
+                      'The field path that triggered the warning'
+                    ),
+                    errorType: Joi.string().description(
+                      'The type of validation warning'
+                    ),
+                    message: Joi.string().description('The warning message')
+                  })
+                )
+                .optional()
+                .description('Array of validation warnings')
             })
+              .allow({})
+              .description('Empty object or object with warnings array')
           },
           [HTTP_STATUS.BAD_REQUEST]: {
             description: 'Input was not in the correct format.',
