@@ -8,14 +8,21 @@ const logger = createLogger()
 
 export const handleCreateReceiptMovement = async (request, h) => {
   let wasteTrackingId
+
   try {
     // const { clientId } = request.auth.credentials
 
     wasteTrackingId = (await httpClients.wasteTracking.get('/next')).payload
       .wasteTrackingId
-    const response = await httpClients.wasteMovement.post(
+
+    let response = await httpClients.wasteMovement.post(
       `/movements/${wasteTrackingId}/receive`,
       { movement: request.payload }
+    )
+
+    logger.debug('handleCreateReceiptMovement response', response)
+    logger.debug(
+      `handleCreateReceiptMovement response.statusCode before: ${response.statusCode}`
     )
 
     // Generate validation warnings
@@ -24,6 +31,18 @@ export const handleCreateReceiptMovement = async (request, h) => {
     const responseData = {
       wasteTrackingId
     }
+
+    response = {
+      ...response,
+      statusCode:
+        response.statusCode === HTTP_STATUS.OK
+          ? HTTP_STATUS.CREATED
+          : response.statusCode
+    }
+
+    logger.debug(
+      `handleCreateReceiptMovement response.statusCode after: ${response.statusCode}`
+    )
 
     // Only include validation object if there are warnings
     if (warnings.length > 0) {
