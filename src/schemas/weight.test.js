@@ -4,8 +4,11 @@ import {
   TEST_CONSTANTS
 } from './test-helpers/waste-test-helpers.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
+import { mockProcessEnv } from '../test/helpers/mock-process-env.js'
 
 describe('Receipt Schema Validation - Weight', () => {
+  mockProcessEnv()
+
   describe('In waste item', () => {
     const validateWithWeightOverrides = (weightOverrides) => {
       const payload = createTestPayload({

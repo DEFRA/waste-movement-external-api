@@ -2,6 +2,7 @@ import { receiveMovementRequestSchema } from './receipt.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import { validContainerTypes } from '../common/constants/container-types.js'
 import { NO_CONSIGNMENT_REASONS } from './hazardous-waste-consignment.js'
+import { mockProcessEnv } from '../test/helpers/mock-process-env.js'
 
 // Helper to build a base valid payload
 const buildBasePayload = () => ({
@@ -25,6 +26,8 @@ const buildBasePayload = () => ({
 })
 
 describe('Hazardous Waste Consignment Note Code rules', () => {
+  mockProcessEnv()
+
   it.each([
     ['code is null and reason is not provided', null, undefined],
     ['code is null and reason is null', null, null]

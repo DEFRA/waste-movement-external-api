@@ -5,6 +5,7 @@ import { receiveMovementRequestSchema } from '../schemas/receipt.js'
 import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
+import { mockProcessEnv } from '../test/helpers/mock-process-env.js'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -19,6 +20,8 @@ jest.mock('../common/helpers/http-client.js', () => ({
 }))
 
 describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
+  mockProcessEnv()
+
   let mockWasteTrackingId
 
   beforeEach(() => {

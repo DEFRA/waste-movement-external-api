@@ -1,8 +1,11 @@
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import { carrierBrokerDealerRegistrationNumberErrorTests } from '../test/common/carrier-broker-dealer-regisration-number/carrier-broker-dealer-registration-number-error-tests.js'
+import { mockProcessEnv } from '../test/helpers/mock-process-env.js'
 
 describe('BrokerOrDealer Validation', () => {
+  mockProcessEnv()
+
   const basePayload = createMovementRequest()
 
   const validate = (brokerOrDealer) =>

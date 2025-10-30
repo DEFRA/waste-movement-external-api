@@ -2,8 +2,11 @@ import { receiveMovementRequestSchema } from './receipt.js'
 import { createTestPayload } from './test-helpers/waste-test-helpers.js'
 import { isValidPopCode, validPopNames } from '../common/constants/pop-names.js'
 import { popsAndHazardousComponentsErrorTests } from '../test/common/pop-and-hazardous-components/pops-and-hazardous-components-error-tests.js'
+import { mockProcessEnv } from '../test/helpers/mock-process-env.js'
 
 describe('Receipt Schema Validation - POPs', () => {
+  mockProcessEnv()
+
   describe('POPs Indicator Validation', () => {
     it('should accept valid POPs indicator (true)', () => {
       const payload = createTestPayload({

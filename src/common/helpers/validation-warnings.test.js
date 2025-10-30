@@ -1,4 +1,5 @@
 import { popsAndHazardousComponentWarningTests } from '../../test/common/pop-and-hazardous-components/pops-and-hazardous-components-warning-tests.js'
+import { apiCodes } from '../../test/data/api-codes.js'
 import {
   VALIDATION_ERROR_TYPES,
   generateAllValidationWarnings,
@@ -7,7 +8,6 @@ import {
   processValidationWarnings,
   disposalOrRecoveryCodesWarningValidators
 } from './validation-warnings.js'
-import { v4 as uuidv4 } from 'uuid'
 
 // Test helpers
 const createDisposalRecoveryPayload = (disposalOrRecoveryCodes) => ({
@@ -59,7 +59,7 @@ describe('Validation Warnings', () => {
 
     it('should generate warning when wasteItems are missing', () => {
       const payload = {
-        apiCode: uuidv4()
+        apiCode: apiCodes[0]
         // No wasteItems section
       }
 
@@ -439,7 +439,7 @@ describe('Validation Warnings', () => {
 
     it('should handle payload without wasteItems section', () => {
       const payload = {
-        apiCode: uuidv4()
+        apiCode: apiCodes[0]
       }
 
       const warnings = processValidationWarnings(

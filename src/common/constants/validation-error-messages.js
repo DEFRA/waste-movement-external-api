@@ -70,3 +70,7 @@ export const CONSIGNMENT_ERRORS = {
 export const AUTHORISATION_ERRORS = {
   INVALID: '{{#label}} must be in a valid UK format'
 }
+
+export const RECEIPT_ERRORS = {
+  API_CODE_INVALID: '{{#label}} must be a valid API Code'
+}

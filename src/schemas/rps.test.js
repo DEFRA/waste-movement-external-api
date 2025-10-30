@@ -1,8 +1,11 @@
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import { TEST_DATA } from './test-constants.js'
+import { mockProcessEnv } from '../test/helpers/mock-process-env.js'
 
 describe('Regulatory Position Statement (RPS) Validation', () => {
+  mockProcessEnv()
+
   const basePayload = createMovementRequest()
 
   const validate = (receiver, receipt) =>

@@ -4,8 +4,9 @@ import { createReceiptMovement } from './create-receipt-movement.js'
 import { receiveMovementRequestSchema } from '../schemas/receipt.js'
 import { MEANS_OF_TRANSPORT } from '../common/constants/means-of-transport.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
-import { v4 as uuidv4 } from 'uuid'
 import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
+import { apiCodes } from '../test/data/api-codes.js'
+import { mockProcessEnv } from '../test/helpers/mock-process-env.js'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -20,6 +21,8 @@ jest.mock('../common/helpers/http-client.js', () => ({
 }))
 
 describe('Create Receipt Movement - Means of Transport Validation', () => {
+  mockProcessEnv()
+
   let mockWasteTrackingId
 
   beforeEach(() => {
@@ -91,7 +94,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
       invalidMeansOfTransport.forEach((meansOfTransport) => {
         it(`should reject invalid means of transport: ${meansOfTransport}`, () => {
           const invalidPayload = {
-            apiCode: uuidv4(),
+            apiCode: apiCodes[0],
             dateTimeReceived: '2024-01-15T14:30:00Z',
             carrier: {
               registrationNumber: 'CBDU123456',
@@ -130,7 +133,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
     describe('Successful submissions with valid means of transport', () => {
       it('should successfully create movement with Road transport', async () => {
         const payload = {
-          apiCode: uuidv4(),
+          apiCode: apiCodes[0],
           carrier: {
             organisationName: 'Test Carrier',
             meansOfTransport: 'Road'
@@ -156,7 +159,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
 
       it('should successfully create movement with Rail transport', async () => {
         const validPayload = {
-          apiCode: uuidv4(),
+          apiCode: apiCodes[0],
           carrier: {
             organisationName: 'Test Carrier',
             meansOfTransport: 'Rail'
@@ -199,7 +202,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
 
       it('should successfully create movement with Sea transport', async () => {
         const validPayload = {
-          apiCode: uuidv4(),
+          apiCode: apiCodes[0],
           carrier: {
             organisationName: 'Test Carrier',
             meansOfTransport: 'Sea'
@@ -244,7 +247,7 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
     describe('Handler error handling', () => {
       it('should handle backend errors', async () => {
         const validPayload = {
-          apiCode: uuidv4(),
+          apiCode: apiCodes[0],
           carrier: {
             organisationName: 'Test Carrier',
             meansOfTransport: 'Road'
