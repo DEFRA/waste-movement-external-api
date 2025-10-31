@@ -158,4 +158,33 @@ describe('Hazardous Waste Consignment Note Code rules', () => {
       '"reasonForNoConsignmentCode" is required when wasteItems[*].ewcCodes contains a hazardous code and hazardousWasteConsignmentCode is not provided'
     )
   })
+
+  // Regression test for bug fix: error.details should include correct field name for error path
+  // This ensures the error handler can extract the field name from error.type
+  it('Error type includes field name for reasonForNoConsignmentCode validation errors', () => {
+    const payload = buildBasePayload()
+    payload.wasteItems[0].ewcCodes = ['030104'] // hazardous
+    // Omit both fields entirely (real-world scenario from bug report)
+    delete payload.hazardousWasteConsignmentCode
+    delete payload.reasonForNoConsignmentCode
+
+    const { error } = receiveMovementRequestSchema.validate(payload)
+    expect(error).toBeDefined()
+    expect(error.details).toBeDefined()
+    expect(error.details[0].type).toBe('reasonForNoConsignmentCode.required')
+    // The error handler will extract 'reasonForNoConsignmentCode' from this type
+  })
+
+  it('Error type includes field name when invalid reason is provided', () => {
+    const payload = buildBasePayload()
+    payload.wasteItems[0].ewcCodes = ['030104'] // hazardous
+    payload.hazardousWasteConsignmentCode = ''
+    payload.reasonForNoConsignmentCode = 'Invalid reason not in allowed list'
+
+    const { error } = receiveMovementRequestSchema.validate(payload)
+    expect(error).toBeDefined()
+    expect(error.details).toBeDefined()
+    expect(error.details[0].type).toBe('reasonForNoConsignmentCode.only')
+    // The error handler will extract 'reasonForNoConsignmentCode' from this type
+  })
 })
