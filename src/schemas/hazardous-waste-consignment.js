@@ -32,15 +32,13 @@ export const hazardousWasteConsignmentCodeSchema = Joi.custom(
     const payload = helpers.state.ancestors[0]
     const hasHazardous = hasHazardousEwcCodes(payload)
 
-    // If hazardous EWC codes are present, the field is required if missing (undefined or null)
-    if (
-      hasHazardous &&
-      !value &&
-      !payload.reasonForNoConsignmentCode &&
-      payload.hazardousWasteConsignmentCode !== ''
-    ) {
+    // If hazardous EWC codes are present and code is explicitly null, require it
+    // If code is undefined, let reasonForNoConsignmentCode validation handle the requirement
+    if (hasHazardous && value === null && !payload.reasonForNoConsignmentCode) {
       return helpers.error('hazardousWasteConsignmentCode.required')
     }
+
+    // Validate format if value is provided
     if (value) {
       const valid =
         EA_NRW_PATTERN.test(value) ||

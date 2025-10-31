@@ -30,8 +30,29 @@ export const errorHandler = {
                 unexpectedErrors.push(err)
             }
 
+            // Determine the error key
+            // For most errors, Joi provides the path (e.g., ['fieldName'])
+            // However, custom validators at the schema level don't have path context,
+            // so we extract the field name from the error type for those cases
+            let key = err.path.join('.')
+
+            // Handle schema-level custom validation errors that reference specific fields
+            // These errors have empty paths but include the field name in the error type
+            // Only apply this for our custom error types (not Joi built-ins like 'any.required')
+            const CUSTOM_FIELD_ERROR_PREFIXES = ['reasonForNoConsignmentCode']
+
+            if (!key && err.type && err.type.includes('.')) {
+              const fieldName = err.type.split('.')[0]
+
+              // Only use the extracted field name if it's one of our known custom validations
+              if (CUSTOM_FIELD_ERROR_PREFIXES.includes(fieldName)) {
+                key = fieldName
+              }
+              // Otherwise leave key as empty string (original behavior for unknown cases)
+            }
+
             return {
-              key: err.path.join('.'),
+              key,
               errorType,
               message: err.message
             }
