@@ -26,9 +26,11 @@ export const handleUpdateReceiptMovement = async (request, h) => {
 
     const responseData = {}
 
-    // Only include warnings if there are any
+    // Only include validation object if there are warnings
     if (warnings.length > 0) {
-      responseData.warnings = warnings
+      responseData.validation = {
+        warnings
+      }
     }
 
     return handleBackendResponse(response, h, () => responseData)
