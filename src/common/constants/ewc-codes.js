@@ -413,6 +413,7 @@ export const validEwcCodes = [
   '100707', // wastes from cooling-water treatment containing oil
   '100708', // wastes from cooling-water treatment other than those mentioned in 10 07 07
   '100799', // wastes not otherwise specified
+  '100804', // particulates and dust
   '100808', // salt slag from primary and secondary production
   '100809', // other slags
   '100810', // dross and skimmings that are flammable or emit, upon contact with water, flammable gases in hazardous quantities
@@ -767,6 +768,7 @@ export const validEwcCodes = [
   '190305', // stabilised wastes other than those mentioned in 19 03 04
   '190306', // wastes marked as hazardous, solidified
   '190307', // solidified wastes other than those mentioned in 19 03 06
+  '190308', // partly stabilised mercury
   '190401', // vitrified waste
   '190402', // fly ash and other flue-gas treatment wastes
   '190403', // non-vitrified solid phase
