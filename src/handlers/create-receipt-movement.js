@@ -21,11 +21,6 @@ export const handleCreateReceiptMovement = async (request, h) => {
       { movement: request.payload }
     )
 
-    logger.debug('handleCreateReceiptMovement response', response)
-    logger.debug(
-      `handleCreateReceiptMovement response.statusCode before: ${response.statusCode}`
-    )
-
     // Generate validation warnings
     const warnings = generateAllValidationWarnings(request.payload)
 
@@ -39,10 +34,6 @@ export const handleCreateReceiptMovement = async (request, h) => {
         ? HTTP_STATUS.CREATED
         : response.statusCode
     }
-
-    logger.debug(
-      `handleCreateReceiptMovement response.statusCode after: ${response.statusCode}`
-    )
 
     // Only include validation object if there are warnings
     if (warnings.length > 0) {
