@@ -59,7 +59,7 @@ describe('GET EWC Codes', () => {
     it('should return the correct number of codes in total', () => {
       const ewcCodesResponse = mapGetEwcCodesResponse()
 
-      expect(ewcCodesResponse.length).toBe(840)
+      expect(ewcCodesResponse.length).toBe(842)
     })
 
     it('should return the correct number of hazardous codes', () => {
@@ -68,7 +68,7 @@ describe('GET EWC Codes', () => {
         ({ isHazardous }) => isHazardous
       )
 
-      expect(hazardousEwcCodes.length).toBe(407)
+      expect(hazardousEwcCodes.length).toBe(408)
     })
 
     it('should return the correct number of non-hazardous codes', () => {
@@ -77,7 +77,7 @@ describe('GET EWC Codes', () => {
         ({ isHazardous }) => !isHazardous
       )
 
-      expect(nonHazardousEwcCodes.length).toBe(433)
+      expect(nonHazardousEwcCodes.length).toBe(434)
     })
   })
 })

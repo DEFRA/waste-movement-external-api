@@ -53,16 +53,18 @@ describe('handleUpdateReceiptMovement', () => {
     code: jest.fn().mockReturnThis()
   }
 
-  // Common expected response with warnings
+  // Common expected response with validation warnings
   const expectedResponseWithWarnings = {
-    warnings: [
-      {
-        errorType: 'NotProvided',
-        key: 'wasteItems.0.disposalOrRecoveryCodes',
-        message:
-          'wasteItems[0].disposalOrRecoveryCodes is required for proper waste tracking and compliance'
-      }
-    ]
+    validation: {
+      warnings: [
+        {
+          errorType: 'NotProvided',
+          key: 'wasteItems.0.disposalOrRecoveryCodes',
+          message:
+            'wasteItems[0].disposalOrRecoveryCodes is required for proper waste tracking and compliance'
+        }
+      ]
+    }
   }
 
   beforeEach(() => {
