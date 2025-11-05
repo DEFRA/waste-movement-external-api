@@ -34,8 +34,10 @@ describe('handleBackendResponse', () => {
   it('should return error response when status code is a client error (400-500)', () => {
     const response = {
       statusCode: HTTP_STATUS.BAD_REQUEST,
-      error: 'Bad Request',
-      message: 'Invalid input'
+      payload: {
+        error: 'Bad Request',
+        message: 'Invalid input'
+      }
     }
 
     handleBackendResponse(response, mockH)
@@ -50,8 +52,10 @@ describe('handleBackendResponse', () => {
   it('should handle 450 error response', () => {
     const response = {
       statusCode: 450,
-      error: 'Custom Error',
-      message: 'Custom error message'
+      payload: {
+        error: 'Custom Error',
+        message: 'Custom error message'
+      }
     }
 
     handleBackendResponse(response, mockH)
@@ -66,8 +70,10 @@ describe('handleBackendResponse', () => {
   it('should handle INTERNAL_SERVER_ERROR response', () => {
     const response = {
       statusCode: HTTP_STATUS.INTERNAL_SERVER_ERROR,
-      error: 'Internal Server Error',
-      message: 'Server error occurred'
+      payload: {
+        error: 'Internal Server Error',
+        message: 'Server error occurred'
+      }
     }
 
     handleBackendResponse(response, mockH)
@@ -112,8 +118,10 @@ describe('handleBackendResponse', () => {
   it('should handle NOT_FOUND error response', () => {
     const response = {
       statusCode: HTTP_STATUS.NOT_FOUND,
-      error: 'Not Found',
-      message: 'Resource not found'
+      payload: {
+        error: 'Not Found',
+        message: 'Resource not found'
+      }
     }
 
     handleBackendResponse(response, mockH)
@@ -128,8 +136,10 @@ describe('handleBackendResponse', () => {
   it('should handle FORBIDDEN error response', () => {
     const response = {
       statusCode: HTTP_STATUS.FORBIDDEN,
-      error: 'Forbidden',
-      message: 'Access denied'
+      payload: {
+        error: 'Forbidden',
+        message: 'Access denied'
+      }
     }
 
     handleBackendResponse(response, mockH)
@@ -139,5 +149,19 @@ describe('handleBackendResponse', () => {
       message: 'Access denied'
     })
     expect(mockH.code).toHaveBeenCalledWith(HTTP_STATUS.FORBIDDEN)
+  })
+
+  it('should handle an error response without a payload object', () => {
+    const response = {
+      statusCode: HTTP_STATUS.INTERNAL_SERVER_ERROR
+    }
+
+    handleBackendResponse(response, mockH)
+
+    expect(mockH.response).toHaveBeenCalledWith({
+      error: undefined,
+      message: undefined
+    })
+    expect(mockH.code).toHaveBeenCalledWith(HTTP_STATUS.INTERNAL_SERVER_ERROR)
   })
 })
