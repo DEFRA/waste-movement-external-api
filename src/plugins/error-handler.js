@@ -30,8 +30,20 @@ export const errorHandler = {
                 unexpectedErrors.push(err)
             }
 
+            // Determine the error key
+            // For most errors, Joi provides the path (e.g., ['fieldName'])
+            // However, custom validators at the schema level don't have path context
+            let key = err.path.join('.')
+
+            // For schema-level custom validations that pass fieldName metadata via local context,
+            // use that instead of the empty path
+            // This allows custom validations to specify which field the error relates to
+            if (!key && err.context?.local?.fieldName) {
+              key = err.context.local.fieldName
+            }
+
             return {
-              key: err.path.join('.'),
+              key,
               errorType,
               message: err.message
             }

@@ -141,13 +141,18 @@ export const receiveMovementRequestSchema = Joi.object({
   .custom((value, helpers) => {
     const hasHazardous = hasHazardousEwcCodes(value)
 
+    // Only validate if there are hazardous codes and no consignment code provided
     if (hasHazardous && !value.hazardousWasteConsignmentCode) {
       if (!value.reasonForNoConsignmentCode) {
-        return helpers.error('reasonForNoConsignmentCode.required')
+        return helpers.error('reasonForNoConsignmentCode.required', {
+          local: { fieldName: 'reasonForNoConsignmentCode' }
+        })
       }
 
       if (!NO_CONSIGNMENT_REASONS.includes(value.reasonForNoConsignmentCode)) {
-        return helpers.error('reasonForNoConsignmentCode.only')
+        return helpers.error('reasonForNoConsignmentCode.only', {
+          local: { fieldName: 'reasonForNoConsignmentCode' }
+        })
       }
     }
 
