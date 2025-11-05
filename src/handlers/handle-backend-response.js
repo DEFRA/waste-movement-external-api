@@ -14,8 +14,8 @@ export function handleBackendResponse(response, h, responseBodyFn) {
   } else {
     return h
       .response({
-        error: response.error,
-        message: response.message
+        error: response.payload?.error,
+        message: response.payload?.message
       })
       .code(response.statusCode)
   }
