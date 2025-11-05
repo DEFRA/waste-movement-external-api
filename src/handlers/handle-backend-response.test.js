@@ -158,10 +158,7 @@ describe('handleBackendResponse', () => {
 
     handleBackendResponse(response, mockH)
 
-    expect(mockH.response).toHaveBeenCalledWith({
-      error: undefined,
-      message: undefined
-    })
+    expect(mockH.response).toHaveBeenCalledWith(undefined)
     expect(mockH.code).toHaveBeenCalledWith(HTTP_STATUS.INTERNAL_SERVER_ERROR)
   })
 })
