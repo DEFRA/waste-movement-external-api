@@ -40,7 +40,7 @@ export function popsAndHazardousComponentWarningTests(
         wasteItems: [
           {
             [containsPopsOrHazardousField]: false,
-            [popsOrHazardousObjectProperty]: {}
+            [popsOrHazardousObjectProperty]: undefined
           }
         ]
       }
