@@ -9,6 +9,10 @@ export const errorHandler = {
       server.ext('onPreResponse', (request, h) => {
         const response = request.response
 
+        if (response.isBoom) {
+          logger.error(response)
+        }
+
         // Check if it's a validation error (Boom error with status 400)
         if (response.isBoom && response.output.statusCode === 400) {
           // Access the validation error details
