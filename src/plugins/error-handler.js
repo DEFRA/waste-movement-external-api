@@ -68,7 +68,10 @@ export const errorHandler = {
               `Validation failed with unexpected error types, mapped to UnexpectedError`
             )
           } else {
-            logger.error({ errors: formattedErrors }, 'Validation failed')
+            logger.error(
+              { err: formattedErrors },
+              `Validation failed ${JSON.stringify(formattedErrors)}`
+            )
           }
 
           // Return the custom formatted error
