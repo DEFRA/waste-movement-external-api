@@ -78,7 +78,7 @@ async function createServer() {
 
   // Register JWT authentication before routes
   if (config.get('cdpEnvironment') === 'local') {
-    logger.info(
+    logger.error(
       'WARNING: Local environment detected. JWT authentication is disabled.'
     )
   } else {
