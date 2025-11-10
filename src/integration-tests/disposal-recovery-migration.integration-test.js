@@ -175,8 +175,10 @@ describe('Disposal/Recovery Code Migration Integration Tests', () => {
             numberOfContainers: 5,
             typeOfContainers: 'SKI',
             weight: { metric: 'Kilograms', amount: 500, isEstimate: false },
-            pops: { containsPops: false },
-            hazardous: { containsHazardous: false },
+            containsPops: false,
+            containsHazardous: false,
+            pops: {},
+            hazardous: {},
             disposalOrRecoveryCodes: [
               {
                 code: 'R03',

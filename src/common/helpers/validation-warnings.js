@@ -498,8 +498,7 @@ function validatePopOrHazardousComponents(
     wasteItem[popsOrHazardousObjectProperty]
 
   if (
-    wasteItem[popsOrHazardousObjectProperty][containsPopsOrHazardousField] ===
-      false ||
+    wasteItem[containsPopsOrHazardousField] === false ||
     sourceOfComponents === 'NOT_PROVIDED'
   ) {
     return { isValid: true }

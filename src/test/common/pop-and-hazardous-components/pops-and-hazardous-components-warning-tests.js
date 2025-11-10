@@ -39,9 +39,22 @@ export function popsAndHazardousComponentWarningTests(
       const payload = {
         wasteItems: [
           {
-            [popsOrHazardousObjectProperty]: {
-              [containsPopsOrHazardousField]: false
-            }
+            [containsPopsOrHazardousField]: false,
+            [popsOrHazardousObjectProperty]: undefined
+          }
+        ]
+      }
+
+      const warnings = processValidationWarnings(payload, validationWarnings)
+      expect(warnings).toEqual([])
+    })
+
+    it(`should return empty array when ${containsPopsOrHazardousField} is false and empty ${popsOrHazardousObjectProperty} object is supplied`, () => {
+      const payload = {
+        wasteItems: [
+          {
+            [containsPopsOrHazardousField]: false,
+            [popsOrHazardousObjectProperty]: {}
           }
         ]
       }
@@ -54,8 +67,8 @@ export function popsAndHazardousComponentWarningTests(
       const payload = {
         wasteItems: [
           {
+            [containsPopsOrHazardousField]: true,
             [popsOrHazardousObjectProperty]: {
-              [containsPopsOrHazardousField]: true,
               sourceOfComponents: 'NOT_PROVIDED'
             }
           }
@@ -70,8 +83,8 @@ export function popsAndHazardousComponentWarningTests(
       const payload = {
         wasteItems: [
           {
+            [containsPopsOrHazardousField]: true,
             [popsOrHazardousObjectProperty]: {
-              [containsPopsOrHazardousField]: true,
               sourceOfComponents: 'CARRIER_SUPPLIED',
               components: [
                 {
@@ -96,8 +109,8 @@ export function popsAndHazardousComponentWarningTests(
       const payload = {
         wasteItems: [
           {
+            [containsPopsOrHazardousField]: true,
             [popsOrHazardousObjectProperty]: {
-              [containsPopsOrHazardousField]: true,
               sourceOfComponents: 'CARRIER_SUPPLIED',
               components: []
             }
@@ -121,8 +134,8 @@ export function popsAndHazardousComponentWarningTests(
         const payload = {
           wasteItems: [
             {
+              [containsPopsOrHazardousField]: true,
               [popsOrHazardousObjectProperty]: {
-                [containsPopsOrHazardousField]: true,
                 sourceOfComponents: 'CARRIER_SUPPLIED',
                 components: value
               }
@@ -140,8 +153,8 @@ export function popsAndHazardousComponentWarningTests(
         const payload = {
           wasteItems: [
             {
+              [containsPopsOrHazardousField]: true,
               [popsOrHazardousObjectProperty]: {
-                [containsPopsOrHazardousField]: true,
                 sourceOfComponents: 'CARRIER_SUPPLIED',
                 components: [
                   {

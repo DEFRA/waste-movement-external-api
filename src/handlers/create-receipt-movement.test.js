@@ -47,12 +47,10 @@ describe('Create Receipt Movement Handler', () => {
           amount: 1.0,
           isEstimate: false
         },
-        pops: {
-          containsPops: false
-        },
-        hazardous: {
-          containsHazardous: false
-        },
+        containsPops: false,
+        containsHazardous: false,
+        pops: {},
+        hazardous: {},
         disposalOrRecoveryCodes: [
           {
             code: 'R1',
