@@ -11,7 +11,6 @@ External-facing REST API service for recording and managing waste movement recei
 - [Getting Started](#getting-started)
 - [Authentication](#authentication)
 - [API Endpoints](#api-endpoints)
-- [Project Structure](#project-structure)
 - [Development](#development)
   - [Available Scripts](#available-scripts)
   - [Running Tests](#running-tests)
@@ -46,19 +45,19 @@ This service integrates with DEFRA's waste tracking infrastructure to generate u
 
 ## Technology Stack
 
-- **Runtime**: Node.js v22+
-- **Framework**: Hapi.js v21
-- **Database**: MongoDB v6
+- **Runtime**: Node.js
+- **Framework**: Hapi.js
+- **Database**: MongoDB
 - **Authentication**: JWT with AWS Cognito
-- **Validation**: Joi v17
-- **Testing**: Jest v29
+- **Validation**: Joi
+- **Testing**: Jest
 - **Logging**: Pino with ECS format
 - **API Docs**: Swagger/OpenAPI (hapi-swagger)
 
 ## Prerequisites
 
-- Node.js >= v22 (use [nvm](https://github.com/creationix/nvm) for version management)
-- npm >= v11
+- Node.js (see .nvmrc for required version, use [nvm](https://github.com/creationix/nvm) for version management)
+- npm
 - Docker and Docker Compose (for local development)
 
 ## Getting Started
@@ -73,7 +72,7 @@ npm install
 
 ### 2. Local Development with Docker Compose
 
-Start the full local environment (includes LocalStack, MongoDB, Redis):
+Start the full local environment (includes LocalStack and MongoDB):
 
 ```bash
 docker compose up --build -d
@@ -155,27 +154,6 @@ Interactive API documentation with request/response examples is available at:
 
 ```
 http://localhost:3001/documentation
-```
-
-## Project Structure
-
-```
-waste-movement-external-api/
-├── src/
-│   ├── handlers/           # Request handlers (business logic)
-│   ├── routes/             # Route definitions with validation
-│   ├── schemas/            # Joi validation schemas
-│   ├── plugins/            # Hapi plugins (auth, error handling, swagger)
-│   ├── common/
-│   │   ├── constants/      # Reference data and validation messages
-│   │   └── helpers/        # Utility functions
-│   ├── integration-tests/  # Integration tests
-│   ├── test/               # Test utilities and fixtures
-│   ├── config.js           # Environment configuration
-│   └── index.js            # Application entry point
-├── .github/workflows/      # CI/CD pipelines
-├── compose/                # Docker Compose configuration
-└── Dockerfile              # Multi-stage Docker build
 ```
 
 ## Development
@@ -291,7 +269,7 @@ docker build --tag waste-movement-external-api:latest .
 
 ### Docker Compose
 
-Local environment includes LocalStack (AWS services), MongoDB, and Redis:
+Local environment includes LocalStack (AWS services) and MongoDB:
 
 ```bash
 docker compose up --build -d
