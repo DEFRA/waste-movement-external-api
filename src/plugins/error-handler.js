@@ -10,7 +10,7 @@ export const errorHandler = {
         const response = request.response
 
         if (response.isBoom) {
-          logger.error(response)
+          logger.error({ err: response }, 'Request error')
         }
 
         // Check if it's a validation error (Boom error with status 400)
