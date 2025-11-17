@@ -20,6 +20,7 @@ import {
   ADDRESS_ERRORS,
   CONSIGNMENT_ERRORS
 } from '../common/constants/validation-error-messages.js'
+import { REASONS_FOR_NO_REGISTRATION_NUMBER } from '../common/constants/reasons-for-no-registration-number.js'
 
 const MIN_STRING_LENGTH = 1
 const LONG_STRING_MAX_LENGTH = 5000
@@ -53,6 +54,7 @@ const carrierSchema = Joi.object({
     .allow(null, '')
     .required(),
   reasonForNoRegistrationNumber: Joi.string()
+    .valid(...REASONS_FOR_NO_REGISTRATION_NUMBER)
     .when('registrationNumber', {
       switch: [
         {
