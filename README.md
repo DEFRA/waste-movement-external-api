@@ -12,7 +12,6 @@ External-facing REST API service for recording and managing waste movement recei
 - [Authentication](#authentication)
 - [API Endpoints](#api-endpoints)
 - [Development](#development)
-  - [Available Scripts](#available-scripts)
   - [Running Tests](#running-tests)
   - [Code Quality](#code-quality)
   - [MongoDB Locks](#mongodb-locks)
@@ -40,7 +39,6 @@ This service integrates with DEFRA's waste tracking infrastructure to generate u
 - Comprehensive request validation using Joi schemas
 - OpenAPI/Swagger documentation available at `/documentation`
 - MongoDB-backed persistence with distributed locking
-- CloudWatch metrics and distributed tracing
 - Full test coverage with Jest
 
 ## Technology Stack
@@ -106,7 +104,7 @@ Access Swagger documentation at: `http://localhost:3001/documentation`
 
 The API uses JWT tokens issued by AWS Cognito. To access authenticated endpoints:
 
-1. **Obtain a token** from the [CDP Portal](https://cdp-portal.defra.gov.uk)
+1. **Obtain a token** from AWS Cognito (see [JWT_AUTHENTICATION_TESTING.md](./JWT_AUTHENTICATION_TESTING.md) for details)
 2. **Include the token** in the Authorization header:
 
 ```bash
@@ -124,60 +122,15 @@ For detailed JWT authentication testing instructions, see [JWT_AUTHENTICATION_TE
 
 ## API Endpoints
 
-### Movement Endpoints (Require Authentication)
+The API provides endpoints for:
 
-| Method | Endpoint                               | Description                                 |
-| :----- | :------------------------------------- | :------------------------------------------ |
-| `POST` | `/movements/receive`                   | Create a new waste movement receipt         |
-| `PUT`  | `/movements/{wasteTrackingId}/receive` | Update an existing receipt with tracking ID |
+- **Movement Operations**: Create and update waste movement receipts (requires authentication)
+- **Reference Data**: Retrieve EWC codes, disposal/recovery codes, hazardous property codes, container types, and POP names
+- **Utilities**: Health checks and authentication testing
 
-### Reference Data Endpoints
-
-| Method | Endpoint                                     | Description                        |
-| :----- | :------------------------------------------- | :--------------------------------- |
-| `GET`  | `/reference-data/ewc-codes`                  | European Waste Catalogue codes     |
-| `GET`  | `/reference-data/disposal-or-recovery-codes` | Treatment disposal/recovery codes  |
-| `GET`  | `/reference-data/hazardous-property-codes`   | Hazardous waste property codes     |
-| `GET`  | `/reference-data/container-types`            | Waste container type options       |
-| `GET`  | `/reference-data/pop-names`                  | Persistent Organic Pollutant names |
-
-### Utility Endpoints
-
-| Method | Endpoint     | Description                             |
-| :----- | :----------- | :-------------------------------------- |
-| `GET`  | `/health`    | Health check (no authentication)        |
-| `GET`  | `/auth/test` | JWT authentication test (non-prod only) |
-
-### API Documentation
-
-Interactive API documentation with request/response examples is available at:
-
-```
-http://localhost:3001/documentation
-```
+For complete API documentation including request/response schemas and examples, see the interactive Swagger documentation at `http://localhost:3001/documentation` when running locally.
 
 ## Development
-
-### Available Scripts
-
-```bash
-# Development
-npm run dev              # Run with watch mode
-npm run dev:debug        # Run with debugger
-
-# Testing
-npm test                 # Run all tests with coverage
-npm run test:watch       # Watch mode for TDD
-
-# Code Quality
-npm run lint             # Run ESLint
-npm run lint:fix         # Auto-fix linting issues
-npm run format           # Format code with Prettier
-npm run format:check     # Check formatting
-
-# Production
-npm start                # Start production server
-```
 
 ### Running Tests
 
@@ -201,6 +154,20 @@ This project follows DEFRA code standards. Before committing:
 - Code is automatically formatted with Prettier
 - ESLint checks are run via Husky pre-commit hooks
 - PRs must pass all tests and linting checks
+
+To manually run code quality checks:
+
+```bash
+npm run lint           # Run ESLint
+npm run format:check   # Check code formatting
+```
+
+To fix issues automatically:
+
+```bash
+npm run lint:fix       # Auto-fix linting issues
+npm run format         # Format code with Prettier
+```
 
 ### MongoDB Locks
 
