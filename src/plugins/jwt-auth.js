@@ -51,7 +51,7 @@ const jwtAuth = {
               }
             }
           } catch (error) {
-            logger.error(`JWT validation error: ${error.message}`)
+            logger.error({ err: error }, 'JWT validation error')
             return { isValid: false }
           }
         }
