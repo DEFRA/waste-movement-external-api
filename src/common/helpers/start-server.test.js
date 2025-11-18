@@ -167,7 +167,8 @@ describe('#startServer', () => {
 
       expect(mockLoggerInfo).toHaveBeenCalledWith('Server failed to start :(')
       expect(mockLoggerError).toHaveBeenCalledWith(
-        Error('Server failed to start')
+        { err: Error('Server failed to start') },
+        'Failed to start server'
       )
     })
   })
