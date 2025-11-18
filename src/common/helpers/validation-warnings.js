@@ -1,4 +1,5 @@
 import { formatPopsOrHazardousFields } from '../../schemas/waste.js'
+import { REASONS_FOR_NO_REGISTRATION_NUMBER } from '../constants/reasons-for-no-registration-number.js'
 import { sourceOfComponentsProvided } from '../constants/source-of-components.js'
 
 /**
@@ -128,6 +129,17 @@ export const disposalOrRecoveryCodesWarningValidators = {
   ]
 }
 
+export const reasonForNoRegistrationNumberWarningValidators = {
+  key: 'carrier.reasonForNoRegistrationNumber',
+  validators: [
+    {
+      field: null,
+      validator: (receipt) => isReasonForNoRegistrationNumberValid(receipt),
+      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      message: `{{ #label }} must be one of: ${REASONS_FOR_NO_REGISTRATION_NUMBER.join(', ')}`
+    }
+  ]
+}
 /**
  * Process validation warnings
  * @param {Object} payload - The request payload
@@ -281,13 +293,9 @@ const formatNonIndexedKeyWarning = (
   topLevelItem,
   errorType
 ) => ({
-  key:
-    topLevelItem === 'wasteItems' ? baseKeyJsonPath : `receipt.${topLevelItem}`,
+  key: baseKeyJsonPath,
   errorType,
-  message: message.replace(
-    '{{ #label }}',
-    topLevelItem === 'wasteItems' ? baseKeyIndexed : `receipt.${topLevelItem}`
-  )
+  message: message.replace('{{ #label }}', baseKeyIndexed)
 })
 
 /**
@@ -298,7 +306,7 @@ const formatNonIndexedKeyWarning = (
  * @returns {string} The key with the replaced item
  */
 const replaceJsonPathIndex = (key, item, index) =>
-  key.replace(item, `${item}.${index}`)
+  key.replace(item, key.includes('wasteItems') ? `${item}.${index}` : item)
 
 /**
  * Replaces a key item with an indexed path index item
@@ -308,7 +316,7 @@ const replaceJsonPathIndex = (key, item, index) =>
  * @returns {string} The key with the replaced item
  */
 const replaceIndexedPathIndex = (key, item, index) =>
-  key.replace(item, `${item}[${index}]`)
+  key.replace(item, key.includes('wasteItems') ? `${item}[${index}]` : item)
 
 /**
  * Determines if Disposal or Recovery weight is missing
@@ -537,6 +545,25 @@ function isPopOrHazardousConcentrationValid(components) {
 }
 
 /**
+ * Determines if the reason for no registration number field is valid
+ * @param {Object} payload - The request payload
+ * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array }
+ */
+function isReasonForNoRegistrationNumberValid(payload) {
+  const { registrationNumber, reasonForNoRegistrationNumber } = payload.carrier
+
+  if (
+    registrationNumber === undefined &&
+    reasonForNoRegistrationNumber !== undefined &&
+    !REASONS_FOR_NO_REGISTRATION_NUMBER.includes(reasonForNoRegistrationNumber)
+  ) {
+    return { isValid: false }
+  }
+
+  return { isValid: true }
+}
+
+/**
  * Generate all validation warnings for a movement request
  * @param {Object} payload - The request payload
  * @returns {Array} Array of all validation warnings
@@ -564,6 +591,13 @@ export const generateAllValidationWarnings = (payload) => {
     hazardousComponentsWarningValidators
   )
   warnings.push(...hazardousWarnings)
+
+  // Add reason for no registration number warnings
+  const reasonForNoRegistrationNumberWarnings = processValidationWarnings(
+    payload,
+    reasonForNoRegistrationNumberWarningValidators
+  )
+  warnings.push(...reasonForNoRegistrationNumberWarnings)
 
   return warnings
 }

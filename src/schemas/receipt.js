@@ -55,6 +55,7 @@ const carrierSchema = Joi.object({
     .required(),
   reasonForNoRegistrationNumber: Joi.string()
     .valid(...REASONS_FOR_NO_REGISTRATION_NUMBER)
+    .allow(null, '')
     .when('registrationNumber', {
       switch: [
         {
@@ -71,7 +72,8 @@ const carrierSchema = Joi.object({
     .messages({
       'string.empty': CARRIER_ERRORS.REGISTRATION_OR_REASON_REQUIRED,
       'string.base': CARRIER_ERRORS.REGISTRATION_OR_REASON_REQUIRED,
-      'any.unknown': CARRIER_ERRORS.REASON_ONLY_FOR_NULL
+      'any.unknown': CARRIER_ERRORS.REASON_ONLY_FOR_NULL,
+      'any.only': `${CARRIER_ERRORS.REASON_FOR_NO_REGISTRATION_NUMBER_INVALID_PREFIX} ${REASONS_FOR_NO_REGISTRATION_NUMBER.join(', ')}`
     }),
   organisationName: Joi.string().required(),
   address: addressSchema,
