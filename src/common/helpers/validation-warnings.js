@@ -219,15 +219,11 @@ function validateField(
           )
         )
       } else {
-        fieldWarnings.push(
-          formatNonIndexedKeyWarning(
-            baseKeyJsonPath,
-            message,
-            baseKeyIndexed,
-            topLevelItem,
-            errorType
-          )
-        )
+        fieldWarnings.push({
+          key: baseKeyJsonPath,
+          errorType,
+          message: message.replace('{{ #label }}', baseKeyIndexed)
+        })
       }
     }
   }
@@ -276,27 +272,6 @@ const formatIndexedKeyWarning = (
     }
   })
 }
-
-/**
- * Formats the warning messages for non-indexed fields
- * @param {String} baseKeyJsonPath - The validation key in JSON path format
- * @param {String} message - The validation message
- * @param {String} baseKeyIndexed - The validation key in indexed format
- * @param {String} topLevelItem - The key of the top level item
- * @param {String} errorType - The error type
- * @returns {Array} Array of warning messages
- */
-const formatNonIndexedKeyWarning = (
-  baseKeyJsonPath,
-  message,
-  baseKeyIndexed,
-  topLevelItem,
-  errorType
-) => ({
-  key: baseKeyJsonPath,
-  errorType,
-  message: message.replace('{{ #label }}', baseKeyIndexed)
-})
 
 /**
  * Replaces a key item with a JSON path index item
