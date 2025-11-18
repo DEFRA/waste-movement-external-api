@@ -94,35 +94,32 @@ export const disposalOrRecoveryCodesWarningValidators = {
   validators: [
     {
       field: 'code',
-      validator: (wasteItem) => isDisposalOrRecoveryCodeMissing(wasteItem),
+      validator: isDisposalOrRecoveryCodeMissing,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message:
         '{{ #label }} is required for proper waste tracking and compliance'
     },
     {
       field: 'weight',
-      validator: (wasteItem) => isDisposalOrRecoveryWeightMissing(wasteItem),
+      validator: isDisposalOrRecoveryWeightMissing,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message: VALIDATION_WARNINGS.IS_REQUIRED
     },
     {
       field: 'weight.metric',
-      validator: (wasteItem) =>
-        isDisposalOrRecoveryWeightMetricMissing(wasteItem),
+      validator: isDisposalOrRecoveryWeightMetricMissing,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message: VALIDATION_WARNINGS.IS_REQUIRED
     },
     {
       field: 'weight.amount',
-      validator: (wasteItem) =>
-        isDisposalOrRecoveryWeightAmountMissing(wasteItem),
+      validator: isDisposalOrRecoveryWeightAmountMissing,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message: VALIDATION_WARNINGS.IS_REQUIRED
     },
     {
       field: 'weight.isEstimate',
-      validator: (wasteItem) =>
-        isDisposalOrRecoveryWeightIsEstimateMissing(wasteItem),
+      validator: isDisposalOrRecoveryWeightIsEstimateMissing,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message: '{{ #label }} flag is required'
     }
@@ -134,7 +131,7 @@ export const reasonForNoRegistrationNumberWarningValidators = {
   validators: [
     {
       field: null,
-      validator: (receipt) => isReasonForNoRegistrationNumberValid(receipt),
+      validator: isReasonForNoRegistrationNumberValid,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message: `{{ #label }} must be one of: ${REASONS_FOR_NO_REGISTRATION_NUMBER.join(', ')}`
     }
@@ -298,7 +295,7 @@ const replaceIndexedPathIndex = (key, item, index) =>
  * @param {Object} wasteItem - The waste item
  * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array }
  */
-const isDisposalOrRecoveryWeightMissing = (wasteItem) => {
+function isDisposalOrRecoveryWeightMissing(wasteItem) {
   if (!wasteItem) {
     return { isValid: true }
   }
@@ -327,7 +324,7 @@ const isDisposalOrRecoveryWeightMissing = (wasteItem) => {
  * @param {Object} wasteItem - The waste item
  * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array }
  */
-const isDisposalOrRecoveryWeightMetricMissing = (wasteItem) => {
+function isDisposalOrRecoveryWeightMetricMissing(wasteItem) {
   if (!wasteItem) {
     return { isValid: true }
   }
@@ -356,7 +353,7 @@ const isDisposalOrRecoveryWeightMetricMissing = (wasteItem) => {
  * @param {Object} wasteItem - The waste item
  * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array }
  */
-const isDisposalOrRecoveryWeightAmountMissing = (wasteItem) => {
+function isDisposalOrRecoveryWeightAmountMissing(wasteItem) {
   if (!wasteItem) {
     return { isValid: true }
   }
@@ -385,7 +382,7 @@ const isDisposalOrRecoveryWeightAmountMissing = (wasteItem) => {
  * @param {Object} wasteItem - The waste item
  * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array }
  */
-const isDisposalOrRecoveryWeightIsEstimateMissing = (wasteItem) => {
+function isDisposalOrRecoveryWeightIsEstimateMissing(wasteItem) {
   if (!wasteItem) {
     return { isValid: true }
   }
@@ -414,7 +411,7 @@ const isDisposalOrRecoveryWeightIsEstimateMissing = (wasteItem) => {
  * @param {Object} wasteItem - The waste item
  * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array }
  */
-const isDisposalOrRecoveryCodeMissing = (wasteItem) => {
+function isDisposalOrRecoveryCodeMissing(wasteItem) {
   if (!wasteItem) {
     return { isValid: false }
   }
