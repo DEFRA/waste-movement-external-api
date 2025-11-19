@@ -1,4 +1,3 @@
-import { REASONS_FOR_NO_REGISTRATION_NUMBER } from '../../../constants/reasons-for-no-registration-number.js'
 import {
   CARRIER_WARNINGS,
   VALIDATION_WARNING_TYPES

@@ -159,24 +159,6 @@ const replaceIndexedPathIndex = (key, item, index) =>
   key.replace(item, key.includes('wasteItems') ? `${item}[${index}]` : item)
 
 /**
- * Determines if the reason for no registration number field is valid
- * @param {Object} payload - The request payload
- * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array }
- */
-function isReasonForNoRegistrationNumberValid(payload) {
-  const { registrationNumber, reasonForNoRegistrationNumber } = payload.carrier
-
-  if (
-    [null, ''].includes(registrationNumber) &&
-    [null, ''].includes(reasonForNoRegistrationNumber)
-  ) {
-    return { isValid: false }
-  }
-
-  return { isValid: true }
-}
-
-/**
  * Generate all validation warnings for a movement request
  * @param {Object} payload - The request payload
  * @returns {Array} Array of all validation warnings

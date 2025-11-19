@@ -487,7 +487,7 @@ describe('Validation Warnings', () => {
         expect(warnings).toEqual([
           {
             key: 'carrier.reasonForNoRegistrationNumber',
-            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+            errorType: VALIDATION_WARNING_TYPES.NOT_PROVIDED,
             message: `carrier.reasonForNoRegistrationNumber must be one of: ${REASONS_FOR_NO_REGISTRATION_NUMBER.join(', ')}`
           }
         ])
