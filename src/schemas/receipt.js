@@ -102,7 +102,7 @@ const receiverAddressSchema = addressSchema.keys({
 })
 
 const receiverSchema = Joi.object({
-  organisationName: Joi.string().required(),
+  siteName: Joi.string().required(),
   emailAddress: Joi.string().email(),
   phoneNumber: Joi.string(),
   authorisationNumbers: authorisationNumbersArraySchema,

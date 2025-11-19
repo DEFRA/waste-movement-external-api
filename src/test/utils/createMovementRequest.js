@@ -22,7 +22,7 @@ export function createMovementRequest(overrides) {
       meansOfTransport: 'Road'
     },
     receiver: {
-      organisationName: 'Test Receiver',
+      siteName: 'Test Receiver',
       authorisationNumbers: [
         TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX
       ],

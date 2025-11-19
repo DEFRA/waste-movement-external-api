@@ -14,7 +14,7 @@ const RPS_DECIMAL_VALUE = 12.5 // Invalid decimal RPS
 
 export const TEST_DATA = {
   RECEIVER: {
-    ORGANISATION_NAME: 'Test Receiver',
+    SITE_NAME: 'Test Receiver',
     EMAIL: 'receiver@example.com',
     PHONE: '01234567890'
   },

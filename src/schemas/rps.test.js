@@ -11,7 +11,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
   describe('Successfully Providing a Valid RPS Number', () => {
     it('accepts single positive integer', () => {
       const receiver = {
-        organisationName: TEST_DATA.RECEIVER.ORGANISATION_NAME,
+        siteName: TEST_DATA.RECEIVER.SITE_NAME,
         authorisationNumbers: TEST_DATA.AUTHORISATION_NUMBERS.SIMPLE,
         regulatoryPositionStatements: TEST_DATA.RPS.VALID.SINGLE
       }
@@ -28,7 +28,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
   describe('Successfully Providing Multiple Valid RPS Numbers', () => {
     it('accepts multiple positive integers', () => {
       const receiver = {
-        organisationName: TEST_DATA.RECEIVER.ORGANISATION_NAME,
+        siteName: TEST_DATA.RECEIVER.SITE_NAME,
         authorisationNumbers: TEST_DATA.AUTHORISATION_NUMBERS.SIMPLE,
         regulatoryPositionStatements: TEST_DATA.RPS.VALID.MULTIPLE
       }
@@ -45,7 +45,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
   describe('Omitting the RPS Number', () => {
     it('accepts when RPS is not provided', () => {
       const receiver = {
-        organisationName: 'Test Receiver',
+        siteName: 'Test Receiver',
         authorisationNumbers: [
           TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX
         ]
@@ -61,7 +61,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
 
     it('rejects when both authorisations and RPS are empty', () => {
       const receiver = {
-        organisationName: 'Test Receiver',
+        siteName: 'Test Receiver',
         authorisationNumbers: [],
         regulatoryPositionStatements: []
       }
@@ -79,7 +79,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
 
     it('rejects when neither authorisations nor RPS are provided', () => {
       const receiver = {
-        organisationName: 'Test Receiver'
+        siteName: 'Test Receiver'
       }
 
       const receipt = {
@@ -95,7 +95,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
   describe('Providing an RPS Number in an Invalid Format', () => {
     it('rejects string value "123RPS"', () => {
       const receiver = {
-        organisationName: 'Test Receiver',
+        siteName: 'Test Receiver',
         authorisationNumbers: [
           TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_PPC_A
         ],
@@ -113,7 +113,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
 
     it('rejects string value "RPS-123"', () => {
       const receiver = {
-        organisationName: 'Test Receiver',
+        siteName: 'Test Receiver',
         authorisationNumbers: [TEST_DATA.AUTHORISATION_NUMBERS.VALID.WALES_EPR],
         regulatoryPositionStatements: ['RPS-123']
       }
@@ -129,7 +129,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
 
     it('rejects string value "RPS12A3"', () => {
       const receiver = {
-        organisationName: 'Test Receiver',
+        siteName: 'Test Receiver',
         authorisationNumbers: [TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WPPC],
         regulatoryPositionStatements: ['RPS12A3']
       }
@@ -145,7 +145,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
 
     it('rejects negative numbers', () => {
       const receiver = {
-        organisationName: 'Test Receiver',
+        siteName: 'Test Receiver',
         authorisationNumbers: [
           TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_EAWML
         ],
@@ -163,7 +163,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
 
     it('rejects zero', () => {
       const receiver = {
-        organisationName: 'Test Receiver',
+        siteName: 'Test Receiver',
         authorisationNumbers: [
           TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_WML
         ],
@@ -181,7 +181,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
 
     it('rejects decimal numbers', () => {
       const receiver = {
-        organisationName: 'Test Receiver',
+        siteName: 'Test Receiver',
         authorisationNumbers: [
           TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_WML_L
         ],
@@ -201,7 +201,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
   describe('RPS can be provided independently of authorisation numbers', () => {
     it('rejects RPS without any authorisation numbers', () => {
       const receiver = {
-        organisationName: 'Test Receiver',
+        siteName: 'Test Receiver',
         regulatoryPositionStatements: [123, 456]
       }
 
@@ -216,7 +216,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
 
     it('accepts authorisation numbers without RPS', () => {
       const receiver = {
-        organisationName: 'Test Receiver',
+        siteName: 'Test Receiver',
         authorisationNumbers: [
           TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX,
           TEST_DATA.AUTHORISATION_NUMBERS.VALID.WALES_EPR
@@ -233,7 +233,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
 
     it('accepts both authorisation numbers and RPS together', () => {
       const receiver = {
-        organisationName: 'Test Receiver',
+        siteName: 'Test Receiver',
         authorisationNumbers: [
           TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_SEPA,
           TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_P_FORMAT
