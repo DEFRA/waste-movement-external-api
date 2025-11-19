@@ -48,7 +48,7 @@ export function createMovementRequest(overrides) {
         },
         containsPops: true,
         pops: {
-          sourceOfComponents: sourceOfComponentsProvided.CARRIER_PROVIDED,
+          sourceOfComponents: sourceOfComponentsProvided.PROVIDED_WITH_WASTE,
           components: [
             {
               code: validPopNames[0].code,

@@ -10,7 +10,7 @@ describe('Receipt Schema Validation - POPs', () => {
         wasteItemOverrides: {
           containsPops: true,
           pops: {
-            sourceOfComponents: 'CARRIER_PROVIDED',
+            sourceOfComponents: 'PROVIDED_WITH_WASTE',
             components: [
               {
                 code: 'ALD',
@@ -65,7 +65,7 @@ describe('Receipt Schema Validation - POPs', () => {
       wasteItemOverrides: {
         containsPops: true,
         pops: {
-          sourceOfComponents: 'CARRIER_PROVIDED',
+          sourceOfComponents: 'PROVIDED_WITH_WASTE',
           components: [
             {
               code: 'ABC',
@@ -89,7 +89,7 @@ describe('Receipt Schema Validation - POPs', () => {
         wasteItemOverrides: {
           containsPops: true,
           pops: {
-            sourceOfComponents: 'CARRIER_PROVIDED',
+            sourceOfComponents: 'PROVIDED_WITH_WASTE',
             components: [
               {
                 code: popCode,

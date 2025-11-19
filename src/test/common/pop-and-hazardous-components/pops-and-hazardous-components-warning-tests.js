@@ -85,7 +85,7 @@ export function popsAndHazardousComponentWarningTests(
           {
             [containsPopsOrHazardousField]: true,
             [popsOrHazardousObjectProperty]: {
-              sourceOfComponents: 'CARRIER_SUPPLIED',
+              sourceOfComponents: 'PROVIDED_WITH_WASTE',
               components: [
                 {
                   [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
@@ -111,7 +111,7 @@ export function popsAndHazardousComponentWarningTests(
           {
             [containsPopsOrHazardousField]: true,
             [popsOrHazardousObjectProperty]: {
-              sourceOfComponents: 'CARRIER_SUPPLIED',
+              sourceOfComponents: 'PROVIDED_WITH_WASTE',
               components: []
             }
           }
@@ -136,7 +136,7 @@ export function popsAndHazardousComponentWarningTests(
             {
               [containsPopsOrHazardousField]: true,
               [popsOrHazardousObjectProperty]: {
-                sourceOfComponents: 'CARRIER_SUPPLIED',
+                sourceOfComponents: 'PROVIDED_WITH_WASTE',
                 components: value
               }
             }
@@ -155,7 +155,7 @@ export function popsAndHazardousComponentWarningTests(
             {
               [containsPopsOrHazardousField]: true,
               [popsOrHazardousObjectProperty]: {
-                sourceOfComponents: 'CARRIER_SUPPLIED',
+                sourceOfComponents: 'PROVIDED_WITH_WASTE',
                 components: [
                   {
                     [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
