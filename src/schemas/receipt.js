@@ -3,8 +3,7 @@ import { MEANS_OF_TRANSPORT } from '../common/constants/means-of-transport.js'
 import { wasteItemsSchema } from './waste.js'
 import {
   hasHazardousEwcCodes,
-  hazardousWasteConsignmentCodeSchema,
-  NO_CONSIGNMENT_REASONS
+  hazardousWasteConsignmentCodeSchema
 } from './hazardous-waste-consignment.js'
 import {
   ENGLAND_CARRIER_REGISTRATION_NUMBER_REGEX,
@@ -21,6 +20,7 @@ import {
   CONSIGNMENT_ERRORS
 } from '../common/constants/validation-error-messages.js'
 import { REASONS_FOR_NO_REGISTRATION_NUMBER } from '../common/constants/reasons-for-no-registration-number.js'
+import { NO_CONSIGNMENT_REASONS } from '../common/constants/no-consignment-reasons.js'
 
 const MIN_STRING_LENGTH = 1
 const LONG_STRING_MAX_LENGTH = 5000
