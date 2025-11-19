@@ -20,6 +20,7 @@ import {
   ADDRESS_ERRORS,
   CONSIGNMENT_ERRORS
 } from '../common/constants/validation-error-messages.js'
+import { REASONS_FOR_NO_REGISTRATION_NUMBER } from '../common/constants/reasons-for-no-registration-number.js'
 
 const MIN_STRING_LENGTH = 1
 const LONG_STRING_MAX_LENGTH = 5000
@@ -53,6 +54,8 @@ const carrierSchema = Joi.object({
     .allow(null, '')
     .required(),
   reasonForNoRegistrationNumber: Joi.string()
+    .valid(...REASONS_FOR_NO_REGISTRATION_NUMBER)
+    .allow(null, '')
     .when('registrationNumber', {
       switch: [
         {
@@ -69,7 +72,8 @@ const carrierSchema = Joi.object({
     .messages({
       'string.empty': CARRIER_ERRORS.REGISTRATION_OR_REASON_REQUIRED,
       'string.base': CARRIER_ERRORS.REGISTRATION_OR_REASON_REQUIRED,
-      'any.unknown': CARRIER_ERRORS.REASON_ONLY_FOR_NULL
+      'any.unknown': CARRIER_ERRORS.REASON_ONLY_FOR_NULL,
+      'any.only': `${CARRIER_ERRORS.REASON_FOR_NO_REGISTRATION_NUMBER_INVALID_PREFIX} ${REASONS_FOR_NO_REGISTRATION_NUMBER.join(', ')}`
     }),
   organisationName: Joi.string().required(),
   address: addressSchema,

@@ -16,7 +16,8 @@ export const CARRIER_ERRORS = {
   VEHICLE_REG_ONLY_ALLOWED_FOR_ROAD:
     'If carrier.meansOfTransport is not "Road" then carrier.vehicleRegistration is not applicable',
   REGISTRATION_NUMBER_FORMAT:
-    '{{#label}} must be in a valid England, SEPA, NRW or NI format'
+    '{{#label}} must be in a valid England, SEPA, NRW or NI format',
+  REASON_FOR_NO_REGISTRATION_NUMBER_INVALID_PREFIX: '{{#label}} must be one of:'
 }
 
 // Address validation messages
