@@ -1,7 +1,7 @@
 import Boom from '@hapi/boom'
 import { httpClients } from '../common/helpers/http-client.js'
 import { handleBackendResponse } from './handle-backend-response.js'
-import { generateAllValidationWarnings } from '../common/helpers/validation-warnings.js'
+import { generateAllValidationWarnings } from '../common/helpers/validation-warnings/validation-warnings.js'
 
 /**
  * Handler for updating a receipt movement

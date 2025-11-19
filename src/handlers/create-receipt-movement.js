@@ -1,9 +1,9 @@
 import { httpClients } from '../common/helpers/http-client.js'
 import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
 import { handleBackendResponse } from './handle-backend-response.js'
-import { generateAllValidationWarnings } from '../common/helpers/validation-warnings.js'
 import { createLogger } from '../common/helpers/logging/logger.js'
 import { isSuccessStatusCode } from '../common/helpers/utils.js'
+import { generateAllValidationWarnings } from '../common/helpers/validation-warnings/validation-warnings.js'
 
 const logger = createLogger()
 

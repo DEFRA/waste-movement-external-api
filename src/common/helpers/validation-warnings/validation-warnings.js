@@ -1,9 +1,9 @@
-import { disposalOrRecoveryCodesWarningValidators } from './validation-warnings/validators/disposal-or-recovery-codes.js'
+import { disposalOrRecoveryCodesWarningValidators } from './validators/disposal-or-recovery-codes.js'
 import {
   hazardousComponentsWarningValidators,
   popsComponentsWarningValidators
-} from './validation-warnings/validators/hazardous-and-pops-components.js'
-import { reasonForNoRegistrationNumberWarningValidators } from './validation-warnings/validators/reason-for-no-registration-number.js'
+} from './validators/hazardous-and-pops-components.js'
+import { reasonForNoRegistrationNumberWarningValidators } from './validators/reason-for-no-registration-number.js'
 
 /**
  * Process validation warnings
