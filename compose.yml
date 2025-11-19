@@ -1,44 +1,139 @@
 services:
-  localstack:
-    image: localstack/localstack:3.0.2
-    ports:
-      - '4566:4566' # LocalStack Gateway
-      - '4510-4559:4510-4559' # external services port range
-    env_file:
-      - 'compose/aws.env'
-    environment:
-      DEBUG: ${DEBUG:-1}
-      LS_LOG: WARN # Localstack DEBUG Level
-      SERVICES: s3,sqs,sns,firehose
-      LOCALSTACK_HOST: 127.0.0.1
-    volumes:
-      - '${TMPDIR:-/tmp}/localstack:/var/lib/localstack'
-      - ./compose/start-localstack.sh:/etc/localstack/init/ready.d/start-localstack.sh
-    healthcheck:
-      test: ['CMD', 'curl', 'localhost:4566']
-      interval: 5s
-      start_period: 5s
-      retries: 3
-    networks:
-      - cdp-tenant
-
-  redis:
-    image: redis:7.2.3-alpine3.18
-    ports:
-      - '6379:6379'
-    restart: always
-    networks:
-      - cdp-tenant
-
   mongodb:
     image: mongo:6.0.13
+    entrypoint: [ "bash", "/scripts/mongo_setup.sh"]
     networks:
       - cdp-tenant
     ports:
       - '27017:27017'
     volumes:
-      - mongodb-data:/data
+      - mongodb-data:/data/db
+      - ./scripts/mongo_setup.sh:/scripts/mongo_setup.sh
     restart: always
+    healthcheck:
+      test: mongosh --quiet --eval "try { var status = rs.status(); if (status.members[0].stateStr === 'PRIMARY') { quit(0); } else { quit(1); } } catch(e) { quit(1); }"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+  waste-tracking-external-api:
+    build:
+      context: .
+      target: development
+    ports:
+      - '3001:3001'
+    links:
+      # - 'localstack:localstack'
+      - 'mongodb:mongodb'
+    depends_on:
+      # localstack:
+      #   condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    env_file:
+      - 'compose/aws.env'
+    environment:
+      PORT: 3001
+      NODE_ENV: development
+      LOCALSTACK_ENDPOINT: http://localstack:4566
+      MONGO_URI: mongodb://mongodb:27017/?replicaSet=rs0&directConnection=true
+    networks:
+      - cdp-tenant
+    volumes:
+      - ./src:/home/node/src
+      - ./package.json:/home/node/package.json
+
+  waste-movement-backend:
+#    image: local-build
+    # build:
+    #   context: ../waste-movement-backend/
+    #   target: development
+    image: defradigital/waste-movement-backend:latest
+    ports:
+      - '3002:3001'
+    links:
+      # - 'localstack:localstack'
+      - 'mongodb:mongodb'
+    depends_on:
+      # localstack:
+      #   condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    env_file:
+      - 'compose/aws.env'
+    environment:
+      PORT: 3001
+      NODE_ENV: development
+      LOCALSTACK_ENDPOINT: http://localstack:4566
+      MONGO_URI: mongodb://mongodb:27017/?replicaSet=rs0&directConnection=true
+      ORG_API_CODES: NTkzOTMwNTItMDdmNy00MzU5LWE1YzAtMjBhOGJmNGFjNWIyPTJhNDg0ZDE2LTJjNzQtNDljMS1hZTc3LTBjODQ0MGM1ODY3OA==
+      MONGO_READ_PREFERENCE: primary
+    networks:
+      - cdp-tenant
+
+  waste-tracking-id-backend:
+    image: defradigital/waste-tracking-id-backend:latest
+    ports:
+      - '3003:3001'
+    links:
+      # - 'localstack:localstack'
+      - 'mongodb:mongodb'
+    depends_on:
+      # localstack:
+      #   condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    env_file:
+      - 'compose/aws.env'
+    environment:
+      PORT: 3001
+      NODE_ENV: development
+      LOCALSTACK_ENDPOINT: http://localstack:4566
+      MONGO_URI: mongodb://mongodb:27017/?replicaSet=rs0&directConnection=true
+    networks:
+      - cdp-tenant
+
+volumes:
+  mongodb-data:
+
+networks:
+  cdp-tenant:
+    driver: bridge
+    name: cdp-tenant
+
+  # localstack:
+  #   image: localstack/localstack:3.0.2
+  #   ports:
+  #     - '4566:4566' # LocalStack Gateway
+  #     - '4510-4559:4510-4559' # external services port range
+  #   env_file:
+  #     - 'compose/aws.env'
+  #   environment:
+  #     DEBUG: ${DEBUG:-1}
+  #     LS_LOG: WARN # Localstack DEBUG Level
+  #     SERVICES: s3,sqs,sns,firehose
+  #     LOCALSTACK_HOST: 127.0.0.1
+  #   volumes:
+  #     - '${TMPDIR:-/tmp}/localstack:/var/lib/localstack'
+  #     - ./compose/start-localstack.sh:/etc/localstack/init/ready.d/start-localstack.sh
+  #   healthcheck:
+  #     test: ['CMD', 'curl', 'localhost:4566']
+  #     interval: 5s
+  #     start_period: 5s
+  #     retries: 3
+  #   networks:
+  #     - cdp-tenant
+
+  # redis:
+  #   image: redis:7.2.3-alpine3.18
+  #   ports:
+  #     - '6379:6379'
+  #   restart: always
+  #   networks:
+  #     - cdp-tenant
+
+
 
   ################################################################################
 
@@ -65,38 +160,7 @@ services:
   #   networks:
   #     - cdp-tenant
 
-  waste-movement-backend:
-#    image: local-build
-    image: defradigital/waste-movement-backend:latest
-    ports:
-      - '3001:3001'
-    links:
-      - 'localstack:localstack'
-      - 'mongodb:mongodb'
-    depends_on:
-      localstack:
-        condition: service_healthy
-      mongodb:
-        condition: service_started
-    env_file:
-      - 'compose/aws.env'
-    environment:
-      PORT: 3001
-      NODE_ENV: development
-      LOCALSTACK_ENDPOINT: http://localstack:4566
-      MONGO_URI: mongodb://mongodb:27017/
-    networks:
-      - cdp-tenant
-#    volumes:
-#      - ./src:/home/node/src
-#      - ./package.json:/home/node/package.json
 
 ################################################################################
 
-volumes:
-  mongodb-data:
 
-networks:
-  cdp-tenant:
-    driver: bridge
-    name: cdp-tenant
