@@ -10,25 +10,6 @@ export const VALIDATION_ERROR_TYPES = {
   TBC: 'TBC'
 }
 
-/**
- * Validation warning keys
- */
-export const VALIDATION_KEYS = {
-  RECEIPT_DISPOSAL_RECOVERY_CODES: 'wasteItems.disposalOrRecoveryCodes',
-  REASON_NO_CONSIGNMENT_CODE: 'receipt.reasonForNoConsignmentCode',
-  HAZARDOUS_COMPONENTS: 'wasteItems.hazardous.components',
-  POP_COMPONENTS: 'wasteItems.pops.components',
-  POP_CODE: 'wasteItems.pops.components.code'
-}
-
-/**
- * Validation warning messages
- */
-export const VALIDATION_MESSAGES = {
-  DISPOSAL_RECOVERY_REQUIRED:
-    'Disposal or Recovery codes are required for proper waste tracking and compliance'
-}
-
 const VALIDATION_WARNINGS = {
   IS_REQUIRED: '{{ #label }} is required'
 }
