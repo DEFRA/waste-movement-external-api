@@ -1,7 +1,7 @@
 import { sourceOfComponentsProvided } from '../../../common/constants/source-of-components.js'
 import {
   processValidationWarnings,
-  VALIDATION_ERROR_TYPES
+  VALIDATION_WARNING_TYPES
 } from '../../../common/helpers/validation-warnings.js'
 import { formatPopsOrHazardousFields } from '../../../schemas/waste.js'
 
@@ -122,7 +122,7 @@ export function popsAndHazardousComponentWarningTests(
       expect(warnings).toEqual([
         {
           key: `wasteItems.0.${popsOrHazardousObjectProperty}.components`,
-          errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+          errorType: VALIDATION_WARNING_TYPES.NOT_PROVIDED,
           message: `wasteItems[0].${popsOrHazardousObjectProperty}.components are recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
         }
       ])
@@ -175,7 +175,7 @@ export function popsAndHazardousComponentWarningTests(
         expect(warnings).toEqual([
           {
             key: `wasteItems.0.${popsOrHazardousObjectProperty}.components.1.concentration`,
-            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+            errorType: VALIDATION_WARNING_TYPES.NOT_PROVIDED,
             message: `wasteItems[0].${popsOrHazardousObjectProperty}.components[1].concentration is recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
           }
         ])

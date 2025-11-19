@@ -7,10 +7,7 @@ import {
   WASTE_WARNINGS
 } from '../constants/validation-warning-messages.js'
 
-/**
- * Validation warning types as defined in the API specification
- */
-export const VALIDATION_ERROR_TYPES = {
+export const VALIDATION_WARNING_TYPES = {
   NOT_PROVIDED: 'NotProvided',
   TBC: 'TBC'
 }
@@ -26,7 +23,7 @@ export const hazardousComponentsWarningValidators = {
           'Hazardous',
           hasPopsOrHazardousComponents
         ),
-      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      errorType: VALIDATION_WARNING_TYPES.NOT_PROVIDED,
       message: POPS_OR_HAZARDOUS_WARNINGS.COMPONENTS_RECOMMENDED
     },
     {
@@ -37,7 +34,7 @@ export const hazardousComponentsWarningValidators = {
           'Hazardous',
           isPopOrHazardousConcentrationValid
         ),
-      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      errorType: VALIDATION_WARNING_TYPES.NOT_PROVIDED,
       message: POPS_OR_HAZARDOUS_WARNINGS.CONCENTRATION_RECOMMENDED
     }
   ]
@@ -54,7 +51,7 @@ export const popsComponentsWarningValidators = {
           'POPs',
           hasPopsOrHazardousComponents
         ),
-      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      errorType: VALIDATION_WARNING_TYPES.NOT_PROVIDED,
       message: POPS_OR_HAZARDOUS_WARNINGS.COMPONENTS_RECOMMENDED
     },
     {
@@ -65,7 +62,7 @@ export const popsComponentsWarningValidators = {
           'POPs',
           isPopOrHazardousConcentrationValid
         ),
-      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      errorType: VALIDATION_WARNING_TYPES.NOT_PROVIDED,
       message: POPS_OR_HAZARDOUS_WARNINGS.CONCENTRATION_RECOMMENDED
     }
   ]
@@ -77,31 +74,31 @@ export const disposalOrRecoveryCodesWarningValidators = {
     {
       field: 'code',
       validator: isDisposalOrRecoveryCodeMissing,
-      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      errorType: VALIDATION_WARNING_TYPES.NOT_PROVIDED,
       message: WASTE_WARNINGS.DISPOSAL_OR_RECOVERY_CODE_REQUIRED
     },
     {
       field: 'weight',
       validator: isDisposalOrRecoveryWeightMissing,
-      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      errorType: VALIDATION_WARNING_TYPES.NOT_PROVIDED,
       message: RECEIPT_WARNINGS.IS_REQUIRED
     },
     {
       field: 'weight.metric',
       validator: isDisposalOrRecoveryWeightMetricMissing,
-      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      errorType: VALIDATION_WARNING_TYPES.NOT_PROVIDED,
       message: RECEIPT_WARNINGS.IS_REQUIRED
     },
     {
       field: 'weight.amount',
       validator: isDisposalOrRecoveryWeightAmountMissing,
-      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      errorType: VALIDATION_WARNING_TYPES.NOT_PROVIDED,
       message: RECEIPT_WARNINGS.IS_REQUIRED
     },
     {
       field: 'weight.isEstimate',
       validator: isDisposalOrRecoveryWeightIsEstimateMissing,
-      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      errorType: VALIDATION_WARNING_TYPES.NOT_PROVIDED,
       message: WASTE_WARNINGS.DISPOSAL_OR_RECOVERY_CODE_WEIGHT_IS_REQURIED
     }
   ]
@@ -113,7 +110,7 @@ export const reasonForNoRegistrationNumberWarningValidators = {
     {
       field: null,
       validator: isReasonForNoRegistrationNumberValid,
-      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      errorType: VALIDATION_WARNING_TYPES.NOT_PROVIDED,
       message: CARRIER_WARNINGS.REASON_FOR_NO_REGISTRATION_NUMBER_INVALID
     }
   ]
