@@ -524,13 +524,9 @@ function isPopOrHazardousConcentrationValid(components) {
 function isReasonForNoRegistrationNumberValid(payload) {
   const { registrationNumber, reasonForNoRegistrationNumber } = payload.carrier
 
-  // As per the error validation, display a validation warning if registrationNumber
-  // is null or an empty string and if reasonForNoRegistrationNumber is not a valid
-  // value (so therefore is also null or an empty string)
   if (
-    registrationNumber !== undefined &&
-    reasonForNoRegistrationNumber !== undefined &&
-    !REASONS_FOR_NO_REGISTRATION_NUMBER.includes(reasonForNoRegistrationNumber)
+    [null, ''].includes(registrationNumber) &&
+    [null, ''].includes(reasonForNoRegistrationNumber)
   ) {
     return { isValid: false }
   }
