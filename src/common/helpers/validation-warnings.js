@@ -525,9 +525,8 @@ function isReasonForNoRegistrationNumberValid(payload) {
   const { registrationNumber, reasonForNoRegistrationNumber } = payload.carrier
 
   if (
-    registrationNumber === undefined &&
-    reasonForNoRegistrationNumber !== undefined &&
-    !REASONS_FOR_NO_REGISTRATION_NUMBER.includes(reasonForNoRegistrationNumber)
+    [null, ''].includes(registrationNumber) &&
+    [null, ''].includes(reasonForNoRegistrationNumber)
   ) {
     return { isValid: false }
   }

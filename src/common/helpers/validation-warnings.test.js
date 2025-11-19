@@ -450,12 +450,54 @@ describe('Validation Warnings', () => {
       expect(warnings).toEqual([])
     })
 
-    it.each([null, ''])(
-      'should generate warning when registrationNumber is not provided and reasonForNoRegistrationNumber is "%s"',
+    it.each([null, '', ...REASONS_FOR_NO_REGISTRATION_NUMBER])(
+      'should return empty array when registrationNumber is not provided and reasonForNoRegistrationNumber is "%s" - error scenario',
       (value) => {
         const payload = {
           carrier: {
             registrationNumber: undefined,
+            reasonForNoRegistrationNumber: value
+          }
+        }
+
+        const warnings = processValidationWarnings(
+          payload,
+          reasonForNoRegistrationNumberWarningValidators
+        )
+        expect(warnings).toEqual([])
+      }
+    )
+
+    it.each([null, ''])(
+      'should generate warning when registrationNumber is "null" and reasonForNoRegistrationNumber is "%s"',
+      (value) => {
+        const payload = {
+          carrier: {
+            registrationNumber: null,
+            reasonForNoRegistrationNumber: value
+          }
+        }
+
+        const warnings = processValidationWarnings(
+          payload,
+          reasonForNoRegistrationNumberWarningValidators
+        )
+        expect(warnings).toEqual([
+          {
+            key: 'carrier.reasonForNoRegistrationNumber',
+            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+            message: `carrier.reasonForNoRegistrationNumber must be one of: ${REASONS_FOR_NO_REGISTRATION_NUMBER.join(', ')}`
+          }
+        ])
+      }
+    )
+
+    it.each([null, ''])(
+      'should generate warning when registrationNumber is "" and reasonForNoRegistrationNumber is "%s"',
+      (value) => {
+        const payload = {
+          carrier: {
+            registrationNumber: '',
             reasonForNoRegistrationNumber: value
           }
         }
