@@ -1,11 +1,13 @@
 import { popsAndHazardousComponentWarningTests } from '../../test/common/pop-and-hazardous-components/pops-and-hazardous-components-warning-tests.js'
+import { REASONS_FOR_NO_REGISTRATION_NUMBER } from '../constants/reasons-for-no-registration-number.js'
 import {
   VALIDATION_ERROR_TYPES,
   generateAllValidationWarnings,
   hazardousComponentsWarningValidators,
   popsComponentsWarningValidators,
   processValidationWarnings,
-  disposalOrRecoveryCodesWarningValidators
+  disposalOrRecoveryCodesWarningValidators,
+  reasonForNoRegistrationNumberWarningValidators
 } from './validation-warnings.js'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -387,6 +389,92 @@ describe('Validation Warnings', () => {
     hazardousComponentsWarningValidators
   )
 
+  describe('Reason For No Registration Number Warnings', () => {
+    it('should return empty array when registrationNumber is provided and reasonForNoRegistrationNumber is not provided - valid scenario', () => {
+      const payload = {
+        carrier: {
+          registrationNumber: 'CBDU123456',
+          reasonForNoRegistrationNumber: undefined
+        }
+      }
+
+      const warnings = processValidationWarnings(
+        payload,
+        reasonForNoRegistrationNumberWarningValidators
+      )
+      expect(warnings).toEqual([])
+    })
+
+    it('should return empty array when registrationNumber is not provided and reasonForNoRegistrationNumber is provided - valid scenario', () => {
+      const payload = {
+        carrier: {
+          registrationNumber: undefined,
+          reasonForNoRegistrationNumber: REASONS_FOR_NO_REGISTRATION_NUMBER[0]
+        }
+      }
+
+      const warnings = processValidationWarnings(
+        payload,
+        reasonForNoRegistrationNumberWarningValidators
+      )
+      expect(warnings).toEqual([])
+    })
+
+    it('should return empty array when neither registrationNumber or reasonForNoRegistrationNumber are provided - error scenario', () => {
+      const payload = {
+        carrier: {
+          registrationNumber: undefined,
+          reasonForNoRegistrationNumber: undefined
+        }
+      }
+
+      const warnings = processValidationWarnings(
+        payload,
+        reasonForNoRegistrationNumberWarningValidators
+      )
+      expect(warnings).toEqual([])
+    })
+
+    it('should return empty array when both registrationNumber and reasonForNoRegistrationNumber are provided - error scenario', () => {
+      const payload = {
+        carrier: {
+          registrationNumber: 'CBDU123456',
+          reasonForNoRegistrationNumber: REASONS_FOR_NO_REGISTRATION_NUMBER[0]
+        }
+      }
+
+      const warnings = processValidationWarnings(
+        payload,
+        reasonForNoRegistrationNumberWarningValidators
+      )
+      expect(warnings).toEqual([])
+    })
+
+    it.each([null, ''])(
+      'should generate warning when registrationNumber is not provided and reasonForNoRegistrationNumber is "%s"',
+      (value) => {
+        const payload = {
+          carrier: {
+            registrationNumber: undefined,
+            reasonForNoRegistrationNumber: value
+          }
+        }
+
+        const warnings = processValidationWarnings(
+          payload,
+          reasonForNoRegistrationNumberWarningValidators
+        )
+        expect(warnings).toEqual([
+          {
+            key: 'carrier.reasonForNoRegistrationNumber',
+            errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+            message: `carrier.reasonForNoRegistrationNumber must be one of: ${REASONS_FOR_NO_REGISTRATION_NUMBER.join(', ')}`
+          }
+        ])
+      }
+    )
+  })
+
   describe('generateAllValidationWarnings', () => {
     it('should return empty array when no warnings are generated', () => {
       const payload = {
@@ -405,7 +493,10 @@ describe('Validation Warnings', () => {
               }
             ]
           }
-        ]
+        ],
+        carrier: {
+          registrationNumber: 'CBDU123456'
+        }
       }
 
       const warnings = generateAllValidationWarnings(payload)

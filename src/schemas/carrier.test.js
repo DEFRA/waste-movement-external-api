@@ -6,6 +6,7 @@ import {
   invalidCarrierRegistrationNumbers,
   validCarrierRegistrationNumbers
 } from '../test/data/carrier-registration-numbers.js'
+import { REASONS_FOR_NO_REGISTRATION_NUMBER } from '../common/constants/reasons-for-no-registration-number.js'
 
 describe('Carrier Registration Validation', () => {
   const basePayload = createMovementRequest()
@@ -20,12 +21,27 @@ describe('Carrier Registration Validation', () => {
   })
 
   describe('Scenario: Valid carrier registration number', () => {
-    it.each([null, ''])(
-      'accepts submission when registrationNumber is "%s" and reasonForNoRegistrationNumber is provided',
+    it.each(REASONS_FOR_NO_REGISTRATION_NUMBER)(
+      'accepts submission when registrationNumber is "null" and reasonForNoRegistrationNumber is "%s"',
       (value) => {
         const carrier = {
-          registrationNumber: value,
-          reasonForNoRegistrationNumber: 'Not provided',
+          registrationNumber: null,
+          reasonForNoRegistrationNumber: value,
+          organisationName: 'Test Carrier',
+          meansOfTransport: MEANS_OF_TRANSPORT[1]
+        }
+
+        const { error } = validate(carrier)
+        expect(error).toBeUndefined()
+      }
+    )
+
+    it.each(REASONS_FOR_NO_REGISTRATION_NUMBER)(
+      'accepts submission when registrationNumber is "" and reasonForNoRegistrationNumber is "%s"',
+      (value) => {
+        const carrier = {
+          registrationNumber: '',
+          reasonForNoRegistrationNumber: value,
           organisationName: 'Test Carrier',
           meansOfTransport: MEANS_OF_TRANSPORT[1]
         }
@@ -66,11 +82,10 @@ describe('Carrier Registration Validation', () => {
       }
     )
 
-    it('rejects submission with valid registration number and a reason', () => {
+    it('rejects submission with an invalid reason', () => {
       const carrier = {
-        registrationNumber: 'CBDU123456',
-        reasonForNoRegistrationNumber:
-          'Should not have a reason with valid number',
+        registrationNumber: null,
+        reasonForNoRegistrationNumber: 'Invalid reason',
         organisationName: 'Test Carrier',
         meansOfTransport: MEANS_OF_TRANSPORT[1]
       }
@@ -78,7 +93,7 @@ describe('Carrier Registration Validation', () => {
       const { error } = validate(carrier)
       expect(error).toBeDefined()
       expect(error.message).toBe(
-        'carrier.reasonForNoRegistrationNumber should only be provided when carrier.registrationNumber is not provided'
+        `"carrier.reasonForNoRegistrationNumber" must be one of: ${REASONS_FOR_NO_REGISTRATION_NUMBER.join(', ')}`
       )
     })
 
@@ -94,53 +109,10 @@ describe('Carrier Registration Validation', () => {
       expect(error.message).toBe('"carrier.meansOfTransport" is required')
     })
 
-    it.each([
-      {
-        registrationNumber: null,
-        reasonForNoRegistrationNumber: null,
-        description:
-          'null registrationNumber and null reasonForNoRegistrationNumber'
-      },
-      {
-        registrationNumber: null,
-        reasonForNoRegistrationNumber: '',
-        description:
-          'null registrationNumber and empty reasonForNoRegistrationNumber'
-      },
-      {
-        registrationNumber: '',
-        reasonForNoRegistrationNumber: '',
-        description:
-          'empty registrationNumber and empty reasonForNoRegistrationNumber'
-      },
-      {
-        registrationNumber: '',
-        reasonForNoRegistrationNumber: null,
-        description:
-          'empty registrationNumber and null reasonForNoRegistrationNumber'
-      }
-    ])(
-      'rejects submission with $description',
-      ({ registrationNumber, reasonForNoRegistrationNumber }) => {
-        const carrier = {
-          registrationNumber,
-          reasonForNoRegistrationNumber,
-          organisationName: 'Test Carrier',
-          meansOfTransport: MEANS_OF_TRANSPORT[1]
-        }
-
-        const { error } = validate(carrier)
-        expect(error).toBeDefined()
-        expect(error.message).toBe(
-          'Either carrier.registrationNumber or carrier.reasonForNoRegistrationNumber is required'
-        )
-      }
-    )
-
     it('rejects submission when both registrationNumber and reasonForNoRegistrationNumber are provided', () => {
       const carrier = {
         registrationNumber: validCarrierRegistrationNumbers[0],
-        reasonForNoRegistrationNumber: 'Not provided',
+        reasonForNoRegistrationNumber: REASONS_FOR_NO_REGISTRATION_NUMBER[0],
         organisationName: 'Test Carrier',
         meansOfTransport: MEANS_OF_TRANSPORT[1]
       }

@@ -1,0 +1,6 @@
+export const REASONS_FOR_NO_REGISTRATION_NUMBER = [
+  'ON_SITE',
+  'HOUSEHOLD',
+  'ONE_OFF',
+  'MARINE'
+]

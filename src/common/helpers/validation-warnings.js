@@ -1,4 +1,5 @@
 import { formatPopsOrHazardousFields } from '../../schemas/waste.js'
+import { REASONS_FOR_NO_REGISTRATION_NUMBER } from '../constants/reasons-for-no-registration-number.js'
 import { sourceOfComponentsProvided } from '../constants/source-of-components.js'
 
 /**
@@ -93,41 +94,49 @@ export const disposalOrRecoveryCodesWarningValidators = {
   validators: [
     {
       field: 'code',
-      validator: (wasteItem) => isDisposalOrRecoveryCodeMissing(wasteItem),
+      validator: isDisposalOrRecoveryCodeMissing,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message:
         '{{ #label }} is required for proper waste tracking and compliance'
     },
     {
       field: 'weight',
-      validator: (wasteItem) => isDisposalOrRecoveryWeightMissing(wasteItem),
+      validator: isDisposalOrRecoveryWeightMissing,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message: VALIDATION_WARNINGS.IS_REQUIRED
     },
     {
       field: 'weight.metric',
-      validator: (wasteItem) =>
-        isDisposalOrRecoveryWeightMetricMissing(wasteItem),
+      validator: isDisposalOrRecoveryWeightMetricMissing,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message: VALIDATION_WARNINGS.IS_REQUIRED
     },
     {
       field: 'weight.amount',
-      validator: (wasteItem) =>
-        isDisposalOrRecoveryWeightAmountMissing(wasteItem),
+      validator: isDisposalOrRecoveryWeightAmountMissing,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message: VALIDATION_WARNINGS.IS_REQUIRED
     },
     {
       field: 'weight.isEstimate',
-      validator: (wasteItem) =>
-        isDisposalOrRecoveryWeightIsEstimateMissing(wasteItem),
+      validator: isDisposalOrRecoveryWeightIsEstimateMissing,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
       message: '{{ #label }} flag is required'
     }
   ]
 }
 
+export const reasonForNoRegistrationNumberWarningValidators = {
+  key: 'carrier.reasonForNoRegistrationNumber',
+  validators: [
+    {
+      field: null,
+      validator: isReasonForNoRegistrationNumberValid,
+      errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
+      message: `{{ #label }} must be one of: ${REASONS_FOR_NO_REGISTRATION_NUMBER.join(', ')}`
+    }
+  ]
+}
 /**
  * Process validation warnings
  * @param {Object} payload - The request payload
@@ -207,15 +216,11 @@ function validateField(
           )
         )
       } else {
-        fieldWarnings.push(
-          formatNonIndexedKeyWarning(
-            baseKeyJsonPath,
-            message,
-            baseKeyIndexed,
-            topLevelItem,
-            errorType
-          )
-        )
+        fieldWarnings.push({
+          key: baseKeyJsonPath,
+          errorType,
+          message: message.replace('{{ #label }}', baseKeyIndexed)
+        })
       }
     }
   }
@@ -266,31 +271,6 @@ const formatIndexedKeyWarning = (
 }
 
 /**
- * Formats the warning messages for non-indexed fields
- * @param {String} baseKeyJsonPath - The validation key in JSON path format
- * @param {String} message - The validation message
- * @param {String} baseKeyIndexed - The validation key in indexed format
- * @param {String} topLevelItem - The key of the top level item
- * @param {String} errorType - The error type
- * @returns {Array} Array of warning messages
- */
-const formatNonIndexedKeyWarning = (
-  baseKeyJsonPath,
-  message,
-  baseKeyIndexed,
-  topLevelItem,
-  errorType
-) => ({
-  key:
-    topLevelItem === 'wasteItems' ? baseKeyJsonPath : `receipt.${topLevelItem}`,
-  errorType,
-  message: message.replace(
-    '{{ #label }}',
-    topLevelItem === 'wasteItems' ? baseKeyIndexed : `receipt.${topLevelItem}`
-  )
-})
-
-/**
  * Replaces a key item with a JSON path index item
  * @param {string} key - The key with item to be replaced
  * @param {string} item - The item to replace
@@ -298,7 +278,7 @@ const formatNonIndexedKeyWarning = (
  * @returns {string} The key with the replaced item
  */
 const replaceJsonPathIndex = (key, item, index) =>
-  key.replace(item, `${item}.${index}`)
+  key.replace(item, key.includes('wasteItems') ? `${item}.${index}` : item)
 
 /**
  * Replaces a key item with an indexed path index item
@@ -308,14 +288,14 @@ const replaceJsonPathIndex = (key, item, index) =>
  * @returns {string} The key with the replaced item
  */
 const replaceIndexedPathIndex = (key, item, index) =>
-  key.replace(item, `${item}[${index}]`)
+  key.replace(item, key.includes('wasteItems') ? `${item}[${index}]` : item)
 
 /**
  * Determines if Disposal or Recovery weight is missing
  * @param {Object} wasteItem - The waste item
  * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array }
  */
-const isDisposalOrRecoveryWeightMissing = (wasteItem) => {
+function isDisposalOrRecoveryWeightMissing(wasteItem) {
   if (!wasteItem) {
     return { isValid: true }
   }
@@ -344,7 +324,7 @@ const isDisposalOrRecoveryWeightMissing = (wasteItem) => {
  * @param {Object} wasteItem - The waste item
  * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array }
  */
-const isDisposalOrRecoveryWeightMetricMissing = (wasteItem) => {
+function isDisposalOrRecoveryWeightMetricMissing(wasteItem) {
   if (!wasteItem) {
     return { isValid: true }
   }
@@ -373,7 +353,7 @@ const isDisposalOrRecoveryWeightMetricMissing = (wasteItem) => {
  * @param {Object} wasteItem - The waste item
  * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array }
  */
-const isDisposalOrRecoveryWeightAmountMissing = (wasteItem) => {
+function isDisposalOrRecoveryWeightAmountMissing(wasteItem) {
   if (!wasteItem) {
     return { isValid: true }
   }
@@ -402,7 +382,7 @@ const isDisposalOrRecoveryWeightAmountMissing = (wasteItem) => {
  * @param {Object} wasteItem - The waste item
  * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array }
  */
-const isDisposalOrRecoveryWeightIsEstimateMissing = (wasteItem) => {
+function isDisposalOrRecoveryWeightIsEstimateMissing(wasteItem) {
   if (!wasteItem) {
     return { isValid: true }
   }
@@ -431,7 +411,7 @@ const isDisposalOrRecoveryWeightIsEstimateMissing = (wasteItem) => {
  * @param {Object} wasteItem - The waste item
  * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array }
  */
-const isDisposalOrRecoveryCodeMissing = (wasteItem) => {
+function isDisposalOrRecoveryCodeMissing(wasteItem) {
   if (!wasteItem) {
     return { isValid: false }
   }
@@ -537,6 +517,25 @@ function isPopOrHazardousConcentrationValid(components) {
 }
 
 /**
+ * Determines if the reason for no registration number field is valid
+ * @param {Object} payload - The request payload
+ * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array }
+ */
+function isReasonForNoRegistrationNumberValid(payload) {
+  const { registrationNumber, reasonForNoRegistrationNumber } = payload.carrier
+
+  if (
+    registrationNumber === undefined &&
+    reasonForNoRegistrationNumber !== undefined &&
+    !REASONS_FOR_NO_REGISTRATION_NUMBER.includes(reasonForNoRegistrationNumber)
+  ) {
+    return { isValid: false }
+  }
+
+  return { isValid: true }
+}
+
+/**
  * Generate all validation warnings for a movement request
  * @param {Object} payload - The request payload
  * @returns {Array} Array of all validation warnings
@@ -564,6 +563,13 @@ export const generateAllValidationWarnings = (payload) => {
     hazardousComponentsWarningValidators
   )
   warnings.push(...hazardousWarnings)
+
+  // Add reason for no registration number warnings
+  const reasonForNoRegistrationNumberWarnings = processValidationWarnings(
+    payload,
+    reasonForNoRegistrationNumberWarningValidators
+  )
+  warnings.push(...reasonForNoRegistrationNumberWarnings)
 
   return warnings
 }
