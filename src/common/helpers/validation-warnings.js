@@ -1,6 +1,11 @@
 import { formatPopsOrHazardousFields } from '../../schemas/waste.js'
 import { REASONS_FOR_NO_REGISTRATION_NUMBER } from '../constants/reasons-for-no-registration-number.js'
-import { sourceOfComponentsProvided } from '../constants/source-of-components.js'
+import {
+  CARRIER_WARNINGS,
+  POPS_OR_HAZARDOUS_WARNINGS,
+  RECEIPT_WARNINGS,
+  WASTE_WARNINGS
+} from '../constants/validation-warning-messages.js'
 
 /**
  * Validation warning types as defined in the API specification
@@ -8,10 +13,6 @@ import { sourceOfComponentsProvided } from '../constants/source-of-components.js
 export const VALIDATION_ERROR_TYPES = {
   NOT_PROVIDED: 'NotProvided',
   TBC: 'TBC'
-}
-
-const VALIDATION_WARNINGS = {
-  IS_REQUIRED: '{{ #label }} is required'
 }
 
 export const hazardousComponentsWarningValidators = {
@@ -26,7 +27,7 @@ export const hazardousComponentsWarningValidators = {
           hasPopsOrHazardousComponents
         ),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: `{{ #label }} are recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+      message: POPS_OR_HAZARDOUS_WARNINGS.COMPONENTS_RECOMMENDED
     },
     {
       field: 'concentration',
@@ -37,7 +38,7 @@ export const hazardousComponentsWarningValidators = {
           isPopOrHazardousConcentrationValid
         ),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: `{{ #label }} is recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+      message: POPS_OR_HAZARDOUS_WARNINGS.CONCENTRATION_RECOMMENDED
     }
   ]
 }
@@ -54,7 +55,7 @@ export const popsComponentsWarningValidators = {
           hasPopsOrHazardousComponents
         ),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: `{{ #label }} are recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+      message: POPS_OR_HAZARDOUS_WARNINGS.COMPONENTS_RECOMMENDED
     },
     {
       field: 'concentration',
@@ -65,7 +66,7 @@ export const popsComponentsWarningValidators = {
           isPopOrHazardousConcentrationValid
         ),
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: `{{ #label }} is recommended when source of components is one of ${Object.values(sourceOfComponentsProvided).join(', ')}`
+      message: POPS_OR_HAZARDOUS_WARNINGS.CONCENTRATION_RECOMMENDED
     }
   ]
 }
@@ -77,32 +78,31 @@ export const disposalOrRecoveryCodesWarningValidators = {
       field: 'code',
       validator: isDisposalOrRecoveryCodeMissing,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message:
-        '{{ #label }} is required for proper waste tracking and compliance'
+      message: WASTE_WARNINGS.DISPOSAL_OR_RECOVERY_CODE_REQUIRED
     },
     {
       field: 'weight',
       validator: isDisposalOrRecoveryWeightMissing,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: VALIDATION_WARNINGS.IS_REQUIRED
+      message: RECEIPT_WARNINGS.IS_REQUIRED
     },
     {
       field: 'weight.metric',
       validator: isDisposalOrRecoveryWeightMetricMissing,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: VALIDATION_WARNINGS.IS_REQUIRED
+      message: RECEIPT_WARNINGS.IS_REQUIRED
     },
     {
       field: 'weight.amount',
       validator: isDisposalOrRecoveryWeightAmountMissing,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: VALIDATION_WARNINGS.IS_REQUIRED
+      message: RECEIPT_WARNINGS.IS_REQUIRED
     },
     {
       field: 'weight.isEstimate',
       validator: isDisposalOrRecoveryWeightIsEstimateMissing,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: '{{ #label }} flag is required'
+      message: WASTE_WARNINGS.DISPOSAL_OR_RECOVERY_CODE_WEIGHT_IS_REQURIED
     }
   ]
 }
@@ -114,7 +114,7 @@ export const reasonForNoRegistrationNumberWarningValidators = {
       field: null,
       validator: isReasonForNoRegistrationNumberValid,
       errorType: VALIDATION_ERROR_TYPES.NOT_PROVIDED,
-      message: `{{ #label }} must be one of: ${REASONS_FOR_NO_REGISTRATION_NUMBER.join(', ')}`
+      message: CARRIER_WARNINGS.REASON_FOR_NO_REGISTRATION_NUMBER_INVALID
     }
   ]
 }
