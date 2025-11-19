@@ -1,8 +1,6 @@
 import { sourceOfComponentsProvided } from '../../../common/constants/source-of-components.js'
-import {
-  processValidationWarnings,
-  VALIDATION_WARNING_TYPES
-} from '../../../common/helpers/validation-warnings.js'
+import { VALIDATION_WARNING_TYPES } from '../../../common/constants/validation-warning-messages.js'
+import { processValidationWarnings } from '../../../common/helpers/validation-warnings.js'
 import { formatPopsOrHazardousFields } from '../../../schemas/waste.js'
 
 export function popsAndHazardousComponentWarningTests(

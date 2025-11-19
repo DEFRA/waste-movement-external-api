@@ -19,3 +19,8 @@ export const WASTE_WARNINGS = {
 export const CARRIER_WARNINGS = {
   REASON_FOR_NO_REGISTRATION_NUMBER_INVALID: `{{ #label }} must be one of: ${REASONS_FOR_NO_REGISTRATION_NUMBER.join(', ')}`
 }
+
+export const VALIDATION_WARNING_TYPES = {
+  NOT_PROVIDED: 'NotProvided',
+  TBC: 'TBC'
+}

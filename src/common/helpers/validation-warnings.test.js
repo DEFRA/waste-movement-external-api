@@ -1,15 +1,17 @@
 import { popsAndHazardousComponentWarningTests } from '../../test/common/pop-and-hazardous-components/pops-and-hazardous-components-warning-tests.js'
 import { REASONS_FOR_NO_REGISTRATION_NUMBER } from '../constants/reasons-for-no-registration-number.js'
+import { VALIDATION_WARNING_TYPES } from '../constants/validation-warning-messages.js'
 import {
-  VALIDATION_WARNING_TYPES,
   generateAllValidationWarnings,
-  hazardousComponentsWarningValidators,
-  popsComponentsWarningValidators,
   processValidationWarnings,
   disposalOrRecoveryCodesWarningValidators,
   reasonForNoRegistrationNumberWarningValidators
 } from './validation-warnings.js'
 import { v4 as uuidv4 } from 'uuid'
+import {
+  hazardousComponentsWarningValidators,
+  popsComponentsWarningValidators
+} from './validation-warnings/validators/hazardous-and-pops-components.js'
 
 // Test helpers
 const createDisposalRecoveryPayload = (disposalOrRecoveryCodes) => ({
