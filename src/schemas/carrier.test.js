@@ -123,6 +123,22 @@ describe('Carrier Registration Validation', () => {
         'carrier.reasonForNoRegistrationNumber should only be provided when carrier.registrationNumber is not provided'
       )
     })
+
+    it.each([null, '', ...REASONS_FOR_NO_REGISTRATION_NUMBER])(
+      'rejects submission when registrationNumber is not provided and reasonForNoRegistrationNumber is "%s"',
+      (value) => {
+        const carrier = {
+          registrationNumber: undefined,
+          reasonForNoRegistrationNumber: value,
+          organisationName: 'Test Carrier',
+          meansOfTransport: MEANS_OF_TRANSPORT[1]
+        }
+
+        const { error } = validate(carrier)
+        expect(error).toBeDefined()
+        expect(error.message).toBe('"carrier.registrationNumber" is required')
+      }
+    )
   })
 
   describe('Additional carrier info validation', () => {
