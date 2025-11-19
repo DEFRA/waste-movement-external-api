@@ -3,8 +3,7 @@ import { REASONS_FOR_NO_REGISTRATION_NUMBER } from '../constants/reasons-for-no-
 import { VALIDATION_WARNING_TYPES } from '../constants/validation-warning-messages.js'
 import {
   generateAllValidationWarnings,
-  processValidationWarnings,
-  reasonForNoRegistrationNumberWarningValidators
+  processValidationWarnings
 } from './validation-warnings.js'
 import { v4 as uuidv4 } from 'uuid'
 import {
@@ -12,6 +11,7 @@ import {
   popsComponentsWarningValidators
 } from './validation-warnings/validators/hazardous-and-pops-components.js'
 import { disposalOrRecoveryCodesWarningValidators } from './validation-warnings/validators/disposal-or-recovery-codes.js'
+import { reasonForNoRegistrationNumberWarningValidators } from './validation-warnings/validators/reason-for-no-registration-number.js'
 
 // Test helpers
 const createDisposalRecoveryPayload = (disposalOrRecoveryCodes) => ({

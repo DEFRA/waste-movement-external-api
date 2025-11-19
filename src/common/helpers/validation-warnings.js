@@ -1,25 +1,10 @@
-import { REASONS_FOR_NO_REGISTRATION_NUMBER } from '../constants/reasons-for-no-registration-number.js'
-import {
-  CARRIER_WARNINGS,
-  VALIDATION_WARNING_TYPES
-} from '../constants/validation-warning-messages.js'
 import { disposalOrRecoveryCodesWarningValidators } from './validation-warnings/validators/disposal-or-recovery-codes.js'
 import {
   hazardousComponentsWarningValidators,
   popsComponentsWarningValidators
 } from './validation-warnings/validators/hazardous-and-pops-components.js'
+import { reasonForNoRegistrationNumberWarningValidators } from './validation-warnings/validators/reason-for-no-registration-number.js'
 
-export const reasonForNoRegistrationNumberWarningValidators = {
-  key: 'carrier.reasonForNoRegistrationNumber',
-  validators: [
-    {
-      field: null,
-      validator: isReasonForNoRegistrationNumberValid,
-      errorType: VALIDATION_WARNING_TYPES.NOT_PROVIDED,
-      message: CARRIER_WARNINGS.REASON_FOR_NO_REGISTRATION_NUMBER_INVALID
-    }
-  ]
-}
 /**
  * Process validation warnings
  * @param {Object} payload - The request payload
