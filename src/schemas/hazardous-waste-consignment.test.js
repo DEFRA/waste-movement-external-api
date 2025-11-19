@@ -1,7 +1,7 @@
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import { validContainerTypes } from '../common/constants/container-types.js'
-import { NO_CONSIGNMENT_REASONS } from './hazardous-waste-consignment.js'
+import { NO_CONSIGNMENT_REASONS } from '../common/constants/no-consignment-reasons.js'
 
 // Helper to build a base valid payload
 const buildBasePayload = () => ({
@@ -135,16 +135,19 @@ describe('Hazardous Waste Consignment Note Code rules', () => {
     )
   })
 
-  it('Prompt reason if consignment number blank - accept if the reason is from the valid reason list', () => {
-    const payload = buildBasePayload()
-    payload.wasteItems[0].ewcCodes = ['030104'] // hazardous
-    payload.hazardousWasteConsignmentCode = ''
-    // Provide a valid reason value (in allowed list)
-    payload.reasonForNoConsignmentCode = NO_CONSIGNMENT_REASONS[0]
+  it.each(NO_CONSIGNMENT_REASONS)(
+    'Prompt reason if consignment number blank - accept if the reason is from the valid reason list: "%s"',
+    (value) => {
+      const payload = buildBasePayload()
+      payload.wasteItems[0].ewcCodes = ['030104'] // hazardous
+      payload.hazardousWasteConsignmentCode = ''
+      // Provide a valid reason value (in allowed list)
+      payload.reasonForNoConsignmentCode = value
 
-    const { error } = receiveMovementRequestSchema.validate(payload)
-    expect(error).toBeUndefined()
-  })
+      const { error } = receiveMovementRequestSchema.validate(payload)
+      expect(error).toBeUndefined()
+    }
+  )
 
   it('Reason is left blank when required - generates a warning (not a rejection)', () => {
     const payload = buildBasePayload()

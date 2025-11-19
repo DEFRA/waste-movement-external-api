@@ -2,12 +2,6 @@ import Joi from 'joi'
 import { isValidHazardousEwcCode } from '../common/constants/ewc-codes.js'
 import { CONSIGNMENT_ERRORS } from '../common/constants/validation-error-messages.js'
 
-export const NO_CONSIGNMENT_REASONS = [
-  'Non-Hazardous Waste Transfer',
-  'Carrier did not provide documentation',
-  'Household Waste Recycling Centre Receipt'
-]
-
 // Consignment note code formats, e.g.
 // CJTILE/A0001
 // SA1234567
