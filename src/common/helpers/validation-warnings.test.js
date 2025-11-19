@@ -4,7 +4,6 @@ import { VALIDATION_WARNING_TYPES } from '../constants/validation-warning-messag
 import {
   generateAllValidationWarnings,
   processValidationWarnings,
-  disposalOrRecoveryCodesWarningValidators,
   reasonForNoRegistrationNumberWarningValidators
 } from './validation-warnings.js'
 import { v4 as uuidv4 } from 'uuid'
@@ -12,6 +11,7 @@ import {
   hazardousComponentsWarningValidators,
   popsComponentsWarningValidators
 } from './validation-warnings/validators/hazardous-and-pops-components.js'
+import { disposalOrRecoveryCodesWarningValidators } from './validation-warnings/validators/disposal-or-recovery-codes.js'
 
 // Test helpers
 const createDisposalRecoveryPayload = (disposalOrRecoveryCodes) => ({

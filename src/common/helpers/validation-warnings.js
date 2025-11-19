@@ -1,50 +1,13 @@
 import { REASONS_FOR_NO_REGISTRATION_NUMBER } from '../constants/reasons-for-no-registration-number.js'
 import {
   CARRIER_WARNINGS,
-  RECEIPT_WARNINGS,
-  VALIDATION_WARNING_TYPES,
-  WASTE_WARNINGS
+  VALIDATION_WARNING_TYPES
 } from '../constants/validation-warning-messages.js'
+import { disposalOrRecoveryCodesWarningValidators } from './validation-warnings/validators/disposal-or-recovery-codes.js'
 import {
   hazardousComponentsWarningValidators,
   popsComponentsWarningValidators
 } from './validation-warnings/validators/hazardous-and-pops-components.js'
-
-export const disposalOrRecoveryCodesWarningValidators = {
-  key: 'wasteItems.disposalOrRecoveryCodes',
-  validators: [
-    {
-      field: 'code',
-      validator: isDisposalOrRecoveryCodeMissing,
-      errorType: VALIDATION_WARNING_TYPES.NOT_PROVIDED,
-      message: WASTE_WARNINGS.DISPOSAL_OR_RECOVERY_CODE_REQUIRED
-    },
-    {
-      field: 'weight',
-      validator: isDisposalOrRecoveryWeightMissing,
-      errorType: VALIDATION_WARNING_TYPES.NOT_PROVIDED,
-      message: RECEIPT_WARNINGS.IS_REQUIRED
-    },
-    {
-      field: 'weight.metric',
-      validator: isDisposalOrRecoveryWeightMetricMissing,
-      errorType: VALIDATION_WARNING_TYPES.NOT_PROVIDED,
-      message: RECEIPT_WARNINGS.IS_REQUIRED
-    },
-    {
-      field: 'weight.amount',
-      validator: isDisposalOrRecoveryWeightAmountMissing,
-      errorType: VALIDATION_WARNING_TYPES.NOT_PROVIDED,
-      message: RECEIPT_WARNINGS.IS_REQUIRED
-    },
-    {
-      field: 'weight.isEstimate',
-      validator: isDisposalOrRecoveryWeightIsEstimateMissing,
-      errorType: VALIDATION_WARNING_TYPES.NOT_PROVIDED,
-      message: WASTE_WARNINGS.DISPOSAL_OR_RECOVERY_CODE_WEIGHT_IS_REQURIED
-    }
-  ]
-}
 
 export const reasonForNoRegistrationNumberWarningValidators = {
   key: 'carrier.reasonForNoRegistrationNumber',
@@ -209,151 +172,6 @@ const replaceJsonPathIndex = (key, item, index) =>
  */
 const replaceIndexedPathIndex = (key, item, index) =>
   key.replace(item, key.includes('wasteItems') ? `${item}[${index}]` : item)
-
-/**
- * Determines if Disposal or Recovery weight is missing
- * @param {Object} wasteItem - The waste item
- * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array }
- */
-function isDisposalOrRecoveryWeightMissing(wasteItem) {
-  if (!wasteItem) {
-    return { isValid: true }
-  }
-
-  const { disposalOrRecoveryCodes } = wasteItem
-
-  if (!disposalOrRecoveryCodes || disposalOrRecoveryCodes.length === 0) {
-    return { isValid: true }
-  }
-
-  const invalidIndices = disposalOrRecoveryCodes?.reduce(
-    (indices, item, index) => {
-      if (!item?.weight) {
-        indices.push(index)
-      }
-      return indices
-    },
-    []
-  )
-
-  return { isValid: invalidIndices.length === 0, invalidIndices }
-}
-
-/**
- * Determines if Disposal or Recovery weight is missing
- * @param {Object} wasteItem - The waste item
- * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array }
- */
-function isDisposalOrRecoveryWeightMetricMissing(wasteItem) {
-  if (!wasteItem) {
-    return { isValid: true }
-  }
-
-  const { disposalOrRecoveryCodes } = wasteItem
-
-  if (!disposalOrRecoveryCodes || disposalOrRecoveryCodes.length === 0) {
-    return { isValid: true }
-  }
-
-  const invalidIndices = disposalOrRecoveryCodes?.reduce(
-    (indices, item, index) => {
-      if (item?.weight && !item.weight.metric) {
-        indices.push(index)
-      }
-      return indices
-    },
-    []
-  )
-
-  return { isValid: invalidIndices.length === 0, invalidIndices }
-}
-
-/**
- * Determines if Disposal or Recovery weight amount is missing
- * @param {Object} wasteItem - The waste item
- * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array }
- */
-function isDisposalOrRecoveryWeightAmountMissing(wasteItem) {
-  if (!wasteItem) {
-    return { isValid: true }
-  }
-
-  const { disposalOrRecoveryCodes } = wasteItem
-
-  if (!disposalOrRecoveryCodes || disposalOrRecoveryCodes.length === 0) {
-    return { isValid: true }
-  }
-
-  const invalidIndices = disposalOrRecoveryCodes?.reduce(
-    (indices, item, index) => {
-      if (item?.weight && !item.weight.amount) {
-        indices.push(index)
-      }
-      return indices
-    },
-    []
-  )
-
-  return { isValid: invalidIndices.length === 0, invalidIndices }
-}
-
-/**
- * Determines if Disposal or Recovery weight isEstimate flag is missing
- * @param {Object} wasteItem - The waste item
- * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array }
- */
-function isDisposalOrRecoveryWeightIsEstimateMissing(wasteItem) {
-  if (!wasteItem) {
-    return { isValid: true }
-  }
-
-  const { disposalOrRecoveryCodes } = wasteItem
-
-  if (!disposalOrRecoveryCodes || disposalOrRecoveryCodes.length === 0) {
-    return { isValid: true }
-  }
-
-  const invalidIndices = disposalOrRecoveryCodes?.reduce(
-    (indices, item, index) => {
-      if (item?.weight && ![true, false].includes(item.weight.isEstimate)) {
-        indices.push(index)
-      }
-      return indices
-    },
-    []
-  )
-
-  return { isValid: invalidIndices.length === 0, invalidIndices }
-}
-
-/**
- * Determines if Disposal or Recovery code is missing
- * @param {Object} wasteItem - The waste item
- * @returns {Object} { isValid: Boolean, invalidIndices: Optional numeric array }
- */
-function isDisposalOrRecoveryCodeMissing(wasteItem) {
-  if (!wasteItem) {
-    return { isValid: false }
-  }
-
-  const { disposalOrRecoveryCodes } = wasteItem
-
-  if (!disposalOrRecoveryCodes || disposalOrRecoveryCodes.length === 0) {
-    return { isValid: false }
-  }
-
-  const invalidIndices = disposalOrRecoveryCodes?.reduce(
-    (indices, item, index) => {
-      if (!item.code) {
-        indices.push(index)
-      }
-      return indices
-    },
-    []
-  )
-
-  return { isValid: invalidIndices.length === 0, invalidIndices }
-}
 
 /**
  * Determines if the reason for no registration number field is valid
