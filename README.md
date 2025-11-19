@@ -1,149 +1,177 @@
-# waste-movement-backend
+# Waste Movement External API
 
-Core delivery platform Node.js Backend Template.
+External-facing REST API service for recording and managing waste movement receipts. This service allows carriers, receivers, and other authorised parties to create and update waste movement records as part of DEFRA's waste tracking system.
 
-- [Requirements](#requirements)
-  - [Node.js](#nodejs)
-- [Local development](#local-development)
-  - [Setup](#setup)
-  - [Development](#development)
-  - [Testing](#testing)
-  - [Production](#production)
-  - [Npm scripts](#npm-scripts)
-  - [Update dependencies](#update-dependencies)
-  - [Formatting](#formatting)
-    - [Windows prettier issue](#windows-prettier-issue)
-- [API endpoints](#api-endpoints)
-- [Development helpers](#development-helpers)
+## Table of Contents
+
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Technology Stack](#technology-stack)
+- [Prerequisites](#prerequisites)
+- [Getting Started](#getting-started)
+- [Authentication](#authentication)
+- [API Endpoints](#api-endpoints)
+- [Development](#development)
+  - [Running Tests](#running-tests)
+  - [Code Quality](#code-quality)
   - [MongoDB Locks](#mongodb-locks)
-  - [Proxy](#proxy)
+  - [Proxy Configuration](#proxy-configuration)
+- [Environments](#environments)
 - [Docker](#docker)
-  - [Development image](#development-image)
-  - [Production image](#production-image)
-  - [Docker Compose](#docker-compose)
-  - [Dependabot](#dependabot)
-  - [SonarCloud](#sonarcloud)
+- [CI/CD](#cicd)
+- [Additional Resources](#additional-resources)
+- [Updating Dependencies](#updating-dependencies)
 - [Licence](#licence)
-  - [About the licence](#about-the-licence)
 
-## Requirements
+## Overview
 
-### Node.js
+The Waste Movement External API provides endpoints for:
 
-Please install [Node.js](http://nodejs.org/) `>= v22` and [npm](https://nodejs.org/) `>= v11`. You will find it
-easier to use the Node Version Manager [nvm](https://github.com/creationix/nvm)
+- **Creating waste movement receipts** when waste is received by a facility
+- **Updating existing movements** with waste tracking IDs
+- **Accessing reference data** (EWC codes, disposal/recovery codes, hazardous property codes, container types, POP names)
 
-To use the correct version of Node.js for this application, via nvm:
+This service integrates with DEFRA's waste tracking infrastructure to generate unique tracking IDs and persist movement data.
+
+## Key Features
+
+- JWT-based authentication via AWS Cognito
+- Comprehensive request validation using Joi schemas
+- OpenAPI/Swagger documentation available at `/documentation`
+- MongoDB-backed persistence with distributed locking
+- Full test coverage with Jest
+
+## Technology Stack
+
+- **Runtime**: Node.js
+- **Framework**: Hapi.js
+- **Database**: MongoDB
+- **Authentication**: JWT with AWS Cognito
+- **Validation**: Joi
+- **Testing**: Jest
+- **Logging**: Pino with ECS format
+- **API Docs**: Swagger/OpenAPI (hapi-swagger)
+
+## Prerequisites
+
+- Node.js (see .nvmrc for required version, use [nvm](https://github.com/creationix/nvm) for version management)
+- npm
+- Docker and Docker Compose (for local development)
+
+## Getting Started
+
+### 1. Clone and Install
 
 ```bash
-cd waste-movement-backend
+cd waste-movement-external-api
 nvm use
-```
-
-## Local development
-
-### Setup
-
-Install application dependencies:
-
-```bash
 npm install
 ```
 
-### Development
+### 2. Local Development with Docker Compose
 
-To run the application in `development` mode run:
+Start the full local environment (includes LocalStack and MongoDB):
+
+```bash
+docker compose up --build -d
+```
+
+The API will be available at `http://localhost:3001`
+
+### 3. Development Without Docker
+
+Run the service directly with watch mode:
 
 ```bash
 npm run dev
 ```
 
-### Testing
+Note: You'll need to configure MongoDB and other dependencies manually.
 
-To test the application run:
+### 4. Verify Setup
 
-```bash
-npm run test
-```
-
-### Production
-
-To mimic the application running in `production` mode locally run:
+Check the health endpoint:
 
 ```bash
-npm start
+curl http://localhost:3001/health
 ```
 
-### Npm scripts
-
-All available Npm scripts can be seen in [package.json](./package.json).
-To view them in your command line run:
-
-```bash
-npm run
-```
-
-### Update dependencies
-
-To update dependencies use [npm-check-updates](https://github.com/raineorshine/npm-check-updates):
-
-> The following script is a good start. Check out all the options on
-> the [npm-check-updates](https://github.com/raineorshine/npm-check-updates)
-
-```bash
-ncu --interactive --format group
-```
-
-### Formatting
-
-#### Windows prettier issue
-
-If you are having issues with formatting of line breaks on Windows update your global git config by running:
-
-```bash
-git config --global core.autocrlf false
-```
+Access Swagger documentation at: `http://localhost:3001/documentation`
 
 ## Authentication
 
-For detailed instructions on testing JWT authentication, see [JWT_AUTHENTICATION_TESTING.md](./JWT_AUTHENTICATION_TESTING.md).
+### JWT Authentication (Production)
 
-## API endpoints
+The API uses JWT tokens issued by AWS Cognito. To access authenticated endpoints:
 
-| Endpoint                                    | Description                                         | Authentication |
-| :------------------------------------------ | :-------------------------------------------------- | :------------- |
-| `GET: /health`                              | Health check                                        | No             |
-| `GET: /auth/test`                           | Test JWT authentication (only available in non-prod | Yes            |
-| `POST: /movements/receive`                  | Create a receipt movement                           | Yes            |
-| `PUT: /movements/{wasteTrackingId}/receive` | Update a receipt movement with a waste tracking ID  | Yes            |
+1. **Obtain a token** from AWS Cognito (see [JWT_AUTHENTICATION_TESTING.md](./JWT_AUTHENTICATION_TESTING.md) for details)
+2. **Include the token** in the Authorization header:
 
-## Development helpers
+```bash
+curl -X POST http://localhost:3001/movements/receive \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ ... }'
+```
+
+### Local Development
+
+JWT authentication is **disabled by default** in local environments. You can test endpoints without tokens.
+
+For detailed JWT authentication testing instructions, see [JWT_AUTHENTICATION_TESTING.md](./JWT_AUTHENTICATION_TESTING.md).
+
+## API Endpoints
+
+The API provides endpoints for:
+
+- **Movement Operations**: Create and update waste movement receipts (requires authentication)
+- **Reference Data**: Retrieve EWC codes, disposal/recovery codes, hazardous property codes, container types, and POP names
+- **Utilities**: Health checks and authentication testing
+
+For complete API documentation including request/response schemas and examples, see the interactive Swagger documentation at `http://localhost:3001/documentation` when running locally.
+
+## Development
+
+### Running Tests
+
+Run unit tests:
+
+```bash
+npm test
+```
+
+Run integration tests (requires Docker Compose):
+
+```bash
+docker compose up -d
+npm run test:integration
+```
+
+### Code Quality
+
+This project follows DEFRA code standards. Before committing:
+
+- Code is automatically formatted with Prettier
+- ESLint checks are run via Husky pre-commit hooks
+- PRs must pass all tests and linting checks
+
+To manually run code quality checks:
+
+```bash
+npm run lint           # Run ESLint
+npm run format:check   # Check code formatting
+```
+
+To fix issues automatically:
+
+```bash
+npm run lint:fix       # Auto-fix linting issues
+npm run format         # Format code with Prettier
+```
 
 ### MongoDB Locks
 
-If you require a write lock for Mongo you can acquire it via `server.locker` or `request.locker`:
-
-```javascript
-async function doStuff(server) {
-  const lock = await server.locker.lock('unique-resource-name')
-
-  if (!lock) {
-    // Lock unavailable
-    return
-  }
-
-  try {
-    // do stuff
-  } finally {
-    await lock.free()
-  }
-}
-```
-
-Keep it small and atomic.
-
-You may use **using** for the lock resource management.
-Note test coverage reports do not like that syntax.
+For distributed write operations, use MongoDB locks via `server.locker`:
 
 ```javascript
 async function doStuff(server) {
@@ -155,27 +183,22 @@ async function doStuff(server) {
   }
 
   // do stuff
-
   // lock automatically released
 }
 ```
 
-Helper methods are also available in `/src/helpers/mongo-lock.js`.
+Helper methods available in `src/common/helpers/mongo-lock.js`.
 
-### Proxy
+### Proxy Configuration
 
-We are using forward-proxy which is set up by default. To make use of this: `import { fetch } from 'undici'` then
-because of the `setGlobalDispatcher(new ProxyAgent(proxyUrl))` calls will use the ProxyAgent Dispatcher
+The service uses a forward proxy (configured via `GLOBAL_AGENT`). HTTP clients using `undici`, `@hapi/wreck`, or `axios` automatically use the proxy.
 
-If you are not using Wreck, Axios or Undici or a similar http that uses `Request`. Then you may have to provide the
-proxy dispatcher:
-
-To add the dispatcher to your own client:
+For custom HTTP clients:
 
 ```javascript
 import { ProxyAgent } from 'undici'
 
-return await fetch(url, {
+await fetch(url, {
   dispatcher: new ProxyAgent({
     uri: proxyUrl,
     keepAliveTimeout: 10,
@@ -184,58 +207,65 @@ return await fetch(url, {
 })
 ```
 
+## Environments
+
+The service supports multiple environments:
+
+- `local` - Local development (auth disabled)
+- `dev` - Development environment
+- `test` - Testing environment
+- `perf-test` - Performance testing
+- `ext-test` - External testing
+- `prod` - Production
+
+Configuration is managed via Convict in `src/config.js`.
+
 ## Docker
 
-### Development image
-
-Build:
+### Build Development Image
 
 ```bash
-docker build --target development --no-cache --tag waste-movement-backend:development .
+docker build --target development --tag waste-movement-external-api:dev .
 ```
 
-Run:
+### Build Production Image
 
 ```bash
-docker run -e PORT=3001 -p 3001:3001 waste-movement-backend:development
-```
-
-### Production image
-
-Build:
-
-```bash
-docker build --no-cache --tag waste-movement-backend .
-```
-
-Run:
-
-```bash
-docker run -e PORT=3001 -p 3001:3001 waste-movement-backend
+docker build --tag waste-movement-external-api:latest .
 ```
 
 ### Docker Compose
 
-A local environment with:
-
-- Localstack for AWS services (S3, SQS)
-- Redis
-- MongoDB
-- This service.
-- A commented out frontend example.
+Local environment includes LocalStack (AWS services) and MongoDB:
 
 ```bash
 docker compose up --build -d
+docker compose down
 ```
 
-### Dependabot
+## CI/CD
 
-We have added an example dependabot configuration file to the repository. You can enable it by renaming
-the [.github/example.dependabot.yml](.github/example.dependabot.yml) to `.github/dependabot.yml`
+GitHub Actions workflows automate:
 
-### SonarCloud
+- **Pull Request Checks**: Formatting, linting, tests, Docker build, SonarCloud scan
+- **Publishing**: Automatic builds and deployments to AWS ECR on merge to main
+- **Hotfix Deployments**: Expedited deployment workflow for urgent fixes
 
-Instructions for setting up SonarCloud can be found in [sonar-project.properties](./sonar-project.properties)
+SonarCloud integration provides code quality and test coverage analysis.
+
+## Additional Resources
+
+- [JWT Authentication Testing Guide](./JWT_AUTHENTICATION_TESTING.md)
+- [API Documentation (Swagger)](http://localhost:3001/documentation) - when running locally
+- [SonarCloud Project](https://sonarcloud.io/project/overview?id=DEFRA_waste-movement-external-api)
+
+## Updating Dependencies
+
+Use [npm-check-updates](https://github.com/raineorshine/npm-check-updates):
+
+```bash
+ncu --interactive --format group
+```
 
 ## Licence
 
@@ -245,12 +275,10 @@ THIS INFORMATION IS LICENSED UNDER THE CONDITIONS OF THE OPEN GOVERNMENT LICENCE
 
 The following attribution statement MUST be cited in your products and applications when using this information.
 
-> Contains public sector information licensed under the Open Government license v3
+> Contains public sector information licensed under the Open Government licence v3
 
 ### About the licence
 
-The Open Government Licence (OGL) was developed by the Controller of Her Majesty's Stationery Office (HMSO) to enable
-information providers in the public sector to license the use and re-use of their information under a common open
-licence.
+The Open Government Licence (OGL) was developed by the Controller of Her Majesty's Stationery Office (HMSO) to enable information providers in the public sector to license the use and re-use of their information under a common open licence.
 
 It is designed to encourage use and re-use of information freely and flexibly, with only a few conditions.
