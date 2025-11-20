@@ -4,6 +4,9 @@ import {
   popsComponentsWarningValidators
 } from './validators/pops-and-hazardous-components.js'
 import { reasonForNoRegistrationNumberWarningValidators } from './validators/reason-for-no-registration-number.js'
+import { createLogger } from '../logging/logger.js'
+
+const logger = createLogger()
 
 /**
  * Process validation warnings
@@ -161,9 +164,10 @@ const replaceIndexedPathIndex = (key, item, index) =>
 /**
  * Generate all validation warnings for a movement request
  * @param {Object} payload - The request payload
+ * @param {String} wasteTrackingId - The waste tracking id of the request
  * @returns {Array} Array of all validation warnings
  */
-export const generateAllValidationWarnings = (payload) => {
+export const generateAllValidationWarnings = (payload, wasteTrackingId) => {
   const warnings = []
 
   // Add disposal/recovery code warnings
@@ -193,6 +197,12 @@ export const generateAllValidationWarnings = (payload) => {
     reasonForNoRegistrationNumberWarningValidators
   )
   warnings.push(...reasonForNoRegistrationNumberWarnings)
+
+  if (warnings.length > 0) {
+    warnings.forEach((warning) =>
+      logger.error(`${warning.message} (wasteTrackingId: "${wasteTrackingId}")`)
+    )
+  }
 
   return warnings
 }

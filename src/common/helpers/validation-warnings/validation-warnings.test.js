@@ -10,6 +10,7 @@ import {
   popsComponentsWarningValidators
 } from './validators/pops-and-hazardous-components.js'
 import { popsAndHazardousComponentWarningTests } from '../../../test/common/pop-and-hazardous-components/pops-and-hazardous-components-warning-tests.js'
+import * as logger from '../../helpers/logging/logger.js'
 
 describe('Validation Warnings', () => {
   describe('VALIDATION_WARNING_TYPES', () => {
@@ -34,7 +35,9 @@ describe('Validation Warnings', () => {
   })
 
   describe('generateAllValidationWarnings', () => {
-    it('should return empty array when no warnings are generated', () => {
+    const wasteTrackingId = '2578ZCY8'
+
+    it('should return empty array and not log error messages when no warnings are generated', () => {
       const payload = {
         wasteItems: [
           {
@@ -56,9 +59,58 @@ describe('Validation Warnings', () => {
           registrationNumber: 'CBDU123456'
         }
       }
+      const errorLoggerSpy = jest.spyOn(logger.createLogger(), 'error')
 
-      const warnings = generateAllValidationWarnings(payload)
+      const warnings = generateAllValidationWarnings(payload, wasteTrackingId)
+
       expect(warnings).toEqual([])
+      expect(errorLoggerSpy).toHaveBeenCalledTimes(0)
+    })
+
+    it('should return warnings array and log error message for each warning when warnings are generated', () => {
+      const payload = {
+        wasteItems: [
+          {
+            ewcCodes: ['200101'],
+            wasteDescription: 'Test waste',
+            disposalOrRecoveryCodes: [
+              {
+                code: 'R1',
+                weight: {
+                  amount: 10
+                }
+              }
+            ]
+          }
+        ],
+        carrier: {
+          registrationNumber: 'CBDU123456'
+        }
+      }
+      const errorLoggerSpy = jest.spyOn(logger.createLogger(), 'error')
+      const metricWarning = {
+        errorType: 'NotProvided',
+        key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight.metric',
+        message:
+          'wasteItems[0].disposalOrRecoveryCodes[0].weight.metric is required'
+      }
+      const isEstimateWarning = {
+        errorType: 'NotProvided',
+        key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight.isEstimate',
+        message:
+          'wasteItems[0].disposalOrRecoveryCodes[0].weight.isEstimate flag is required'
+      }
+
+      const warnings = generateAllValidationWarnings(payload, wasteTrackingId)
+
+      expect(warnings).toEqual([metricWarning, isEstimateWarning])
+      expect(errorLoggerSpy).toHaveBeenCalledTimes(2)
+      expect(errorLoggerSpy).toHaveBeenCalledWith(
+        `${metricWarning.message} (wasteTrackingId: "${wasteTrackingId}")`
+      )
+      expect(errorLoggerSpy).toHaveBeenCalledWith(
+        `${isEstimateWarning.message} (wasteTrackingId: "${wasteTrackingId}")`
+      )
     })
 
     it('should return disposal/recovery warnings when they exist', () => {
