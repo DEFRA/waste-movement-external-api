@@ -2,7 +2,7 @@ import { disposalOrRecoveryCodesWarningValidators } from './validators/disposal-
 import {
   hazardousComponentsWarningValidators,
   popsComponentsWarningValidators
-} from './validators/hazardous-and-pops-components.js'
+} from './validators/pops-and-hazardous-components.js'
 import { reasonForNoRegistrationNumberWarningValidators } from './validators/reason-for-no-registration-number.js'
 
 /**
