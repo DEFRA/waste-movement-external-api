@@ -9,5 +9,8 @@ coverage
 .cache
 .eslintcache
 
+# Environment variables (secrets)
+.env
+
 # @shelf/jest-mongodb generated file
 globalConfig.json

@@ -42,3 +42,59 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  uat-integration-tests:
+    name: Run UAT Integration Tests
+    runs-on: ubuntu-latest
+    needs: pr-validator
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Start Docker Compose Services
+        env:
+          ORG_API_CODES: ${{ secrets.ORG_API_CODES }}
+        run: |
+          docker compose up -d --wait
+          docker compose ps
+
+      - name: Checkout UAT Test Repository
+        uses: actions/checkout@v4
+        with:
+          repository: DEFRA/digital-waste-tracking-uat
+          path: uat-tests
+
+      - name: Setup Node.js for UAT Test Suite
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: uat-tests/.nvmrc
+          cache: npm
+          cache-dependency-path: uat-tests/package-lock.json
+
+      - name: Install UAT Test Dependencies
+        working-directory: uat-tests
+        run: npm ci --ignore-scripts
+
+      - name: Run UAT Tests
+        working-directory: uat-tests
+        env:
+          WASTE_MOVEMENT_EXTERNAL_API_BASE_URL: http://localhost:3001
+          AUTH_DISABLED: true
+          API_LOGGING: true
+          JIRA_BASE_URL: https://eaflood.atlassian.net/browse
+        run: |
+          npm run report:clean
+          npm run test
+          npm run report:generate
+
+      - name: Upload Test Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uat-test-report
+          path: uat-tests/allure-report/
+          retention-days: 30
+
+      - name: Stop Docker Compose Services
+        if: always()
+        run: docker compose down

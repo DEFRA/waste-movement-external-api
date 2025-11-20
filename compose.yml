@@ -49,7 +49,7 @@ services:
       ENVIRONMENT: local
       LOCALSTACK_ENDPOINT: http://localstack:4566
       MONGO_URI: mongodb://mongodb:27017/?replicaSet=rs0&directConnection=true
-      ORG_API_CODES: NTkzOTMwNTItMDdmNy00MzU5LWE1YzAtMjBhOGJmNGFjNWIyPTJhNDg0ZDE2LTJjNzQtNDljMS1hZTc3LTBjODQ0MGM1ODY3OA==
+      ORG_API_CODES: ${ORG_API_CODES}
       MONGO_READ_PREFERENCE: primary
     networks:
       - cdp-tenant
