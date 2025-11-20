@@ -207,7 +207,7 @@ export function popsAndHazardousComponentsErrorTests(
           wasteItemOverrides: {
             [containsPopsOrHazardousField]: true,
             [popsOrHazardousObjectProperty]: {
-              sourceOfComponents: 'CARRIER_PROVIDED',
+              sourceOfComponents: 'PROVIDED_WITH_WASTE',
               components: [
                 {
                   [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
@@ -242,7 +242,7 @@ export function popsAndHazardousComponentsErrorTests(
           wasteItemOverrides: {
             [containsPopsOrHazardousField]: true,
             [popsOrHazardousObjectProperty]: {
-              sourceOfComponents: 'CARRIER_PROVIDED',
+              sourceOfComponents: 'PROVIDED_WITH_WASTE',
               components: [
                 {
                   [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
@@ -267,7 +267,7 @@ export function popsAndHazardousComponentsErrorTests(
         wasteItemOverrides: {
           [containsPopsOrHazardousField]: true,
           [popsOrHazardousObjectProperty]: {
-            sourceOfComponents: 'CARRIER_PROVIDED',
+            sourceOfComponents: 'PROVIDED_WITH_WASTE',
             components: [
               {
                 [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
@@ -443,14 +443,37 @@ export function popsAndHazardousComponentsErrorTests(
     )
 
     it.each([undefined, null])(
-      `should reject components when ${containsPopsOrHazardousField} is true, sourceOfComponents is other than NOT_PROVIDED and no components are provided: "%s"`,
+      `should accept when ${containsPopsOrHazardousField} is true, sourceOfComponents is PROVIDED_WITH_WASTE and no components are provided: "%s"`,
       (value) => {
         const payload = createTestPayloadWithHazCodes({
           wasteItemOverrides: {
             [containsPopsOrHazardousField]: true,
             [popsOrHazardousObjectProperty]: {
-              sourceOfComponents: 'CARRIER_PROVIDED',
+              sourceOfComponents: 'PROVIDED_WITH_WASTE',
               components: value,
+              ...overrides
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeUndefined()
+      }
+    )
+
+    it.each([
+      ['GUIDANCE', undefined],
+      ['GUIDANCE', null],
+      ['OWN_TESTING', undefined],
+      ['OWN_TESTING', null]
+    ])(
+      `should reject when ${containsPopsOrHazardousField} is true, sourceOfComponents is %s and components is %s`,
+      (source, componentsValue) => {
+        const payload = createTestPayloadWithHazCodes({
+          wasteItemOverrides: {
+            [containsPopsOrHazardousField]: true,
+            [popsOrHazardousObjectProperty]: {
+              sourceOfComponents: source,
+              components: componentsValue,
               ...overrides
             }
           }

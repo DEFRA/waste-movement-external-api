@@ -22,7 +22,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         const result1 = validateHazardous({
           containsHazardous: true,
           hazardous: {
-            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            sourceOfComponents: validSourceOfComponents.PROVIDED_WITH_WASTE,
             hazCodes: ['HP_15'],
             components: [{ name: 'Mercury', concentration: 10 }]
           }
@@ -43,7 +43,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         const result3 = validateHazardous({
           containsHazardous: true,
           hazardous: {
-            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            sourceOfComponents: validSourceOfComponents.PROVIDED_WITH_WASTE,
             hazCodes: ['HP_5', 'HP_10', 'HP_12'],
             components: [{ name: 'Lead compounds', concentration: 15 }]
           }
@@ -55,7 +55,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         const result = validateHazardous({
           containsHazardous: true,
           hazardous: {
-            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            sourceOfComponents: validSourceOfComponents.PROVIDED_WITH_WASTE,
             hazCodes: [],
             components: [{ name: 'Mercury', concentration: 15 }]
           }
@@ -112,7 +112,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
           const result = validateHazardous({
             containsHazardous: true,
             hazardous: {
-              sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+              sourceOfComponents: validSourceOfComponents.PROVIDED_WITH_WASTE,
               hazCodes: [hazCode],
               components: [{ name: 'Mercury', concentration: 30 }]
             }
@@ -125,7 +125,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         const result = validateHazardous({
           containsHazardous: true,
           hazardous: {
-            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            sourceOfComponents: validSourceOfComponents.PROVIDED_WITH_WASTE,
             hazCodes: ['HP_1', 'HP_1', 'HP_2', 'HP_2'],
             components: [{ name: 'Mercury', concentration: 30 }]
           }
@@ -140,7 +140,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         const result = validateHazardous({
           containsHazardous: true,
           hazardous: {
-            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            sourceOfComponents: validSourceOfComponents.PROVIDED_WITH_WASTE,
             hazCodes: ['HP_3', 'HP_5', 'HP_3', 'HP_7', 'HP_5'],
             components: [{ name: 'Lead compounds', concentration: 20 }]
           }
@@ -154,7 +154,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         const result = validateHazardous({
           containsHazardous: true,
           hazardous: {
-            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            sourceOfComponents: validSourceOfComponents.PROVIDED_WITH_WASTE,
             hazCodes: ['HP_15', 'HP_15', 'HP_1', 'HP_1'],
             components: [{ name: 'Arsenic compounds', concentration: 25 }]
           }
@@ -168,7 +168,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         const result = validateHazardous({
           containsHazardous: true,
           hazardous: {
-            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            sourceOfComponents: validSourceOfComponents.PROVIDED_WITH_WASTE,
             hazCodes: [
               'HP_1',
               'HP_2',
@@ -198,7 +198,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         const result = validateHazardous({
           containsHazardous: true,
           hazardous: {
-            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            sourceOfComponents: validSourceOfComponents.PROVIDED_WITH_WASTE,
             hazCodes: ['HP_1', 'HP_2', 'HP_16']
           }
         })
@@ -215,7 +215,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         input: {
           containsHazardous: true,
           hazardous: {
-            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            sourceOfComponents: validSourceOfComponents.PROVIDED_WITH_WASTE,
             hazCodes: ['HP 1', 'HP2']
           }
         },
@@ -226,7 +226,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         input: {
           containsHazardous: true,
           hazardous: {
-            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            sourceOfComponents: validSourceOfComponents.PROVIDED_WITH_WASTE,
             hazCodes: [undefined]
           }
         },
@@ -238,7 +238,7 @@ describe('Receipt Schema Validation - Hazardous', () => {
         input: {
           containsHazardous: true,
           hazardous: {
-            sourceOfComponents: validSourceOfComponents.CARRIER_PROVIDED,
+            sourceOfComponents: validSourceOfComponents.PROVIDED_WITH_WASTE,
             hazCodes: [null]
           }
         },
@@ -255,8 +255,8 @@ describe('Receipt Schema Validation - Hazardous', () => {
       }
     )
   })
+})
 
-  popsAndHazardousComponentsErrorTests('Hazardous', {
-    hazCodes: [validHazCodes[0]]
-  })
+popsAndHazardousComponentsErrorTests('Hazardous', {
+  hazCodes: [validHazCodes[0]]
 })

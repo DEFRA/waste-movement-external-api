@@ -11,10 +11,7 @@ import {
   POPS_OR_HAZARDOUS_ERRORS,
   WASTE_ERRORS
 } from '../common/constants/validation-error-messages.js'
-import {
-  sourceOfComponentsProvided,
-  validSourceOfComponents
-} from '../common/constants/source-of-components.js'
+import { validSourceOfComponents } from '../common/constants/source-of-components.js'
 
 const MAX_EWC_CODES_COUNT = 5
 
@@ -54,17 +51,19 @@ const validatePopOrHazardousPresence = (value, helpers, popsOrHazardous) => {
       return helpers.message(validationMessage('sourceOfComponents'))
     }
 
+    // GUIDANCE and OWN_TESTING require components because the user actively determined them
+    // Only PROVIDED_WITH_WASTE can omit components (they may not have been provided with the waste)
     if (
-      Object.values(sourceOfComponentsProvided).includes(sourceOfComponents) &&
+      ['GUIDANCE', 'OWN_TESTING'].includes(sourceOfComponents) &&
       [undefined, null].includes(components)
     ) {
       return helpers.message(validationMessage('components'))
     }
+
+    // PROVIDED_WITH_WASTE: components are recommended but not required
+    // Warnings are handled separately - this allows submission to pass even without components
   }
 
-  // For other sources (CARRIER_PROVIDED, GUIDANCE, OWN_TESTING),
-  // components are recommended but not required - warnings are handled separately
-  // This allows the submission to pass validation even without components
   return value
 }
 
