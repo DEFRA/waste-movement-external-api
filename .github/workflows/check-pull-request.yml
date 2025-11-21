@@ -88,13 +88,13 @@ jobs:
           npm run test
 
       - name: Generate Test Report
-        if: steps.integration-tests.outcome == 'success' || steps.integration-tests.outcome == 'failure'
+        if: always()
         id: generate-report
         working-directory: integration-tests
         run: npm run report:generate
 
       - name: Upload Test Report
-        if: steps.generate-report.outcome == 'success'
+        if: always() && steps.generate-report.outcome == 'success'
         id: upload-report
         uses: actions/upload-artifact@v4
         with:
@@ -103,7 +103,7 @@ jobs:
           retention-days: 30
 
       - name: Comment Test Report Link on PR
-        if: steps.upload-report.outcome == 'success' && github.event_name == 'pull_request'
+        if: always() && steps.upload-report.outcome == 'success' && github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:
           script: |
@@ -115,7 +115,7 @@ jobs:
             })
 
       - name: Stop Docker Compose Services
-        if: steps.start-docker-compose-services.outcome == 'success'
+        if: always() && steps.start-docker-compose-services.outcome == 'success'
         env:
           ORG_API_CODES: ${{ secrets.ORG_API_CODES }}
         run: docker compose down
