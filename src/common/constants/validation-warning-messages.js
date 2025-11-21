@@ -13,7 +13,7 @@ export const POPS_OR_HAZARDOUS_WARNINGS = {
 export const WASTE_WARNINGS = {
   DISPOSAL_OR_RECOVERY_CODE_REQUIRED:
     '{{ #label }} is required for proper waste tracking and compliance',
-  DISPOSAL_OR_RECOVERY_CODE_WEIGHT_IS_REQURIED: '{{ #label }} flag is required'
+  DISPOSAL_OR_RECOVERY_CODE_WEIGHT_IS_REQUIRED: '{{ #label }} flag is required'
 }
 
 export const CARRIER_WARNINGS = {

@@ -35,7 +35,7 @@ export const disposalOrRecoveryCodesWarningValidators = {
       field: 'weight.isEstimate',
       validator: isDisposalOrRecoveryWeightIsEstimateMissing,
       errorType: VALIDATION_WARNING_TYPES.NOT_PROVIDED,
-      message: WASTE_WARNINGS.DISPOSAL_OR_RECOVERY_CODE_WEIGHT_IS_REQURIED
+      message: WASTE_WARNINGS.DISPOSAL_OR_RECOVERY_CODE_WEIGHT_IS_REQUIRED
     }
   ]
 }
