@@ -1,5 +1,5 @@
-import { REASONS_FOR_NO_REGISTRATION_NUMBER } from './reasons-for-no-registration-number'
-import { sourceOfComponentsProvided } from './source-of-components'
+import { REASONS_FOR_NO_REGISTRATION_NUMBER } from './reasons-for-no-registration-number.js'
+import { sourceOfComponentsProvided } from './source-of-components.js'
 
 export const RECEIPT_WARNINGS = {
   IS_REQUIRED: '{{ #label }} is required'
