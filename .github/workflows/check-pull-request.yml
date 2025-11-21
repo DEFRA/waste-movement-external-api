@@ -89,12 +89,22 @@ jobs:
           exit ${TEST_EXIT_CODE:-0}
 
       - name: Upload Test Report
-        if: always()
+        if: success() || failure()
+        id: upload-report
         uses: actions/upload-artifact@v4
         with:
           name: uat-test-report
           path: uat-tests/allure-report/
           retention-days: 30
+
+      - name: Add Test Report Link to Summary
+        if: success()
+        run: |
+          echo "## 📊 UAT Test Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The test report has been generated and is available as an artifact." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📥 [Download Test Report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload-report.outputs.artifact-id }})" >> $GITHUB_STEP_SUMMARY
 
       - name: Stop Docker Compose Services
         if: always()
