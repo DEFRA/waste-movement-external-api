@@ -81,7 +81,7 @@ jobs:
         working-directory: integration-tests
         env:
           WASTE_MOVEMENT_EXTERNAL_API_BASE_URL: http://localhost:3001
-          # AUTH_DISABLED: true
+          AUTH_DISABLED: true
           API_LOGGING: true
           JIRA_BASE_URL: https://eaflood.atlassian.net/browse
         run: |
