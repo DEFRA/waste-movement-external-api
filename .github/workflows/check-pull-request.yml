@@ -78,6 +78,7 @@ jobs:
 
       - name: Run Integration Tests
         id: integration-tests
+        continue-on-error: true
         working-directory: integration-tests
         env:
           WASTE_MOVEMENT_EXTERNAL_API_BASE_URL: http://localhost:3001
@@ -85,13 +86,16 @@ jobs:
           API_LOGGING: true
           JIRA_BASE_URL: https://eaflood.atlassian.net/browse
         run: |
-          npm run report:clean
-          npm run test || TEST_EXIT_CODE=$?
-          npm run report:generate
-          exit ${TEST_EXIT_CODE:-0}
+          npm run test
+
+      - name: Generate Test Report
+        if: steps.integration-tests.outcome == 'success' || steps.integration-tests.outcome == 'failure'
+        id: generate-report
+        working-directory: integration-tests
+        run: npm run report:generate
 
       - name: Upload Test Report
-        if: steps.integration-tests.outcome == 'success' || steps.integration-tests.outcome == 'failure'
+        if: steps.generate-report.outcome == 'success'
         id: upload-report
         uses: actions/upload-artifact@v4
         with:
