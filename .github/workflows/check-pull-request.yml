@@ -42,3 +42,81 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  integration-tests:
+    name: Run Integration Tests
+    runs-on: ubuntu-latest
+    needs: pr-validator
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Start Docker Compose Services
+        id: start-docker-compose-services
+        env:
+          ORG_API_CODES: ${{ secrets.ORG_API_CODES }}
+        run: |
+          docker compose up -d --wait
+          docker compose ps
+
+      - name: Checkout UAT Repository as Integration Test Suite
+        uses: actions/checkout@v4
+        with:
+          repository: DEFRA/digital-waste-tracking-uat
+          path: integration-tests
+
+      - name: Setup Node.js for Integration Test Suite
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: integration-tests/.nvmrc
+          cache: npm
+          cache-dependency-path: integration-tests/package-lock.json
+
+      - name: Install Integration Test Dependencies
+        working-directory: integration-tests
+        run: npm ci --ignore-scripts
+
+      - name: Run Integration Tests
+        id: integration-tests
+        working-directory: integration-tests
+        env:
+          WASTE_MOVEMENT_EXTERNAL_API_BASE_URL: http://localhost:3001
+          AUTH_DISABLED: true
+          API_LOGGING: true
+          JIRA_BASE_URL: https://eaflood.atlassian.net/browse
+        run: |
+          npm run test
+
+      - name: Generate Test Report
+        if: always()
+        id: generate-report
+        working-directory: integration-tests
+        run: npm run report:generate
+
+      - name: Upload Test Report
+        if: always() && steps.generate-report.outcome == 'success'
+        id: upload-report
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-report
+          path: integration-tests/allure-report/
+          retention-days: 30
+
+      - name: Comment Test Report Link on PR
+        if: always() && steps.upload-report.outcome == 'success' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const statusEmoji = '${{ steps.integration-tests.outcome }}' === 'success' ? '✅' : '❌';
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 📊 Integration Test Report ${statusEmoji}\n\nThe test report has been generated and is available as an artifact.\n\n📥 [Download Test Report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload-report.outputs.artifact-id }})`
+            })
+
+      - name: Stop Docker Compose Services
+        if: always() && steps.start-docker-compose-services.outcome == 'success'
+        env:
+          ORG_API_CODES: ${{ secrets.ORG_API_CODES }}
+        run: docker compose down

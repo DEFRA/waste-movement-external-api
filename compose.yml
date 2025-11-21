@@ -1,97 +1,75 @@
 services:
-  localstack:
-    image: localstack/localstack:3.0.2
+  waste-tracking-external-api:
+    build:
+      context: .
+      target: development
     ports:
-      - '4566:4566' # LocalStack Gateway
-      - '4510-4559:4510-4559' # external services port range
-    env_file:
-      - 'compose/aws.env'
+      - '3001:3001'
+    depends_on:
+      mongodb:
+        condition: service_healthy
     environment:
-      DEBUG: ${DEBUG:-1}
-      LS_LOG: WARN # Localstack DEBUG Level
-      SERVICES: s3,sqs,sns,firehose
-      LOCALSTACK_HOST: 127.0.0.1
+      PORT: 3001
+      NODE_ENV: development
+      ENVIRONMENT: local
+      MONGO_URI: mongodb://mongodb:27017/?replicaSet=rs0&directConnection=true
+      WASTE_TRACKING_SERVICE_URL: http://waste-tracking-id-backend:3001
+      WASTE_MOVEMENT_SERVICE_URL: http://waste-movement-backend:3001
+    networks:
+      - cdp-tenant
     volumes:
-      - '${TMPDIR:-/tmp}/localstack:/var/lib/localstack'
-      - ./compose/start-localstack.sh:/etc/localstack/init/ready.d/start-localstack.sh
-    healthcheck:
-      test: ['CMD', 'curl', 'localhost:4566']
-      interval: 5s
-      start_period: 5s
-      retries: 3
+      - ./src:/home/node/src
+      - ./package.json:/home/node/package.json
+
+  waste-movement-backend:
+    image: defradigital/waste-movement-backend:${WASTE_MOVEMENT_BACKEND_VERSION:-latest}
+    ports:
+      - '3002:3001'
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      PORT: 3001
+      NODE_ENV: development
+      ENVIRONMENT: local
+      MONGO_URI: mongodb://mongodb:27017/?replicaSet=rs0&directConnection=true
+      ORG_API_CODES: ${ORG_API_CODES}
+      MONGO_READ_PREFERENCE: primary
     networks:
       - cdp-tenant
 
-  redis:
-    image: redis:7.2.3-alpine3.18
+  waste-tracking-id-backend:
+    image: defradigital/waste-tracking-id-backend:${WASTE_TRACKING_ID_BACKEND_VERSION:-latest}
     ports:
-      - '6379:6379'
-    restart: always
+      - '3003:3001'
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      PORT: 3001
+      NODE_ENV: development
+      ENVIRONMENT: local
+      MONGO_URI: mongodb://mongodb:27017/?replicaSet=rs0&directConnection=true
     networks:
       - cdp-tenant
 
   mongodb:
     image: mongo:6.0.13
+    entrypoint: [ "bash", "/compose/mongo_setup.sh"]
     networks:
       - cdp-tenant
     ports:
       - '27017:27017'
     volumes:
-      - mongodb-data:/data
+      - mongodb-data:/data/db
+      - ./compose/mongo_setup.sh:/compose/mongo_setup.sh
     restart: always
-
-  ################################################################################
-
-  # frontend:
-  #   image: defradigital/frontend:${FRONTEND_VERSION:-latest}
-  #   ports:
-  #     - '3000:3000'
-  #   links:
-  #     - 'localstack:localstack'
-  #     - 'redis:redis'
-  #   depends_on:
-  #     localstack:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_started
-  #   env_file:
-  #     - 'compose/aws.env'
-  #   environment:
-  #     PORT: 3000
-  #     NODE_ENV: development
-  #     REDIS_HOST: redis
-  #     LOCALSTACK_ENDPOINT: http://localstack:4566
-  #     USE_SINGLE_INSTANCE_CACHE: true
-  #   networks:
-  #     - cdp-tenant
-
-  waste-movement-backend:
-#    image: local-build
-    image: defradigital/waste-movement-backend:latest
-    ports:
-      - '3001:3001'
-    links:
-      - 'localstack:localstack'
-      - 'mongodb:mongodb'
-    depends_on:
-      localstack:
-        condition: service_healthy
-      mongodb:
-        condition: service_started
-    env_file:
-      - 'compose/aws.env'
-    environment:
-      PORT: 3001
-      NODE_ENV: development
-      LOCALSTACK_ENDPOINT: http://localstack:4566
-      MONGO_URI: mongodb://mongodb:27017/
-    networks:
-      - cdp-tenant
-#    volumes:
-#      - ./src:/home/node/src
-#      - ./package.json:/home/node/package.json
-
-################################################################################
+    healthcheck:
+      test: mongosh --quiet --eval "try { var status = rs.status(); if (status.members[0].stateStr === 'PRIMARY') { quit(0); } else { quit(1); } } catch(e) { quit(1); }"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
 
 volumes:
   mongodb-data:
