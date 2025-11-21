@@ -83,9 +83,7 @@ jobs:
           API_LOGGING: true
           JIRA_BASE_URL: https://eaflood.atlassian.net/browse
         run: |
-          npm run report:clean
-          npm run test
-          npm run report:generate
+          npm run report:clean && npm run test ; npm run report:generate
 
       - name: Upload Test Report
         if: always()
