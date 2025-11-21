@@ -22,7 +22,7 @@ export const handleUpdateReceiptMovement = async (request, h) => {
     )
 
     // Generate validation warnings
-    const warnings = generateAllValidationWarnings(movement)
+    const warnings = generateAllValidationWarnings(movement, wasteTrackingId)
 
     const responseData = {}
 

@@ -22,7 +22,10 @@ export const handleCreateReceiptMovement = async (request, h) => {
     )
 
     // Generate validation warnings
-    const warnings = generateAllValidationWarnings(request.payload)
+    const warnings = generateAllValidationWarnings(
+      request.payload,
+      wasteTrackingId
+    )
 
     const responseData = {
       wasteTrackingId
