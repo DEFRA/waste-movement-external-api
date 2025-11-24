@@ -11,16 +11,17 @@ import {
   NI_CARRIER_REGISTRATION_NUMBER_REGEX,
   NRU_CARRIER_REGISTRATION_NUMBER_REGEX,
   SEPA_CARRIER_REGISTRATION_NUMBER_REGEX,
-  UK_POSTCODE_REGEX
+  UK_POSTCODE_REGEX,
+  ALL_SITE_AUTHORISATION_NUMBER_PATTERNS
 } from '../common/constants/regexes.js'
 import {
   CARRIER_ERRORS,
   ADDRESS_ERRORS,
-  CONSIGNMENT_ERRORS
+  CONSIGNMENT_ERRORS,
+  AUTHORISATION_ERRORS
 } from '../common/constants/validation-error-messages.js'
 import { REASONS_FOR_NO_REGISTRATION_NUMBER } from '../common/constants/reasons-for-no-registration-number.js'
 import { NO_CONSIGNMENT_REASONS } from '../common/constants/no-consignment-reasons.js'
-import { authorisationNumberSchema } from '../schemas/authorisation-number.js'
 
 const MIN_STRING_LENGTH = 1
 const LONG_STRING_MAX_LENGTH = 5000
@@ -48,6 +49,31 @@ const carrierOrBrokerDealerRegistrationNumber = Joi.alternatives()
   .messages({
     'alternatives.match': CARRIER_ERRORS.REGISTRATION_NUMBER_FORMAT
   })
+
+/**
+ * Determines if a site authorisation number is valid
+ * @param {String} authorisationNumber - The site authorisation number
+ * @returns {Boolean} True if the site authorisation number is valid, otherwise false
+ */
+const isValidAuthorisationNumber = (authorisationNumber) => {
+  const trimmedAuthorisationNumber = authorisationNumber.trim()
+  return ALL_SITE_AUTHORISATION_NUMBER_PATTERNS.some((pattern) =>
+    pattern.test(trimmedAuthorisationNumber)
+  )
+}
+
+const authorisationNumberSchema = Joi.string()
+  .strict()
+  .custom((value, helpers) => {
+    if (isValidAuthorisationNumber(value)) {
+      return value
+    }
+    return helpers.error('authorisation.invalid')
+  })
+  .messages({
+    'authorisation.invalid': AUTHORISATION_ERRORS.INVALID
+  })
+  .required()
 
 const carrierSchema = Joi.object({
   registrationNumber: carrierOrBrokerDealerRegistrationNumber

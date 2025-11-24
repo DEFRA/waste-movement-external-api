@@ -256,5 +256,20 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       const { error } = validate(receiver, receipt)
       expect(error).toBeUndefined()
     })
+
+    it('accepts authorisation number with start and/or end whitespace', () => {
+      const receiver = {
+        siteName: 'Test Receiver',
+        authorisationNumber: `   ${TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_SEPA}   `,
+        regulatoryPositionStatements: [100, 200, 300]
+      }
+
+      const receipt = {
+        address: { fullAddress: '1 Receiver St, Town', postcode: 'TE1 1ST' }
+      }
+
+      const { error } = validate(receiver, receipt)
+      expect(error).toBeUndefined()
+    })
   })
 })
