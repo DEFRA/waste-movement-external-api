@@ -200,7 +200,7 @@ export const generateAllValidationWarnings = (payload, wasteTrackingId) => {
 
   if (warnings.length > 0) {
     warnings.forEach((warning) =>
-      logger.error(`${warning.message} (wasteTrackingId: "${wasteTrackingId}")`)
+      logger.warn(`${warning.message} (wasteTrackingId: "${wasteTrackingId}")`)
     )
   }
 
