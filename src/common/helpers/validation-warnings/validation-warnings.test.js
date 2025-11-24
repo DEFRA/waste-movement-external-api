@@ -59,12 +59,12 @@ describe('Validation Warnings', () => {
           registrationNumber: 'CBDU123456'
         }
       }
-      const errorLoggerSpy = jest.spyOn(logger.createLogger(), 'error')
+      const warnLoggerSpy = jest.spyOn(logger.createLogger(), 'warn')
 
       const warnings = generateAllValidationWarnings(payload, wasteTrackingId)
 
       expect(warnings).toEqual([])
-      expect(errorLoggerSpy).toHaveBeenCalledTimes(0)
+      expect(warnLoggerSpy).toHaveBeenCalledTimes(0)
     })
 
     it('should return warnings array and log error message for each warning when warnings are generated', () => {
@@ -87,7 +87,7 @@ describe('Validation Warnings', () => {
           registrationNumber: 'CBDU123456'
         }
       }
-      const errorLoggerSpy = jest.spyOn(logger.createLogger(), 'error')
+      const warnLoggerSpy = jest.spyOn(logger.createLogger(), 'warn')
       const metricWarning = {
         errorType: 'NotProvided',
         key: 'wasteItems.0.disposalOrRecoveryCodes.0.weight.metric',
@@ -104,11 +104,11 @@ describe('Validation Warnings', () => {
       const warnings = generateAllValidationWarnings(payload, wasteTrackingId)
 
       expect(warnings).toEqual([metricWarning, isEstimateWarning])
-      expect(errorLoggerSpy).toHaveBeenCalledTimes(2)
-      expect(errorLoggerSpy).toHaveBeenCalledWith(
+      expect(warnLoggerSpy).toHaveBeenCalledTimes(2)
+      expect(warnLoggerSpy).toHaveBeenCalledWith(
         `${metricWarning.message} (wasteTrackingId: "${wasteTrackingId}")`
       )
-      expect(errorLoggerSpy).toHaveBeenCalledWith(
+      expect(warnLoggerSpy).toHaveBeenCalledWith(
         `${isEstimateWarning.message} (wasteTrackingId: "${wasteTrackingId}")`
       )
     })
