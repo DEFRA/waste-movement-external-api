@@ -12,7 +12,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
     it('accepts single positive integer', () => {
       const receiver = {
         siteName: TEST_DATA.RECEIVER.SITE_NAME,
-        authorisationNumbers: TEST_DATA.AUTHORISATION_NUMBERS.SIMPLE,
+        authorisationNumber: TEST_DATA.AUTHORISATION_NUMBERS.SIMPLE,
         regulatoryPositionStatements: TEST_DATA.RPS.VALID.SINGLE
       }
 
@@ -29,7 +29,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
     it('accepts multiple positive integers', () => {
       const receiver = {
         siteName: TEST_DATA.RECEIVER.SITE_NAME,
-        authorisationNumbers: TEST_DATA.AUTHORISATION_NUMBERS.SIMPLE,
+        authorisationNumber: TEST_DATA.AUTHORISATION_NUMBERS.SIMPLE,
         regulatoryPositionStatements: TEST_DATA.RPS.VALID.MULTIPLE
       }
 
@@ -46,9 +46,8 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
     it('accepts when RPS is not provided', () => {
       const receiver = {
         siteName: 'Test Receiver',
-        authorisationNumbers: [
+        authorisationNumber:
           TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX
-        ]
       }
 
       const receipt = {
@@ -59,10 +58,10 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       expect(error).toBeUndefined()
     })
 
-    it('rejects when both authorisations and RPS are empty', () => {
+    it('rejects when both authorisation number and RPS are empty', () => {
       const receiver = {
         siteName: 'Test Receiver',
-        authorisationNumbers: [],
+        authorisationNumber: '',
         regulatoryPositionStatements: []
       }
 
@@ -73,11 +72,29 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       const { error } = validate(receiver, receipt)
       expect(error).toBeDefined()
       expect(error.message).toBe(
-        '"receiver.authorisationNumbers" must contain at least 1 items'
+        '"receiver.authorisationNumber" is not allowed to be empty'
       )
     })
 
-    it('rejects when neither authorisations nor RPS are provided', () => {
+    it('rejects when both authorisation number and RPS are null', () => {
+      const receiver = {
+        siteName: 'Test Receiver',
+        authorisationNumber: null,
+        regulatoryPositionStatements: null
+      }
+
+      const receipt = {
+        address: { fullAddress: '1 Receiver St, Town', postcode: 'TE1 1ST' }
+      }
+
+      const { error } = validate(receiver, receipt)
+      expect(error).toBeDefined()
+      expect(error.message).toBe(
+        '"receiver.authorisationNumber" must be a string'
+      )
+    })
+
+    it('rejects when neither authorisation number nor RPS are provided', () => {
       const receiver = {
         siteName: 'Test Receiver'
       }
@@ -88,7 +105,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
 
       const { error } = validate(receiver, receipt)
       expect(error).toBeDefined()
-      expect(error.message).toBe('"receiver.authorisationNumbers" is required')
+      expect(error.message).toBe('"receiver.authorisationNumber" is required')
     })
   })
 
@@ -96,9 +113,8 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
     it('rejects string value "123RPS"', () => {
       const receiver = {
         siteName: 'Test Receiver',
-        authorisationNumbers: [
-          TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_PPC_A
-        ],
+        authorisationNumber:
+          TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_PPC_A,
         regulatoryPositionStatements: ['123RPS']
       }
 
@@ -114,7 +130,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
     it('rejects string value "RPS-123"', () => {
       const receiver = {
         siteName: 'Test Receiver',
-        authorisationNumbers: [TEST_DATA.AUTHORISATION_NUMBERS.VALID.WALES_EPR],
+        authorisationNumber: TEST_DATA.AUTHORISATION_NUMBERS.VALID.WALES_EPR,
         regulatoryPositionStatements: ['RPS-123']
       }
 
@@ -130,7 +146,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
     it('rejects string value "RPS12A3"', () => {
       const receiver = {
         siteName: 'Test Receiver',
-        authorisationNumbers: [TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WPPC],
+        authorisationNumber: TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WPPC,
         regulatoryPositionStatements: ['RPS12A3']
       }
 
@@ -146,9 +162,8 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
     it('rejects negative numbers', () => {
       const receiver = {
         siteName: 'Test Receiver',
-        authorisationNumbers: [
-          TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_EAWML
-        ],
+        authorisationNumber:
+          TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_EAWML,
         regulatoryPositionStatements: [-123]
       }
 
@@ -164,9 +179,7 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
     it('rejects zero', () => {
       const receiver = {
         siteName: 'Test Receiver',
-        authorisationNumbers: [
-          TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_WML
-        ],
+        authorisationNumber: TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_WML,
         regulatoryPositionStatements: [0]
       }
 
@@ -182,9 +195,8 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
     it('rejects decimal numbers', () => {
       const receiver = {
         siteName: 'Test Receiver',
-        authorisationNumbers: [
-          TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_WML_L
-        ],
+        authorisationNumber:
+          TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_WML_L,
         regulatoryPositionStatements: [12.5]
       }
 
@@ -198,8 +210,8 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
     })
   })
 
-  describe('RPS can be provided independently of authorisation numbers', () => {
-    it('rejects RPS without any authorisation numbers', () => {
+  describe('RPS can be provided independently of authorisation number', () => {
+    it('rejects RPS without any authorisation number', () => {
       const receiver = {
         siteName: 'Test Receiver',
         regulatoryPositionStatements: [123, 456]
@@ -211,16 +223,14 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
 
       const { error } = validate(receiver, receipt)
       expect(error).toBeDefined()
-      expect(error.message).toBe('"receiver.authorisationNumbers" is required')
+      expect(error.message).toBe('"receiver.authorisationNumber" is required')
     })
 
-    it('accepts authorisation numbers without RPS', () => {
+    it('accepts authorisation number without RPS', () => {
       const receiver = {
         siteName: 'Test Receiver',
-        authorisationNumbers: [
-          TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX,
-          TEST_DATA.AUTHORISATION_NUMBERS.VALID.WALES_EPR
-        ]
+        authorisationNumber:
+          TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX
       }
 
       const receipt = {
@@ -231,13 +241,26 @@ describe('Regulatory Position Statement (RPS) Validation', () => {
       expect(error).toBeUndefined()
     })
 
-    it('accepts both authorisation numbers and RPS together', () => {
+    it('accepts both authorisation number and RPS together', () => {
       const receiver = {
         siteName: 'Test Receiver',
-        authorisationNumbers: [
+        authorisationNumber:
           TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_SEPA,
-          TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_P_FORMAT
-        ],
+        regulatoryPositionStatements: [100, 200, 300]
+      }
+
+      const receipt = {
+        address: { fullAddress: '1 Receiver St, Town', postcode: 'TE1 1ST' }
+      }
+
+      const { error } = validate(receiver, receipt)
+      expect(error).toBeUndefined()
+    })
+
+    it('accepts authorisation number with start and/or end whitespace', () => {
+      const receiver = {
+        siteName: 'Test Receiver',
+        authorisationNumber: `   ${TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_SEPA}   `,
         regulatoryPositionStatements: [100, 200, 300]
       }
 
