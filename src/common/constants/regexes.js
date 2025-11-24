@@ -21,8 +21,8 @@ export const NRU_CARRIER_REGISTRATION_NUMBER_REGEX =
 
 export const NI_CARRIER_REGISTRATION_NUMBER_REGEX = /^ROC\W*[UL]T\W*\d{1,5}$/i
 
-// England site authorisation number patterns
-const ENGLAND_SITE_AUTHORISATION_NUMBER_PATTERNS = [
+// England site authorisation number regexes
+const ENGLAND_SITE_AUTHORISATION_NUMBER_REGEXES = [
   /^[A-Z]{2}\d{4}[A-Z]{2}$/i, // XX9999XX
   /^[A-Z]{2}\d{4}[A-Z]{2}\/D\d{4}$/i, // XX9999XX/D9999
   /^EPR\/[A-Z]{2}\d{4}[A-Z]{2}$/i, // EPR/XX9999XX
@@ -31,8 +31,8 @@ const ENGLAND_SITE_AUTHORISATION_NUMBER_PATTERNS = [
   /^WML\d{6}$/i // WML999999
 ]
 
-// Scotland (SEPA) site authorisation number patterns
-const SCOTLAND_SITE_AUTHORISATION_NUMBER_PATTERNS = [
+// Scotland (SEPA) site authorisation number regexes
+const SCOTLAND_SITE_AUTHORISATION_NUMBER_REGEXES = [
   /^PPC\/[AWEN]\/\d{7}$/i, // PPC/A/9999999
   /^WML\/[LWEN]\/\d{7}$/i, // WML/L/9999999
   /^PPC\/A\/SEPA\d{4}-\d{4}$/i, // PPC/A/SEPA9999-9999
@@ -40,14 +40,14 @@ const SCOTLAND_SITE_AUTHORISATION_NUMBER_PATTERNS = [
   /^EAS\/P\/\d{6}$/i // EAS/P/999999
 ]
 
-// Wales (NRW) site authorisation number patterns - shares patterns with England
-const WALES_SITE_AUTHORISATION_NUMBER_PATTERNS = [
+// Wales (NRW) site authorisation number regexes - shares regexes with England
+const WALES_SITE_AUTHORISATION_NUMBER_REGEXES = [
   /^[A-Z]{2}\d{4}[A-Z]{2}$/i, // XX9999XX
   /^EPR\/[A-Z]{2}\d{4}[A-Z]{2}$/i // EPR/XX9999XX
 ]
 
-// Northern Ireland site authorisation number patterns
-const NI_SITE_AUTHORISATION_NUMBER_PATTERNS = [
+// Northern Ireland site authorisation number regexes
+const NI_SITE_AUTHORISATION_NUMBER_REGEXES = [
   /^P\d{4}\/\d{2}[A-Z]$/i, // P9999/99X
   /^P\d{4}\/\d{2}[A-Z]\/V\d+$/i, // P9999/99X/V# (with version)
   /^WPPC \d{2}\/\d{2}$/i, // WPPC 99/99
@@ -57,10 +57,10 @@ const NI_SITE_AUTHORISATION_NUMBER_PATTERNS = [
   /^WML \d{2}\/\d+ PAC\/\d{4}\/WCL\d{3}$/i // Combined WML + PAC formats
 ]
 
-// Combine all site authorisation number patterns for validation
-export const ALL_SITE_AUTHORISATION_NUMBER_PATTERNS = [
-  ...ENGLAND_SITE_AUTHORISATION_NUMBER_PATTERNS,
-  ...SCOTLAND_SITE_AUTHORISATION_NUMBER_PATTERNS,
-  ...WALES_SITE_AUTHORISATION_NUMBER_PATTERNS,
-  ...NI_SITE_AUTHORISATION_NUMBER_PATTERNS
+// Combine all site authorisation number regexes for validation
+export const ALL_SITE_AUTHORISATION_NUMBER_REGEXES = [
+  ...ENGLAND_SITE_AUTHORISATION_NUMBER_REGEXES,
+  ...SCOTLAND_SITE_AUTHORISATION_NUMBER_REGEXES,
+  ...WALES_SITE_AUTHORISATION_NUMBER_REGEXES,
+  ...NI_SITE_AUTHORISATION_NUMBER_REGEXES
 ]

@@ -12,7 +12,7 @@ import {
   NRU_CARRIER_REGISTRATION_NUMBER_REGEX,
   SEPA_CARRIER_REGISTRATION_NUMBER_REGEX,
   UK_POSTCODE_REGEX,
-  ALL_SITE_AUTHORISATION_NUMBER_PATTERNS
+  ALL_SITE_AUTHORISATION_NUMBER_REGEXES
 } from '../common/constants/regexes.js'
 import {
   CARRIER_ERRORS,
@@ -57,8 +57,8 @@ const carrierOrBrokerDealerRegistrationNumber = Joi.alternatives()
  */
 const isValidAuthorisationNumber = (authorisationNumber) => {
   const trimmedAuthorisationNumber = authorisationNumber.trim()
-  return ALL_SITE_AUTHORISATION_NUMBER_PATTERNS.some((pattern) =>
-    pattern.test(trimmedAuthorisationNumber)
+  return ALL_SITE_AUTHORISATION_NUMBER_REGEXES.some((regex) =>
+    regex.test(trimmedAuthorisationNumber)
   )
 }
 
