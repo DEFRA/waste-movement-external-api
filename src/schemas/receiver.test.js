@@ -20,9 +20,8 @@ describe('Receiver Validation', () => {
       siteName: 'Test Receiver',
       emailAddress: 'receiver@example.com',
       phoneNumber: '01234567890',
-      authorisationNumbers: [
+      authorisationNumber:
         TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX
-      ]
     }
 
     const receipt = {
@@ -39,9 +38,7 @@ describe('Receiver Validation', () => {
   it('accepts when no receiver tel/email are provided', () => {
     const receiver = {
       siteName: 'Test Receiver',
-      authorisationNumbers: [
-        TEST_DATA.AUTHORISATION_NUMBERS.VALID.WALES_XX9999XX
-      ]
+      authorisationNumber: TEST_DATA.AUTHORISATION_NUMBERS.VALID.WALES_XX9999XX
     }
 
     const receipt = {
@@ -55,30 +52,10 @@ describe('Receiver Validation', () => {
     expect(error).toBeUndefined()
   })
 
-  it('accepts when multiple authorisation numbers are provided', () => {
+  it('rejects when authorisation number is undefined', () => {
     const receiver = {
       siteName: 'Test Receiver',
-      authorisationNumbers: [
-        TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX,
-        TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_PPC_A,
-        TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WPPC
-      ]
-    }
-
-    const receipt = {
-      address: {
-        fullAddress: '1 Receiver St, Town',
-        postcode: 'TE1 1ST'
-      }
-    }
-
-    const { error } = validate(receiver, receipt)
-    expect(error).toBeUndefined()
-  })
-
-  it('rejects when no authorisation numbers are provided', () => {
-    const receiver = {
-      siteName: 'Test Receiver'
+      authorisationNumber: undefined
     }
 
     const receipt = {
@@ -90,13 +67,13 @@ describe('Receiver Validation', () => {
 
     const { error } = validate(receiver, receipt)
     expect(error).toBeDefined()
-    expect(error.message).toBe('"receiver.authorisationNumbers" is required')
+    expect(error.message).toBe('"receiver.authorisationNumber" is required')
   })
 
-  it('rejects when authorisation numbers is an empty array', () => {
+  it('rejects when authorisation number is null', () => {
     const receiver = {
       siteName: 'Test Receiver',
-      authorisationNumbers: []
+      authorisationNumber: null
     }
 
     const receipt = {
@@ -109,7 +86,27 @@ describe('Receiver Validation', () => {
     const { error } = validate(receiver, receipt)
     expect(error).toBeDefined()
     expect(error.message).toBe(
-      '"receiver.authorisationNumbers" must contain at least 1 items'
+      '"receiver.authorisationNumber" must be a string'
+    )
+  })
+
+  it('rejects when authorisation number is an empty string', () => {
+    const receiver = {
+      siteName: 'Test Receiver',
+      authorisationNumber: ''
+    }
+
+    const receipt = {
+      address: {
+        fullAddress: '1 Receiver St, Town',
+        postcode: 'TE1 1ST'
+      }
+    }
+
+    const { error } = validate(receiver, receipt)
+    expect(error).toBeDefined()
+    expect(error.message).toBe(
+      '"receiver.authorisationNumber" is not allowed to be empty'
     )
   })
 
@@ -135,9 +132,7 @@ describe('Receiver Validation', () => {
       siteName: 'Test Receiver',
       emailAddress: 'receiver@example.com',
       phoneNumber: '01234567890',
-      authorisationNumbers: [
-        TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_PPC_A
-      ]
+      authorisationNumber: TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_PPC_A
     }
 
     const receipt = {}
@@ -150,7 +145,7 @@ describe('Receiver Validation', () => {
   it('rejects incomplete receiver address without postcode', () => {
     const receiver = {
       siteName: 'Test Receiver',
-      authorisationNumbers: [TEST_DATA.AUTHORISATION_NUMBERS.VALID.WALES_EPR]
+      authorisationNumber: TEST_DATA.AUTHORISATION_NUMBERS.VALID.WALES_EPR
     }
 
     const receipt = {
@@ -165,7 +160,7 @@ describe('Receiver Validation', () => {
   it('rejects incomplete receiver address without fullAddress', () => {
     const receiver = {
       siteName: 'Test Receiver',
-      authorisationNumbers: [TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WPPC]
+      authorisationNumber: TEST_DATA.AUTHORISATION_NUMBERS.VALID.NI_WPPC
     }
 
     const receipt = {
@@ -180,9 +175,7 @@ describe('Receiver Validation', () => {
   it('rejects invalid UK postcode', () => {
     const receiver = {
       siteName: 'Invalid Postcode Receiver',
-      authorisationNumbers: [
-        TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_EAWML
-      ]
+      authorisationNumber: TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_EAWML
     }
 
     const receipt = {
@@ -202,7 +195,7 @@ describe('Receiver Validation', () => {
   it('rejects valid Ireland Eircode', () => {
     const receiver = {
       siteName: 'Invalid Eircode Receiver',
-      authorisationNumbers: [TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_WML]
+      authorisationNumber: TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_WML
     }
 
     const receipt = {
@@ -223,9 +216,7 @@ describe('Receiver Validation', () => {
     const receiver = {
       siteName: 'Invalid Email Receiver',
       emailAddress: 'not-an-email',
-      authorisationNumbers: [
-        TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_WML_L
-      ]
+      authorisationNumber: TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_WML_L
     }
 
     const receipt = {
@@ -240,10 +231,10 @@ describe('Receiver Validation', () => {
     expect(error.message).toBe('"receiver.emailAddress" must be a valid email')
   })
 
-  it('accepts receiver with authorisation numbers and valid RPS numbers', () => {
+  it('accepts receiver with authorisation number and valid RPS numbers', () => {
     const receiver = {
       siteName: TEST_DATA.RECEIVER.SITE_NAME,
-      authorisationNumbers: TEST_DATA.AUTHORISATION_NUMBERS.COMPLEX,
+      authorisationNumber: TEST_DATA.AUTHORISATION_NUMBERS.COMPLEX,
       regulatoryPositionStatements: [123, 456]
     }
 
@@ -258,7 +249,7 @@ describe('Receiver Validation', () => {
   it('rejects receiver with invalid RPS number format', () => {
     const receiver = {
       siteName: TEST_DATA.RECEIVER.SITE_NAME,
-      authorisationNumbers: TEST_DATA.AUTHORISATION_NUMBERS.COMPLEX,
+      authorisationNumber: TEST_DATA.AUTHORISATION_NUMBERS.COMPLEX,
       regulatoryPositionStatements: [TEST_DATA.RPS.INVALID.STRINGS[0]]
     }
 
@@ -274,7 +265,7 @@ describe('Receiver Validation', () => {
   it('rejects when an authorisation number is provided with an invalid format', () => {
     const receiver = {
       siteName: 'Test Receiver',
-      authorisationNumbers: [1]
+      authorisationNumber: 1
     }
 
     const receipt = {
@@ -287,16 +278,14 @@ describe('Receiver Validation', () => {
     const { error } = validate(receiver, receipt)
     expect(error).toBeDefined()
     expect(error.message).toBe(
-      '"receiver.authorisationNumbers[0]" must be a string'
+      '"receiver.authorisationNumber" must be a string'
     )
   })
 
   it('accepts receiver with only regulatory position statements', () => {
     const receiver = {
       siteName: 'Test Receiver',
-      authorisationNumbers: [
-        TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_SEPA
-      ],
+      authorisationNumber: TEST_DATA.AUTHORISATION_NUMBERS.VALID.SCOTLAND_SEPA,
       regulatoryPositionStatements: [123, 456, 789]
     }
 
@@ -311,13 +300,11 @@ describe('Receiver Validation', () => {
     expect(error).toBeUndefined()
   })
 
-  it('accepts receiver with only authorisation numbers', () => {
+  it('accepts receiver with only authorisation number', () => {
     const receiver = {
       siteName: 'Test Receiver',
-      authorisationNumbers: [
-        TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX,
-        TEST_DATA.AUTHORISATION_NUMBERS.VALID.WALES_EPR
-      ]
+      authorisationNumber:
+        TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX
     }
 
     const receipt = {
@@ -342,13 +329,13 @@ describe('Receiver Validation', () => {
       test(`invalidates ${formatExample}`, () => {
         const receiver = {
           siteName: 'Test Receiver',
-          authorisationNumbers: [testDataValue]
+          authorisationNumber: testDataValue
         }
 
         const { error } = validate(receiver, createStandardReceipt())
         expect(error).toBeDefined()
         expect(error.message).toBe(
-          '"receiver.authorisationNumbers[0]" must be in a valid UK format'
+          '"receiver.authorisationNumber" must be in a valid UK format'
         )
       })
     })
@@ -376,7 +363,7 @@ describe('Receiver Validation', () => {
     ])('accepts valid format: %s', (format) => {
       const receiver = {
         siteName: 'Test Receiver',
-        authorisationNumbers: [format]
+        authorisationNumber: format
       }
 
       const { error } = validate(receiver, createStandardReceipt())
@@ -400,13 +387,13 @@ describe('Receiver Validation', () => {
       test(`invalidates ${formatExample}`, () => {
         const receiver = {
           siteName: 'Test Receiver',
-          authorisationNumbers: [testDataValue]
+          authorisationNumber: testDataValue
         }
 
         const { error } = validate(receiver, createStandardReceipt())
         expect(error).toBeDefined()
         expect(error.message).toBe(
-          '"receiver.authorisationNumbers[0]" must be in a valid UK format'
+          '"receiver.authorisationNumber" must be in a valid UK format'
         )
       })
     })

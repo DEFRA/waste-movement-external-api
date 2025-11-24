@@ -56,10 +56,6 @@ const ALL_PATTERNS = [
  * Validates a site authorization number against all UK nation formats
  */
 const isValidAuthorisationNumber = (value) => {
-  if (!value || typeof value !== 'string') {
-    return false
-  }
-
   const trimmedValue = value.trim()
   return ALL_PATTERNS.some((pattern) => pattern.test(trimmedValue))
 }
@@ -68,6 +64,7 @@ const isValidAuthorisationNumber = (value) => {
  * Joi schema for validating site authorization numbers
  */
 export const authorisationNumberSchema = Joi.string()
+  .strict()
   .custom((value, helpers) => {
     if (isValidAuthorisationNumber(value)) {
       return value
@@ -77,11 +74,4 @@ export const authorisationNumberSchema = Joi.string()
   .messages({
     'authorisation.invalid': AUTHORISATION_ERRORS.INVALID
   })
-
-/**
- * Joi schema for validating an array of authorization numbers
- */
-export const authorisationNumbersArraySchema = Joi.array()
-  .items(authorisationNumberSchema)
-  .min(1)
   .required()

@@ -20,9 +20,8 @@ export const TEST_DATA = {
   },
 
   AUTHORISATION_NUMBERS: {
-    SIMPLE: ['HP3456XX'],
-    COMPLEX: ['EPR/AB1234CD/D6789'],
-    MULTIPLE: ['HP3456XX', 'PPC/A/1234567', 'WPPC 12/34'],
+    SIMPLE: 'HP3456XX',
+    COMPLEX: 'EPR/AB1234CD/D6789',
     // Valid formats from acceptance criteria
     VALID: {
       ENGLAND_XX9999XX: 'HP3456XX',

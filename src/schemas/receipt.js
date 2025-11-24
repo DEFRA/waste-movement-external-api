@@ -13,7 +13,6 @@ import {
   SEPA_CARRIER_REGISTRATION_NUMBER_REGEX,
   UK_POSTCODE_REGEX
 } from '../common/constants/regexes.js'
-import { authorisationNumbersArraySchema } from './authorisation-number.js'
 import {
   CARRIER_ERRORS,
   ADDRESS_ERRORS,
@@ -21,6 +20,7 @@ import {
 } from '../common/constants/validation-error-messages.js'
 import { REASONS_FOR_NO_REGISTRATION_NUMBER } from '../common/constants/reasons-for-no-registration-number.js'
 import { NO_CONSIGNMENT_REASONS } from '../common/constants/no-consignment-reasons.js'
+import { authorisationNumberSchema } from '../schemas/authorisation-number.js'
 
 const MIN_STRING_LENGTH = 1
 const LONG_STRING_MAX_LENGTH = 5000
@@ -105,7 +105,7 @@ const receiverSchema = Joi.object({
   siteName: Joi.string().required(),
   emailAddress: Joi.string().email(),
   phoneNumber: Joi.string(),
-  authorisationNumbers: authorisationNumbersArraySchema,
+  authorisationNumber: authorisationNumberSchema,
   regulatoryPositionStatements: Joi.array().items(
     Joi.number().strict().integer().positive()
   )

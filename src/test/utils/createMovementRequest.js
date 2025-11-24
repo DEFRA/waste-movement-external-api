@@ -23,9 +23,8 @@ export function createMovementRequest(overrides) {
     },
     receiver: {
       siteName: 'Test Receiver',
-      authorisationNumbers: [
-        TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX
-      ],
+      authorisationNumber:
+        TEST_DATA.AUTHORISATION_NUMBERS.VALID.ENGLAND_XX9999XX,
       regulatoryPositionStatements: [343]
     },
     receipt: {
