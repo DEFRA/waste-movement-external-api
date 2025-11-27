@@ -28,6 +28,8 @@ const jwtAuth = {
               return { isValid: false }
             }
 
+            logger.info(`JWT token client_id: ${clientId}`)
+
             const tokenUse = artifacts.decoded.payload.token_use
             if (tokenUse !== 'access') {
               logger.error('JWT token is not an access token')
