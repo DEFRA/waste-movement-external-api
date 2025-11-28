@@ -1,12 +1,9 @@
-import { createLogger } from '../common/helpers/logging/logger.js'
-
-const logger = createLogger()
-
 export const errorHandler = {
   plugin: {
     name: 'errorHandler',
     register: async (server) => {
       server.ext('onPreResponse', (request, h) => {
+        const logger = request.logger
         const response = request.response
 
         if (response.isBoom) {
