@@ -9,7 +9,8 @@ const defaultConfig = {
   maxRetries: 3,
   retryDelay: 1000, // 1 second
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${config.get('serviceAuthToken')}`
   }
 }
 
