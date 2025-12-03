@@ -55,7 +55,7 @@ services:
 
   mongodb:
     image: mongo:6.0.13
-    entrypoint: [ "bash", "/compose/mongo_setup.sh"]
+    entrypoint: ['bash', '/compose/mongo_setup.sh']
     networks:
       - cdp-tenant
     ports:
