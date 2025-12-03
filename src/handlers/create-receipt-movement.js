@@ -11,14 +11,15 @@ export const handleCreateReceiptMovement = async (request, h) => {
   let wasteTrackingId
 
   try {
-    // const { clientId } = request.auth.credentials
+    const { clientId } = request.auth.credentials
 
-    wasteTrackingId = (await httpClients.wasteTracking.get('/next')).payload
-      .wasteTrackingId
+    wasteTrackingId = (await httpClients.wasteTracking.get('/next', clientId))
+      .payload.wasteTrackingId
 
     let response = await httpClients.wasteMovement.post(
       `/movements/${wasteTrackingId}/receive`,
-      { movement: request.payload }
+      { movement: request.payload },
+      clientId
     )
 
     // Generate validation warnings

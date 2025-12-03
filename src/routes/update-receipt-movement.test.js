@@ -80,7 +80,8 @@ describe('handleUpdateReceiptMovement', () => {
 
     expect(httpClients.wasteMovement.put).toHaveBeenCalledWith(
       `/movements/${mockRequest.params.wasteTrackingId}/receive`,
-      { movement: mockRequest.payload }
+      { movement: mockRequest.payload },
+      'test-client-id'
     )
     expect(mockH.response).toHaveBeenCalledWith(expectedResponseWithWarnings)
 
@@ -119,7 +120,8 @@ describe('handleUpdateReceiptMovement', () => {
 
     expect(httpClients.wasteMovement.put).toHaveBeenCalledWith(
       `/movements/${mockRequest.params.wasteTrackingId}/receive`,
-      { movement: completePayload }
+      { movement: completePayload },
+      'test-client-id'
     )
     expect(mockH.response).toHaveBeenCalledWith({})
 

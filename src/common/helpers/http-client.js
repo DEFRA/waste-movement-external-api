@@ -4,17 +4,22 @@ import { config } from '../../config.js'
 /**
  * Base configuration for the HTTP clients
  */
-const serviceAuthToken = config.get('serviceAuthToken')
-const basicAuthHeader = `Basic ${Buffer.from(`service:${serviceAuthToken}`).toString('base64')}`
-
 const defaultConfig = {
   timeout: 5000, // 5 seconds timeout
   maxRetries: 3,
   retryDelay: 1000, // 1 second
   headers: {
-    'Content-Type': 'application/json',
-    Authorization: basicAuthHeader
+    'Content-Type': 'application/json'
   }
+}
+
+/**
+ * Generates Basic auth header from clientId
+ * @param {string} clientId - The client ID from JWT credentials
+ * @returns {string} Basic auth header value
+ */
+function generateAuthHeader(clientId) {
+  return `Basic ${Buffer.from(`${clientId}:`).toString('base64')}`
 }
 
 /**
@@ -79,15 +84,19 @@ function createServiceClient(baseUrl, httpClient) {
     /**
      * Make a GET request
      * @param {string} path - API path
+     * @param {string} clientId - Client ID from JWT credentials
      * @param {Object} [headers] - Request headers
      * @returns {Promise<Object>} Response object
      */
-    async get(path, headers = {}) {
+    async get(path, clientId, headers = {}) {
       return makeRequest(
         {
           url: `${baseUrl}${path}`,
           method: 'GET',
-          headers
+          headers: {
+            ...headers,
+            Authorization: generateAuthHeader(clientId)
+          }
         },
         httpClient
       )
@@ -97,16 +106,20 @@ function createServiceClient(baseUrl, httpClient) {
      * Make a POST request
      * @param {string} path - API path
      * @param {Object} payload - Request payload
+     * @param {string} clientId - Client ID from JWT credentials
      * @param {Object} [headers] - Request headers
      * @returns {Promise<Object>} Response object
      */
-    async post(path, payload, headers = {}) {
+    async post(path, payload, clientId, headers = {}) {
       return makeRequest(
         {
           url: `${baseUrl}${path}`,
           method: 'POST',
           payload,
-          headers
+          headers: {
+            ...headers,
+            Authorization: generateAuthHeader(clientId)
+          }
         },
         httpClient
       )
@@ -116,16 +129,20 @@ function createServiceClient(baseUrl, httpClient) {
      * Make a PUT request
      * @param {string} path - API path
      * @param {Object} payload - Request payload
+     * @param {string} clientId - Client ID from JWT credentials
      * @param {Object} [headers] - Request headers
      * @returns {Promise<Object>} Response object
      */
-    async put(path, payload, headers = {}) {
+    async put(path, payload, clientId, headers = {}) {
       return makeRequest(
         {
           url: `${baseUrl}${path}`,
           method: 'PUT',
           payload,
-          headers
+          headers: {
+            ...headers,
+            Authorization: generateAuthHeader(clientId)
+          }
         },
         httpClient
       )

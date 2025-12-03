@@ -12,13 +12,15 @@ import { generateAllValidationWarnings } from '../common/helpers/validation-warn
 export const handleUpdateReceiptMovement = async (request, h) => {
   try {
     const { wasteTrackingId } = request.params
+    const { clientId } = request.auth.credentials
     const movement = request.payload
 
     const response = await httpClients.wasteMovement.put(
       `/movements/${wasteTrackingId}/receive`,
       {
         movement
-      }
+      },
+      clientId
     )
 
     // Generate validation warnings

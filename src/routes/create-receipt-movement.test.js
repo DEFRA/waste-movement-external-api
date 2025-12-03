@@ -71,14 +71,18 @@ describe('Create Receipt Movement Route', () => {
     })
 
     // Verify waste tracking ID was requested
-    expect(httpClients.wasteTracking.get).toHaveBeenCalledWith('/next')
+    expect(httpClients.wasteTracking.get).toHaveBeenCalledWith(
+      '/next',
+      'test-client-id'
+    )
 
     // Verify waste movement was created
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
       `/movements/${mockWasteTrackingId}/receive`,
       {
         movement: validPayload
-      }
+      },
+      'test-client-id'
     )
   })
 

@@ -150,7 +150,8 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
 
         expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
           `/movements/${mockWasteTrackingId}/receive`,
-          { movement: payload }
+          { movement: payload },
+          'test-client-id'
         )
       })
 
