@@ -18,8 +18,8 @@ services:
     networks:
       - cdp-tenant
     volumes:
-      - ./src:/home/node/src
-      - ./package.json:/home/node/package.json
+      - ./src:/home/node/src:Z
+      - ./package.json:/home/node/package.json:Z
 
   waste-movement-backend:
     image: defradigital/waste-movement-backend:${WASTE_MOVEMENT_BACKEND_VERSION:-latest}
@@ -62,7 +62,7 @@ services:
       - '27017:27017'
     volumes:
       - mongodb-data:/data/db
-      - ./compose/mongo_setup.sh:/compose/mongo_setup.sh
+      - ./compose/mongo_setup.sh:/compose/mongo_setup.sh:Z
     restart: always
     healthcheck:
       test: mongosh --quiet --eval "try { var status = rs.status(); if (status.members[0].stateStr === 'PRIMARY') { quit(0); } else { quit(1); } } catch(e) { quit(1); }"
