@@ -4,13 +4,16 @@ import { config } from '../../config.js'
 /**
  * Base configuration for the HTTP clients
  */
+const serviceAuthToken = config.get('serviceAuthToken')
+const basicAuthHeader = `Basic ${Buffer.from(`service:${serviceAuthToken}`).toString('base64')}`
+
 const defaultConfig = {
   timeout: 5000, // 5 seconds timeout
   maxRetries: 3,
   retryDelay: 1000, // 1 second
   headers: {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${config.get('serviceAuthToken')}`
+    Authorization: basicAuthHeader
   }
 }
 
