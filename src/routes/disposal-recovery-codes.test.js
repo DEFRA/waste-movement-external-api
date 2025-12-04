@@ -226,8 +226,7 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
 
         expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
           `/movements/${mockWasteTrackingId}/receive`,
-          { movement: validPayload },
-          'test-client-id'
+          { movement: validPayload }
         )
       })
 

@@ -160,6 +160,20 @@ const config = convict({
       default: 'https://waste-movement-backend.dev.cdp-int.defra.cloud',
       env: 'WASTE_MOVEMENT_SERVICE_URL'
     }
+  },
+  serviceAuth: {
+    username: {
+      doc: 'Username for authenticating with internal backend services',
+      format: String,
+      default: 'waste-movement-external-api',
+      env: 'SERVICE_AUTH_USERNAME'
+    },
+    password: {
+      doc: 'Password for authenticating with internal backend services',
+      format: String,
+      default: 'development-secret',
+      env: 'SERVICE_AUTH_PASSWORD'
+    }
   }
 })
 
@@ -190,5 +204,24 @@ const overrideConfig = {
 config.load(overrideConfig)
 
 config.validate({ allowed: 'strict' })
+
+// Fail-fast: in production, ENVIRONMENT must be explicitly set (not default to 'local')
+const cdpEnvironment = config.get('cdpEnvironment')
+if (isProduction && !process.env.ENVIRONMENT) {
+  throw new Error(
+    'ENVIRONMENT must be explicitly set when NODE_ENV is production'
+  )
+}
+
+// Fail-fast: prevent startup with default credentials in non-local environments
+if (cdpEnvironment !== 'local') {
+  const currentPassword = process.env.SERVICE_AUTH_PASSWORD
+
+  if (!currentPassword || currentPassword === 'development-secret') {
+    throw new Error(
+      `SERVICE_AUTH_PASSWORD must be explicitly set in non-local environments (current: ${cdpEnvironment})`
+    )
+  }
+}
 
 export { config }

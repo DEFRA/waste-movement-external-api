@@ -100,18 +100,14 @@ describe('Create Receipt Movement Handler', () => {
     })
 
     // Verify waste tracking ID was requested
-    expect(httpClients.wasteTracking.get).toHaveBeenCalledWith(
-      '/next',
-      'test-client-id'
-    )
+    expect(httpClients.wasteTracking.get).toHaveBeenCalledWith('/next')
 
     // Verify waste movement was created
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
       `/movements/${mockWasteTrackingId}/receive`,
       {
         movement: validPayload
-      },
-      'test-client-id'
+      }
     )
   })
 
