@@ -14,6 +14,16 @@ const defaultConfig = {
 }
 
 /**
+ * Generates Basic auth header from service credentials
+ * @returns {string} Basic auth header value
+ */
+function generateAuthHeader() {
+  const username = config.get('serviceAuth.username')
+  const password = config.get('serviceAuth.password')
+  return `Basic ${Buffer.from(`${username}:${password}`).toString('base64')}`
+}
+
+/**
  * Creates a Wreck client with the given configuration
  * @param {Object} clientConfig - Client configuration
  * @returns {Object} Configured Wreck client
@@ -83,7 +93,10 @@ function createServiceClient(baseUrl, httpClient) {
         {
           url: `${baseUrl}${path}`,
           method: 'GET',
-          headers
+          headers: {
+            ...headers,
+            Authorization: generateAuthHeader()
+          }
         },
         httpClient
       )
@@ -102,7 +115,10 @@ function createServiceClient(baseUrl, httpClient) {
           url: `${baseUrl}${path}`,
           method: 'POST',
           payload,
-          headers
+          headers: {
+            ...headers,
+            Authorization: generateAuthHeader()
+          }
         },
         httpClient
       )
@@ -121,7 +137,10 @@ function createServiceClient(baseUrl, httpClient) {
           url: `${baseUrl}${path}`,
           method: 'PUT',
           payload,
-          headers
+          headers: {
+            ...headers,
+            Authorization: generateAuthHeader()
+          }
         },
         httpClient
       )

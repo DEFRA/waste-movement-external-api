@@ -160,6 +160,20 @@ const config = convict({
       default: 'https://waste-movement-backend.dev.cdp-int.defra.cloud',
       env: 'WASTE_MOVEMENT_SERVICE_URL'
     }
+  },
+  serviceAuth: {
+    username: {
+      doc: 'Username for authenticating with internal backend services',
+      format: String,
+      default: 'waste-movement-external-api',
+      env: 'SERVICE_AUTH_USERNAME'
+    },
+    password: {
+      doc: 'Password for authenticating with internal backend services',
+      format: String,
+      default: '',
+      env: 'SERVICE_AUTH_PASSWORD'
+    }
   }
 })
 
