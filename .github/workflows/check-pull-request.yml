@@ -55,6 +55,8 @@ jobs:
         id: start-docker-compose-services
         env:
           ORG_API_CODES: ${{ secrets.ORG_API_CODES }}
+          ACCESS_CRED_WASTE_MOVEMENT_EXTERNAL_API: ${{ secrets.ACCESS_CRED_WASTE_MOVEMENT_EXTERNAL_API }}
+          SERVICE_AUTH_PASSWORD: ${{ secrets.SERVICE_AUTH_PASSWORD }}
         run: |
           docker compose up -d --wait
           docker compose ps
@@ -119,4 +121,6 @@ jobs:
         if: always() && steps.start-docker-compose-services.outcome == 'success'
         env:
           ORG_API_CODES: ${{ secrets.ORG_API_CODES }}
+          ACCESS_CRED_WASTE_MOVEMENT_EXTERNAL_API: ${{ secrets.ACCESS_CRED_WASTE_MOVEMENT_EXTERNAL_API }}
+          SERVICE_AUTH_PASSWORD: ${{ secrets.SERVICE_AUTH_PASSWORD }}
         run: docker compose down

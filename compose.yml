@@ -15,6 +15,7 @@ services:
       MONGO_URI: mongodb://mongodb:27017/?replicaSet=rs0&directConnection=true
       WASTE_TRACKING_SERVICE_URL: http://waste-tracking-id-backend:3001
       WASTE_MOVEMENT_SERVICE_URL: http://waste-movement-backend:3001
+      SERVICE_AUTH_PASSWORD: ${SERVICE_AUTH_PASSWORD}
     networks:
       - cdp-tenant
     volumes:
@@ -35,6 +36,7 @@ services:
       MONGO_URI: mongodb://mongodb:27017/?replicaSet=rs0&directConnection=true
       ORG_API_CODES: ${ORG_API_CODES}
       MONGO_READ_PREFERENCE: primary
+      ACCESS_CRED_WASTE_MOVEMENT_EXTERNAL_API: ${ACCESS_CRED_WASTE_MOVEMENT_EXTERNAL_API}
     networks:
       - cdp-tenant
 
@@ -50,6 +52,7 @@ services:
       NODE_ENV: development
       ENVIRONMENT: local
       MONGO_URI: mongodb://mongodb:27017/?replicaSet=rs0&directConnection=true
+      ACCESS_CRED_WASTE_MOVEMENT_EXTERNAL_API: ${ACCESS_CRED_WASTE_MOVEMENT_EXTERNAL_API}
     networks:
       - cdp-tenant
 
