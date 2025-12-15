@@ -25,4 +25,17 @@ const metricsCounter = async (metricName, value = 1) => {
   }
 }
 
-export { metricsCounter }
+const logWarningMetrics = async (warningCount, endpointType) => {
+  await metricsCounter(`warningsReturned${endpointType}`, warningCount)
+  await metricsCounter('warningsReturnedTotal', warningCount)
+
+  if (warningCount > 0) {
+    await metricsCounter(`requestsWithWarnings${endpointType}`)
+    await metricsCounter('requestsWithWarningsTotal')
+  } else {
+    await metricsCounter(`requestsWithoutWarnings${endpointType}`)
+    await metricsCounter('requestsWithoutWarningsTotal')
+  }
+}
+
+export { metricsCounter, logWarningMetrics }
