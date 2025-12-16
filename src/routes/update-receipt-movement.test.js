@@ -3,6 +3,7 @@ import { handleUpdateReceiptMovement } from '../handlers/update-receipt-movement
 import { updateReceiptMovement } from './update-receipt-movement.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import Boom from '@hapi/boom'
+import * as metrics from '../common/helpers/metrics.js'
 
 jest.mock('../common/helpers/http-client.js', () => ({
   httpClients: {
@@ -10,6 +11,10 @@ jest.mock('../common/helpers/http-client.js', () => ({
       put: jest.fn()
     }
   }
+}))
+
+jest.mock('../common/helpers/metrics.js', () => ({
+  logWarningMetrics: jest.fn()
 }))
 
 describe('updateReceiptMovement route', () => {
@@ -143,5 +148,17 @@ describe('handleUpdateReceiptMovement', () => {
     await expect(
       handleUpdateReceiptMovement(mockRequest, mockH)
     ).rejects.toThrow(Boom.badRequest('Invalid input'))
+  })
+
+  it('should not log metrics when backend returns non-success status', async () => {
+    httpClients.wasteMovement.put.mockResolvedValueOnce({
+      statusCode: 400,
+      payload: { error: 'Bad Request' }
+    })
+
+    await handleUpdateReceiptMovement(mockRequest, mockH)
+
+    expect(metrics.logWarningMetrics).not.toHaveBeenCalled()
+    expect(mockH.code).toHaveBeenCalledWith(400)
   })
 })

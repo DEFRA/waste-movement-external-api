@@ -2,6 +2,7 @@ import { jest } from '@jest/globals'
 import { httpClients } from '../common/helpers/http-client.js'
 import { handleCreateReceiptMovement } from './create-receipt-movement.js'
 import { v4 as uuidv4 } from 'uuid'
+import * as metrics from '../common/helpers/metrics.js'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -13,6 +14,11 @@ jest.mock('../common/helpers/http-client.js', () => ({
       post: jest.fn()
     }
   }
+}))
+
+// Mock metrics
+jest.mock('../common/helpers/metrics.js', () => ({
+  logWarningMetrics: jest.fn()
 }))
 
 describe('Create Receipt Movement Handler', () => {
@@ -145,5 +151,23 @@ describe('Create Receipt Movement Handler', () => {
       message: 'Failed to create waste movement'
     })
     expect(h.code).toHaveBeenCalledWith(500)
+  })
+
+  it('should not log metrics when backend returns non-success status', async () => {
+    // Mock backend returning error status code
+    httpClients.wasteMovement.post.mockResolvedValue({
+      statusCode: 400,
+      payload: { error: 'Bad Request' }
+    })
+
+    const h = {
+      response: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis()
+    }
+
+    await handleCreateReceiptMovement(request, h)
+
+    expect(metrics.logWarningMetrics).not.toHaveBeenCalled()
+    expect(h.code).toHaveBeenCalledWith(400)
   })
 })
