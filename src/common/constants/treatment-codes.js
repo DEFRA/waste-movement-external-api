@@ -1,4 +1,4 @@
-const RECOVERY_CODES = [
+export const RECOVERY_CODES = [
   {
     code: 'R1',
     isNotRecoveryToFinalProduct: true,
@@ -71,7 +71,7 @@ const RECOVERY_CODES = [
   }
 ]
 
-const DISPOSAL_CODES = [
+export const DISPOSAL_CODES = [
   {
     code: 'D1',
     isNotRecoveryToFinalProduct: false,

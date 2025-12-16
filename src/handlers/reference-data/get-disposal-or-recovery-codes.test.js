@@ -53,7 +53,10 @@ describe('GET Disposal or Recovery Codes', () => {
       const codesResponse = mapGetDisposalOrRecoveryCodesResponse()
 
       expect(codesResponse[0]).toStrictEqual({
-        code: 'R1'
+        code: 'R1',
+        isNotRecoveryToFinalProduct: true,
+        description:
+          'Use principally as a fuel or other means to generate energy'
       })
     })
 
