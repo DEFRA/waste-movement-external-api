@@ -1,4 +1,7 @@
-import { DISPOSAL_OR_RECOVERY_CODES } from '../../common/constants/treatment-codes.js'
+import {
+  DISPOSAL_CODES,
+  RECOVERY_CODES
+} from '../../common/constants/treatment-codes.js'
 import { HTTP_STATUS } from '../../common/constants/http-status-codes.js'
 import { handleBackendResponse } from '../handle-backend-response.js'
 import { createLogger } from '../../common/helpers/logging/logger.js'
@@ -25,6 +28,10 @@ export const handleGetDisposalOrRecoveryCodes = async (_request, h) => {
 }
 
 export const mapGetDisposalOrRecoveryCodesResponse = () =>
-  DISPOSAL_OR_RECOVERY_CODES.map((code) => ({
-    code
-  }))
+  [...RECOVERY_CODES, ...DISPOSAL_CODES].map(
+    ({ code, isNotRecoveryToFinalProduct, description }) => ({
+      code,
+      isNotRecoveryToFinalProduct,
+      description
+    })
+  )
