@@ -1,885 +1,7774 @@
 export const validEwcCodes = [
-  // Chapter 01: Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals
-  '010101', // wastes from mineral excavation
-  '010102', // wastes from mineral non-metalliferous excavation
-  '010304', // acid-generating tailings from processing of sulphide ore
-  '010305', // other tailings containing hazardous substances
-  '010306', // tailings other than those mentioned in 01 03 04 and 01 03 05
-  '010307', // other wastes containing hazardous substances from physical and chemical processing of metalliferous minerals
-  '010308', // dusty and powdery wastes other than those mentioned in 01 03 07
-  '010309', // red mud from alumina production other than the wastes mentioned in 01 03 10
-  '010310', // red mud from alumina production containing hazardous substances other than the wastes mentioned in 01 03 07
-  '010399', // wastes not otherwise specified
-  '010407', // wastes containing dangerous substances from physical and chemical processing of non-metalliferous minerals
-  '010408', // waste gravel and crushed rocks other than those mentioned in 01 04 07
-  '010409', // waste sand and clays
-  '010410', // dusty and powdery wastes other than those mentioned in 01 04 07
-  '010411', // wastes from potash and rock salt processing other than those mentioned in 01 04 07
-  '010412', // tailings and other wastes from washing and cleaning of minerals other than those mentioned in 01 04 07 and 01 04 11
-  '010413', // wastes from stone cutting and sawing other than those mentioned in 01 04 07
-  '010499', // wastes not otherwise specified
-  '010504', // freshwater drilling muds and wastes
-  '010505', // oil-containing drilling muds and wastes
-  '010506', // drilling muds and other drilling wastes containing dangerous substances
-  '010507', // barite-containing drilling muds and wastes other than those mentioned in 01 05 05 and 01 05 06
-  '010508', // chloride-containing drilling muds and wastes other than those mentioned in 01 05 05 and 01 05 06
-  '010599', // wastes not otherwise specified
-
-  // Chapter 02: Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing
-  '020101', // sludges from washing and cleaning
-  '020102', // animal-tissue waste
-  '020103', // plant-tissue waste
-  '020104', // waste plastics (except packaging)
-  '020106', // animal faeces, urine and manure (including spoiled straw), effluent, collected separately and treated off-site
-  '020107', // wastes from forestry
-  '020108', // agrochemical waste containing hazardous substances
-  '020109', // agrochemical waste other than those mentioned in 02 01 08
-  '020110', // waste metal
-  '020199', // wastes not otherwise specified
-  '020201', // sludges from washing and cleaning
-  '020202', // animal-tissue waste
-  '020203', // materials unsuitable for consumption or processing
-  '020204', // sludges from on-site effluent treatment
-  '020299', // wastes not otherwise specified
-  '020301', // sludges from washing, cleaning, peeling, centrifuging and separation
-  '020302', // wastes from preserving agents
-  '020303', // wastes from solvent extraction
-  '020304', // materials unsuitable for consumption or processing
-  '020305', // sludges from on-site effluent treatment
-  '020399', // wastes not otherwise specified
-  '020401', // soil from cleaning and washing beet
-  '020402', // off-specification calcium carbonate
-  '020403', // sludges from on-site effluent treatment
-  '020499', // wastes not otherwise specified
-  '020501', // materials unsuitable for consumption or processing
-  '020502', // sludges from on-site effluent treatment
-  '020599', // wastes not otherwise specified
-  '020601', // materials unsuitable for consumption or processing
-  '020602', // wastes from preserving agents
-  '020603', // sludges from on-site effluent treatment
-  '020699', // wastes not otherwise specified
-  '020701', // wastes from washing, cleaning and mechanical reduction of raw materials
-  '020702', // wastes from spirits distillation
-  '020703', // wastes from chemical treatment
-  '020704', // materials unsuitable for consumption or processing
-  '020705', // sludges from on-site effluent treatment
-  '020799', // wastes not otherwise specified
-
-  // Chapter 03: Wastes from wood processing and the production of panels and furniture, pulp, paper and cardboard
-  '030101', // waste bark and cork
-  '030104', // sawdust, shavings, cuttings, wood, particle board and veneer containing hazardous substances
-  '030105', // sawdust, shavings, cuttings, wood, particle board and veneer other than those mentioned in 03 01 04
-  '030199', // wastes not otherwise specified
-  '030201', // non-halogenated organic wood preservatives
-  '030202', // organochlorinated wood preservatives
-  '030203', // organometallic wood preservatives
-  '030204', // inorganic wood preservatives
-  '030205', // other wood preservatives containing hazardous substances
-  '030299', // wood preservatives not otherwise specified
-  '030301', // waste bark and wood
-  '030302', // green liquor sludge (from recovery of cooking liquor)
-  '030305', // de-inking sludges from paper recycling
-  '030307', // mechanically separated rejects from pulping of waste paper and cardboard
-  '030308', // wastes from sorting of paper and cardboard destined for recycling
-  '030309', // lime mud waste
-  '030310', // fibre rejects, fibre-, filler- and coating-sludges from mechanical separation
-  '030311', // sludges from on-site effluent treatment other than those mentioned in 03 03 10
-  '030399', // wastes not otherwise specified
-
-  // Chapter 04: Wastes from the leather, fur and textile industries
-  '040101', // fleshings and lime split wastes
-  '040102', // liming waste
-  '040103', // degreasing wastes containing solvents without a liquid phase
-  '040104', // tanning liquor containing chromium
-  '040105', // tanning liquor free of chromium
-  '040106', // sludges, in particular from on-site effluent treatment containing chromium
-  '040107', // sludges, in particular from on-site effluent treatment free of chromium
-  '040108', // waste tanned leather (blue sheetings, shavings, cuttings, buffing dust) containing chromium
-  '040109', // wastes from dressing and finishing
-  '040199', // wastes not otherwise specified
-  '040209', // wastes from composite materials (impregnated textile, elastomer, plastomer)
-  '040210', // organic matter from natural products (for example grease, wax)
-  '040214', // wastes from finishing containing organic solvents
-  '040215', // wastes from finishing other than those mentioned in 04 02 14
-  '040216', // dyestuffs and pigments containing hazardous substances
-  '040217', // dyestuffs and pigments other than those mentioned in 04 02 16
-  '040219', // sludges from on-site effluent treatment containing hazardous substances
-  '040220', // sludges from on-site effluent treatment other than those mentioned in 04 02 19
-  '040221', // wastes from unprocessed textile fibres
-  '040222', // wastes from processed textile fibres
-  '040299', // wastes not otherwise specified
-
-  // Chapter 05: Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal
-  '050102', // desalter sludges
-  '050103', // tank bottom sludges
-  '050104', // acid alkyl sludges
-  '050105', // oil spills
-  '050106', // oily sludges from maintenance operations of the plant or equipment
-  '050107', // acid tars
-  '050108', // other tars
-  '050109', // sludges from on-site effluent treatment containing hazardous substances
-  '050110', // sludges from on-site effluent treatment other than those mentioned in 05 01 09
-  '050111', // wastes from cleaning of fuels with bases
-  '050112', // oil containing acids
-  '050113', // boiler feedwater sludges
-  '050114', // wastes from cooling columns
-  '050115', // spent filter clays
-  '050116', // sulphur-containing wastes from petroleum desulphurisation
-  '050117', // bitumen
-  '050199', // wastes not otherwise specified
-  '050601', // acid tars
-  '050603', // other tars
-  '050604', // waste from cooling columns
-  '050699', // wastes not otherwise specified
-  '050701', // wastes containing mercury
-  '050702', // wastes containing sulphur
-  '050799', // wastes not otherwise specified
-
-  // Chapter 06: Wastes from inorganic chemical processes
-  '060101', // sulphuric acid and sulphurous acid
-  '060102', // hydrochloric acid
-  '060103', // hydrofluoric acid
-  '060104', // phosphoric and phosphorous acid
-  '060105', // nitric acid and nitrous acid
-  '060106', // other acids
-  '060199', // wastes not otherwise specified
-  '060201', // calcium hydroxide
-  '060203', // ammonium hydroxide
-  '060204', // sodium and potassium hydroxide
-  '060205', // other bases
-  '060299', // wastes not otherwise specified
-  '060311', // solid salts and solutions containing cyanides
-  '060313', // solid salts and solutions containing heavy metals
-  '060314', // solid salts and solutions other than those mentioned in 06 03 11 and 06 03 13
-  '060315', // metallic oxides containing heavy metals
-  '060316', // metallic oxides other than those mentioned in 06 03 15
-  '060399', // wastes not otherwise specified
-  '060403', // wastes containing arsenic
-  '060404', // wastes containing mercury
-  '060405', // wastes containing other heavy metals
-  '060499', // wastes not otherwise specified
-  '060502', // sludges from on-site effluent treatment containing hazardous substances
-  '060503', // sludges from on-site effluent treatment other than those mentioned in 06 05 02
-  '060602', // wastes containing hazardous sulphides
-  '060603', // wastes containing sulphides other than those mentioned in 06 06 02
-  '060699', // wastes not otherwise specified
-  '060701', // wastes containing asbestos from electrolysis
-  '060702', // activated carbon from chlorine production
-  '060703', // barium sulphate sludge containing mercury
-  '060704', // solutions and acids, for example contact acid
-  '060799', // wastes not otherwise specified
-  '060802', // wastes containing hazardous chlorosilanes
-  '060899', // wastes not otherwise specified
-  '060902', // phosphorous slag
-  '060903', // calcium-based reaction wastes containing or contaminated with hazardous substances
-  '060904', // calcium-based reaction wastes other than those mentioned in 06 09 03
-  '060999', // wastes not otherwise specified
-  '061002', // wastes containing hazardous substances
-  '061099', // wastes not otherwise specified
-  '061101', // calcium-based reaction wastes from titanium dioxide production
-  '061199', // wastes not otherwise specified
-  '061301', // inorganic plant protection products, wood-preserving agents and other biocides
-  '061302', // spent activated carbon (except 06 07 02)
-  '061303', // carbon black
-  '061304', // wastes from asbestos processing
-  '061305', // soot
-  '061399', // wastes not otherwise specified
-
-  // Chapter 07: Wastes from organic chemical processes
-  '070101', // aqueous washing liquids and mother liquors
-  '070103', // organic halogenated solvents, washing liquids and mother liquors
-  '070104', // other organic solvents, washing liquids and mother liquors
-  '070107', // halogenated still bottoms and reaction residues
-  '070108', // other still bottoms and reaction residues
-  '070109', // halogenated filter cakes and spent absorbents
-  '070110', // other filter cakes and spent absorbents
-  '070111', // sludges from on-site effluent treatment containing hazardous substances
-  '070112', // sludges from on-site effluent treatment other than those mentioned in 07 01 11
-  '070199', // wastes not otherwise specified
-  '070201', // aqueous washing liquids and mother liquors
-  '070203', // organic halogenated solvents, washing liquids and mother liquors
-  '070204', // other organic solvents, washing liquids and mother liquors
-  '070207', // halogenated still bottoms and reaction residues
-  '070208', // other still bottoms and reaction residues
-  '070209', // halogenated filter cakes and spent absorbents
-  '070210', // other filter cakes and spent absorbents
-  '070211', // sludges from on-site effluent treatment containing hazardous substances
-  '070212', // sludges from on-site effluent treatment other than those mentioned in 07 02 11
-  '070213', // waste plastic
-  '070214', // wastes from additives containing hazardous substances
-  '070215', // wastes from additives other than those mentioned in 07 02 14
-  '070216', // wastes containing hazardous silicones
-  '070217', // waste containing silicones other than those mentioned in 07 02 16
-  '070299', // wastes not otherwise specified
-  '070301', // aqueous washing liquids and mother liquors
-  '070303', // organic halogenated solvents, washing liquids and mother liquors
-  '070304', // other organic solvents, washing liquids and mother liquors
-  '070307', // halogenated still bottoms and reaction residues
-  '070308', // other still bottoms and reaction residues
-  '070309', // halogenated filter cakes and spent absorbents
-  '070310', // other filter cakes and spent absorbents
-  '070311', // sludges from on-site effluent treatment containing hazardous substances
-  '070312', // sludges from on-site effluent treatment other than those mentioned in 07 03 11
-  '070399', // wastes not otherwise specified
-  '070401', // aqueous washing liquids and mother liquors
-  '070403', // organic halogenated solvents, washing liquids and mother liquors
-  '070404', // other organic solvents, washing liquids and mother liquors
-  '070407', // halogenated still bottoms and reaction residues
-  '070408', // other still bottoms and reaction residues
-  '070409', // halogenated filter cakes and spent absorbents
-  '070410', // other filter cakes and spent absorbents
-  '070411', // sludges from on-site effluent treatment containing hazardous substances
-  '070412', // sludges from on-site effluent treatment other than those mentioned in 07 04 11
-  '070413', // solid wastes containing hazardous substances
-  '070499', // wastes not otherwise specified
-  '070501', // aqueous washing liquids and mother liquors
-  '070503', // organic halogenated solvents, washing liquids and mother liquors
-  '070504', // other organic solvents, washing liquids and mother liquors
-  '070507', // halogenated still bottoms and reaction residues
-  '070508', // other still bottoms and reaction residues
-  '070509', // halogenated filter cakes and spent absorbents
-  '070510', // other filter cakes and spent absorbents
-  '070511', // sludges from on-site effluent treatment containing hazardous substances
-  '070512', // sludges from on-site effluent treatment other than those mentioned in 07 05 11
-  '070513', // solid wastes containing hazardous substances
-  '070514', // solid wastes other than those mentioned in 07 05 13
-  '070599', // wastes not otherwise specified
-  '070601', // aqueous washing liquids and mother liquors
-  '070603', // organic halogenated solvents, washing liquids and mother liquors
-  '070604', // other organic solvents, washing liquids and mother liquors
-  '070607', // halogenated still bottoms and reaction residues
-  '070608', // other still bottoms and reaction residues
-  '070609', // halogenated filter cakes and spent absorbents
-  '070610', // other filter cakes and spent absorbents
-  '070611', // sludges from on-site effluent treatment containing hazardous substances
-  '070612', // sludges from on-site effluent treatment other than those mentioned in 07 06 11
-  '070699', // wastes not otherwise specified
-  '070701', // aqueous washing liquids and mother liquors
-  '070703', // organic halogenated solvents, washing liquids and mother liquors
-  '070704', // other organic solvents, washing liquids and mother liquors
-  '070707', // halogenated still bottoms and reaction residues
-  '070708', // other still bottoms and reaction residues
-  '070709', // halogenated filter cakes and spent absorbents
-  '070710', // other filter cakes and spent absorbents
-  '070711', // sludges from on-site effluent treatment containing hazardous substances
-  '070712', // sludges from on-site effluent treatment other than those mentioned in 07 07 11
-  '070799', // wastes not otherwise specified
-
-  // Chapter 08: Wastes from the manufacture, formulation, supply and use of coatings, adhesives, sealants and printing inks
-  '080111', // waste paint and varnish containing organic solvents or other hazardous substances
-  '080112', // waste paint and varnish other than those mentioned in 08 01 11
-  '080113', // sludges from paint or varnish containing organic solvents or other hazardous substances
-  '080114', // sludges from paint or varnish other than those mentioned in 08 01 13
-  '080115', // aqueous sludges containing paint or varnish containing organic solvents or other hazardous substances
-  '080116', // aqueous sludges containing paint or varnish other than those mentioned in 08 01 15
-  '080117', // wastes from paint or varnish removal containing organic solvents or other hazardous substances
-  '080118', // wastes from paint or varnish removal other than those mentioned in 08 01 17
-  '080119', // aqueous suspensions containing paint or varnish containing organic solvents or other hazardous substances
-  '080120', // aqueous suspensions containing paint or varnish other than those mentioned in 08 01 19
-  '080121', // waste paint or varnish remover
-  '080199', // wastes not otherwise specified
-  '080201', // waste coating powders
-  '080202', // aqueous sludges containing ceramic materials
-  '080203', // aqueous suspensions containing ceramic materials
-  '080299', // wastes not otherwise specified
-  '080307', // aqueous sludges containing ink
-  '080308', // aqueous liquid waste containing ink
-  '080312', // waste ink containing hazardous substances
-  '080313', // waste ink other than those mentioned in 08 03 12
-  '080314', // ink sludges containing hazardous substances
-  '080315', // ink sludges other than those mentioned in 08 03 14
-  '080316', // waste etching solutions
-  '080317', // waste printing toner containing hazardous substances
-  '080318', // waste printing toner other than those mentioned in 08 03 17
-  '080319', // disperse oil
-  '080399', // wastes not otherwise specified
-  '080409', // waste adhesives and sealants containing organic solvents or other hazardous substances
-  '080410', // waste adhesives and sealants other than those mentioned in 08 04 09
-  '080411', // adhesive and sealant sludges containing organic solvents or other hazardous substances
-  '080412', // adhesive and sealant sludges other than those mentioned in 08 04 11
-  '080413', // aqueous sludges containing adhesives or sealants containing organic solvents or other hazardous substances
-  '080414', // aqueous sludges containing adhesives or sealants other than those mentioned in 08 04 13
-  '080415', // aqueous liquid waste containing adhesives or sealants containing organic solvents or other hazardous substances
-  '080416', // aqueous liquid waste containing adhesives or sealants other than those mentioned in 08 04 15
-  '080417', // rosin oil
-  '080499', // wastes not otherwise specified
-  '080501', // waste isocyanates
-
-  // Chapter 09: Wastes from the photographic industry
-  '090101', // water-based developer and activator solutions
-  '090102', // water-based offset plate developer solutions
-  '090103', // solvent-based developer solutions
-  '090104', // fixer solutions
-  '090105', // bleach solutions and bleach fixer solutions
-  '090106', // wastes containing silver from on-site treatment of photographic wastes
-  '090107', // photographic film and paper containing silver or silver compounds
-  '090108', // photographic film and paper free of silver or silver compounds
-  '090110', // single-use cameras without batteries
-  '090111', // single-use cameras containing batteries included in 16 06 01, 16 06 02 or 16 06 03
-  '090112', // single-use cameras containing batteries other than those mentioned in 09 01 11
-  '090113', // aqueous liquid waste from on-site reclamation of silver other than those mentioned in 09 01 06
-  '090199', // wastes not otherwise specified
-
-  // Chapter 10: Wastes from thermal processes
-  '100101', // bottom ash, slag and boiler dust (excluding boiler dust mentioned in 10 01 04)
-  '100102', // coal fly ash
-  '100103', // fly ash from peat and untreated wood
-  '100104', // oil fly ash and boiler dust
-  '100105', // calcium-based reaction wastes from flue-gas desulphurisation in solid form
-  '100107', // calcium-based reaction wastes from flue-gas desulphurisation in sludge form
-  '100109', // sulphuric acid
-  '100113', // fly ash from emulsified hydrocarbons used as fuel
-  '100114', // bottom ash, slag and boiler dust from co-incineration containing hazardous substances
-  '100115', // bottom ash, slag and boiler dust from co-incineration other than those mentioned in 10 01 14
-  '100116', // fly ash from co-incineration containing hazardous substances
-  '100117', // fly ash from co-incineration other than those mentioned in 10 01 16
-  '100118', // wastes from gas cleaning containing hazardous substances
-  '100119', // wastes from gas cleaning other than those mentioned in 10 01 05, 10 01 07 and 10 01 18
-  '100120', // sludges from on-site effluent treatment containing hazardous substances
-  '100121', // sludges from on-site effluent treatment other than those mentioned in 10 01 20
-  '100122', // aqueous sludges from boiler cleansing containing hazardous substances
-  '100123', // aqueous sludges from boiler cleansing other than those mentioned in 10 01 22
-  '100124', // sands from fluidised beds
-  '100125', // wastes from fuel storage and preparation of coal-fired power plants
-  '100126', // wastes from cooling-water treatment
-  '100199', // wastes not otherwise specified
-  '100201', // wastes from the processing of slag
-  '100202', // unprocessed slag
-  '100207', // solid wastes from gas treatment containing hazardous substances
-  '100208', // solid wastes from gas treatment other than those mentioned in 10 02 07
-  '100210', // mill scales
-  '100211', // wastes from cooling-water treatment containing oil
-  '100212', // wastes from cooling-water treatment other than those mentioned in 10 02 11
-  '100213', // sludges and filter cakes from gas treatment containing hazardous substances
-  '100214', // sludges and filter cakes from gas treatment other than those mentioned in 10 02 13
-  '100215', // other sludges and filter cakes
-  '100299', // wastes not otherwise specified
-  '100302', // anode scraps
-  '100304', // primary production slags
-  '100305', // waste alumina
-  '100308', // salt slags from secondary production
-  '100309', // black drosses from secondary production
-  '100315', // skimmings that are flammable or emit, upon contact with water, flammable gases in hazardous quantities
-  '100316', // skimmings other than those mentioned in 10 03 15
-  '100317', // tar-containing wastes from anode manufacture
-  '100318', // carbon-containing wastes from anode manufacture other than those mentioned in 10 03 17
-  '100319', // flue-gas dust containing hazardous substances
-  '100320', // flue-gas dust other than those mentioned in 10 03 19
-  '100321', // other particulates and dust (including ball-mill dust) containing hazardous substances
-  '100322', // other particulates and dust (including ball-mill dust) other than those mentioned in 10 03 21
-  '100323', // solid wastes from gas treatment containing hazardous substances
-  '100324', // solid wastes from gas treatment other than those mentioned in 10 03 23
-  '100325', // sludges and filter cakes from gas treatment containing hazardous substances
-  '100326', // sludges and filter cakes from gas treatment other than those mentioned in 10 03 25
-  '100327', // wastes from cooling-water treatment containing oil
-  '100328', // wastes from cooling-water treatment other than those mentioned in 10 03 27
-  '100329', // wastes from treatment of salt slags and black drosses containing hazardous substances
-  '100330', // wastes from treatment of salt slags and black drosses other than those mentioned in 10 03 29
-  '100399', // wastes not otherwise specified
-  '100401', // slags from primary and secondary production
-  '100402', // dross and skimmings from primary and secondary production
-  '100403', // calcium arsenate
-  '100404', // flue-gas dust
-  '100405', // other particulates and dust
-  '100406', // solid wastes from gas treatment
-  '100407', // sludges and filter cakes from gas treatment
-  '100409', // wastes from cooling-water treatment containing oil
-  '100410', // wastes from cooling-water treatment other than those mentioned in 10 04 09
-  '100499', // wastes not otherwise specified
-  '100501', // slags from primary and secondary production
-  '100503', // flue-gas dust
-  '100504', // other particulates and dust
-  '100505', // solid waste from gas treatment
-  '100506', // sludges and filter cakes from gas treatment
-  '100508', // wastes from cooling-water treatment containing oil
-  '100509', // wastes from cooling-water treatment other than those mentioned in 10 05 08
-  '100510', // dross and skimmings that are flammable or emit, upon contact with water, flammable gases in hazardous quantities
-  '100511', // dross and skimmings other than those mentioned in 10 05 10
-  '100599', // wastes not otherwise specified
-  '100601', // slags from primary and secondary production
-  '100602', // dross and skimmings from primary and secondary production
-  '100603', // flue-gas dust
-  '100604', // other particulates and dust
-  '100606', // solid wastes from gas treatment
-  '100607', // sludges and filter cakes from gas treatment
-  '100609', // wastes from cooling-water treatment containing oil
-  '100610', // wastes from cooling-water treatment other than those mentioned in 10 06 09
-  '100699', // wastes not otherwise specified
-  '100701', // slags from primary and secondary production
-  '100702', // dross and skimmings from primary and secondary production
-  '100703', // solid wastes from gas treatment
-  '100704', // other particulates and dust
-  '100705', // sludges and filter cakes from gas treatment
-  '100707', // wastes from cooling-water treatment containing oil
-  '100708', // wastes from cooling-water treatment other than those mentioned in 10 07 07
-  '100799', // wastes not otherwise specified
-  '100804', // particulates and dust
-  '100808', // salt slag from primary and secondary production
-  '100809', // other slags
-  '100810', // dross and skimmings that are flammable or emit, upon contact with water, flammable gases in hazardous quantities
-  '100811', // dross and skimmings other than those mentioned in 10 08 10
-  '100812', // tar-containing wastes from anode manufacture
-  '100813', // carbon-containing wastes from anode manufacture other than those mentioned in 10 08 12
-  '100814', // anode scrap
-  '100815', // flue-gas dust containing hazardous substances
-  '100816', // flue-gas dust other than those mentioned in 10 08 15
-  '100817', // sludges and filter cakes from flue-gas treatment containing hazardous substances
-  '100818', // sludges and filter cakes from flue-gas treatment other than those mentioned in 10 08 17
-  '100819', // wastes from cooling-water treatment containing oil
-  '100820', // wastes from cooling-water treatment other than those mentioned in 10 08 19
-  '100899', // wastes not otherwise specified
-  '100903', // furnace slag
-  '100905', // casting cores and moulds which have not undergone pouring containing hazardous substances
-  '100906', // casting cores and moulds which have not undergone pouring other than those mentioned in 10 09 05
-  '100907', // casting cores and moulds which have undergone pouring containing hazardous substances
-  '100908', // casting cores and moulds which have undergone pouring other than those mentioned in 10 09 07
-  '100909', // flue-gas dust containing hazardous substances
-  '100910', // flue-gas dust other than those mentioned in 10 09 09
-  '100911', // other particulates containing hazardous substances
-  '100912', // other particulates other than those mentioned in 10 09 11
-  '100913', // waste binders containing hazardous substances
-  '100914', // waste binders other than those mentioned in 10 09 13
-  '100915', // waste crack-indicating agent containing hazardous substances
-  '100916', // waste crack-indicating agent other than those mentioned in 10 09 15
-  '100999', // wastes not otherwise specified
-  '101003', // furnace slag
-  '101005', // casting cores and moulds which have not undergone pouring containing hazardous substances
-  '101006', // casting cores and moulds which have not undergone pouring other than those mentioned in 10 10 05
-  '101007', // casting cores and moulds which have undergone pouring containing hazardous substances
-  '101008', // casting cores and moulds which have undergone pouring other than those mentioned in 10 10 07
-  '101009', // flue-gas dust containing hazardous substances
-  '101010', // flue-gas dust other than those mentioned in 10 10 09
-  '101011', // other particulates containing hazardous substances
-  '101012', // other particulates other than those mentioned in 10 10 11
-  '101013', // waste binders containing hazardous substances
-  '101014', // waste binders other than those mentioned in 10 10 13
-  '101015', // waste crack-indicating agent containing hazardous substances
-  '101016', // waste crack-indicating agent other than those mentioned in 10 10 15
-  '101099', // wastes not otherwise specified
-  '101103', // waste glass-based fibrous materials
-  '101105', // particulates and dust
-  '101109', // waste preparation mixture before thermal processing containing hazardous substances
-  '101110', // waste preparation mixture before thermal processing other than those mentioned in 10 11 09
-  '101111', // waste glass in small particles and glass powder containing heavy metals (for example from cathode ray tubes)
-  '101112', // waste glass other than those mentioned in 10 11 11
-  '101113', // glass-polishing and -grinding sludge containing hazardous substances
-  '101114', // glass-polishing and -grinding sludge other than those mentioned in 10 11 13
-  '101115', // solid wastes from flue-gas treatment containing hazardous substances
-  '101116', // solid wastes from flue-gas treatment other than those mentioned in 10 11 15
-  '101117', // sludges and filter cakes from flue-gas treatment containing hazardous substances
-  '101118', // sludges and filter cakes from flue-gas treatment other than those mentioned in 10 11 17
-  '101119', // solid wastes from on-site effluent treatment containing hazardous substances
-  '101120', // solid wastes from on-site effluent treatment other than those mentioned in 10 11 19
-  '101199', // wastes not otherwise specified
-  '101201', // waste preparation mixture before thermal processing
-  '101203', // particulates and dust
-  '101205', // sludges and filter cakes from gas treatment
-  '101206', // discarded moulds
-  '101208', // waste ceramics, bricks, tiles and construction products (after thermal processing)
-  '101209', // solid wastes from gas treatment containing hazardous substances
-  '101210', // solid wastes from gas treatment other than those mentioned in 10 12 09
-  '101211', // wastes from glazing containing heavy metals
-  '101212', // wastes from glazing other than those mentioned in 10 12 11
-  '101213', // sludge from on-site effluent treatment
-  '101299', // wastes not otherwise specified
-  '101301', // waste preparation mixture before thermal processing
-  '101304', // wastes from calcination and hydration of lime
-  '101306', // particulates and dust (except 10 13 12 and 10 13 13)
-  '101307', // sludges and filter cakes from gas treatment
-  '101309', // wastes from asbestos-cement manufacture containing asbestos
-  '101310', // wastes from asbestos-cement manufacture other than those mentioned in 10 13 09
-  '101311', // wastes from cement-based composite materials other than those mentioned in 10 13 09 and 10 13 10
-  '101312', // solid wastes from gas treatment containing hazardous substances
-  '101313', // solid wastes from gas treatment other than those mentioned in 10 13 12
-  '101314', // waste concrete and concrete sludge
-  '101399', // wastes not otherwise specified
-  '101401', // waste from gas cleaning containing mercury
-
-  // Chapter 11: Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy
-  '110105', // pickling acids
-  '110106', // acids not otherwise specified
-  '110107', // pickling bases
-  '110108', // phosphatising sludges
-  '110109', // sludges and filter cakes containing hazardous substances
-  '110110', // sludges and filter cakes other than those mentioned in 11 01 09
-  '110111', // aqueous rinsing liquids containing hazardous substances
-  '110112', // aqueous rinsing liquids other than those mentioned in 11 01 11
-  '110113', // degreasing wastes containing hazardous substances
-  '110114', // degreasing wastes other than those mentioned in 11 01 13
-  '110115', // eluate and sludges from membrane systems or ion exchange systems containing hazardous substances
-  '110116', // saturated or spent ion exchange resins
-  '110198', // other wastes containing hazardous substances
-  '110199', // wastes not otherwise specified
-  '110202', // sludges from zinc hydrometallurgy (including jarosite, goethite)
-  '110203', // wastes from the production of anodes for aqueous electrolytical processes
-  '110205', // wastes from copper hydrometallurgical processes containing hazardous substances
-  '110206', // wastes from copper hydrometallurgical processes other than those mentioned in 11 02 05
-  '110207', // other wastes containing hazardous substances
-  '110299', // wastes not otherwise specified
-  '110301', // wastes containing cyanide
-  '110302', // other wastes
-  '110501', // hard zinc
-  '110502', // zinc ash
-  '110503', // solid wastes from gas treatment
-  '110504', // spent flux
-  '110599', // wastes not otherwise specified
-
-  // Chapter 12: Wastes from shaping and physical and mechanical surface treatment of metals and plastics
-  '120101', // ferrous metal filings and turnings
-  '120102', // ferrous metal dust and particles
-  '120103', // non-ferrous metal filings and turnings
-  '120104', // non-ferrous metal dust and particles
-  '120105', // plastics shavings and turnings
-  '120106', // mineral-based machining oils containing halogens (except emulsions and solutions)
-  '120107', // mineral-based machining oils free of halogens (except emulsions and solutions)
-  '120108', // machining emulsions and solutions containing halogens
-  '120109', // machining emulsions and solutions free of halogens
-  '120110', // synthetic machining oils
-  '120112', // spent waxes and fats
-  '120113', // welding wastes
-  '120114', // machining sludges containing hazardous substances
-  '120115', // machining sludges other than those mentioned in 12 01 14
-  '120116', // waste blasting material containing hazardous substances
-  '120117', // waste blasting material other than those mentioned in 12 01 16
-  '120118', // metal sludge (grinding, honing and lapping sludge) containing oil
-  '120119', // readily biodegradable machining oil
-  '120120', // spent grinding bodies and grinding materials containing hazardous substances
-  '120121', // spent grinding bodies and grinding materials other than those mentioned in 12 01 20
-  '120199', // wastes not otherwise specified
-  '120301', // aqueous washing liquids
-  '120302', // steam degreasing wastes
-
-  // Chapter 13: Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)
-  '130101', // hydraulic oils, containing PCBs
-  '130104', // chlorinated emulsions
-  '130105', // non-chlorinated emulsions
-  '130109', // mineral-based chlorinated hydraulic oils
-  '130110', // mineral based non-chlorinated hydraulic oils
-  '130111', // synthetic hydraulic oils
-  '130112', // readily biodegradable hydraulic oils
-  '130113', // other hydraulic oils
-  '130204', // mineral-based chlorinated engine, gear and lubricating oils
-  '130205', // mineral-based non-chlorinated engine, gear and lubricating oils
-  '130206', // synthetic engine, gear and lubricating oils
-  '130207', // readily biodegradable engine, gear and lubricating oils
-  '130208', // other engine, gear and lubricating oils
-  '130301', // insulating or heat transmission oils containing PCBs
-  '130306', // mineral-based chlorinated insulating and heat transmission oils other than those mentioned in 13 03 01
-  '130307', // mineral-based non-chlorinated insulating and heat transmission oils
-  '130308', // synthetic insulating and heat transmission oils
-  '130309', // readily biodegradable insulating and heat transmission oils
-  '130310', // other insulating and heat transmission oils
-  '130401', // bilge oils from inland navigation
-  '130402', // bilge oils from jetty sewers
-  '130403', // bilge oils from other navigation
-  '130501', // solids from grit chambers and oil/water separators
-  '130502', // sludges from oil/water separators
-  '130503', // interceptor sludges
-  '130506', // oil from oil/water separators
-  '130507', // oily water from oil/water separators
-  '130508', // mixtures of wastes from grit chambers and oil/water separators
-  '130701', // fuel oil and diesel
-  '130702', // petrol
-  '130703', // other fuels (including mixtures)
-  '130801', // desalter sludges or emulsions
-  '130802', // other emulsions
-  '130899', // wastes not otherwise specified
-
-  // Chapter 14: Waste organic solvents, refrigerants and propellants (except 07 and 08)
-  '140601', // chlorofluorocarbons, HCFC, HFC
-  '140602', // other halogenated solvents and solvent mixtures
-  '140603', // other solvents and solvent mixtures
-  '140604', // sludges or solid wastes containing halogenated solvents
-  '140605', // sludges or solid wastes containing other solvents
-
-  // Chapter 15: Waste packaging, absorbents, wiping cloths, filter materials and protective clothing not otherwise specified
-  '150101', // paper and cardboard packaging
-  '150102', // plastic packaging
-  '150103', // wooden packaging
-  '150104', // metallic packaging
-  '150105', // composite packaging
-  '150106', // mixed packaging
-  '150107', // glass packaging
-  '150109', // textile packaging
-  '150110', // packaging containing residues of or contaminated by hazardous substances
-  '150111', // metallic packaging containing a hazardous solid porous matrix (for example asbestos), including empty pressure containers
-  '150202', // absorbents, filter materials (including oil filters not otherwise specified), wiping cloths, protective clothing contaminated by hazardous substances
-  '150203', // absorbents, filter materials, wiping cloths and protective clothing other than those mentioned in 15 02 02
-
-  // Chapter 16: Wastes not otherwise specified in the list
-  '160103', // end-of-life tyres
-  '160104', // end-of-life vehicles
-  '160106', // end-of-life vehicles, containing neither liquids nor other hazardous components
-  '160107', // oil filters
-  '160108', // components containing mercury
-  '160109', // components containing PCBs
-  '160110', // explosive components (for example air bags)
-  '160111', // brake pads containing asbestos
-  '160112', // brake pads other than those mentioned in 16 01 11
-  '160113', // brake fluids
-  '160114', // antifreeze fluids containing hazardous substances
-  '160115', // antifreeze fluids other than those mentioned in 16 01 14
-  '160116', // tanks for liquefied gas
-  '160117', // ferrous metal
-  '160118', // non-ferrous metal
-  '160119', // plastic
-  '160120', // glass
-  '160121', // hazardous components other than those mentioned in 16 01 07 to 16 01 11 and 16 01 13 and 16 01 14
-  '160122', // components not otherwise specified
-  '160199', // wastes not otherwise specified
-  '160209', // transformers and capacitors containing PCBs
-  '160210', // discarded equipment containing or contaminated by PCBs other than those mentioned in 16 02 09
-  '160211', // discarded equipment containing chlorofluorocarbons, HCFC, HFC
-  '160212', // discarded equipment containing free asbestos
-  '160213', // discarded equipment containing hazardous components other than those mentioned in 16 02 09 to 16 02 12
-  '160214', // discarded equipment other than those mentioned in 16 02 09 to 16 02 13
-  '160215', // hazardous components removed from discarded equipment
-  '160216', // components removed from discarded equipment other than those mentioned in 16 02 15
-  '160303', // inorganic wastes containing hazardous substances
-  '160304', // inorganic wastes other than those mentioned in 16 03 03
-  '160305', // organic wastes containing hazardous substances
-  '160306', // organic wastes other than those mentioned in 16 03 05
-  '160307', // metallic mercury
-  '160401', // waste ammunition
-  '160402', // fireworks wastes
-  '160403', // other waste explosives
-  '160504', // gases in pressure containers (including halons) containing hazardous substances
-  '160505', // gases in pressure containers other than those mentioned in 16 05 04
-  '160506', // laboratory chemicals, consisting of or containing hazardous substances, including mixtures of laboratory chemicals
-  '160507', // discarded inorganic chemicals consisting of or containing hazardous substances
-  '160508', // discarded organic chemicals consisting of or containing hazardous substances
-  '160509', // discarded chemicals other than those mentioned in 16 05 06, 16 05 07 or 16 05 08
-  '160601', // lead batteries
-  '160602', // Ni-Cd batteries
-  '160603', // mercury-containing batteries
-  '160604', // alkaline batteries (except 16 06 03)
-  '160605', // other batteries and accumulators
-  '160606', // separately collected electrolyte from batteries and accumulators
-  '160708', // wastes containing oil
-  '160709', // wastes containing other hazardous substances
-  '160799', // wastes not otherwise specified
-  '160801', // spent catalysts containing gold, silver, rhenium, rhodium, palladium, iridium or platinum (except 16 08 07)
-  '160802', // spent catalysts containing hazardous transition metals or hazardous transition metal compounds
-  '160803', // spent catalysts containing transition metals or transition metal compounds not otherwise specified
-  '160804', // spent fluid catalytic cracking catalysts (except 16 08 07)
-  '160805', // spent catalysts containing phosphoric acid
-  '160806', // spent liquids used as catalysts
-  '160807', // spent catalysts contaminated with hazardous substances
-  '160901', // permanganates, for example potassium permanganate
-  '160902', // chromates, for example potassium chromate, potassium or sodium dichromate
-  '160903', // peroxides, for example hydrogen peroxide
-  '160904', // oxidising substances, not otherwise specified
-  '161001', // aqueous liquid wastes containing hazardous substances
-  '161002', // aqueous liquid wastes other than those mentioned in 16 10 01
-  '161003', // aqueous concentrates containing hazardous substances
-  '161004', // aqueous concentrates other than those mentioned in 16 10 03
-  '161101', // carbon-based linings and refractories from metallurgical processes containing hazardous substances
-  '161102', // carbon-based linings and refractories from metallurgical processes others than those mentioned in 16 11 01
-  '161103', // other linings and refractories from metallurgical processes containing hazardous substances
-  '161104', // other linings and refractories from metallurgical processes other than those mentioned in 16 11 03
-  '161105', // linings and refractories from non-metallurgical processes containing hazardous substances
-  '161106', // linings and refractories from non-metallurgical processes others than those mentioned in 16 11 05
-
-  // Chapter 17: Construction and demolition wastes (including excavated soil from contaminated sites)
-  '170101', // concrete
-  '170102', // bricks
-  '170103', // tiles and ceramics
-  '170106', // mixtures of, or separate fractions of concrete, bricks, tiles and ceramics containing hazardous substances
-  '170107', // mixtures of concrete, bricks, tiles and ceramics other than those mentioned in 17 01 06
-  '170201', // wood
-  '170202', // glass
-  '170203', // plastic
-  '170204', // glass, plastic and wood containing or contaminated with hazardous substances
-  '170301', // bituminous mixtures containing coal tar
-  '170302', // bituminous mixtures other than those mentioned in 17 03 01
-  '170303', // coal tar and tarred products
-  '170401', // copper, bronze, brass
-  '170402', // aluminium
-  '170403', // lead
-  '170404', // zinc
-  '170405', // iron and steel
-  '170406', // tin
-  '170407', // mixed metals
-  '170409', // metal waste contaminated with hazardous substances
-  '170410', // cables containing oil, coal tar and other hazardous substances
-  '170411', // cables other than those mentioned in 17 04 10
-  '170503', // soil and stones containing hazardous substances
-  '170504', // soil and stones other than those mentioned in 17 05 03
-  '170505', // dredging spoil containing hazardous substances
-  '170506', // dredging spoil other than those mentioned in 17 05 05
-  '170507', // track ballast containing hazardous substances
-  '170508', // track ballast other than those mentioned in 17 05 07
-  '170601', // insulation materials containing asbestos
-  '170603', // other insulation materials consisting of or containing hazardous substances
-  '170604', // insulation materials other than those mentioned in 17 06 01 and 17 06 03
-  '170605', // construction materials containing asbestos
-  '170801', // gypsum-based construction materials contaminated with hazardous substances
-  '170802', // gypsum-based construction materials other than those mentioned in 17 08 01
-  '170901', // construction and demolition wastes containing mercury
-  '170902', // construction and demolition wastes containing PCB (for example PCB-containing sealants, PCB-containing resin-based floorings, PCB-containing sealed glazing units, PCB-containing capacitors)
-  '170903', // other construction and demolition wastes (including mixed wastes) containing hazardous substances
-  '170904', // mixed construction and demolition wastes other than those mentioned in 17 09 01, 17 09 02 and 17 09 03
-
-  // Chapter 18: Wastes from human or animal health care and/or related research (except kitchen and restaurant wastes not arising from immediate health care)
-  '180101', // sharps (except 18 01 03)
-  '180102', // body parts and organs including blood bags and blood preserves (except 18 01 03)
-  '180103', // wastes whose collection and disposal is subject to special requirements in order to prevent infection
-  '180104', // wastes whose collection and disposal is not subject to special requirements in order to prevent infection (for example dressings, plaster casts, linen, disposable clothing, diapers)
-  '180106', // chemicals consisting of or containing hazardous substances
-  '180107', // chemicals other than those mentioned in 18 01 06
-  '180108', // cytotoxic and cytostatic medicines
-  '180109', // medicines other than those mentioned in 18 01 08
-  '180110', // amalgam waste from dental care
-  '180201', // sharps (except 18 02 02)
-  '180202', // wastes whose collection and disposal is subject to special requirements in order to prevent infection
-  '180203', // wastes whose collection and disposal is not subject to special requirements in order to prevent infection
-  '180205', // chemicals consisting of or containing hazardous substances
-  '180206', // chemicals other than those mentioned in 18 02 05
-  '180207', // cytotoxic and cytostatic medicines
-  '180208', // medicines other than those mentioned in 18 02 07
-
-  // Chapter 19: Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use
-  '190102', // ferrous materials removed from bottom ash
-  '190105', // filter cake from gas treatment
-  '190106', // aqueous liquid wastes from gas treatment and other aqueous liquid wastes
-  '190107', // solid wastes from gas treatment
-  '190110', // spent activated carbon from flue-gas treatment
-  '190111', // bottom ash and slag containing hazardous substances
-  '190112', // bottom ash and slag other than those mentioned in 19 01 11
-  '190113', // fly ash containing hazardous substances
-  '190114', // fly ash other than those mentioned in 19 01 13
-  '190115', // boiler dust containing hazardous substances
-  '190116', // boiler dust other than those mentioned in 19 01 15
-  '190117', // pyrolysis wastes containing hazardous substances
-  '190118', // pyrolysis wastes other than those mentioned in 19 01 17
-  '190119', // sands from fluidised beds
-  '190199', // wastes not otherwise specified
-  '190203', // premixed wastes composed only of non-hazardous wastes
-  '190204', // premixed wastes composed of at least one hazardous waste
-  '190205', // sludges from physico/chemical treatment containing hazardous substances
-  '190206', // sludges from physico/chemical treatment other than those mentioned in 19 02 05
-  '190207', // oil and concentrates from separation
-  '190208', // liquid combustible wastes containing hazardous substances
-  '190209', // solid combustible wastes containing hazardous substances
-  '190210', // combustible wastes other than those mentioned in 19 02 08 and 19 02 09
-  '190211', // other wastes containing hazardous substances
-  '190299', // wastes not otherwise specified
-  '190304', // wastes marked as hazardous, partly stabilised
-  '190305', // stabilised wastes other than those mentioned in 19 03 04
-  '190306', // wastes marked as hazardous, solidified
-  '190307', // solidified wastes other than those mentioned in 19 03 06
-  '190308', // partly stabilised mercury
-  '190401', // vitrified waste
-  '190402', // fly ash and other flue-gas treatment wastes
-  '190403', // non-vitrified solid phase
-  '190404', // aqueous liquid wastes from vitrified waste tempering
-  '190501', // non-composted fraction of municipal and similar wastes
-  '190502', // non-composted fraction of animal and vegetable waste
-  '190503', // off-specification compost
-  '190599', // wastes not otherwise specified
-  '190603', // liquor from anaerobic treatment of municipal waste
-  '190604', // digestate from anaerobic treatment of municipal waste
-  '190605', // liquor from anaerobic treatment of animal and vegetable waste
-  '190606', // digestate from anaerobic treatment of animal and vegetable waste
-  '190699', // wastes not otherwise specified
-  '190702', // landfill leachate containing hazardous substances
-  '190703', // landfill leachate other than those mentioned in 19 07 02
-  '190801', // screenings
-  '190802', // waste from desanding
-  '190805', // sludges from treatment of urban waste water
-  '190806', // saturated or spent ion exchange resins
-  '190807', // solutions and sludges from regeneration of ion exchangers
-  '190808', // membrane system waste containing heavy metals
-  '190809', // grease and oil mixture from oil/water separation containing only edible oil and fats
-  '190810', // grease and oil mixture from oil/water separation other than those mentioned in 19 08 09
-  '190811', // sludges containing hazardous substances from biological treatment of industrial waste water
-  '190812', // sludges from biological treatment of industrial waste water other than those mentioned in 19 08 11
-  '190813', // sludges containing hazardous substances from other treatment of industrial waste water
-  '190814', // sludges from other treatment of industrial waste water other than those mentioned in 19 08 13
-  '190899', // wastes not otherwise specified
-  '190901', // solid waste from primary filtration and screenings
-  '190902', // sludges from water clarification
-  '190903', // sludges from decarbonation
-  '190904', // spent activated carbon
-  '190905', // saturated or spent ion exchange resins
-  '190906', // solutions and sludges from regeneration of ion exchangers
-  '190999', // wastes not otherwise specified
-  '191001', // iron and steel waste
-  '191002', // non-ferrous waste
-  '191003', // fluff-light fraction and dust containing hazardous substances
-  '191004', // fluff-light fraction and dust other than those mentioned in 19 10 03
-  '191005', // other fractions containing hazardous substances
-  '191006', // other fractions other than those mentioned in 19 10 05
-  '191101', // spent filter clays
-  '191102', // acid tars
-  '191103', // aqueous liquid wastes
-  '191104', // wastes from fuel cleaning with bases
-  '191105', // sludges from on-site effluent treatment containing hazardous substances
-  '191106', // sludges from on-site effluent treatment other than those mentioned in 19 11 05
-  '191107', // wastes from flue-gas cleaning
-  '191199', // wastes not otherwise specified
-  '191201', // paper and cardboard
-  '191202', // ferrous metal
-  '191203', // non-ferrous metal
-  '191204', // plastic and rubber
-  '191205', // glass
-  '191206', // wood containing hazardous substances
-  '191207', // wood other than that mentioned in 19 12 06
-  '191208', // textiles
-  '191209', // minerals (for example sand, stones)
-  '191210', // combustible waste (refuse derived fuel)
-  '191211', // other wastes (including mixtures of materials) from mechanical treatment of waste containing hazardous substances
-  '191212', // other wastes (including mixtures of materials) from mechanical treatment of wastes other than those mentioned in 19 12 11
-  '191301', // solid wastes from soil remediation containing hazardous substances
-  '191302', // solid wastes from soil remediation other than those mentioned in 19 13 01
-  '191303', // sludges from soil remediation containing hazardous substances
-  '191304', // sludges from soil remediation other than those mentioned in 19 13 03
-  '191305', // sludges from groundwater remediation containing hazardous substances
-  '191306', // sludges from groundwater remediation other than those mentioned in 19 13 05
-  '191307', // aqueous liquid wastes and aqueous concentrates from groundwater remediation containing hazardous substances
-  '191308', // aqueous liquid wastes and aqueous concentrates from groundwater remediation other than those mentioned in 19 13 07
-
-  // Chapter 20: Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions
-  '200101', // paper and cardboard
-  '200102', // glass
-  '200108', // biodegradable kitchen and canteen waste
-  '200110', // clothes
-  '200111', // textiles
-  '200113', // solvents
-  '200114', // acids
-  '200115', // alkalines
-  '200117', // photochemicals
-  '200119', // pesticides
-  '200121', // fluorescent tubes and other mercury-containing waste
-  '200123', // discarded equipment containing chlorofluorocarbons
-  '200125', // edible oil and fat
-  '200126', // oil and fat other than those mentioned in 20 01 25
-  '200127', // paint, inks, adhesives and resins containing hazardous substances
-  '200128', // paint, inks, adhesives and resins other than those mentioned in 20 01 27
-  '200129', // detergents containing hazardous substances
-  '200130', // detergents other than those mentioned in 20 01 29
-  '200131', // cytotoxic and cytostatic medicines
-  '200132', // medicines other than those mentioned in 20 01 31
-  '200133', // batteries and accumulators included in 16 06 01, 16 06 02 or 16 06 03 and unsorted batteries and accumulators containing these batteries
-  '200134', // batteries and accumulators other than those mentioned in 20 01 33
-  '200135', // discarded electrical and electronic equipment other than those mentioned in 20 01 21 and 20 01 23 containing hazardous components
-  '200136', // discarded electrical and electronic equipment other than those mentioned in 20 01 21, 20 01 23 and 20 01 35
-  '200137', // wood containing hazardous substances
-  '200138', // wood other than that mentioned in 20 01 37
-  '200139', // plastics
-  '200140', // metals
-  '200141', // wastes from chimney sweeping
-  '200199', // other fractions not otherwise specified
-  '200201', // biodegradable waste
-  '200202', // soil and stones
-  '200203', // other non-biodegradable wastes
-  '200301', // mixed municipal waste
-  '200302', // waste from markets
-  '200303', // street-cleaning residues
-  '200304', // septic tank sludge
-  '200306', // waste from sewage cleaning
-  '200307', // bulky waste
-  '200399' // municipal wastes not otherwise specified
+  {
+    code: '010101',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter: 'Wastes from mineral excavation',
+    description: 'Wastes from mineral metalliferous excavation'
+  },
+  {
+    code: '010102',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter: 'Wastes from mineral excavation',
+    description: 'Wastes from mineral non-metalliferous excavation'
+  },
+  {
+    code: '010304',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter:
+      'Wastes from physical and chemical processing of metalliferous minerals',
+    description: 'Acid-generating tailings from processing of sulphide ore'
+  },
+  {
+    code: '010305',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter:
+      'Wastes from physical and chemical processing of metalliferous minerals',
+    description: 'Other tailings containing hazardous substances'
+  },
+  {
+    code: '010306',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter:
+      'Wastes from physical and chemical processing of metalliferous minerals',
+    description: 'Tailings other than those mentioned in 01 03 04 and 01 03 05'
+  },
+  {
+    code: '010307',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter:
+      'Wastes from physical and chemical processing of metalliferous minerals',
+    description:
+      'Other wastes containing hazardous substances from physical and chemical processing of metalliferous minerals'
+  },
+  {
+    code: '010308',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter:
+      'Wastes from physical and chemical processing of metalliferous minerals',
+    description:
+      'Dusty and powdery wastes other than those mentioned in 01 03 07'
+  },
+  {
+    code: '010309',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter:
+      'Wastes from physical and chemical processing of metalliferous minerals',
+    description:
+      'Red mud from alumina production other than the wastes mentioned in 01 03 10'
+  },
+  {
+    code: '010310',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter:
+      'Wastes from physical and chemical processing of metalliferous minerals',
+    description:
+      'Red mud from alumina production containing hazardous substances other than the wastes mentioned in 01 03 07'
+  },
+  {
+    code: '010399',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter:
+      'Wastes from physical and chemical processing of metalliferous minerals',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '010407',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter:
+      'Wastes from physical and chemical processing of non-metalliferous minerals',
+    description:
+      'Wastes containing hazardous substances from physical and chemical processing of non-metalliferous minerals'
+  },
+  {
+    code: '010408',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter:
+      'Wastes from physical and chemical processing of non-metalliferous minerals',
+    description:
+      'Waste gravel and crushed rocks other than those mentioned in 01 04 07'
+  },
+  {
+    code: '010409',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter:
+      'Wastes from physical and chemical processing of non-metalliferous minerals',
+    description: 'Waste sand and clays'
+  },
+  {
+    code: '010410',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter:
+      'Wastes from physical and chemical processing of non-metalliferous minerals',
+    description:
+      'Dusty and powdery wastes other than those mentioned in 01 04 07'
+  },
+  {
+    code: '010411',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter:
+      'Wastes from physical and chemical processing of non-metalliferous minerals',
+    description:
+      'Wastes from potash and rock salt processing other than those mentioned in 01 04 07'
+  },
+  {
+    code: '010412',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter:
+      'Wastes from physical and chemical processing of non-metalliferous minerals',
+    description:
+      'Tailings and other wastes from washing and cleaning of minerals other than those mentioned in 01 04 07 and 01 04 11'
+  },
+  {
+    code: '010413',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter:
+      'Wastes from physical and chemical processing of non-metalliferous minerals',
+    description:
+      'Wastes from stone cutting and sawing other than those mentioned in 01 04 07'
+  },
+  {
+    code: '010499',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter:
+      'Wastes from physical and chemical processing of non-metalliferous minerals',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '010504',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter: 'Drilling muds and other drilling wastes',
+    description: 'Freshwater drilling muds and wastes'
+  },
+  {
+    code: '010505',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter: 'Drilling muds and other drilling wastes',
+    description: 'Oil-containing drilling muds and wastes'
+  },
+  {
+    code: '010506',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter: 'Drilling muds and other drilling wastes',
+    description:
+      'Drilling muds and other drilling wastes containing hazardous substances'
+  },
+  {
+    code: '010507',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter: 'Drilling muds and other drilling wastes',
+    description:
+      'Barite-containing drilling muds and wastes other than those mentioned in 01 05 05 and 01 05 06'
+  },
+  {
+    code: '010508',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter: 'Drilling muds and other drilling wastes',
+    description:
+      'Chloride-containing drilling muds and wastes other than those mentioned in 01 05 05 and 01 05 06'
+  },
+  {
+    code: '010599',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+    subChapter: 'Drilling muds and other drilling wastes',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '020101',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing',
+    description: 'Sludges from washing and cleaning'
+  },
+  {
+    code: '020102',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing',
+    description: 'Animal-tissue waste'
+  },
+  {
+    code: '020103',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing',
+    description: 'Plant-tissue waste'
+  },
+  {
+    code: '020104',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing',
+    description: 'Waste plastics (except packaging)'
+  },
+  {
+    code: '020106',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing',
+    description:
+      'Animal faeces, urine and manure (including spoiled straw), effluent, collected separately and treated off-site'
+  },
+  {
+    code: '020107',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing',
+    description: 'Wastes from forestry'
+  },
+  {
+    code: '020108',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing',
+    description: 'Agrochemical waste containing hazardous substances'
+  },
+  {
+    code: '020109',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing',
+    description: 'Agrochemical waste other than those mentioned in 02 01 08'
+  },
+  {
+    code: '020110',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing',
+    description: 'Waste metal'
+  },
+  {
+    code: '020199',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '020201',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from the preparation and processing of meat, fish and other foods of animal origin',
+    description: 'Sludges from washing and cleaning'
+  },
+  {
+    code: '020202',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from the preparation and processing of meat, fish and other foods of animal origin',
+    description: 'Animal-tissue waste'
+  },
+  {
+    code: '020203',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from the preparation and processing of meat, fish and other foods of animal origin',
+    description: 'Materials unsuitable for consumption or processing'
+  },
+  {
+    code: '020204',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from the preparation and processing of meat, fish and other foods of animal origin',
+    description: 'Sludges from on-site effluent treatment'
+  },
+  {
+    code: '020299',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from the preparation and processing of meat, fish and other foods of animal origin',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '020301',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from fruit, vegetables, cereals, edible oils, cocoa, coffee, tea and tobacco preparation and processing; conserve production; yeast and yeast extract production, molasses preparation and fermentation',
+    description:
+      'Sludges from washing, cleaning, peeling, centrifuging and separation'
+  },
+  {
+    code: '020302',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from fruit, vegetables, cereals, edible oils, cocoa, coffee, tea and tobacco preparation and processing; conserve production; yeast and yeast extract production, molasses preparation and fermentation',
+    description: 'Wastes from preserving agents'
+  },
+  {
+    code: '020303',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from fruit, vegetables, cereals, edible oils, cocoa, coffee, tea and tobacco preparation and processing; conserve production; yeast and yeast extract production, molasses preparation and fermentation',
+    description: 'Wastes from solvent extraction'
+  },
+  {
+    code: '020304',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from fruit, vegetables, cereals, edible oils, cocoa, coffee, tea and tobacco preparation and processing; conserve production; yeast and yeast extract production, molasses preparation and fermentation',
+    description: 'Materials unsuitable for consumption or processing'
+  },
+  {
+    code: '020305',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from fruit, vegetables, cereals, edible oils, cocoa, coffee, tea and tobacco preparation and processing; conserve production; yeast and yeast extract production, molasses preparation and fermentation',
+    description: 'Sludges from on-site effluent treatment'
+  },
+  {
+    code: '020399',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from fruit, vegetables, cereals, edible oils, cocoa, coffee, tea and tobacco preparation and processing; conserve production; yeast and yeast extract production, molasses preparation and fermentation',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '020401',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter: 'Wastes from sugar processing',
+    description: 'Soil from cleaning and washing beet'
+  },
+  {
+    code: '020402',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter: 'Wastes from sugar processing',
+    description: 'Off-specification calcium carbonate'
+  },
+  {
+    code: '020403',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter: 'Wastes from sugar processing',
+    description: 'Sludges from on-site effluent treatment'
+  },
+  {
+    code: '020499',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter: 'Wastes from sugar processing',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '020501',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter: 'Wastes from the dairy products industry',
+    description: 'Materials unsuitable for consumption or processing'
+  },
+  {
+    code: '020502',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter: 'Wastes from the dairy products industry',
+    description: 'Sludges from on-site effluent treatment'
+  },
+  {
+    code: '020599',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter: 'Wastes from the dairy products industry',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '020601',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter: 'Wastes from the baking and confectionery industry',
+    description: 'Materials unsuitable for consumption or processing'
+  },
+  {
+    code: '020602',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter: 'Wastes from the baking and confectionery industry',
+    description: 'Wastes from preserving agents'
+  },
+  {
+    code: '020603',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter: 'Wastes from the baking and confectionery industry',
+    description: 'Sludges from on-site effluent treatment'
+  },
+  {
+    code: '020699',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter: 'Wastes from the baking and confectionery industry',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '020701',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from the production of alcoholic and non- alcoholic beverages (except coffee, tea and cocoa)',
+    description:
+      'Wastes from washing, cleaning and mechanical reduction of raw materials'
+  },
+  {
+    code: '020702',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from the production of alcoholic and non- alcoholic beverages (except coffee, tea and cocoa)',
+    description: 'Wastes from spirits distillation'
+  },
+  {
+    code: '020703',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from the production of alcoholic and non- alcoholic beverages (except coffee, tea and cocoa)',
+    description: 'Wastes from chemical treatment'
+  },
+  {
+    code: '020704',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from the production of alcoholic and non- alcoholic beverages (except coffee, tea and cocoa)',
+    description: 'Materials unsuitable for consumption or processing'
+  },
+  {
+    code: '020705',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from the production of alcoholic and non- alcoholic beverages (except coffee, tea and cocoa)',
+    description: 'Sludges from on-site effluent treatment'
+  },
+  {
+    code: '020799',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
+    subChapter:
+      'Wastes from the production of alcoholic and non- alcoholic beverages (except coffee, tea and cocoa)',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '030101',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from wood processing and the production of panels and furniture, pulp, paper and cardboard',
+    subChapter:
+      'Wastes from wood processing and the production of panels and furniture',
+    description: 'Waste bark and cork'
+  },
+  {
+    code: '030104',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from wood processing and the production of panels and furniture, pulp, paper and cardboard',
+    subChapter:
+      'Wastes from wood processing and the production of panels and furniture',
+    description:
+      'Sawdust, shavings, cuttings, wood, particle board and veneer containing hazardous substances'
+  },
+  {
+    code: '030105',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from wood processing and the production of panels and furniture, pulp, paper and cardboard',
+    subChapter:
+      'Wastes from wood processing and the production of panels and furniture',
+    description:
+      'Sawdust, shavings, cuttings, wood, particle board and veneer other than those mentioned in 03 01 04'
+  },
+  {
+    code: '030199',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from wood processing and the production of panels and furniture, pulp, paper and cardboard',
+    subChapter:
+      'Wastes from wood processing and the production of panels and furniture',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '030201',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from wood processing and the production of panels and furniture, pulp, paper and cardboard',
+    subChapter: 'Wastes from wood preservation',
+    description: 'Non-halogenated organic wood preservatives'
+  },
+  {
+    code: '030202',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from wood processing and the production of panels and furniture, pulp, paper and cardboard',
+    subChapter: 'Wastes from wood preservation',
+    description: 'Organochlorinated wood preservatives'
+  },
+  {
+    code: '030203',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from wood processing and the production of panels and furniture, pulp, paper and cardboard',
+    subChapter: 'Wastes from wood preservation',
+    description: 'Organometallic wood preservatives'
+  },
+  {
+    code: '030204',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from wood processing and the production of panels and furniture, pulp, paper and cardboard',
+    subChapter: 'Wastes from wood preservation',
+    description: 'Inorganic wood preservatives'
+  },
+  {
+    code: '030205',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from wood processing and the production of panels and furniture, pulp, paper and cardboard',
+    subChapter: 'Wastes from wood preservation',
+    description: 'Other wood preservatives containing hazardous substances'
+  },
+  {
+    code: '030299',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from wood processing and the production of panels and furniture, pulp, paper and cardboard',
+    subChapter: 'Wastes from wood preservation',
+    description: 'Wood preservatives not otherwise specified'
+  },
+  {
+    code: '030301',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from wood processing and the production of panels and furniture, pulp, paper and cardboard',
+    subChapter:
+      'Wastes from pulp, paper and cardboard production and processing',
+    description: 'Waste bark and wood'
+  },
+  {
+    code: '030302',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from wood processing and the production of panels and furniture, pulp, paper and cardboard',
+    subChapter:
+      'Wastes from pulp, paper and cardboard production and processing',
+    description: 'Green liquor sludge (from recovery of cooking liquor)'
+  },
+  {
+    code: '030305',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from wood processing and the production of panels and furniture, pulp, paper and cardboard',
+    subChapter:
+      'Wastes from pulp, paper and cardboard production and processing',
+    description: 'De-inking sludges from paper recycling'
+  },
+  {
+    code: '030307',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from wood processing and the production of panels and furniture, pulp, paper and cardboard',
+    subChapter:
+      'Wastes from pulp, paper and cardboard production and processing',
+    description:
+      'Mechanically separated rejects from pulping of waste paper and cardboard'
+  },
+  {
+    code: '030308',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from wood processing and the production of panels and furniture, pulp, paper and cardboard',
+    subChapter:
+      'Wastes from pulp, paper and cardboard production and processing',
+    description:
+      'Wastes from sorting of paper and cardboard destined for recycling'
+  },
+  {
+    code: '030309',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from wood processing and the production of panels and furniture, pulp, paper and cardboard',
+    subChapter:
+      'Wastes from pulp, paper and cardboard production and processing',
+    description: 'Lime mud waste'
+  },
+  {
+    code: '030310',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from wood processing and the production of panels and furniture, pulp, paper and cardboard',
+    subChapter:
+      'Wastes from pulp, paper and cardboard production and processing',
+    description:
+      'Fibre rejects, fibre-, filler- and coating-sludges from mechanical separation'
+  },
+  {
+    code: '030311',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from wood processing and the production of panels and furniture, pulp, paper and cardboard',
+    subChapter:
+      'Wastes from pulp, paper and cardboard production and processing',
+    description:
+      'Sludges from on-site effluent treatment other than those mentioned in 03 03 10'
+  },
+  {
+    code: '030399',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from wood processing and the production of panels and furniture, pulp, paper and cardboard',
+    subChapter:
+      'Wastes from pulp, paper and cardboard production and processing',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '040101',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the leather and fur industry',
+    description: 'Fleshings and lime split wastes'
+  },
+  {
+    code: '040102',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the leather and fur industry',
+    description: 'Liming waste'
+  },
+  {
+    code: '040103',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the leather and fur industry',
+    description: 'Degreasing wastes containing solvents without a liquid phase'
+  },
+  {
+    code: '040104',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the leather and fur industry',
+    description: 'Tanning liquor containing chromium'
+  },
+  {
+    code: '040105',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the leather and fur industry',
+    description: 'Tanning liquor free of chromium'
+  },
+  {
+    code: '040106',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the leather and fur industry',
+    description:
+      'Sludges, in particular from on-site effluent treatment containing chromium'
+  },
+  {
+    code: '040107',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the leather and fur industry',
+    description:
+      'Sludges, in particular from on-site effluent treatment free of chromium'
+  },
+  {
+    code: '040108',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the leather and fur industry',
+    description:
+      'Waste tanned leather (blue sheetings, shavings, cuttings, buffing dust) containing chromium'
+  },
+  {
+    code: '040109',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the leather and fur industry',
+    description: 'Wastes from dressing and finishing'
+  },
+  {
+    code: '040199',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the leather and fur industry',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '040209',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the textile industry',
+    description:
+      'Wastes from composite materials (impregnated textile, elastomer, plastomer)'
+  },
+  {
+    code: '040210',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the textile industry',
+    description:
+      'Organic matter from natural products (for example grease, wax)'
+  },
+  {
+    code: '040214',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the textile industry',
+    description: 'Wastes from finishing containing organic solvents'
+  },
+  {
+    code: '040215',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the textile industry',
+    description: 'Wastes from finishing other than those mentioned in 04 02 14'
+  },
+  {
+    code: '040216',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the textile industry',
+    description: 'Dyestuffs and pigments containing hazardous substances'
+  },
+  {
+    code: '040217',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the textile industry',
+    description: 'Dyestuffs and pigments other than those mentioned in 04 02 16'
+  },
+  {
+    code: '040219',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the textile industry',
+    description:
+      'Sludges from on-site effluent treatment containing hazardous substances'
+  },
+  {
+    code: '040220',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the textile industry',
+    description:
+      'Sludges from on-site effluent treatment other than those mentioned in 04 02 19'
+  },
+  {
+    code: '040221',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the textile industry',
+    description: 'Wastes from unprocessed textile fibres'
+  },
+  {
+    code: '040222',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the textile industry',
+    description: 'Wastes from processed textile fibres'
+  },
+  {
+    code: '040299',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from the leather, fur and textile industries',
+    subChapter: 'Wastes from the textile industry',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '050102',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from petroleum refining',
+    description: 'Desalter sludges'
+  },
+  {
+    code: '050103',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from petroleum refining',
+    description: 'Tank bottom sludges'
+  },
+  {
+    code: '050104',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from petroleum refining',
+    description: 'Acid alkyl sludges'
+  },
+  {
+    code: '050105',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from petroleum refining',
+    description: 'Oil spills'
+  },
+  {
+    code: '050106',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from petroleum refining',
+    description:
+      'Oily sludges from maintenance operations of the plant or equipment'
+  },
+  {
+    code: '050107',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from petroleum refining',
+    description: 'Acid tars'
+  },
+  {
+    code: '050108',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from petroleum refining',
+    description: 'Other tars'
+  },
+  {
+    code: '050109',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from petroleum refining',
+    description:
+      'Sludges from on-site effluent treatment containing hazardous substances'
+  },
+  {
+    code: '050110',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from petroleum refining',
+    description:
+      'Sludges from on-site effluent treatment other than those mentioned in 05 01 09'
+  },
+  {
+    code: '050111',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from petroleum refining',
+    description: 'Wastes from cleaning of fuels with bases'
+  },
+  {
+    code: '050112',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from petroleum refining',
+    description: 'Oil containing acids'
+  },
+  {
+    code: '050113',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from petroleum refining',
+    description: 'Boiler feedwater sludges'
+  },
+  {
+    code: '050114',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from petroleum refining',
+    description: 'Wastes from cooling columns'
+  },
+  {
+    code: '050115',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from petroleum refining',
+    description: 'Spent filter clays'
+  },
+  {
+    code: '050116',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from petroleum refining',
+    description: 'Sulphur-containing wastes from petroleum desulphurisation'
+  },
+  {
+    code: '050117',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from petroleum refining',
+    description: 'Bitumen'
+  },
+  {
+    code: '050199',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from petroleum refining',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '050601',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from the pyrolytic treatment of coal',
+    description: 'Acid tars'
+  },
+  {
+    code: '050603',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from the pyrolytic treatment of coal',
+    description: 'Other tars'
+  },
+  {
+    code: '050604',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from the pyrolytic treatment of coal',
+    description: 'Waste from cooling columns'
+  },
+  {
+    code: '050699',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from the pyrolytic treatment of coal',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '050701',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from natural gas purification and transportation',
+    description: 'Wastes containing mercury'
+  },
+  {
+    code: '050702',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from natural gas purification and transportation',
+    description: 'Wastes containing sulphur'
+  },
+  {
+    code: '050799',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from petroleum refining, natural gas purification and pyrolytic treatment of coal',
+    subChapter: 'Wastes from natural gas purification and transportation',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '060101',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of acids',
+    description: 'Sulphuric acid and sulphurous acid'
+  },
+  {
+    code: '060102',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of acids',
+    description: 'Hydrochloric acid'
+  },
+  {
+    code: '060103',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of acids',
+    description: 'Hydrofluoric acid'
+  },
+  {
+    code: '060104',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of acids',
+    description: 'Phosphoric and phosphorous acid'
+  },
+  {
+    code: '060105',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of acids',
+    description: 'Nitric acid and nitrous acid'
+  },
+  {
+    code: '060106',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of acids',
+    description: 'Other acids'
+  },
+  {
+    code: '060199',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of acids',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '060201',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter: 'Wastes from the mfsu of bases',
+    description: 'Calcium hydroxide'
+  },
+  {
+    code: '060203',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter: 'Wastes from the mfsu of bases',
+    description: 'Ammonium hydroxide'
+  },
+  {
+    code: '060204',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter: 'Wastes from the mfsu of bases',
+    description: 'Sodium and potassium hydroxide'
+  },
+  {
+    code: '060205',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter: 'Wastes from the mfsu of bases',
+    description: 'Other bases'
+  },
+  {
+    code: '060299',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter: 'Wastes from the mfsu of bases',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '060311',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of salts and their solutions and metallic oxides',
+    description: 'Solid salts and solutions containing cyanides'
+  },
+  {
+    code: '060313',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of salts and their solutions and metallic oxides',
+    description: 'Solid salts and solutions containing heavy metals'
+  },
+  {
+    code: '060314',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of salts and their solutions and metallic oxides',
+    description:
+      'Solid salts and solutions other than those mentioned in 06 03 11 and 06 03 13'
+  },
+  {
+    code: '060315',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of salts and their solutions and metallic oxides',
+    description: 'Metallic oxides containing heavy metals'
+  },
+  {
+    code: '060316',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of salts and their solutions and metallic oxides',
+    description: 'Metallic oxides other than those mentioned in 06 03 15'
+  },
+  {
+    code: '060399',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of salts and their solutions and metallic oxides',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '060403',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter: 'Metal-containing wastes other than those mentioned in 06 03',
+    description: 'Wastes containing arsenic'
+  },
+  {
+    code: '060404',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter: 'Metal-containing wastes other than those mentioned in 06 03',
+    description: 'Wastes containing mercury'
+  },
+  {
+    code: '060405',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter: 'Metal-containing wastes other than those mentioned in 06 03',
+    description: 'Wastes containing other heavy metals'
+  },
+  {
+    code: '060499',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter: 'Metal-containing wastes other than those mentioned in 06 03',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '060502',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter: 'Sludges from on-site effluent treatment',
+    description:
+      'Sludges from on-site effluent treatment containing hazardous substances'
+  },
+  {
+    code: '060503',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter: 'Sludges from on-site effluent treatment',
+    description:
+      'Sludges from on-site effluent treatment other than those mentioned in 06 05 02'
+  },
+  {
+    code: '060602',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter: 'Sludges from on-site effluent treatment',
+    description: 'Wastes containing hazardous sulphides'
+  },
+  {
+    code: '060603',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter: 'Sludges from on-site effluent treatment',
+    description:
+      'Wastes containing sulphides other than those mentioned in 06 06 02'
+  },
+  {
+    code: '060699',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter: 'Sludges from on-site effluent treatment',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '060701',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of halogens and halogen chemical processes',
+    description: 'Wastes containing asbestos from electrolysis'
+  },
+  {
+    code: '060702',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of halogens and halogen chemical processes',
+    description: 'Activated carbon from chlorine production'
+  },
+  {
+    code: '060703',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of halogens and halogen chemical processes',
+    description: 'Barium sulphate sludge containing mercury'
+  },
+  {
+    code: '060704',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of halogens and halogen chemical processes',
+    description: 'Solutions and acids, for example contact acid'
+  },
+  {
+    code: '060799',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of halogens and halogen chemical processes',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '060802',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter: 'Wastes from the mfsu of silicon and silicon derivatives',
+    description: 'Wastes containing hazardous chlorosilanes'
+  },
+  {
+    code: '060899',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter: 'Wastes from the mfsu of silicon and silicon derivatives',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '060902',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the msfu of phosphorous chemicals and phosphorous chemical processes',
+    description: 'Phosphorous slag'
+  },
+  {
+    code: '060903',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the msfu of phosphorous chemicals and phosphorous chemical processes',
+    description:
+      'Calcium-based reaction wastes containing or contaminated with hazardous substances'
+  },
+  {
+    code: '060904',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the msfu of phosphorous chemicals and phosphorous chemical processes',
+    description:
+      'Calcium-based reaction wastes other than those mentioned in 06 09 03'
+  },
+  {
+    code: '060999',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the msfu of phosphorous chemicals and phosphorous chemical processes',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '061002',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of nitrogen chemicals, nitrogen chemical processes and fertiliser manufacture',
+    description: 'Wastes containing hazardous substances'
+  },
+  {
+    code: '061099',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of nitrogen chemicals, nitrogen chemical processes and fertiliser manufacture',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '061101',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the manufacture of inorganic pigments and opacificiers',
+    description:
+      'Calcium-based reaction wastes from titanium dioxide production'
+  },
+  {
+    code: '061199',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from the manufacture of inorganic pigments and opacificiers',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '061301',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from inorganic chemical processes not otherwise specified',
+    description:
+      'Inorganic plant protection products, wood-preserving agents and other biocides.'
+  },
+  {
+    code: '061302',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from inorganic chemical processes not otherwise specified',
+    description: 'Spent activated carbon (except 06 07 02)'
+  },
+  {
+    code: '061303',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from inorganic chemical processes not otherwise specified',
+    description: 'Carbon black'
+  },
+  {
+    code: '061304',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from inorganic chemical processes not otherwise specified',
+    description: 'Wastes from asbestos processing'
+  },
+  {
+    code: '061305',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from inorganic chemical processes not otherwise specified',
+    description: 'Soot'
+  },
+  {
+    code: '061399',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from inorganic chemical processes',
+    subChapter:
+      'Wastes from inorganic chemical processes not otherwise specified',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '070101',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of basic organic chemicals',
+    description: 'Aqueous washing liquids and mother liquors'
+  },
+  {
+    code: '070103',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of basic organic chemicals',
+    description:
+      'Organic halogenated solvents, washing liquids and mother liquors'
+  },
+  {
+    code: '070104',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of basic organic chemicals',
+    description: 'Other organic solvents, washing liquids and mother liquors'
+  },
+  {
+    code: '070107',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of basic organic chemicals',
+    description: 'Halogenated still bottoms and reaction residues'
+  },
+  {
+    code: '070108',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of basic organic chemicals',
+    description: 'Other still bottoms and reaction residues'
+  },
+  {
+    code: '070109',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of basic organic chemicals',
+    description: 'Halogenated filter cakes and spent absorbents'
+  },
+  {
+    code: '070110',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of basic organic chemicals',
+    description: 'Other filter cakes and spent absorbents'
+  },
+  {
+    code: '070111',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of basic organic chemicals',
+    description:
+      'Sludges from on-site effluent treatment containing hazardous substances'
+  },
+  {
+    code: '070112',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of basic organic chemicals',
+    description:
+      'Sludges from on-site effluent treatment other than those mentioned in 07 01 11'
+  },
+  {
+    code: '070199',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of basic organic chemicals',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '070201',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of plastics, synthetic rubber and man-made fibres',
+    description: 'Aqueous washing liquids and mother liquors'
+  },
+  {
+    code: '070203',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of plastics, synthetic rubber and man-made fibres',
+    description:
+      'Organic halogenated solvents, washing liquids and mother liquors'
+  },
+  {
+    code: '070204',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of plastics, synthetic rubber and man-made fibres',
+    description: 'Other organic solvents, washing liquids and mother liquors'
+  },
+  {
+    code: '070207',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of plastics, synthetic rubber and man-made fibres',
+    description: 'Halogenated still bottoms and reaction residues'
+  },
+  {
+    code: '070208',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of plastics, synthetic rubber and man-made fibres',
+    description: 'Other still bottoms and reaction residues'
+  },
+  {
+    code: '070209',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of plastics, synthetic rubber and man-made fibres',
+    description: 'Halogenated filter cakes and spent absorbents'
+  },
+  {
+    code: '070210',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of plastics, synthetic rubber and man-made fibres',
+    description: 'Other filter cakes and spent absorbents'
+  },
+  {
+    code: '070211',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of plastics, synthetic rubber and man-made fibres',
+    description:
+      'Sludges from on-site effluent treatment containing hazardous substances'
+  },
+  {
+    code: '070212',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of plastics, synthetic rubber and man-made fibres',
+    description:
+      'Sludges from on-site effluent treatment other than those mentioned in 07 02 11'
+  },
+  {
+    code: '070213',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of plastics, synthetic rubber and man-made fibres',
+    description: 'Waste plastic'
+  },
+  {
+    code: '070214',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of plastics, synthetic rubber and man-made fibres',
+    description: 'Wastes from additives containing hazardous substances'
+  },
+  {
+    code: '070215',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of plastics, synthetic rubber and man-made fibres',
+    description: 'Wastes from additives other than those mentioned in 07 02 14'
+  },
+  {
+    code: '070216',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of plastics, synthetic rubber and man-made fibres',
+    description: 'Wastes containing hazardous silicones'
+  },
+  {
+    code: '070217',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of plastics, synthetic rubber and man-made fibres',
+    description:
+      'Wastes containing silicones other than those mentioned in 07 02 16'
+  },
+  {
+    code: '070299',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of plastics, synthetic rubber and man-made fibres',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '070301',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic dyes and pigments (except 06 11)',
+    description: 'Aqueous washing liquids and mother liquors'
+  },
+  {
+    code: '070303',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic dyes and pigments (except 06 11)',
+    description:
+      'Organic halogenated solvents, washing liquids and mother liquors'
+  },
+  {
+    code: '070304',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic dyes and pigments (except 06 11)',
+    description: 'Other organic solvents, washing liquids and mother liquors'
+  },
+  {
+    code: '070307',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic dyes and pigments (except 06 11)',
+    description: 'Halogenated still bottoms and reaction residues'
+  },
+  {
+    code: '070308',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic dyes and pigments (except 06 11)',
+    description: 'Other still bottoms and reaction residues'
+  },
+  {
+    code: '070309',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic dyes and pigments (except 06 11)',
+    description: 'Halogenated filter cakes and spent absorbents'
+  },
+  {
+    code: '070310',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic dyes and pigments (except 06 11)',
+    description: 'Other filter cakes and spent absorbents'
+  },
+  {
+    code: '070311',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic dyes and pigments (except 06 11)',
+    description:
+      'Sludges from on-site effluent treatment containing hazardous substances'
+  },
+  {
+    code: '070312',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic dyes and pigments (except 06 11)',
+    description:
+      'Sludges from on-site effluent treatment other than those mentioned in 07 03 11'
+  },
+  {
+    code: '070399',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic dyes and pigments (except 06 11)',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '070401',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic plant protection products (except 02 01 08 and 02 01 09), wood preserving agents (except 03 02) and other biocides',
+    description: 'Aqueous washing liquids and mother liquors'
+  },
+  {
+    code: '070403',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic plant protection products (except 02 01 08 and 02 01 09), wood preserving agents (except 03 02) and other biocides',
+    description:
+      'Organic halogenated solvents, washing liquids and mother liquors'
+  },
+  {
+    code: '070404',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic plant protection products (except 02 01 08 and 02 01 09), wood preserving agents (except 03 02) and other biocides',
+    description: 'Other organic solvents, washing liquids and mother liquors'
+  },
+  {
+    code: '070407',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic plant protection products (except 02 01 08 and 02 01 09), wood preserving agents (except 03 02) and other biocides',
+    description: 'Halogenated still bottoms and reaction residues'
+  },
+  {
+    code: '070408',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic plant protection products (except 02 01 08 and 02 01 09), wood preserving agents (except 03 02) and other biocides',
+    description: 'Other still bottoms and reaction residues'
+  },
+  {
+    code: '070409',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic plant protection products (except 02 01 08 and 02 01 09), wood preserving agents (except 03 02) and other biocides',
+    description: 'Halogenated filter cakes and spent absorbents'
+  },
+  {
+    code: '070410',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic plant protection products (except 02 01 08 and 02 01 09), wood preserving agents (except 03 02) and other biocides',
+    description: 'Other filter cakes and spent absorbents'
+  },
+  {
+    code: '070411',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic plant protection products (except 02 01 08 and 02 01 09), wood preserving agents (except 03 02) and other biocides',
+    description:
+      'Sludges from on-site effluent treatment containing hazardous substances'
+  },
+  {
+    code: '070412',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic plant protection products (except 02 01 08 and 02 01 09), wood preserving agents (except 03 02) and other biocides',
+    description:
+      'Sludges from on-site effluent treatment other than those mentioned in 07 04 11'
+  },
+  {
+    code: '070413',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic plant protection products (except 02 01 08 and 02 01 09), wood preserving agents (except 03 02) and other biocides',
+    description: 'Solid wastes containing hazardous substances'
+  },
+  {
+    code: '070499',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of organic plant protection products (except 02 01 08 and 02 01 09), wood preserving agents (except 03 02) and other biocides',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '070501',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter: 'Wastes from the mfsu of pharmaceuticals',
+    description: 'Aqueous washing liquids and mother liquors'
+  },
+  {
+    code: '070503',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter: 'Wastes from the mfsu of pharmaceuticals',
+    description:
+      'Organic halogenated solvents, washing liquids and mother liquors'
+  },
+  {
+    code: '070504',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter: 'Wastes from the mfsu of pharmaceuticals',
+    description: 'Other organic solvents, washing liquids and mother liquors'
+  },
+  {
+    code: '070507',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter: 'Wastes from the mfsu of pharmaceuticals',
+    description: 'Halogenated still bottoms and reaction residues'
+  },
+  {
+    code: '070508',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter: 'Wastes from the mfsu of pharmaceuticals',
+    description: 'Other still bottoms and reaction residues'
+  },
+  {
+    code: '070509',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter: 'Wastes from the mfsu of pharmaceuticals',
+    description: 'Halogenated filter cakes and spent absorbents'
+  },
+  {
+    code: '070510',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter: 'Wastes from the mfsu of pharmaceuticals',
+    description: 'Other filter cakes and spent absorbents'
+  },
+  {
+    code: '070511',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter: 'Wastes from the mfsu of pharmaceuticals',
+    description:
+      'Sludges from on-site effluent treatment containing hazardous substances'
+  },
+  {
+    code: '070512',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter: 'Wastes from the mfsu of pharmaceuticals',
+    description:
+      'Sludges from on-site effluent treatment other than those mentioned in 07 05 11'
+  },
+  {
+    code: '070513',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter: 'Wastes from the mfsu of pharmaceuticals',
+    description: 'Solid wastes containing hazardous substances'
+  },
+  {
+    code: '070514',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter: 'Wastes from the mfsu of pharmaceuticals',
+    description: 'Solid wastes other than those mentioned in 07 05 13'
+  },
+  {
+    code: '070599',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter: 'Wastes from the mfsu of pharmaceuticals',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '070601',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of fats, grease, soaps, detergents, disinfectants and cosmetics',
+    description: 'Aqueous washing liquids and mother liquors'
+  },
+  {
+    code: '070603',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of fats, grease, soaps, detergents, disinfectants and cosmetics',
+    description:
+      'Organic halogenated solvents, washing liquids and mother liquors'
+  },
+  {
+    code: '070604',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of fats, grease, soaps, detergents, disinfectants and cosmetics',
+    description: 'Other organic solvents, washing liquids and mother liquors'
+  },
+  {
+    code: '070607',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of fats, grease, soaps, detergents, disinfectants and cosmetics',
+    description: 'Halogenated still bottoms and reaction residues'
+  },
+  {
+    code: '070608',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of fats, grease, soaps, detergents, disinfectants and cosmetics',
+    description: 'Other still bottoms and reaction residues'
+  },
+  {
+    code: '070609',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of fats, grease, soaps, detergents, disinfectants and cosmetics',
+    description: 'Halogenated filter cakes and spent absorbents'
+  },
+  {
+    code: '070610',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of fats, grease, soaps, detergents, disinfectants and cosmetics',
+    description: 'Other filter cakes and spent absorbents'
+  },
+  {
+    code: '070611',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of fats, grease, soaps, detergents, disinfectants and cosmetics',
+    description:
+      'Sludges from on-site effluent treatment containing hazardous substances'
+  },
+  {
+    code: '070612',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of fats, grease, soaps, detergents, disinfectants and cosmetics',
+    description:
+      'Sludges from on-site effluent treatment other than those mentioned in 07 06 11'
+  },
+  {
+    code: '070699',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of fats, grease, soaps, detergents, disinfectants and cosmetics',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '070701',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of fine chemicals and chemical products not otherwise specified',
+    description: 'Aqueous washing liquids and mother liquors'
+  },
+  {
+    code: '070703',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of fine chemicals and chemical products not otherwise specified',
+    description:
+      'Organic halogenated solvents, washing liquids and mother liquors'
+  },
+  {
+    code: '070704',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of fine chemicals and chemical products not otherwise specified',
+    description: 'Other organic solvents, washing liquids and mother liquors'
+  },
+  {
+    code: '070707',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of fine chemicals and chemical products not otherwise specified',
+    description: 'Halogenated still bottoms and reaction residues'
+  },
+  {
+    code: '070708',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of fine chemicals and chemical products not otherwise specified',
+    description: 'Other still bottoms and reaction residues'
+  },
+  {
+    code: '070709',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of fine chemicals and chemical products not otherwise specified',
+    description: 'Halogenated filter cakes and spent absorbents'
+  },
+  {
+    code: '070710',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of fine chemicals and chemical products not otherwise specified',
+    description: 'Other filter cakes and spent absorbents'
+  },
+  {
+    code: '070711',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of fine chemicals and chemical products not otherwise specified',
+    description:
+      'Sludges from on-site effluent treatment containing hazardous substances'
+  },
+  {
+    code: '070712',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of fine chemicals and chemical products not otherwise specified',
+    description:
+      'Sludges from on-site effluent treatment other than those mentioned in 07 07 11'
+  },
+  {
+    code: '070799',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from organic chemical processes',
+    subChapter:
+      'Wastes from the mfsu of fine chemicals and chemical products not otherwise specified',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '080111',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu and removal of paint and varnish',
+    description:
+      'Waste paint and varnish containing organic solvents or other hazardous substances'
+  },
+  {
+    code: '080112',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu and removal of paint and varnish',
+    description:
+      'Waste paint and varnish other than those mentioned in 08 01 11'
+  },
+  {
+    code: '080113',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu and removal of paint and varnish',
+    description:
+      'Sludges from paint or varnish containing organic solvents or other hazardous substances'
+  },
+  {
+    code: '080114',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu and removal of paint and varnish',
+    description:
+      'Sludges from paint or varnish other than those mentioned in 08 01 13'
+  },
+  {
+    code: '080115',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu and removal of paint and varnish',
+    description:
+      'Aqueous sludges containing paint or varnish containing organic solvents or other hazardous substances'
+  },
+  {
+    code: '080116',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu and removal of paint and varnish',
+    description:
+      'Aqueous sludges containing paint or varnish other than those mentioned in 08 01 15'
+  },
+  {
+    code: '080117',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu and removal of paint and varnish',
+    description:
+      'Wastes from paint or varnish removal containing organic solvents or other hazardous substances'
+  },
+  {
+    code: '080118',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu and removal of paint and varnish',
+    description:
+      'Wastes from paint or varnish removal other than those mentioned in 08 01 17'
+  },
+  {
+    code: '080119',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu and removal of paint and varnish',
+    description:
+      'Aqueous suspensions containing paint or varnish containing organic solvents or other hazardous substances'
+  },
+  {
+    code: '080120',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu and removal of paint and varnish',
+    description:
+      'Aqueous suspensions containing paint or varnish other than those mentioned in 08 01 19'
+  },
+  {
+    code: '080121',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu and removal of paint and varnish',
+    description: 'Waste paint or varnish remover'
+  },
+  {
+    code: '080199',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu and removal of paint and varnish',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '080201',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter:
+      'Wastes from mfsu of other coatings (including ceramic materials)',
+    description: 'Waste coating powders'
+  },
+  {
+    code: '080202',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter:
+      'Wastes from mfsu of other coatings (including ceramic materials)',
+    description: 'Aqueous sludges containing ceramic materials'
+  },
+  {
+    code: '080203',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter:
+      'Wastes from mfsu of other coatings (including ceramic materials)',
+    description: 'Aqueous suspensions containing ceramic materials'
+  },
+  {
+    code: '080299',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter:
+      'Wastes from mfsu of other coatings (including ceramic materials)',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '080307',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu of printing inks',
+    description: 'Aqueous sludges containing ink'
+  },
+  {
+    code: '080308',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu of printing inks',
+    description: 'Aqueous liquid waste containing ink'
+  },
+  {
+    code: '080312',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu of printing inks',
+    description: 'Waste ink containing hazardous substances'
+  },
+  {
+    code: '080313',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu of printing inks',
+    description: 'Waste ink other than those mentioned in 08 03 12'
+  },
+  {
+    code: '080314',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu of printing inks',
+    description: 'Ink sludges containing hazardous substances'
+  },
+  {
+    code: '080315',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu of printing inks',
+    description: 'Ink sludges other than those mentioned in 08 03 14'
+  },
+  {
+    code: '080316',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu of printing inks',
+    description: 'Waste etching solutions'
+  },
+  {
+    code: '080317',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu of printing inks',
+    description: 'Waste printing toner containing hazardous substances'
+  },
+  {
+    code: '080318',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu of printing inks',
+    description: 'Waste printing toner other than those mentioned in 08 03 17'
+  },
+  {
+    code: '080319',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu of printing inks',
+    description: 'Disperse oil'
+  },
+  {
+    code: '080399',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes from mfsu of printing inks',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '080409',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter:
+      'Wastes from mfsu of adhesives and sealants (including waterproofing products)',
+    description:
+      'Waste adhesives and sealants containing organic solvents or other hazardous substances'
+  },
+  {
+    code: '080410',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter:
+      'Wastes from mfsu of adhesives and sealants (including waterproofing products)',
+    description:
+      'Waste adhesives and sealants other than those mentioned in 08 04 09'
+  },
+  {
+    code: '080411',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter:
+      'Wastes from mfsu of adhesives and sealants (including waterproofing products)',
+    description:
+      'Adhesive and sealant sludges containing organic solvents or other hazardous substances'
+  },
+  {
+    code: '080412',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter:
+      'Wastes from mfsu of adhesives and sealants (including waterproofing products)',
+    description:
+      'Adhesive and sealant sludges other than those mentioned in 08 04 11'
+  },
+  {
+    code: '080413',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter:
+      'Wastes from mfsu of adhesives and sealants (including waterproofing products)',
+    description:
+      'Aqueous sludges containing adhesives or sealants containing organic solvents or other hazardous substances'
+  },
+  {
+    code: '080414',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter:
+      'Wastes from mfsu of adhesives and sealants (including waterproofing products)',
+    description:
+      'Aqueous sludges containing adhesives or sealants other than those mentioned in 08 04 13'
+  },
+  {
+    code: '080415',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter:
+      'Wastes from mfsu of adhesives and sealants (including waterproofing products)',
+    description:
+      'Aqueous liquid waste containing adhesives or sealants containing organic solvents or other hazardous substances'
+  },
+  {
+    code: '080416',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter:
+      'Wastes from mfsu of adhesives and sealants (including waterproofing products)',
+    description:
+      'Aqueous liquid waste containing adhesives or sealants other than those mentioned in 08 04 15'
+  },
+  {
+    code: '080417',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter:
+      'Wastes from mfsu of adhesives and sealants (including waterproofing products)',
+    description: 'Rosin oil'
+  },
+  {
+    code: '080499',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter:
+      'Wastes from mfsu of adhesives and sealants (including waterproofing products)',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '080501',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from the manufacture, formulation, supply and use (mfsu) of coatings (paints, varnishes and vitreous enamels), adhesives, sealants and printing inks',
+    subChapter: 'Wastes not otherwise specified in 08',
+    description: 'Waste isocyanates'
+  },
+  {
+    code: '090101',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from the photographic industry',
+    subChapter: 'Wastes from the photographic industry',
+    description: 'Water-based developer and activator solutions'
+  },
+  {
+    code: '090102',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from the photographic industry',
+    subChapter: 'Wastes from the photographic industry',
+    description: 'Water-based offset plate developer solutions'
+  },
+  {
+    code: '090103',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from the photographic industry',
+    subChapter: 'Wastes from the photographic industry',
+    description: 'Solvent-based developer solutions'
+  },
+  {
+    code: '090104',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from the photographic industry',
+    subChapter: 'Wastes from the photographic industry',
+    description: 'Fixer solutions'
+  },
+  {
+    code: '090105',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from the photographic industry',
+    subChapter: 'Wastes from the photographic industry',
+    description: 'Bleach solutions and bleach fixer solutions'
+  },
+  {
+    code: '090106',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from the photographic industry',
+    subChapter: 'Wastes from the photographic industry',
+    description:
+      'Wastes containing silver from on-site treatment of photographic wastes'
+  },
+  {
+    code: '090107',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from the photographic industry',
+    subChapter: 'Wastes from the photographic industry',
+    description:
+      'Photographic film and paper containing silver or silver compounds'
+  },
+  {
+    code: '090108',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from the photographic industry',
+    subChapter: 'Wastes from the photographic industry',
+    description:
+      'Photographic film and paper free of silver or silver compounds'
+  },
+  {
+    code: '090110',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from the photographic industry',
+    subChapter: 'Wastes from the photographic industry',
+    description: 'Single-use cameras without batteries'
+  },
+  {
+    code: '090111',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from the photographic industry',
+    subChapter: 'Wastes from the photographic industry',
+    description:
+      'Single-use cameras containing batteries included in 16 06 01, 16 06 02 or 16 06 03'
+  },
+  {
+    code: '090112',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from the photographic industry',
+    subChapter: 'Wastes from the photographic industry',
+    description:
+      'Single-use cameras containing batteries other than those mentioned in 09 01 11'
+  },
+  {
+    code: '090113',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from the photographic industry',
+    subChapter: 'Wastes from the photographic industry',
+    description:
+      'Aqueous liquid waste from on-site reclamation of silver other than those mentioned in 09 01 06'
+  },
+  {
+    code: '090199',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from the photographic industry',
+    subChapter: 'Wastes from the photographic industry',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '100101',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description:
+      'Bottom ash, slag and boiler dust (excluding boiler dust mentioned in 10 01 04)'
+  },
+  {
+    code: '100102',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description: 'Coal fly ash'
+  },
+  {
+    code: '100103',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description: 'Fly ash from peat and untreated wood'
+  },
+  {
+    code: '100104',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description: 'Oil fly ash and boiler dust'
+  },
+  {
+    code: '100105',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description:
+      'Calcium-based reaction wastes from flue-gas desulphurisation in solid form'
+  },
+  {
+    code: '100107',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description:
+      'Calcium-based reaction wastes from flue-gas desulphurisation in sludge form'
+  },
+  {
+    code: '100109',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description: 'Sulphuric acid'
+  },
+  {
+    code: '100113',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description: 'Fly ash from emulsified hydrocarbons used as fuel'
+  },
+  {
+    code: '100114',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description:
+      'Bottom ash, slag and boiler dust from co-incineration containing hazardous substances'
+  },
+  {
+    code: '100115',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description:
+      'Bottom ash, slag and boiler dust from co-incineration other than those mentioned in 10 01 14'
+  },
+  {
+    code: '100116',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description: 'Fly ash from co-incineration containing hazardous substances'
+  },
+  {
+    code: '100117',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description:
+      'Fly ash from co-incineration other than those mentioned in 10 01 16'
+  },
+  {
+    code: '100118',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description: 'Wastes from gas cleaning containing hazardous substances'
+  },
+  {
+    code: '100119',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description:
+      'Wastes from gas cleaning other than those mentioned in 10 01 05, 10 01 07 and 10 01 18'
+  },
+  {
+    code: '100120',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description:
+      'Sludges from on-site effluent treatment containing hazardous substances'
+  },
+  {
+    code: '100121',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description:
+      'Sludges from on-site effluent treatment other than those mentioned in 10 01 20'
+  },
+  {
+    code: '100122',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description:
+      'Aqueous sludges from boiler cleansing containing hazardous substances'
+  },
+  {
+    code: '100123',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description:
+      'Aqueous sludges from boiler cleansing other than those mentioned in 10 01 22'
+  },
+  {
+    code: '100124',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description: 'Sands from fluidised beds'
+  },
+  {
+    code: '100125',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description:
+      'Wastes from fuel storage and preparation of coal-fired power plants'
+  },
+  {
+    code: '100126',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description: 'Wastes from cooling-water treatment'
+  },
+  {
+    code: '100199',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from power stations and other combustion plants (except 19)',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '100201',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from the iron and steel industry',
+    description: 'Wastes from the processing of slag'
+  },
+  {
+    code: '100202',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from the iron and steel industry',
+    description: 'Unprocessed slag'
+  },
+  {
+    code: '100207',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from the iron and steel industry',
+    description:
+      'Solid wastes from gas treatment containing hazardous substances'
+  },
+  {
+    code: '100208',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from the iron and steel industry',
+    description:
+      'Solid wastes from gas treatment other than those mentioned in 10 02 07'
+  },
+  {
+    code: '100210',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from the iron and steel industry',
+    description: 'Mill scales'
+  },
+  {
+    code: '100211',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from the iron and steel industry',
+    description: 'Wastes from cooling-water treatment containing oil'
+  },
+  {
+    code: '100212',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from the iron and steel industry',
+    description:
+      'Wastes from cooling-water treatment other than those mentioned in 10 02 11'
+  },
+  {
+    code: '100213',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from the iron and steel industry',
+    description:
+      'Sludges and filter cakes from gas treatment containing hazardous substances'
+  },
+  {
+    code: '100214',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from the iron and steel industry',
+    description:
+      'Sludges and filter cakes from gas treatment other than those mentioned in 10 02 13'
+  },
+  {
+    code: '100215',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from the iron and steel industry',
+    description: 'Other sludges and filter cakes'
+  },
+  {
+    code: '100299',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from the iron and steel industry',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '100302',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description: 'Anode scraps'
+  },
+  {
+    code: '100304',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description: 'Primary production slags'
+  },
+  {
+    code: '100305',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description: 'Waste alumina'
+  },
+  {
+    code: '100308',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description: 'Salt slags from secondary production'
+  },
+  {
+    code: '100309',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description: 'Black drosses from secondary production'
+  },
+  {
+    code: '100315',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description:
+      'Skimmings that are flammable or emit, upon contact with water, flammable gases in hazardous quantities'
+  },
+  {
+    code: '100316',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description: 'Skimmings other than those mentioned in 10 03 15'
+  },
+  {
+    code: '100317',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description: 'Tar-containing wastes from anode manufacture'
+  },
+  {
+    code: '100318',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description:
+      'Carbon-containing wastes from anode manufacture other than those mentioned in 10 03 17'
+  },
+  {
+    code: '100319',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description: 'Flue-gas dust containing hazardous substances'
+  },
+  {
+    code: '100320',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description: 'Flue-gas dust other than those mentioned in 10 03 19'
+  },
+  {
+    code: '100321',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description:
+      'Other particulates and dust (including ball-mill dust) containing hazardous substances'
+  },
+  {
+    code: '100322',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description:
+      'Other particulates and dust (including ball-mill dust) other than those mentioned in 10 03 21'
+  },
+  {
+    code: '100323',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description:
+      'Solid wastes from gas treatment containing hazardous substances'
+  },
+  {
+    code: '100324',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description:
+      'Solid wastes from gas treatment other than those mentioned in 10 03 23'
+  },
+  {
+    code: '100325',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description:
+      'Sludges and filter cakes from gas treatment containing hazardous substances'
+  },
+  {
+    code: '100326',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description:
+      'Sludges and filter cakes from gas treatment other than those mentioned in 10 03 25'
+  },
+  {
+    code: '100327',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description: 'Wastes from cooling-water treatment containing oil'
+  },
+  {
+    code: '100328',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description:
+      'Wastes from cooling-water treatment other than those mentioned in 10 03 27'
+  },
+  {
+    code: '100329',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description:
+      'Wastes from treatment of salt slags and black drosses containing hazardous substances'
+  },
+  {
+    code: '100330',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description:
+      'Wastes from treatment of salt slags and black drosses other than those mentioned in 10 03 29'
+  },
+  {
+    code: '100399',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from aluminium thermal metallurgy',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '100401',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from lead thermal metallurgy',
+    description: 'Slags from primary and secondary production'
+  },
+  {
+    code: '100402',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from lead thermal metallurgy',
+    description: 'Dross and skimmings from primary and secondary production'
+  },
+  {
+    code: '100403',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from lead thermal metallurgy',
+    description: 'Calcium arsenate'
+  },
+  {
+    code: '100404',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from lead thermal metallurgy',
+    description: 'Flue-gas dust'
+  },
+  {
+    code: '100405',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from lead thermal metallurgy',
+    description: 'Other particulates and dust'
+  },
+  {
+    code: '100406',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from lead thermal metallurgy',
+    description: 'Solid wastes from gas treatment'
+  },
+  {
+    code: '100407',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from lead thermal metallurgy',
+    description: 'Sludges and filter cakes from gas treatment'
+  },
+  {
+    code: '100409',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from lead thermal metallurgy',
+    description: 'Wastes from cooling-water treatment containing oil'
+  },
+  {
+    code: '100410',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from lead thermal metallurgy',
+    description:
+      'Wastes from cooling-water treatment other than those mentioned in 10 04 09'
+  },
+  {
+    code: '100499',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from lead thermal metallurgy',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '100501',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from zinc thermal metallurgy',
+    description: 'Slags from primary and secondary production'
+  },
+  {
+    code: '100503',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from zinc thermal metallurgy',
+    description: 'Flue-gas dust'
+  },
+  {
+    code: '100504',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from zinc thermal metallurgy',
+    description: 'Other particulates and dust'
+  },
+  {
+    code: '100505',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from zinc thermal metallurgy',
+    description: 'Solid waste from gas treatment'
+  },
+  {
+    code: '100506',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from zinc thermal metallurgy',
+    description: 'Sludges and filter cakes from gas treatment'
+  },
+  {
+    code: '100508',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from zinc thermal metallurgy',
+    description: 'Wastes from cooling-water treatment containing oil'
+  },
+  {
+    code: '100509',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from zinc thermal metallurgy',
+    description:
+      'Wastes from cooling-water treatment other than those mentioned in 10 05 08'
+  },
+  {
+    code: '100510',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from zinc thermal metallurgy',
+    description:
+      'Dross and skimmings that are flammable or emit, upon contact with water, flammable gases in hazardous quantities'
+  },
+  {
+    code: '100511',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from zinc thermal metallurgy',
+    description: 'Dross and skimmings other than those mentioned in 10 05 10'
+  },
+  {
+    code: '100599',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from zinc thermal metallurgy',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '100601',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from copper thermal metallurgy',
+    description: 'Slags from primary and secondary production'
+  },
+  {
+    code: '100602',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from copper thermal metallurgy',
+    description: 'Dross and skimmings from primary and secondary production'
+  },
+  {
+    code: '100603',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from copper thermal metallurgy',
+    description: 'Flue-gas dust'
+  },
+  {
+    code: '100604',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from copper thermal metallurgy',
+    description: 'Other particulates and dust'
+  },
+  {
+    code: '100606',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from copper thermal metallurgy',
+    description: 'Solid wastes from gas treatment'
+  },
+  {
+    code: '100607',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from copper thermal metallurgy',
+    description: 'Sludges and filter cakes from gas treatment'
+  },
+  {
+    code: '100609',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from copper thermal metallurgy',
+    description: 'Wastes from cooling-water treatment containing oil'
+  },
+  {
+    code: '100610',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from copper thermal metallurgy',
+    description:
+      'Wastes from cooling-water treatment other than those mentioned in 10 06 09'
+  },
+  {
+    code: '100699',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from copper thermal metallurgy',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '100701',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from silver, gold and platinum thermal metallurgy',
+    description: 'Slags from primary and secondary production'
+  },
+  {
+    code: '100702',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from silver, gold and platinum thermal metallurgy',
+    description: 'Dross and skimmings from primary and secondary production'
+  },
+  {
+    code: '100703',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from silver, gold and platinum thermal metallurgy',
+    description: 'Solid wastes from gas treatment'
+  },
+  {
+    code: '100704',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from silver, gold and platinum thermal metallurgy',
+    description: 'Other particulates and dust'
+  },
+  {
+    code: '100705',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from silver, gold and platinum thermal metallurgy',
+    description: 'Sludges and filter cakes from gas treatment'
+  },
+  {
+    code: '100707',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from silver, gold and platinum thermal metallurgy',
+    description: 'Wastes from cooling-water treatment containing oil'
+  },
+  {
+    code: '100708',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from silver, gold and platinum thermal metallurgy',
+    description:
+      'Wastes from cooling-water treatment other than those mentioned in 10 07 07'
+  },
+  {
+    code: '100799',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from silver, gold and platinum thermal metallurgy',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '100804',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from other non-ferrous thermal metallurgy',
+    description: 'Particulates and dust'
+  },
+  {
+    code: '100808',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from other non-ferrous thermal metallurgy',
+    description: 'Salt slag from primary and secondary production'
+  },
+  {
+    code: '100809',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from other non-ferrous thermal metallurgy',
+    description: 'Other slags'
+  },
+  {
+    code: '100810',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from other non-ferrous thermal metallurgy',
+    description:
+      'Dross and skimmings that are flammable or emit, upon contact with water, flammable gases in hazardous quantities'
+  },
+  {
+    code: '100811',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from other non-ferrous thermal metallurgy',
+    description: 'Dross and skimmings other than those mentioned in 10 08 10'
+  },
+  {
+    code: '100812',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from other non-ferrous thermal metallurgy',
+    description: 'Tar-containing wastes from anode manufacture'
+  },
+  {
+    code: '100813',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from other non-ferrous thermal metallurgy',
+    description:
+      'Carbon-containing wastes from anode manufacture other than those mentioned in 10 08 12'
+  },
+  {
+    code: '100814',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from other non-ferrous thermal metallurgy',
+    description: 'Anode scrap'
+  },
+  {
+    code: '100815',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from other non-ferrous thermal metallurgy',
+    description: 'Flue-gas dust containing hazardous substances'
+  },
+  {
+    code: '100816',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from other non-ferrous thermal metallurgy',
+    description: 'Flue-gas dust other than those mentioned in 10 08 15'
+  },
+  {
+    code: '100817',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from other non-ferrous thermal metallurgy',
+    description:
+      'Sludges and filter cakes from flue-gas treatment containing hazardous substances'
+  },
+  {
+    code: '100818',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from other non-ferrous thermal metallurgy',
+    description:
+      'Sludges and filter cakes from flue-gas treatment other than those mentioned in 10 08 17'
+  },
+  {
+    code: '100819',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from other non-ferrous thermal metallurgy',
+    description: 'Wastes from cooling-water treatment containing oil'
+  },
+  {
+    code: '100820',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from other non-ferrous thermal metallurgy',
+    description:
+      'Wastes from cooling-water treatment other than those mentioned in 10 08 19'
+  },
+  {
+    code: '100899',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from other non-ferrous thermal metallurgy',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '100903',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of ferrous pieces',
+    description: 'Furnace slag'
+  },
+  {
+    code: '100905',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of ferrous pieces',
+    description:
+      'Casting cores and moulds which have not undergone pouring containing hazardous substances'
+  },
+  {
+    code: '100906',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of ferrous pieces',
+    description:
+      'Casting cores and moulds which have not undergone pouring other than those mentioned in 10 09 05'
+  },
+  {
+    code: '100907',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of ferrous pieces',
+    description:
+      'Casting cores and moulds which have undergone pouring containing hazardous substances'
+  },
+  {
+    code: '100908',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of ferrous pieces',
+    description:
+      'Casting cores and moulds which have undergone pouring other than those mentioned in 10 09 07'
+  },
+  {
+    code: '100909',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of ferrous pieces',
+    description: 'Flue-gas dust containing hazardous substances'
+  },
+  {
+    code: '100910',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of ferrous pieces',
+    description: 'Flue-gas dust other than those mentioned in 10 09 09'
+  },
+  {
+    code: '100911',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of ferrous pieces',
+    description: 'Other particulates containing hazardous substances'
+  },
+  {
+    code: '100912',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of ferrous pieces',
+    description: 'Other particulates other than those mentioned in 10 09 11'
+  },
+  {
+    code: '100913',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of ferrous pieces',
+    description: 'Waste binders containing hazardous substances'
+  },
+  {
+    code: '100914',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of ferrous pieces',
+    description: 'Waste binders other than those mentioned in 10 09 13'
+  },
+  {
+    code: '100915',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of ferrous pieces',
+    description: 'Waste crack-indicating agent containing hazardous substances'
+  },
+  {
+    code: '100916',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of ferrous pieces',
+    description:
+      'Waste crack-indicating agent other than those mentioned in 10 09 15'
+  },
+  {
+    code: '100999',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of ferrous pieces',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '101003',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of non-ferrous pieces',
+    description: 'Furnace slag'
+  },
+  {
+    code: '101005',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of non-ferrous pieces',
+    description:
+      'Casting cores and moulds which have not undergone pouring, containing hazardous substances'
+  },
+  {
+    code: '101006',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of non-ferrous pieces',
+    description:
+      'Casting cores and moulds which have not undergone pouring, other than those mentioned in 10 10 05'
+  },
+  {
+    code: '101007',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of non-ferrous pieces',
+    description:
+      'Casting cores and moulds which have undergone pouring, containing hazardous substances'
+  },
+  {
+    code: '101008',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of non-ferrous pieces',
+    description:
+      'Casting cores and moulds which have undergone pouring, other than those mentioned in 10 10 07'
+  },
+  {
+    code: '101009',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of non-ferrous pieces',
+    description: 'Flue-gas dust containing hazardous substances'
+  },
+  {
+    code: '101010',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of non-ferrous pieces',
+    description: 'Flue-gas dust other than those mentioned in 10 10 09'
+  },
+  {
+    code: '101011',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of non-ferrous pieces',
+    description: 'Other particulates containing hazardous substances'
+  },
+  {
+    code: '101012',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of non-ferrous pieces',
+    description: 'Other particulates other than those mentioned in 10 10 11'
+  },
+  {
+    code: '101013',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of non-ferrous pieces',
+    description: 'Waste binders containing hazardous substances'
+  },
+  {
+    code: '101014',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of non-ferrous pieces',
+    description: 'Waste binders other than those mentioned in 10 10 13'
+  },
+  {
+    code: '101015',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of non-ferrous pieces',
+    description: 'Waste crack-indicating agent containing hazardous substances'
+  },
+  {
+    code: '101016',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of non-ferrous pieces',
+    description:
+      'Waste crack-indicating agent other than those mentioned in 10 10 15'
+  },
+  {
+    code: '101099',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from casting of non-ferrous pieces',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '101103',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from manufacture of glass and glass products',
+    description: 'Waste glass-based fibrous materials'
+  },
+  {
+    code: '101105',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from manufacture of glass and glass products',
+    description: 'Particulates and dust'
+  },
+  {
+    code: '101109',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from manufacture of glass and glass products',
+    description:
+      'Waste preparation mixture before thermal processing, containing hazardous substances'
+  },
+  {
+    code: '101110',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from manufacture of glass and glass products',
+    description:
+      'Waste preparation mixture before thermal processing, other than those mentioned in 10 11 09'
+  },
+  {
+    code: '101111',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from manufacture of glass and glass products',
+    description:
+      'Waste glass in small particles and glass powder containing heavy metals (for example from cathode ray tubes)'
+  },
+  {
+    code: '101112',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from manufacture of glass and glass products',
+    description: 'Waste glass other than those mentioned in 10 11 11'
+  },
+  {
+    code: '101113',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from manufacture of glass and glass products',
+    description:
+      'Glass-polishing and -grinding sludge containing hazardous substances'
+  },
+  {
+    code: '101114',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from manufacture of glass and glass products',
+    description:
+      'Glass-polishing and -grinding sludge other than those mentioned in 10 11 13'
+  },
+  {
+    code: '101115',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from manufacture of glass and glass products',
+    description:
+      'Solid wastes from flue-gas treatment containing hazardous substances'
+  },
+  {
+    code: '101116',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from manufacture of glass and glass products',
+    description:
+      'Solid wastes from flue-gas treatment other than those mentioned in 10 11 15'
+  },
+  {
+    code: '101117',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from manufacture of glass and glass products',
+    description:
+      'Sludges and filter cakes from flue-gas treatment containing hazardous substances'
+  },
+  {
+    code: '101118',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from manufacture of glass and glass products',
+    description:
+      'Sludges and filter cakes from flue-gas treatment other than those mentioned in 10 11 17'
+  },
+  {
+    code: '101119',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from manufacture of glass and glass products',
+    description:
+      'Solid wastes from on-site effluent treatment containing hazardous substances'
+  },
+  {
+    code: '101120',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from manufacture of glass and glass products',
+    description:
+      'Solid wastes from on-site effluent treatment other than those mentioned in 10 11 19'
+  },
+  {
+    code: '101199',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Wastes from manufacture of glass and glass products',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '101201',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of ceramic goods, bricks, tiles and construction products',
+    description: 'Waste preparation mixture before thermal processing'
+  },
+  {
+    code: '101203',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of ceramic goods, bricks, tiles and construction products',
+    description: 'Particulates and dust'
+  },
+  {
+    code: '101205',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of ceramic goods, bricks, tiles and construction products',
+    description: 'Sludges and filter cakes from gas treatment'
+  },
+  {
+    code: '101206',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of ceramic goods, bricks, tiles and construction products',
+    description: 'Discarded moulds'
+  },
+  {
+    code: '101208',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of ceramic goods, bricks, tiles and construction products',
+    description:
+      'Waste ceramics, bricks, tiles and construction products (after thermal processing)'
+  },
+  {
+    code: '101209',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of ceramic goods, bricks, tiles and construction products',
+    description:
+      'Solid wastes from gas treatment containing hazardous substances'
+  },
+  {
+    code: '101210',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of ceramic goods, bricks, tiles and construction products',
+    description:
+      'Solid wastes from gas treatment other than those mentioned in 10 12 09'
+  },
+  {
+    code: '101211',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of ceramic goods, bricks, tiles and construction products',
+    description: 'Wastes from glazing containing heavy metals'
+  },
+  {
+    code: '101212',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of ceramic goods, bricks, tiles and construction products',
+    description: 'Wastes from glazing other than those mentioned in 10 12 11'
+  },
+  {
+    code: '101213',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of ceramic goods, bricks, tiles and construction products',
+    description: 'Sludge from on-site effluent treatment'
+  },
+  {
+    code: '101299',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of ceramic goods, bricks, tiles and construction products',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '101301',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of cement, lime and plaster and articles and products made from them',
+    description: 'Waste preparation mixture before thermal processing'
+  },
+  {
+    code: '101304',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of cement, lime and plaster and articles and products made from them',
+    description: 'Wastes from calcination and hydration of lime'
+  },
+  {
+    code: '101306',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of cement, lime and plaster and articles and products made from them',
+    description: 'Particulates and dust (except 10 13 12 and 10 13 13)'
+  },
+  {
+    code: '101307',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of cement, lime and plaster and articles and products made from them',
+    description: 'Sludges and filter cakes from gas treatment'
+  },
+  {
+    code: '101309',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of cement, lime and plaster and articles and products made from them',
+    description: 'Wastes from asbestos-cement manufacture containing asbestos'
+  },
+  {
+    code: '101310',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of cement, lime and plaster and articles and products made from them',
+    description:
+      'Wastes from asbestos-cement manufacture other than those mentioned in 10 13 09'
+  },
+  {
+    code: '101311',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of cement, lime and plaster and articles and products made from them',
+    description:
+      'Wastes from cement-based composite materials other than those mentioned in 10 13 09 and 10 13 10'
+  },
+  {
+    code: '101312',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of cement, lime and plaster and articles and products made from them',
+    description:
+      'Solid wastes from gas treatment containing hazardous substances'
+  },
+  {
+    code: '101313',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of cement, lime and plaster and articles and products made from them',
+    description:
+      'Solid wastes from gas treatment other than those mentioned in 10 13 12'
+  },
+  {
+    code: '101314',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of cement, lime and plaster and articles and products made from them',
+    description: 'Waste concrete and concrete sludge'
+  },
+  {
+    code: '101399',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter:
+      'Wastes from manufacture of cement, lime and plaster and articles and products made from them',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '101401',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes from thermal processes',
+    subChapter: 'Waste from crematoria',
+    description: 'Waste from gas cleaning containing mercury'
+  },
+  {
+    code: '110105',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
+    description: 'Pickling acids'
+  },
+  {
+    code: '110106',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
+    description: 'Acids not otherwise specified'
+  },
+  {
+    code: '110107',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
+    description: 'Pickling bases'
+  },
+  {
+    code: '110108',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
+    description: 'Phosphatising sludges'
+  },
+  {
+    code: '110109',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
+    description: 'Sludges and filter cakes containing hazardous substances'
+  },
+  {
+    code: '110110',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
+    description:
+      'Sludges and filter cakes other than those mentioned in 11 01 09'
+  },
+  {
+    code: '110111',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
+    description: 'Aqueous rinsing liquids containing hazardous substances'
+  },
+  {
+    code: '110112',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
+    description:
+      'Aqueous rinsing liquids other than those mentioned in 11 01 11'
+  },
+  {
+    code: '110113',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
+    description: 'Degreasing wastes containing hazardous substances'
+  },
+  {
+    code: '110114',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
+    description: 'Degreasing wastes other than those mentioned in 11 01 13'
+  },
+  {
+    code: '110115',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
+    description:
+      'Eluate and sludges from membrane systems or ion exchange systems containing hazardous substances'
+  },
+  {
+    code: '110116',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
+    description: 'Saturated or spent ion exchange resins'
+  },
+  {
+    code: '110198',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
+    description: 'Other wastes containing hazardous substances'
+  },
+  {
+    code: '110199',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '110202',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter: 'Wastes from non-ferrous hydrometallurgical processes',
+    description:
+      'Sludges from zinc hydrometallurgy (including jarosite, goethite)'
+  },
+  {
+    code: '110203',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter: 'Wastes from non-ferrous hydrometallurgical processes',
+    description:
+      'Wastes from the production of anodes for aqueous electrolytical processes'
+  },
+  {
+    code: '110205',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter: 'Wastes from non-ferrous hydrometallurgical processes',
+    description:
+      'Wastes from copper hydrometallurgical processes containing hazardous substances'
+  },
+  {
+    code: '110206',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter: 'Wastes from non-ferrous hydrometallurgical processes',
+    description:
+      'Wastes from copper hydrometallurgical processes other than those mentioned in 11 02 05'
+  },
+  {
+    code: '110207',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter: 'Wastes from non-ferrous hydrometallurgical processes',
+    description: 'Other wastes containing hazardous substances'
+  },
+  {
+    code: '110299',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter: 'Wastes from non-ferrous hydrometallurgical processes',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '110301',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter: 'Sludges and solids from tempering processes',
+    description: 'Wastes containing cyanide'
+  },
+  {
+    code: '110302',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter: 'Sludges and solids from tempering processes',
+    description: 'Other waste'
+  },
+  {
+    code: '110501',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter: 'Wastes from hot galvanising processes',
+    description: 'Hard zinc'
+  },
+  {
+    code: '110502',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter: 'Wastes from hot galvanising processes',
+    description: 'Zinc ash'
+  },
+  {
+    code: '110503',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter: 'Wastes from hot galvanising processes',
+    description: 'Solid wastes from gas treatment'
+  },
+  {
+    code: '110504',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter: 'Wastes from hot galvanising processes',
+    description: 'Spent flux'
+  },
+  {
+    code: '110599',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+    subChapter: 'Wastes from hot galvanising processes',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '120101',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description: 'Ferrous metal filings and turnings'
+  },
+  {
+    code: '120102',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description: 'Ferrous metal dust and particles'
+  },
+  {
+    code: '120103',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description: 'Non-ferrous metal filings and turnings'
+  },
+  {
+    code: '120104',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description: 'Non-ferrous metal dust and particles'
+  },
+  {
+    code: '120105',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description: 'Plastics shavings and turnings'
+  },
+  {
+    code: '120106',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description:
+      'Mineral-based machining oils containing halogens (except emulsions and solutions)'
+  },
+  {
+    code: '120107',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description:
+      'Mineral-based machining oils free of halogens (except emulsions and solutions)'
+  },
+  {
+    code: '120108',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description: 'Machining emulsions and solutions containing halogens'
+  },
+  {
+    code: '120109',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description: 'Machining emulsions and solutions free of halogens'
+  },
+  {
+    code: '120110',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description: 'Synthetic machining oils'
+  },
+  {
+    code: '120112',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description: 'Spent waxes and fats'
+  },
+  {
+    code: '120113',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description: 'Welding wastes'
+  },
+  {
+    code: '120114',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description: 'Machining sludges containing hazardous substances'
+  },
+  {
+    code: '120115',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description: 'Machining sludges other than those mentioned in 12 01 14'
+  },
+  {
+    code: '120116',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description: 'Waste blasting material containing hazardous substances'
+  },
+  {
+    code: '120117',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description:
+      'Waste blasting material other than those mentioned in 12 01 16'
+  },
+  {
+    code: '120118',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description:
+      'Metal sludge (grinding, honing and lapping sludge) containing oil'
+  },
+  {
+    code: '120119',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description: 'Readily biodegradable machining oil'
+  },
+  {
+    code: '120120',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description:
+      'Spent grinding bodies and grinding materials containing hazardous substances'
+  },
+  {
+    code: '120121',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description:
+      'Spent grinding bodies and grinding materials other than those mentioned in 12 01 20'
+  },
+  {
+    code: '120199',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '120301',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter: 'Wastes from water and steam degreasing processes (except 11)',
+    description: 'Aqueous washing liquids'
+  },
+  {
+    code: '120302',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from shaping and physical and mechanical surface treatment of metals and plastics',
+    subChapter: 'Wastes from water and steam degreasing processes (except 11)',
+    description: 'Steam degreasing wastes'
+  },
+  {
+    code: '130101',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Waste hydraulic oils',
+    description: 'Hydraulic oils, containing pcbs'
+  },
+  {
+    code: '130104',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Waste hydraulic oils',
+    description: 'Chlorinated emulsions'
+  },
+  {
+    code: '130105',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Waste hydraulic oils',
+    description: 'Non-chlorinated  emulsions'
+  },
+  {
+    code: '130109',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Waste hydraulic oils',
+    description: 'Mineral-based chlorinated hydraulic oils'
+  },
+  {
+    code: '130110',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Waste hydraulic oils',
+    description: 'Mineral based non-chlorinated hydraulic oils'
+  },
+  {
+    code: '130111',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Waste hydraulic oils',
+    description: 'Synthetic hydraulic oils'
+  },
+  {
+    code: '130112',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Waste hydraulic oils',
+    description: 'Readily biodegradable hydraulic oils'
+  },
+  {
+    code: '130113',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Waste hydraulic oils',
+    description: 'Other hydraulic oils'
+  },
+  {
+    code: '130204',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Waste engine, gear and lubricating oils',
+    description: 'Mineral-based chlorinated engine, gear and lubricating oils'
+  },
+  {
+    code: '130205',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Waste engine, gear and lubricating oils',
+    description:
+      'Mineral-based non-chlorinated engine, gear and lubricating oils'
+  },
+  {
+    code: '130206',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Waste engine, gear and lubricating oils',
+    description: 'Synthetic engine, gear and lubricating oils'
+  },
+  {
+    code: '130207',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Waste engine, gear and lubricating oils',
+    description: 'Readily biodegradable engine, gear and lubricating oils'
+  },
+  {
+    code: '130208',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Waste engine, gear and lubricating oils',
+    description: 'Other engine, gear and lubricating oils'
+  },
+  {
+    code: '130301',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Waste insulating and heat transmission oils',
+    description: 'Insulating or heat transmission oils containing pcbs'
+  },
+  {
+    code: '130306',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Waste insulating and heat transmission oils',
+    description:
+      'Mineral-based chlorinated insulating and heat transmission oils other than those mentioned in 13 03 01'
+  },
+  {
+    code: '130307',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Waste insulating and heat transmission oils',
+    description:
+      'Mineral-based non-chlorinated insulating and heat transmission oils'
+  },
+  {
+    code: '130308',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Waste insulating and heat transmission oils',
+    description: 'Synthetic insulating and heat transmission oils'
+  },
+  {
+    code: '130309',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Waste insulating and heat transmission oils',
+    description: 'Readily biodegradable insulating and heat transmission oils'
+  },
+  {
+    code: '130310',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Waste insulating and heat transmission oils',
+    description: 'Other insulating and heat transmission oils'
+  },
+  {
+    code: '130401',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Bilge oils',
+    description: 'Bilge oils from inland navigation'
+  },
+  {
+    code: '130402',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Bilge oils',
+    description: 'Bilge oils from jetty sewers'
+  },
+  {
+    code: '130403',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Bilge oils',
+    description: 'Bilge oils from other navigation'
+  },
+  {
+    code: '130501',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Oil/water separator contents',
+    description: 'Solids from grit chambers and oil/water separators'
+  },
+  {
+    code: '130502',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Oil/water separator contents',
+    description: 'Sludges from oil/water separators'
+  },
+  {
+    code: '130503',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Oil/water separator contents',
+    description: 'Interceptor sludges'
+  },
+  {
+    code: '130506',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Oil/water separator contents',
+    description: 'Oil from oil/water separators'
+  },
+  {
+    code: '130507',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Oil/water separator contents',
+    description: 'Oily water from oil/water separators'
+  },
+  {
+    code: '130508',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Oil/water separator contents',
+    description:
+      'Mixtures of wastes from grit chambers and oil/water separators'
+  },
+  {
+    code: '130701',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Wastes of liquid fuels',
+    description: 'Fuel oil and diesel'
+  },
+  {
+    code: '130702',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Wastes of liquid fuels',
+    description: 'Petrol'
+  },
+  {
+    code: '130703',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Wastes of liquid fuels',
+    description: 'Other fuels (including mixtures)'
+  },
+  {
+    code: '130801',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Oil wastes not otherwise specified',
+    description: 'Desalter sludges or emulsions'
+  },
+  {
+    code: '130802',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Oil wastes not otherwise specified',
+    description: 'Other emulsions'
+  },
+  {
+    code: '130899',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
+    subChapter: 'Oil wastes not otherwise specified',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '140601',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Waste organic solvents, refrigerants and propellants (except 07 and 08)',
+    subChapter:
+      'Waste organic solvents, refrigerants and foam/aerosol propellants',
+    description: 'Chlorofluorocarbons, hcfc, hfc'
+  },
+  {
+    code: '140602',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Waste organic solvents, refrigerants and propellants (except 07 and 08)',
+    subChapter:
+      'Waste organic solvents, refrigerants and foam/aerosol propellants',
+    description: 'Other halogenated solvents and solvent mixtures'
+  },
+  {
+    code: '140603',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Waste organic solvents, refrigerants and propellants (except 07 and 08)',
+    subChapter:
+      'Waste organic solvents, refrigerants and foam/aerosol propellants',
+    description: 'Other solvents and solvent mixtures'
+  },
+  {
+    code: '140604',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Waste organic solvents, refrigerants and propellants (except 07 and 08)',
+    subChapter:
+      'Waste organic solvents, refrigerants and foam/aerosol propellants',
+    description: 'Sludges or solid wastes containing halogenated solvents'
+  },
+  {
+    code: '140605',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Waste organic solvents, refrigerants and propellants (except 07 and 08)',
+    subChapter:
+      'Waste organic solvents, refrigerants and foam/aerosol propellants',
+    description: 'Sludges or solid wastes containing other solvents'
+  },
+  {
+    code: '150101',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Waste packaging, absorbents, wiping cloths, filter materials and protective clothing not otherwise specified',
+    subChapter:
+      'Packaging (including separately collected municipal packaging waste)',
+    description: 'Paper and cardboard packaging'
+  },
+  {
+    code: '150102',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Waste packaging, absorbents, wiping cloths, filter materials and protective clothing not otherwise specified',
+    subChapter:
+      'Packaging (including separately collected municipal packaging waste)',
+    description: 'Plastic packaging'
+  },
+  {
+    code: '150103',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Waste packaging, absorbents, wiping cloths, filter materials and protective clothing not otherwise specified',
+    subChapter:
+      'Packaging (including separately collected municipal packaging waste)',
+    description: 'Wooden packaging'
+  },
+  {
+    code: '150104',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Waste packaging, absorbents, wiping cloths, filter materials and protective clothing not otherwise specified',
+    subChapter:
+      'Packaging (including separately collected municipal packaging waste)',
+    description: 'Metallic packaging'
+  },
+  {
+    code: '150105',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Waste packaging, absorbents, wiping cloths, filter materials and protective clothing not otherwise specified',
+    subChapter:
+      'Packaging (including separately collected municipal packaging waste)',
+    description: 'Composite packaging'
+  },
+  {
+    code: '150106',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Waste packaging, absorbents, wiping cloths, filter materials and protective clothing not otherwise specified',
+    subChapter:
+      'Packaging (including separately collected municipal packaging waste)',
+    description: 'Mixed packaging'
+  },
+  {
+    code: '150107',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Waste packaging, absorbents, wiping cloths, filter materials and protective clothing not otherwise specified',
+    subChapter:
+      'Packaging (including separately collected municipal packaging waste)',
+    description: 'Glass packaging'
+  },
+  {
+    code: '150109',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Waste packaging, absorbents, wiping cloths, filter materials and protective clothing not otherwise specified',
+    subChapter:
+      'Packaging (including separately collected municipal packaging waste)',
+    description: 'Textile packaging'
+  },
+  {
+    code: '150110',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Waste packaging, absorbents, wiping cloths, filter materials and protective clothing not otherwise specified',
+    subChapter:
+      'Packaging (including separately collected municipal packaging waste)',
+    description:
+      'Packaging containing residues of or contaminated by hazardous substances'
+  },
+  {
+    code: '150111',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Waste packaging, absorbents, wiping cloths, filter materials and protective clothing not otherwise specified',
+    subChapter:
+      'Packaging (including separately collected municipal packaging waste)',
+    description:
+      'Metallic packaging containing a hazardous solid porous matrix (for example asbestos), including empty pressure containers'
+  },
+  {
+    code: '150202',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Waste packaging, absorbents, wiping cloths, filter materials and protective clothing not otherwise specified',
+    subChapter:
+      'Absorbents, filter materials, wiping cloths and protective clothing',
+    description:
+      'Absorbents, filter materials (including oil filters not otherwise specified), wiping cloths, protective clothing contaminated by hazardous substances'
+  },
+  {
+    code: '150203',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Waste packaging, absorbents, wiping cloths, filter materials and protective clothing not otherwise specified',
+    subChapter:
+      'Absorbents, filter materials, wiping cloths and protective clothing',
+    description:
+      'Absorbents, filter materials, wiping cloths and protective clothing other than those mentioned in 15 02 02'
+  },
+  {
+    code: '160103',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'End-of-life vehicles from different means of transport (including off-road machinery) and wastes from dismantling of end-of-life vehicles and vehicle maintenance (except 13, 14, 16 06 and 16 08)',
+    description: 'End-of-life tyres'
+  },
+  {
+    code: '160104',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'End-of-life vehicles from different means of transport (including off-road machinery) and wastes from dismantling of end-of-life vehicles and vehicle maintenance (except 13, 14, 16 06 and 16 08)',
+    description: 'End-of-life vehicles'
+  },
+  {
+    code: '160106',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'End-of-life vehicles from different means of transport (including off-road machinery) and wastes from dismantling of end-of-life vehicles and vehicle maintenance (except 13, 14, 16 06 and 16 08)',
+    description:
+      'End-of-life vehicles, containing neither liquids nor other hazardous components'
+  },
+  {
+    code: '160107',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'End-of-life vehicles from different means of transport (including off-road machinery) and wastes from dismantling of end-of-life vehicles and vehicle maintenance (except 13, 14, 16 06 and 16 08)',
+    description: 'Oil filters'
+  },
+  {
+    code: '160108',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'End-of-life vehicles from different means of transport (including off-road machinery) and wastes from dismantling of end-of-life vehicles and vehicle maintenance (except 13, 14, 16 06 and 16 08)',
+    description: 'Components containing mercury'
+  },
+  {
+    code: '160109',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'End-of-life vehicles from different means of transport (including off-road machinery) and wastes from dismantling of end-of-life vehicles and vehicle maintenance (except 13, 14, 16 06 and 16 08)',
+    description: 'Components containing pcbs'
+  },
+  {
+    code: '160110',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'End-of-life vehicles from different means of transport (including off-road machinery) and wastes from dismantling of end-of-life vehicles and vehicle maintenance (except 13, 14, 16 06 and 16 08)',
+    description: 'Explosive components (for example air bags)'
+  },
+  {
+    code: '160111',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'End-of-life vehicles from different means of transport (including off-road machinery) and wastes from dismantling of end-of-life vehicles and vehicle maintenance (except 13, 14, 16 06 and 16 08)',
+    description: 'Brake pads containing asbestos'
+  },
+  {
+    code: '160112',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'End-of-life vehicles from different means of transport (including off-road machinery) and wastes from dismantling of end-of-life vehicles and vehicle maintenance (except 13, 14, 16 06 and 16 08)',
+    description: 'Brake pads other than those mentioned in 16 01 11'
+  },
+  {
+    code: '160113',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'End-of-life vehicles from different means of transport (including off-road machinery) and wastes from dismantling of end-of-life vehicles and vehicle maintenance (except 13, 14, 16 06 and 16 08)',
+    description: 'Brake fluids'
+  },
+  {
+    code: '160114',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'End-of-life vehicles from different means of transport (including off-road machinery) and wastes from dismantling of end-of-life vehicles and vehicle maintenance (except 13, 14, 16 06 and 16 08)',
+    description: 'Antifreeze fluids containing hazardous substances'
+  },
+  {
+    code: '160115',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'End-of-life vehicles from different means of transport (including off-road machinery) and wastes from dismantling of end-of-life vehicles and vehicle maintenance (except 13, 14, 16 06 and 16 08)',
+    description: 'Antifreeze fluids other than those mentioned in 16 01 14'
+  },
+  {
+    code: '160116',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'End-of-life vehicles from different means of transport (including off-road machinery) and wastes from dismantling of end-of-life vehicles and vehicle maintenance (except 13, 14, 16 06 and 16 08)',
+    description: 'Tanks for liquefied gas'
+  },
+  {
+    code: '160117',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'End-of-life vehicles from different means of transport (including off-road machinery) and wastes from dismantling of end-of-life vehicles and vehicle maintenance (except 13, 14, 16 06 and 16 08)',
+    description: 'Ferrous metal'
+  },
+  {
+    code: '160118',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'End-of-life vehicles from different means of transport (including off-road machinery) and wastes from dismantling of end-of-life vehicles and vehicle maintenance (except 13, 14, 16 06 and 16 08)',
+    description: 'Non-ferrous metal'
+  },
+  {
+    code: '160119',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'End-of-life vehicles from different means of transport (including off-road machinery) and wastes from dismantling of end-of-life vehicles and vehicle maintenance (except 13, 14, 16 06 and 16 08)',
+    description: 'Plastic'
+  },
+  {
+    code: '160120',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'End-of-life vehicles from different means of transport (including off-road machinery) and wastes from dismantling of end-of-life vehicles and vehicle maintenance (except 13, 14, 16 06 and 16 08)',
+    description: 'Glass'
+  },
+  {
+    code: '160121',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'End-of-life vehicles from different means of transport (including off-road machinery) and wastes from dismantling of end-of-life vehicles and vehicle maintenance (except 13, 14, 16 06 and 16 08)',
+    description:
+      'Hazardous components other than those mentioned in 16 01 07 to 16 01 11 and 16 01 13 and 16 01 14'
+  },
+  {
+    code: '160122',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'End-of-life vehicles from different means of transport (including off-road machinery) and wastes from dismantling of end-of-life vehicles and vehicle maintenance (except 13, 14, 16 06 and 16 08)',
+    description: 'Components not otherwise specified'
+  },
+  {
+    code: '160199',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'End-of-life vehicles from different means of transport (including off-road machinery) and wastes from dismantling of end-of-life vehicles and vehicle maintenance (except 13, 14, 16 06 and 16 08)',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '160209',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Wastes from electrical and electronic equipment',
+    description: 'Transformers and capacitors containing pcbs'
+  },
+  {
+    code: '160210',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Wastes from electrical and electronic equipment',
+    description:
+      'Discarded equipment containing or contaminated by pcbs other than those mentioned in 16 02 09'
+  },
+  {
+    code: '160211',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Wastes from electrical and electronic equipment',
+    description: 'Discarded equipment containing chlorofluorocarbons, hcfc, hfc'
+  },
+  {
+    code: '160212',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Wastes from electrical and electronic equipment',
+    description: 'Discarded equipment containing free asbestos'
+  },
+  {
+    code: '160213',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Wastes from electrical and electronic equipment',
+    description:
+      'Discarded equipment containing hazardous components other than those mentioned in 16 02 09 to 16 02 12'
+  },
+  {
+    code: '160214',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Wastes from electrical and electronic equipment',
+    description:
+      'Discarded equipment other than those mentioned in 16 02 09 to 16 02 13'
+  },
+  {
+    code: '160215',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Wastes from electrical and electronic equipment',
+    description: 'Hazardous components removed from discarded equipment'
+  },
+  {
+    code: '160216',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Wastes from electrical and electronic equipment',
+    description:
+      'Components removed from discarded equipment other than those mentioned in 16 02 15'
+  },
+  {
+    code: '160303',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Off-specification batches and unused products',
+    description: 'Inorganic wastes containing hazardous substances'
+  },
+  {
+    code: '160304',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Off-specification batches and unused products',
+    description: 'Inorganic wastes other than those mentioned in 16 03 03'
+  },
+  {
+    code: '160305',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Off-specification batches and unused products',
+    description: 'Organic wastes containing hazardous substances'
+  },
+  {
+    code: '160306',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Off-specification batches and unused products',
+    description: 'Organic wastes other than those mentioned in 16 03 05'
+  },
+  {
+    code: '160307',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Off-specification batches and unused products',
+    description: 'Metallic mercury'
+  },
+  {
+    code: '160401',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Waste explosives',
+    description: 'Waste ammunition'
+  },
+  {
+    code: '160402',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Waste explosives',
+    description: 'Fireworks wastes'
+  },
+  {
+    code: '160403',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Waste explosives',
+    description: 'Other waste explosives'
+  },
+  {
+    code: '160504',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Gases in pressure containers and discarded chemicals',
+    description:
+      'Gases in pressure containers (including halons) containing hazardous substances'
+  },
+  {
+    code: '160505',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Gases in pressure containers and discarded chemicals',
+    description:
+      'Gases in pressure containers other than those mentioned in 16 05 04'
+  },
+  {
+    code: '160506',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Gases in pressure containers and discarded chemicals',
+    description:
+      'Laboratory chemicals, consisting of or containing hazardous substances, including mixtures of laboratory chemicals'
+  },
+  {
+    code: '160507',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Gases in pressure containers and discarded chemicals',
+    description:
+      'Discarded inorganic chemicals consisting of or containing hazardous substances'
+  },
+  {
+    code: '160508',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Gases in pressure containers and discarded chemicals',
+    description:
+      'Discarded organic chemicals consisting of or containing hazardous substances'
+  },
+  {
+    code: '160509',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Gases in pressure containers and discarded chemicals',
+    description:
+      'Discarded chemicals other than those mentioned in 16 05 06, 16 05 07 or 16 05 08'
+  },
+  {
+    code: '160601',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Batteries and accumulators',
+    description: 'Lead batteries'
+  },
+  {
+    code: '160602',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Batteries and accumulators',
+    description: 'Ni-cd batteries'
+  },
+  {
+    code: '160603',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Batteries and accumulators',
+    description: 'Mercury-containing  batteries'
+  },
+  {
+    code: '160604',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Batteries and accumulators',
+    description: 'Alkaline batteries (except 16 06 03)'
+  },
+  {
+    code: '160605',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Batteries and accumulators',
+    description: 'Other batteries and accumulators'
+  },
+  {
+    code: '160606',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Batteries and accumulators',
+    description:
+      'Separately collected electrolyte from batteries and accumulators'
+  },
+  {
+    code: '160708',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'Wastes from transport tank, storage tank and barrel cleaning (except 05 and 13)',
+    description: 'Wastes containing oil'
+  },
+  {
+    code: '160709',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'Wastes from transport tank, storage tank and barrel cleaning (except 05 and 13)',
+    description: 'Wastes containing other hazardous substances'
+  },
+  {
+    code: '160799',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter:
+      'Wastes from transport tank, storage tank and barrel cleaning (except 05 and 13)',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '160801',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Spent catalysts',
+    description:
+      'Spent catalysts containing gold, silver, rhenium, rhodium, palladium, iridium or platinum (except 16 08 07)'
+  },
+  {
+    code: '160802',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Spent catalysts',
+    description:
+      'Spent catalysts containing hazardous transition metals or hazardous transition metal compounds'
+  },
+  {
+    code: '160803',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Spent catalysts',
+    description:
+      'Spent catalysts containing transition metals or transition metal compounds not otherwise specified'
+  },
+  {
+    code: '160804',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Spent catalysts',
+    description: 'Spent fluid catalytic cracking catalysts (except 16 08 07)'
+  },
+  {
+    code: '160805',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Spent catalysts',
+    description: 'Spent catalysts containing phosphoric acid'
+  },
+  {
+    code: '160806',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Spent catalysts',
+    description: 'Spent liquids used as catalysts'
+  },
+  {
+    code: '160807',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Spent catalysts',
+    description: 'Spent catalysts contaminated with hazardous substances'
+  },
+  {
+    code: '160901',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Oxidising substances',
+    description: 'Permanganates, for example potassium permanganate'
+  },
+  {
+    code: '160902',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Oxidising substances',
+    description:
+      'Chromates, for example potassium chromate, potassium or sodium dichromate'
+  },
+  {
+    code: '160903',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Oxidising substances',
+    description: 'Peroxides, for example hydrogen peroxide'
+  },
+  {
+    code: '160904',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Oxidising substances',
+    description: 'Oxidising substances, not otherwise specified'
+  },
+  {
+    code: '161001',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Aqueous liquid wastes destined for off-site treatment',
+    description: 'Aqueous liquid wastes containing hazardous substances'
+  },
+  {
+    code: '161002',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Aqueous liquid wastes destined for off-site treatment',
+    description: 'Aqueous liquid wastes other than those mentioned in 16 10 01'
+  },
+  {
+    code: '161003',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Aqueous liquid wastes destined for off-site treatment',
+    description: 'Aqueous concentrates containing hazardous substances'
+  },
+  {
+    code: '161004',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Aqueous liquid wastes destined for off-site treatment',
+    description: 'Aqueous concentrates other than those mentioned in 16 10 03'
+  },
+  {
+    code: '161101',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Waste linings and refractories',
+    description:
+      'Carbon-based linings and refractories from metallurgical processes containing hazardous substances'
+  },
+  {
+    code: '161102',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Waste linings and refractories',
+    description:
+      'Carbon-based linings and refractories from metallurgical processes other than those mentioned in 16 11 01'
+  },
+  {
+    code: '161103',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Waste linings and refractories',
+    description:
+      'Other linings and refractories from metallurgical processes containing hazardous substances'
+  },
+  {
+    code: '161104',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Waste linings and refractories',
+    description:
+      'Other linings and refractories from metallurgical processes other than those mentioned in 16 11 03'
+  },
+  {
+    code: '161105',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Waste linings and refractories',
+    description:
+      'Linings and refractories from non-metallurgical processes containing hazardous substances'
+  },
+  {
+    code: '161106',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter: 'Wastes not otherwise specified in the list',
+    subChapter: 'Waste linings and refractories',
+    description:
+      'Linings and refractories from non-metallurgical processes other than those mentioned in 16 11 05'
+  },
+  {
+    code: '170101',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Concrete, bricks, tiles and ceramics',
+    description: 'Concrete'
+  },
+  {
+    code: '170102',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Concrete, bricks, tiles and ceramics',
+    description: 'Bricks'
+  },
+  {
+    code: '170103',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Concrete, bricks, tiles and ceramics',
+    description: 'Tiles and ceramics'
+  },
+  {
+    code: '170106',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Concrete, bricks, tiles and ceramics',
+    description:
+      'Mixtures of, or separate fractions of concrete, bricks, tiles and ceramics containing hazardous substances'
+  },
+  {
+    code: '170107',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Concrete, bricks, tiles and ceramics',
+    description:
+      'Mixtures of concrete, bricks, tiles and ceramics other than those mentioned in 17 01 06'
+  },
+  {
+    code: '170201',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Wood, glass and plastic',
+    description: 'Wood'
+  },
+  {
+    code: '170202',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Wood, glass and plastic',
+    description: 'Glass'
+  },
+  {
+    code: '170203',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Wood, glass and plastic',
+    description: 'Plastic'
+  },
+  {
+    code: '170204',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Wood, glass and plastic',
+    description:
+      'Glass, plastic and wood containing or contaminated with hazardous substances'
+  },
+  {
+    code: '170301',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Bituminous mixtures, coal tar and tarred products',
+    description: 'Bituminous mixtures containing coal tar'
+  },
+  {
+    code: '170302',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Bituminous mixtures, coal tar and tarred products',
+    description: 'Bituminous mixtures other than those mentioned in 17 03 01'
+  },
+  {
+    code: '170303',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Bituminous mixtures, coal tar and tarred products',
+    description: 'Coal tar and tarred products'
+  },
+  {
+    code: '170401',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Metals (including their alloys)',
+    description: 'Copper, bronze, brass'
+  },
+  {
+    code: '170402',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Metals (including their alloys)',
+    description: 'Aluminium'
+  },
+  {
+    code: '170403',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Metals (including their alloys)',
+    description: 'Lead'
+  },
+  {
+    code: '170404',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Metals (including their alloys)',
+    description: 'Zinc'
+  },
+  {
+    code: '170405',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Metals (including their alloys)',
+    description: 'Iron and steel'
+  },
+  {
+    code: '170406',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Metals (including their alloys)',
+    description: 'Tin'
+  },
+  {
+    code: '170407',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Metals (including their alloys)',
+    description: 'Mixed metals'
+  },
+  {
+    code: '170409',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Metals (including their alloys)',
+    description: 'Metal waste contaminated with hazardous substances'
+  },
+  {
+    code: '170410',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Metals (including their alloys)',
+    description:
+      'Cables containing oil, coal tar and other hazardous substances'
+  },
+  {
+    code: '170411',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Metals (including their alloys)',
+    description: 'Cables other than those mentioned in 17 04 10'
+  },
+  {
+    code: '170503',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter:
+      'Soil (including excavated soil from contaminated sites), stones and dredging spoil',
+    description: 'Soil and stones containing hazardous substances'
+  },
+  {
+    code: '170504',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter:
+      'Soil (including excavated soil from contaminated sites), stones and dredging spoil',
+    description: 'Soil and stones other than those mentioned in 17 05 03'
+  },
+  {
+    code: '170505',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter:
+      'Soil (including excavated soil from contaminated sites), stones and dredging spoil',
+    description: 'Dredging spoil containing hazardous substances'
+  },
+  {
+    code: '170506',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter:
+      'Soil (including excavated soil from contaminated sites), stones and dredging spoil',
+    description: 'Dredging spoil other than those mentioned in 17 05 05'
+  },
+  {
+    code: '170507',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter:
+      'Soil (including excavated soil from contaminated sites), stones and dredging spoil',
+    description: 'Track ballast containing hazardous substances'
+  },
+  {
+    code: '170508',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter:
+      'Soil (including excavated soil from contaminated sites), stones and dredging spoil',
+    description: 'Track ballast other than those mentioned in 17 05 07'
+  },
+  {
+    code: '170601',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter:
+      'Insulation materials and asbestos-containing construction materials',
+    description: 'Insulation materials containing asbestos'
+  },
+  {
+    code: '170603',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter:
+      'Insulation materials and asbestos-containing construction materials',
+    description:
+      'Other insulation materials consisting of or containing hazardous substances'
+  },
+  {
+    code: '170604',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter:
+      'Insulation materials and asbestos-containing construction materials',
+    description:
+      'Insulation materials other than those mentioned in 17 06 01 and 17 06 03'
+  },
+  {
+    code: '170605',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter:
+      'Insulation materials and asbestos-containing construction materials',
+    description: 'Construction materials containing asbestos'
+  },
+  {
+    code: '170801',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Gypsum-based construction material',
+    description:
+      'Gypsum-based construction materials contaminated with hazardous substances'
+  },
+  {
+    code: '170802',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Gypsum-based construction material',
+    description:
+      'Gypsum-based construction materials other than those mentioned in 17 08 01'
+  },
+  {
+    code: '170901',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Other construction and demolition wastes',
+    description: 'Construction and demolition wastes containing mercury'
+  },
+  {
+    code: '170902',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Other construction and demolition wastes',
+    description:
+      'Construction and demolition wastes containing pcb (for example pcb-containing sealants, pcb-containing resin-based floorings, \npcb-containing sealed glazing units, pcb-containing capacitors)'
+  },
+  {
+    code: '170903',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Other construction and demolition wastes',
+    description:
+      'Other construction and demolition wastes (including mixed wastes) containing hazardous substances'
+  },
+  {
+    code: '170904',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Construction and demolition wastes (including excavated soil from contaminated sites)',
+    subChapter: 'Other construction and demolition wastes',
+    description:
+      'Mixed construction and demolition wastes other than those mentioned in 17 09 01, 17 09 02 and 17 09 03'
+  },
+  {
+    code: '180101',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from human or animal health care and/or related research (except kitchen and restaurant wastes not arising from immediate health care)',
+    subChapter:
+      'Wastes from natal care, diagnosis, treatment or prevention of disease in humans',
+    description: 'Sharps (except 18 01 03)'
+  },
+  {
+    code: '180102',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from human or animal health care and/or related research (except kitchen and restaurant wastes not arising from immediate health care)',
+    subChapter:
+      'Wastes from natal care, diagnosis, treatment or prevention of disease in humans',
+    description:
+      'Body parts and organs including blood bags and blood preserves (except 18 01 03)'
+  },
+  {
+    code: '180103',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from human or animal health care and/or related research (except kitchen and restaurant wastes not arising from immediate health care)',
+    subChapter:
+      'Wastes from natal care, diagnosis, treatment or prevention of disease in humans',
+    description:
+      'Wastes whose collection and disposal is subject to special requirements in order to prevent infection'
+  },
+  {
+    code: '180104',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from human or animal health care and/or related research (except kitchen and restaurant wastes not arising from immediate health care)',
+    subChapter:
+      'Wastes from natal care, diagnosis, treatment or prevention of disease in humans',
+    description:
+      'Wastes whose collection and disposal is not subject to special requirements in order to prevent infection(for example dressings, plaster casts, linen, disposable clothing, diapers)'
+  },
+  {
+    code: '180106',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from human or animal health care and/or related research (except kitchen and restaurant wastes not arising from immediate health care)',
+    subChapter:
+      'Wastes from natal care, diagnosis, treatment or prevention of disease in humans',
+    description: 'Chemicals consisting of or containing hazardous substances'
+  },
+  {
+    code: '180107',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from human or animal health care and/or related research (except kitchen and restaurant wastes not arising from immediate health care)',
+    subChapter:
+      'Wastes from natal care, diagnosis, treatment or prevention of disease in humans',
+    description: 'Chemicals other than those mentioned in 18 01 06'
+  },
+  {
+    code: '180108',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from human or animal health care and/or related research (except kitchen and restaurant wastes not arising from immediate health care)',
+    subChapter:
+      'Wastes from natal care, diagnosis, treatment or prevention of disease in humans',
+    description: 'Cytotoxic and cytostatic medicines'
+  },
+  {
+    code: '180109',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from human or animal health care and/or related research (except kitchen and restaurant wastes not arising from immediate health care)',
+    subChapter:
+      'Wastes from natal care, diagnosis, treatment or prevention of disease in humans',
+    description: 'Medicines other than those mentioned in 18 01 08'
+  },
+  {
+    code: '180110',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from human or animal health care and/or related research (except kitchen and restaurant wastes not arising from immediate health care)',
+    subChapter:
+      'Wastes from natal care, diagnosis, treatment or prevention of disease in humans',
+    description: 'Amalgam waste from dental care'
+  },
+  {
+    code: '180201',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from human or animal health care and/or related research (except kitchen and restaurant wastes not arising from immediate health care)',
+    subChapter:
+      'Wastes from research, diagnosis, treatment or prevention of disease involving animals',
+    description: 'Sharps (except 18 02 02)'
+  },
+  {
+    code: '180202',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from human or animal health care and/or related research (except kitchen and restaurant wastes not arising from immediate health care)',
+    subChapter:
+      'Wastes from research, diagnosis, treatment or prevention of disease involving animals',
+    description:
+      'Wastes whose collection and disposal is subject to special requirements in order to prevent infection'
+  },
+  {
+    code: '180203',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from human or animal health care and/or related research (except kitchen and restaurant wastes not arising from immediate health care)',
+    subChapter:
+      'Wastes from research, diagnosis, treatment or prevention of disease involving animals',
+    description:
+      'Wastes whose collection and disposal is not subject to special requirements in order to prevent infection'
+  },
+  {
+    code: '180205',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from human or animal health care and/or related research (except kitchen and restaurant wastes not arising from immediate health care)',
+    subChapter:
+      'Wastes from research, diagnosis, treatment or prevention of disease involving animals',
+    description: 'Chemicals consisting of or containing hazardous substances'
+  },
+  {
+    code: '180206',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from human or animal health care and/or related research (except kitchen and restaurant wastes not arising from immediate health care)',
+    subChapter:
+      'Wastes from research, diagnosis, treatment or prevention of disease involving animals',
+    description: 'Chemicals other than those mentioned in 18 02 05'
+  },
+  {
+    code: '180207',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from human or animal health care and/or related research (except kitchen and restaurant wastes not arising from immediate health care)',
+    subChapter:
+      'Wastes from research, diagnosis, treatment or prevention of disease involving animals',
+    description: 'Cytotoxic and cytostatic medicines'
+  },
+  {
+    code: '180208',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from human or animal health care and/or related research (except kitchen and restaurant wastes not arising from immediate health care)',
+    subChapter:
+      'Wastes from research, diagnosis, treatment or prevention of disease involving animals',
+    description: 'Medicines other than those mentioned in 18 02 07'
+  },
+  {
+    code: '190102',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from incineration or pyrolysis of waste',
+    description: 'Ferrous materials removed from bottom ash'
+  },
+  {
+    code: '190105',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from incineration or pyrolysis of waste',
+    description: 'Filter cake from gas treatment'
+  },
+  {
+    code: '190106',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from incineration or pyrolysis of waste',
+    description:
+      'Aqueous liquid wastes from gas treatment and other aqueous liquid wastes'
+  },
+  {
+    code: '190107',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from incineration or pyrolysis of waste',
+    description: 'Solid wastes from gas treatment'
+  },
+  {
+    code: '190110',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from incineration or pyrolysis of waste',
+    description: 'Spent activated carbon from flue-gas treatment'
+  },
+  {
+    code: '190111',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from incineration or pyrolysis of waste',
+    description: 'Bottom ash and slag containing hazardous substances'
+  },
+  {
+    code: '190112',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from incineration or pyrolysis of waste',
+    description: 'Bottom ash and slag other than those mentioned in 19 01 11'
+  },
+  {
+    code: '190113',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from incineration or pyrolysis of waste',
+    description: 'Fly ash containing hazardous substances'
+  },
+  {
+    code: '190114',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from incineration or pyrolysis of waste',
+    description: 'Fly ash other than those mentioned in 19 01 13'
+  },
+  {
+    code: '190115',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from incineration or pyrolysis of waste',
+    description: 'Boiler dust containing hazardous substances'
+  },
+  {
+    code: '190116',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from incineration or pyrolysis of waste',
+    description: 'Boiler dust other than those mentioned in 19 01 15'
+  },
+  {
+    code: '190117',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from incineration or pyrolysis of waste',
+    description: 'Pyrolysis wastes containing hazardous substances'
+  },
+  {
+    code: '190118',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from incineration or pyrolysis of waste',
+    description: 'Pyrolysis wastes other than those mentioned in 19 01 17'
+  },
+  {
+    code: '190119',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from incineration or pyrolysis of waste',
+    description: 'Sands from fluidised beds'
+  },
+  {
+    code: '190199',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from incineration or pyrolysis of waste',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '190203',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from physico/chemical treatments of waste \n(including dechromatation, decyanidation, neutralisation)',
+    description: 'Premixed wastes composed only of non-hazardous wastes'
+  },
+  {
+    code: '190204',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from physico/chemical treatments of waste \n(including dechromatation, decyanidation, neutralisation)',
+    description: 'Premixed wastes composed of at least one hazardous waste'
+  },
+  {
+    code: '190205',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from physico/chemical treatments of waste \n(including dechromatation, decyanidation, neutralisation)',
+    description:
+      'Sludges from physico/chemical treatment containing hazardous substances'
+  },
+  {
+    code: '190206',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from physico/chemical treatments of waste \n(including dechromatation, decyanidation, neutralisation)',
+    description:
+      'Sludges from physico/chemical treatment other than those mentioned in 19 02 05'
+  },
+  {
+    code: '190207',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from physico/chemical treatments of waste \n(including dechromatation, decyanidation, neutralisation)',
+    description: 'Oil and concentrates from separation'
+  },
+  {
+    code: '190208',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from physico/chemical treatments of waste \n(including dechromatation, decyanidation, neutralisation)',
+    description: 'Liquid combustible wastes containing hazardous substances'
+  },
+  {
+    code: '190209',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from physico/chemical treatments of waste \n(including dechromatation, decyanidation, neutralisation)',
+    description: 'Solid combustible wastes containing hazardous substances'
+  },
+  {
+    code: '190210',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from physico/chemical treatments of waste \n(including dechromatation, decyanidation, neutralisation)',
+    description:
+      'Combustible wastes other than those mentioned in 19 02 08 and 19 02 09'
+  },
+  {
+    code: '190211',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from physico/chemical treatments of waste \n(including dechromatation, decyanidation, neutralisation)',
+    description: 'Other wastes containing hazardous substances'
+  },
+  {
+    code: '190299',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from physico/chemical treatments of waste \n(including dechromatation, decyanidation, neutralisation)',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '190304',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Stabilised/solidified wastes',
+    description:
+      'Wastes marked as hazardous, partly stabilised other than 19 03 08'
+  },
+  {
+    code: '190305',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Stabilised/solidified wastes',
+    description: 'Stabilised wastes other than those mentioned in 19 03 04'
+  },
+  {
+    code: '190306',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Stabilised/solidified wastes',
+    description: 'Wastes marked as hazardous, solidified'
+  },
+  {
+    code: '190307',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Stabilised/solidified wastes',
+    description: 'Solidified wastes other than those mentioned in 19 03 06'
+  },
+  {
+    code: '190308',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Stabilised/solidified wastes',
+    description: 'Partly stabilised mercury'
+  },
+  {
+    code: '190401',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Vitrified waste and wastes from vitrification',
+    description: 'Vitrified waste'
+  },
+  {
+    code: '190402',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Vitrified waste and wastes from vitrification',
+    description: 'Fly ash and other flue-gas treatment wastes'
+  },
+  {
+    code: '190403',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Vitrified waste and wastes from vitrification',
+    description: 'Non-vitrified solid phase'
+  },
+  {
+    code: '190404',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Vitrified waste and wastes from vitrification',
+    description: 'Aqueous liquid wastes from vitrified waste tempering'
+  },
+  {
+    code: '190501',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from aerobic treatment of solid wastes',
+    description: 'Non-composted fraction of municipal and similar wastes'
+  },
+  {
+    code: '190502',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from aerobic treatment of solid wastes',
+    description: 'Non-composted fraction of animal and vegetable waste'
+  },
+  {
+    code: '190503',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from aerobic treatment of solid wastes',
+    description: 'Off-specification compost'
+  },
+  {
+    code: '190599',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from aerobic treatment of solid wastes',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '190603',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from anaerobic treatment of waste',
+    description: 'Liquor from anaerobic treatment of municipal waste'
+  },
+  {
+    code: '190604',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from anaerobic treatment of waste',
+    description: 'Digestate from anaerobic treatment of municipal waste'
+  },
+  {
+    code: '190605',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from anaerobic treatment of waste',
+    description: 'Liquor from anaerobic treatment of animal and vegetable waste'
+  },
+  {
+    code: '190606',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from anaerobic treatment of waste',
+    description:
+      'Digestate from anaerobic treatment of animal and vegetable waste'
+  },
+  {
+    code: '190699',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from anaerobic treatment of waste',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '190702',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Landfill leachate',
+    description: 'Landfill leachate containing hazardous substances'
+  },
+  {
+    code: '190703',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Landfill leachate',
+    description: 'Landfill leachate other than those mentioned in 19 07 02'
+  },
+  {
+    code: '190801',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from waste water treatment plants not otherwise specified',
+    description: 'Screenings'
+  },
+  {
+    code: '190802',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from waste water treatment plants not otherwise specified',
+    description: 'Waste from desanding'
+  },
+  {
+    code: '190805',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from waste water treatment plants not otherwise specified',
+    description: 'Sludges from treatment of urban waste water'
+  },
+  {
+    code: '190806',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from waste water treatment plants not otherwise specified',
+    description: 'Saturated or spent ion exchange resins'
+  },
+  {
+    code: '190807',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from waste water treatment plants not otherwise specified',
+    description: 'Solutions and sludges from regeneration of ion exchangers'
+  },
+  {
+    code: '190808',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from waste water treatment plants not otherwise specified',
+    description: 'Membrane system waste containing heavy metals'
+  },
+  {
+    code: '190809',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from waste water treatment plants not otherwise specified',
+    description:
+      'Grease and oil mixture from oil/water separation containing only edible oil and fats'
+  },
+  {
+    code: '190810',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from waste water treatment plants not otherwise specified',
+    description:
+      'Grease and oil mixture from oil/water separation other than those mentioned in 19 08 09'
+  },
+  {
+    code: '190811',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from waste water treatment plants not otherwise specified',
+    description:
+      'Sludges containing hazardous substances from biological treatment of industrial waste water'
+  },
+  {
+    code: '190812',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from waste water treatment plants not otherwise specified',
+    description:
+      'Sludges from biological treatment of industrial waste water other than those mentioned in 19 08 11'
+  },
+  {
+    code: '190813',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from waste water treatment plants not otherwise specified',
+    description:
+      'Sludges containing hazardous substances from other treatment of industrial waste water'
+  },
+  {
+    code: '190814',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from waste water treatment plants not otherwise specified',
+    description:
+      'Sludges from other treatment of industrial waste water other than those mentioned in 19 08 13'
+  },
+  {
+    code: '190899',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from waste water treatment plants not otherwise specified',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '190901',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from the preparation of water intended for human consumption or water for industrial use',
+    description: 'Solid waste from primary filtration and screenings'
+  },
+  {
+    code: '190902',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from the preparation of water intended for human consumption or water for industrial use',
+    description: 'Sludges from water clarification'
+  },
+  {
+    code: '190903',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from the preparation of water intended for human consumption or water for industrial use',
+    description: 'Sludges from decarbonation'
+  },
+  {
+    code: '190904',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from the preparation of water intended for human consumption or water for industrial use',
+    description: 'Spent activated carbon'
+  },
+  {
+    code: '190905',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from the preparation of water intended for human consumption or water for industrial use',
+    description: 'Saturated or spent ion exchange resins'
+  },
+  {
+    code: '190906',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from the preparation of water intended for human consumption or water for industrial use',
+    description: 'Solutions and sludges from regeneration of ion exchangers'
+  },
+  {
+    code: '190999',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from the preparation of water intended for human consumption or water for industrial use',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '191001',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from shredding of metal-containing wastes',
+    description: 'Iron and steel waste'
+  },
+  {
+    code: '191002',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from shredding of metal-containing wastes',
+    description: 'Non-ferrous waste'
+  },
+  {
+    code: '191003',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from shredding of metal-containing wastes',
+    description: 'Fluff-light fraction and dust containing hazardous substances'
+  },
+  {
+    code: '191004',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from shredding of metal-containing wastes',
+    description:
+      'Fluff-light fraction and dust other than those mentioned in 19 10 03'
+  },
+  {
+    code: '191005',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from shredding of metal-containing wastes',
+    description: 'Other fractions containing hazardous substances'
+  },
+  {
+    code: '191006',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from shredding of metal-containing wastes',
+    description: 'Other fractions other than those mentioned in 19 10 05'
+  },
+  {
+    code: '191101',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from oil regeneration',
+    description: 'Spent filter clays'
+  },
+  {
+    code: '191102',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from oil regeneration',
+    description: 'Acid tars'
+  },
+  {
+    code: '191103',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from oil regeneration',
+    description: 'Aqueous liquid wastes'
+  },
+  {
+    code: '191104',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from oil regeneration',
+    description: 'Wastes from cleaning of fuel with bases'
+  },
+  {
+    code: '191105',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from oil regeneration',
+    description:
+      'Sludges from on-site effluent treatment containing hazardous substances'
+  },
+  {
+    code: '191106',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from oil regeneration',
+    description:
+      'Sludges from on-site effluent treatment other than those mentioned in 19 11 05'
+  },
+  {
+    code: '191107',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from oil regeneration',
+    description: 'Wastes from flue-gas cleaning'
+  },
+  {
+    code: '191199',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from oil regeneration',
+    description: 'Wastes not otherwise specified'
+  },
+  {
+    code: '191201',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from the mechanical treatment of waste (for example sorting, crushing, compacting, pelletising) not otherwise specified',
+    description: 'Paper and cardboard'
+  },
+  {
+    code: '191202',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from the mechanical treatment of waste (for example sorting, crushing, compacting, pelletising) not otherwise specified',
+    description: 'Ferrous metal'
+  },
+  {
+    code: '191203',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from the mechanical treatment of waste (for example sorting, crushing, compacting, pelletising) not otherwise specified',
+    description: 'Non-ferrous metal'
+  },
+  {
+    code: '191204',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from the mechanical treatment of waste (for example sorting, crushing, compacting, pelletising) not otherwise specified',
+    description: 'Plastic and rubber'
+  },
+  {
+    code: '191205',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from the mechanical treatment of waste (for example sorting, crushing, compacting, pelletising) not otherwise specified',
+    description: 'Glass'
+  },
+  {
+    code: '191206',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from the mechanical treatment of waste (for example sorting, crushing, compacting, pelletising) not otherwise specified',
+    description: 'Wood containing hazardous substances'
+  },
+  {
+    code: '191207',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from the mechanical treatment of waste (for example sorting, crushing, compacting, pelletising) not otherwise specified',
+    description: 'Wood other than that mentioned in 19 12 06'
+  },
+  {
+    code: '191208',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from the mechanical treatment of waste (for example sorting, crushing, compacting, pelletising) not otherwise specified',
+    description: 'Textiles'
+  },
+  {
+    code: '191209',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from the mechanical treatment of waste (for example sorting, crushing, compacting, pelletising) not otherwise specified',
+    description: 'Minerals (for example sand, stones)'
+  },
+  {
+    code: '191210',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from the mechanical treatment of waste (for example sorting, crushing, compacting, pelletising) not otherwise specified',
+    description: 'Combustible waste (refuse derived fuel)'
+  },
+  {
+    code: '191211',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from the mechanical treatment of waste (for example sorting, crushing, compacting, pelletising) not otherwise specified',
+    description:
+      'Other wastes (including mixtures of materials) from mechanical treatment of waste containing hazardous substances'
+  },
+  {
+    code: '191212',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter:
+      'Wastes from the mechanical treatment of waste (for example sorting, crushing, compacting, pelletising) not otherwise specified',
+    description:
+      'Other wastes (including mixtures of materials) from mechanical treatment of wastes other than those mentioned in 19 12 11'
+  },
+  {
+    code: '191301',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from soil and groundwater remediation',
+    description:
+      'Solid wastes from soil remediation containing hazardous substances'
+  },
+  {
+    code: '191302',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from soil and groundwater remediation',
+    description:
+      'Solid wastes from soil remediation other than those mentioned in 19 13 01'
+  },
+  {
+    code: '191303',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from soil and groundwater remediation',
+    description: 'Sludges from soil remediation containing hazardous substances'
+  },
+  {
+    code: '191304',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from soil and groundwater remediation',
+    description:
+      'Sludges from soil remediation other than those mentioned in 19 13 03'
+  },
+  {
+    code: '191305',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from soil and groundwater remediation',
+    description:
+      'Sludges from groundwater remediation containing hazardous substances'
+  },
+  {
+    code: '191306',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from soil and groundwater remediation',
+    description:
+      'Sludges from groundwater remediation other than those mentioned in 19 13 05'
+  },
+  {
+    code: '191307',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from soil and groundwater remediation',
+    description:
+      'Aqueous liquid wastes and aqueous concentrates from groundwater remediation containing hazardous substances'
+  },
+  {
+    code: '191308',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
+    subChapter: 'Wastes from soil and groundwater remediation',
+    description:
+      'Aqueous liquid wastes and aqueous concentrates from groundwater remediation other than those mentioned in 19 13 07'
+  },
+  {
+    code: '200101',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Paper and cardboard'
+  },
+  {
+    code: '200102',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Glass'
+  },
+  {
+    code: '200108',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Biodegradable kitchen and canteen waste'
+  },
+  {
+    code: '200110',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Clothes'
+  },
+  {
+    code: '200111',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Textiles'
+  },
+  {
+    code: '200113',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Solvents'
+  },
+  {
+    code: '200114',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Acids'
+  },
+  {
+    code: '200115',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Alkalines'
+  },
+  {
+    code: '200117',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Photochemicals'
+  },
+  {
+    code: '200119',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Pesticides'
+  },
+  {
+    code: '200121',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Fluorescent tubes and other mercury-containing waste'
+  },
+  {
+    code: '200123',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Discarded equipment containing chlorofluorocarbons'
+  },
+  {
+    code: '200125',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Edible oil and fat'
+  },
+  {
+    code: '200126',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Oil and fat other than those mentioned in 20 01 25'
+  },
+  {
+    code: '200127',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description:
+      'Paint, inks, adhesives and resins containing hazardous substances'
+  },
+  {
+    code: '200128',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description:
+      'Paint, inks, adhesives and resins other than those mentioned in 20 01 27'
+  },
+  {
+    code: '200129',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Detergents containing hazardous substances'
+  },
+  {
+    code: '200130',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Detergents other than those mentioned in 20 01 29'
+  },
+  {
+    code: '200131',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Cytotoxic and cytostatic medicines'
+  },
+  {
+    code: '200132',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Medicines other than those mentioned in 20 01 31'
+  },
+  {
+    code: '200133',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description:
+      'Batteries and accumulators included in 16 06 01, 16 06 02 or 16 06 03 and unsorted batteries and accumulators containing these batteries'
+  },
+  {
+    code: '200134',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description:
+      'Batteries and accumulators other than those mentioned in 20 01 33'
+  },
+  {
+    code: '200135',
+    isHazardous: true,
+    entryTypeDesc: 'Absolute hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description:
+      'Discarded electrical and electronic equipment other than those mentioned in 20 01 21 and 20 01 23 containing hazardous components'
+  },
+  {
+    code: '200136',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description:
+      'Discarded electrical and electronic equipment other than those mentioned in 20 01 21, 20 01 23 and 20 01 35'
+  },
+  {
+    code: '200137',
+    isHazardous: true,
+    entryTypeDesc: 'Mirror hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Wood containing hazardous substances'
+  },
+  {
+    code: '200138',
+    isHazardous: false,
+    entryTypeDesc: 'Mirror non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Wood other than that mentioned in 20 01 37'
+  },
+  {
+    code: '200139',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Plastics'
+  },
+  {
+    code: '200140',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Metals'
+  },
+  {
+    code: '200141',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Wastes from chimney sweeping'
+  },
+  {
+    code: '200199',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Separately collected fractions (except 15 01)',
+    description: 'Other fractions not otherwise specified'
+  },
+  {
+    code: '200201',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Garden and park wastes (including cemetery waste)',
+    description: 'Biodegradable waste'
+  },
+  {
+    code: '200202',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Garden and park wastes (including cemetery waste)',
+    description: 'Soil and stones'
+  },
+  {
+    code: '200203',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Garden and park wastes (including cemetery waste)',
+    description: 'Other non-biodegradable wastes'
+  },
+  {
+    code: '200301',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Other municipal wastes',
+    description: 'Mixed municipal waste'
+  },
+  {
+    code: '200302',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Other municipal wastes',
+    description: 'Waste from markets'
+  },
+  {
+    code: '200303',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Other municipal wastes',
+    description: 'Street-cleaning residues'
+  },
+  {
+    code: '200304',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Other municipal wastes',
+    description: 'Septic tank sludge'
+  },
+  {
+    code: '200306',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Other municipal wastes',
+    description: 'Waste from sewage cleaning'
+  },
+  {
+    code: '200307',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Other municipal wastes',
+    description: 'Bulky waste'
+  },
+  {
+    code: '200399',
+    isHazardous: false,
+    entryTypeDesc: 'Absolute non-hazardous',
+    chapter:
+      'Municipal wastes (household waste and similar commercial, industrial and institutional wastes) including separately collected fractions',
+    subChapter: 'Other municipal wastes',
+    description: 'Municipal wastes not otherwise specified'
+  }
 ]
 
 const hazardousEwcCodes = [
@@ -1403,7 +8292,7 @@ export const isValidEwcCode = (code) => {
   const normalizedCode = code.replace(/\s/g, '')
 
   // Check if the normalized code is in the list of valid codes
-  return validEwcCodes.includes(normalizedCode)
+  return validEwcCodes.map(({ code }) => code).includes(normalizedCode)
 }
 
 export const isValidHazardousEwcCode = (code) => {

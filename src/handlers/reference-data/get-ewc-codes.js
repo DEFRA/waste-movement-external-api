@@ -28,7 +28,7 @@ export const handleGetEwcCodes = async (_request, h) => {
 }
 
 export const mapGetEwcCodesResponse = () =>
-  validEwcCodes.map((code) => ({
+  validEwcCodes.map(({ code }) => ({
     code,
     isHazardous: isValidHazardousEwcCode(code)
   }))
