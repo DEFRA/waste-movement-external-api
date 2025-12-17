@@ -37,14 +37,11 @@ export const handleUpdateReceiptMovement = async (request, h) => {
 
     // Only log metrics for successful responses
     if (isSuccessStatusCode(response.statusCode)) {
-      // Per-endpoint metrics with dimensions
-      await metricsCounter('validation.warnings.count', warnings.length, {
-        endpointType: 'put'
-      })
-      // Total metrics without dimensions
-      await metricsCounter('validation.warnings.count', warnings.length)
-
       if (warnings.length > 0) {
+        await metricsCounter('validation.warnings.count', warnings.length, {
+          endpointType: 'put'
+        })
+        await metricsCounter('validation.warnings.count', warnings.length)
         await metricsCounter('validation.requests.with_warnings', 1, {
           endpointType: 'put'
         })

@@ -154,16 +154,11 @@ describe('handleUpdateReceiptMovement', () => {
     expect(mockH.code).toHaveBeenCalledWith(200)
 
     // Verify metrics are logged on success (no warnings case)
-    // Per-endpoint metrics with dimensions
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+    // validation.warnings.count is NOT logged when there are no warnings
+    expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
       'validation.warnings.count',
-      0,
-      { endpointType: 'put' }
-    )
-    // Total metrics without dimensions
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.warnings.count',
-      0
+      expect.anything(),
+      expect.anything()
     )
     // Requests without warnings
     expect(metrics.metricsCounter).toHaveBeenCalledWith(
