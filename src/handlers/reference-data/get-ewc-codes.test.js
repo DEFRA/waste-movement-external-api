@@ -52,7 +52,12 @@ describe('GET EWC Codes', () => {
 
       expect(ewcCodesResponse[0]).toStrictEqual({
         code: '010101',
-        isHazardous: false
+        isHazardous: false,
+        entryTypeDesc: 'Absolute non-hazardous',
+        chapter:
+          'Wastes resulting from exploration, mining, quarrying, and physical and chemical treatment of minerals',
+        subChapter: 'Wastes from mineral excavation',
+        description: 'Wastes from mineral metalliferous excavation'
       })
     })
 

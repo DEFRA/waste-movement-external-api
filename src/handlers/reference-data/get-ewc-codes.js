@@ -1,7 +1,4 @@
-import {
-  isValidHazardousEwcCode,
-  validEwcCodes
-} from '../../common/constants/ewc-codes.js'
+import { validEwcCodes } from '../../common/constants/ewc-codes.js'
 import { HTTP_STATUS } from '../../common/constants/http-status-codes.js'
 import { handleBackendResponse } from '../handle-backend-response.js'
 import { createLogger } from '../../common/helpers/logging/logger.js'
@@ -28,7 +25,11 @@ export const handleGetEwcCodes = async (_request, h) => {
 }
 
 export const mapGetEwcCodesResponse = () =>
-  validEwcCodes.map(({ code }) => ({
-    code,
-    isHazardous: isValidHazardousEwcCode(code)
+  validEwcCodes.map((ewcCode) => ({
+    code: ewcCode.code,
+    isHazardous: ewcCode.isHazardous,
+    entryTypeDesc: ewcCode.entryTypeDesc,
+    chapter: ewcCode.chapter,
+    subChapter: ewcCode.subChapter,
+    description: ewcCode.description
   }))
