@@ -2,7 +2,7 @@ import Boom from '@hapi/boom'
 import { httpClients } from '../common/helpers/http-client.js'
 import { handleBackendResponse } from './handle-backend-response.js'
 import { generateAllValidationWarnings } from '../common/helpers/validation-warnings/validation-warnings.js'
-import { logWarningMetrics } from '../common/helpers/metrics.js'
+import { metricsCounter } from '../common/helpers/metrics.js'
 import { isSuccessStatusCode } from '../common/helpers/utils.js'
 
 /**
@@ -37,7 +37,24 @@ export const handleUpdateReceiptMovement = async (request, h) => {
 
     // Only log metrics for successful responses
     if (isSuccessStatusCode(response.statusCode)) {
-      await logWarningMetrics(warnings.length, 'Put')
+      // Per-endpoint metrics with dimensions
+      await metricsCounter('validation.warnings.count', warnings.length, {
+        endpointType: 'put'
+      })
+      // Total metrics without dimensions
+      await metricsCounter('validation.warnings.count', warnings.length)
+
+      if (warnings.length > 0) {
+        await metricsCounter('validation.requests.with_warnings', 1, {
+          endpointType: 'put'
+        })
+        await metricsCounter('validation.requests.with_warnings', 1)
+      } else {
+        await metricsCounter('validation.requests.without_warnings', 1, {
+          endpointType: 'put'
+        })
+        await metricsCounter('validation.requests.without_warnings', 1)
+      }
     }
 
     return handleBackendResponse(response, h, () => responseData)

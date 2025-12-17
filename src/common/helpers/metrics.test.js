@@ -1,9 +1,10 @@
 import { StorageResolution, Unit } from 'aws-embedded-metrics'
 
 import { config } from '../../config.js'
-import { metricsCounter, logWarningMetrics } from './metrics.js'
+import { metricsCounter } from './metrics.js'
 
 const mockPutMetric = jest.fn()
+const mockPutDimensions = jest.fn()
 const mockFlush = jest.fn()
 const mockLoggerError = jest.fn()
 
@@ -11,6 +12,7 @@ jest.mock('aws-embedded-metrics', () => ({
   ...jest.requireActual('aws-embedded-metrics'),
   createMetricsLogger: () => ({
     putMetric: mockPutMetric,
+    putDimensions: mockPutDimensions,
     flush: mockFlush
   })
 }))
@@ -22,7 +24,11 @@ const mockMetricsName = 'mock-metrics-name'
 const defaultMetricsValue = 1
 const mockValue = 200
 
-describe('#metrics', () => {
+describe('#metricsCounter', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   describe('When metrics is not enabled', () => {
     beforeEach(async () => {
       config.set('isMetricsEnabled', false)
@@ -54,7 +60,7 @@ describe('#metrics', () => {
       )
     })
 
-    test('Should send metric', async () => {
+    test('Should send metric with provided value', async () => {
       await metricsCounter(mockMetricsName, mockValue)
 
       expect(mockPutMetric).toHaveBeenCalledWith(
@@ -65,9 +71,34 @@ describe('#metrics', () => {
       )
     })
 
-    test('Should not call flush', async () => {
+    test('Should call flush', async () => {
       await metricsCounter(mockMetricsName, mockValue)
       expect(mockFlush).toHaveBeenCalled()
+    })
+
+    test('Should not call putDimensions when no dimensions provided', async () => {
+      await metricsCounter(mockMetricsName, mockValue)
+      expect(mockPutDimensions).not.toHaveBeenCalled()
+    })
+
+    test('Should call putDimensions when dimensions provided', async () => {
+      const dimensions = { endpointType: 'post' }
+      await metricsCounter(mockMetricsName, mockValue, dimensions)
+      expect(mockPutDimensions).toHaveBeenCalledWith(dimensions)
+    })
+
+    test('Should work with dot notation metric names', async () => {
+      await metricsCounter('validation.warnings.count', 5, {
+        endpointType: 'post'
+      })
+
+      expect(mockPutDimensions).toHaveBeenCalledWith({ endpointType: 'post' })
+      expect(mockPutMetric).toHaveBeenCalledWith(
+        'validation.warnings.count',
+        5,
+        Unit.Count,
+        StorageResolution.Standard
+      )
     })
   })
 
@@ -83,116 +114,6 @@ describe('#metrics', () => {
 
     test('Should log expected error', () => {
       expect(mockLoggerError).toHaveBeenCalledWith(Error(mockError), mockError)
-    })
-  })
-})
-
-describe('#logWarningMetrics', () => {
-  beforeEach(() => {
-    jest.clearAllMocks()
-    config.set('isMetricsEnabled', true)
-  })
-
-  describe('When there are warnings', () => {
-    test('Should log warning count metric for Post endpoint', async () => {
-      await logWarningMetrics(5, 'Post')
-
-      expect(mockPutMetric).toHaveBeenCalledWith(
-        'warningsReturnedPost',
-        5,
-        Unit.Count,
-        StorageResolution.Standard
-      )
-    })
-
-    test('Should log warning count metric for Put endpoint', async () => {
-      await logWarningMetrics(3, 'Put')
-
-      expect(mockPutMetric).toHaveBeenCalledWith(
-        'warningsReturnedPut',
-        3,
-        Unit.Count,
-        StorageResolution.Standard
-      )
-    })
-
-    test('Should log warningsReturnedTotal metric', async () => {
-      await logWarningMetrics(5, 'Post')
-
-      expect(mockPutMetric).toHaveBeenCalledWith(
-        'warningsReturnedTotal',
-        5,
-        Unit.Count,
-        StorageResolution.Standard
-      )
-    })
-
-    test('Should log requestsWithWarnings metric when warnings > 0', async () => {
-      await logWarningMetrics(2, 'Post')
-
-      expect(mockPutMetric).toHaveBeenCalledWith(
-        'requestsWithWarningsPost',
-        1,
-        Unit.Count,
-        StorageResolution.Standard
-      )
-    })
-
-    test('Should log requestsWithWarningsTotal metric when warnings > 0', async () => {
-      await logWarningMetrics(2, 'Post')
-
-      expect(mockPutMetric).toHaveBeenCalledWith(
-        'requestsWithWarningsTotal',
-        1,
-        Unit.Count,
-        StorageResolution.Standard
-      )
-    })
-  })
-
-  describe('When there are no warnings', () => {
-    test('Should log zero warning count', async () => {
-      await logWarningMetrics(0, 'Post')
-
-      expect(mockPutMetric).toHaveBeenCalledWith(
-        'warningsReturnedPost',
-        0,
-        Unit.Count,
-        StorageResolution.Standard
-      )
-    })
-
-    test('Should log warningsReturnedTotal with zero', async () => {
-      await logWarningMetrics(0, 'Post')
-
-      expect(mockPutMetric).toHaveBeenCalledWith(
-        'warningsReturnedTotal',
-        0,
-        Unit.Count,
-        StorageResolution.Standard
-      )
-    })
-
-    test('Should log requestsWithoutWarnings metric when warnings = 0', async () => {
-      await logWarningMetrics(0, 'Put')
-
-      expect(mockPutMetric).toHaveBeenCalledWith(
-        'requestsWithoutWarningsPut',
-        1,
-        Unit.Count,
-        StorageResolution.Standard
-      )
-    })
-
-    test('Should log requestsWithoutWarningsTotal metric when warnings = 0', async () => {
-      await logWarningMetrics(0, 'Put')
-
-      expect(mockPutMetric).toHaveBeenCalledWith(
-        'requestsWithoutWarningsTotal',
-        1,
-        Unit.Count,
-        StorageResolution.Standard
-      )
     })
   })
 })
