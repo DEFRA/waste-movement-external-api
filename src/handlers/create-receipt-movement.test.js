@@ -2,6 +2,7 @@ import { jest } from '@jest/globals'
 import { httpClients } from '../common/helpers/http-client.js'
 import { handleCreateReceiptMovement } from './create-receipt-movement.js'
 import { v4 as uuidv4 } from 'uuid'
+import * as metrics from '../common/helpers/metrics.js'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -13,6 +14,11 @@ jest.mock('../common/helpers/http-client.js', () => ({
       post: jest.fn()
     }
   }
+}))
+
+// Mock metrics
+jest.mock('../common/helpers/metrics.js', () => ({
+  metricsCounter: jest.fn()
 }))
 
 describe('Create Receipt Movement Handler', () => {
@@ -109,6 +115,75 @@ describe('Create Receipt Movement Handler', () => {
         movement: validPayload
       }
     )
+
+    // Verify metrics are logged on success (no warnings case)
+    // validation.warnings.count is NOT logged when there are no warnings
+    expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
+      'validation.warnings.count',
+      expect.anything(),
+      expect.anything()
+    )
+    // Requests without warnings
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_warnings',
+      1,
+      { endpointType: 'post' }
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_warnings',
+      1
+    )
+  })
+
+  it('should successfully create a waste movement with warnings and log metrics', async () => {
+    // Create a payload that will generate warnings (missing disposalOrRecoveryCodes)
+    const payloadWithWarnings = {
+      ...validPayload,
+      wasteItems: validPayload.wasteItems.map((item) => {
+        const { disposalOrRecoveryCodes, ...rest } = item
+        return rest
+      })
+    }
+
+    const requestWithWarnings = {
+      ...request,
+      payload: payloadWithWarnings
+    }
+
+    // Mock successful waste movement creation
+    httpClients.wasteMovement.post.mockResolvedValue({
+      statusCode: 200
+    })
+
+    const h = {
+      response: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis()
+    }
+
+    await handleCreateReceiptMovement(requestWithWarnings, h)
+
+    // Verify metrics are logged on success (with warnings case)
+    // Per-endpoint metrics with dimensions
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.warnings.count',
+      1,
+      { endpointType: 'post' }
+    )
+    // Total metrics without dimensions
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.warnings.count',
+      1
+    )
+    // Requests with warnings
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.with_warnings',
+      1,
+      { endpointType: 'post' }
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.with_warnings',
+      1
+    )
   })
 
   it('should return 500 when waste movement creation fails', async () => {
@@ -145,5 +220,23 @@ describe('Create Receipt Movement Handler', () => {
       message: 'Failed to create waste movement'
     })
     expect(h.code).toHaveBeenCalledWith(500)
+  })
+
+  it('should not log metrics when backend returns non-success status', async () => {
+    // Mock backend returning error status code
+    httpClients.wasteMovement.post.mockResolvedValue({
+      statusCode: 400,
+      payload: { error: 'Bad Request' }
+    })
+
+    const h = {
+      response: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis()
+    }
+
+    await handleCreateReceiptMovement(request, h)
+
+    expect(metrics.metricsCounter).not.toHaveBeenCalled()
+    expect(h.code).toHaveBeenCalledWith(400)
   })
 })

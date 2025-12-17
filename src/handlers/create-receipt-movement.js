@@ -4,6 +4,7 @@ import { handleBackendResponse } from './handle-backend-response.js'
 import { createLogger } from '../common/helpers/logging/logger.js'
 import { isSuccessStatusCode } from '../common/helpers/utils.js'
 import { generateAllValidationWarnings } from '../common/helpers/validation-warnings/validation-warnings.js'
+import { metricsCounter } from '../common/helpers/metrics.js'
 
 const logger = createLogger()
 
@@ -29,17 +30,36 @@ export const handleCreateReceiptMovement = async (request, h) => {
       wasteTrackingId
     }
 
+    const isSuccess = isSuccessStatusCode(response.statusCode)
+
     response = {
       ...response,
-      statusCode: isSuccessStatusCode(response.statusCode)
-        ? HTTP_STATUS.CREATED
-        : response.statusCode
+      statusCode: isSuccess ? HTTP_STATUS.CREATED : response.statusCode
     }
 
     // Only include validation object if there are warnings
     if (warnings.length > 0) {
       responseData.validation = {
         warnings
+      }
+    }
+
+    // Only log metrics for successful responses
+    if (isSuccess) {
+      if (warnings.length > 0) {
+        await metricsCounter('validation.warnings.count', warnings.length, {
+          endpointType: 'post'
+        })
+        await metricsCounter('validation.warnings.count', warnings.length)
+        await metricsCounter('validation.requests.with_warnings', 1, {
+          endpointType: 'post'
+        })
+        await metricsCounter('validation.requests.with_warnings', 1)
+      } else {
+        await metricsCounter('validation.requests.without_warnings', 1, {
+          endpointType: 'post'
+        })
+        await metricsCounter('validation.requests.without_warnings', 1)
       }
     }
 

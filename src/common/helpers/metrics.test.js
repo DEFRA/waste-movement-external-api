@@ -4,6 +4,7 @@ import { config } from '../../config.js'
 import { metricsCounter } from './metrics.js'
 
 const mockPutMetric = jest.fn()
+const mockPutDimensions = jest.fn()
 const mockFlush = jest.fn()
 const mockLoggerError = jest.fn()
 
@@ -11,6 +12,7 @@ jest.mock('aws-embedded-metrics', () => ({
   ...jest.requireActual('aws-embedded-metrics'),
   createMetricsLogger: () => ({
     putMetric: mockPutMetric,
+    putDimensions: mockPutDimensions,
     flush: mockFlush
   })
 }))
@@ -22,7 +24,11 @@ const mockMetricsName = 'mock-metrics-name'
 const defaultMetricsValue = 1
 const mockValue = 200
 
-describe('#metrics', () => {
+describe('#metricsCounter', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   describe('When metrics is not enabled', () => {
     beforeEach(async () => {
       config.set('isMetricsEnabled', false)
@@ -54,7 +60,7 @@ describe('#metrics', () => {
       )
     })
 
-    test('Should send metric', async () => {
+    test('Should send metric with provided value', async () => {
       await metricsCounter(mockMetricsName, mockValue)
 
       expect(mockPutMetric).toHaveBeenCalledWith(
@@ -65,9 +71,34 @@ describe('#metrics', () => {
       )
     })
 
-    test('Should not call flush', async () => {
+    test('Should call flush', async () => {
       await metricsCounter(mockMetricsName, mockValue)
       expect(mockFlush).toHaveBeenCalled()
+    })
+
+    test('Should not call putDimensions when no dimensions provided', async () => {
+      await metricsCounter(mockMetricsName, mockValue)
+      expect(mockPutDimensions).not.toHaveBeenCalled()
+    })
+
+    test('Should call putDimensions when dimensions provided', async () => {
+      const dimensions = { endpointType: 'post' }
+      await metricsCounter(mockMetricsName, mockValue, dimensions)
+      expect(mockPutDimensions).toHaveBeenCalledWith(dimensions)
+    })
+
+    test('Should work with dot notation metric names', async () => {
+      await metricsCounter('validation.warnings.count', 5, {
+        endpointType: 'post'
+      })
+
+      expect(mockPutDimensions).toHaveBeenCalledWith({ endpointType: 'post' })
+      expect(mockPutMetric).toHaveBeenCalledWith(
+        'validation.warnings.count',
+        5,
+        Unit.Count,
+        StorageResolution.Standard
+      )
     })
   })
 

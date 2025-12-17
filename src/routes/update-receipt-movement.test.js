@@ -3,6 +3,7 @@ import { handleUpdateReceiptMovement } from '../handlers/update-receipt-movement
 import { updateReceiptMovement } from './update-receipt-movement.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import Boom from '@hapi/boom'
+import * as metrics from '../common/helpers/metrics.js'
 
 jest.mock('../common/helpers/http-client.js', () => ({
   httpClients: {
@@ -10,6 +11,10 @@ jest.mock('../common/helpers/http-client.js', () => ({
       put: jest.fn()
     }
   }
+}))
+
+jest.mock('../common/helpers/metrics.js', () => ({
+  metricsCounter: jest.fn()
 }))
 
 describe('updateReceiptMovement route', () => {
@@ -85,6 +90,29 @@ describe('handleUpdateReceiptMovement', () => {
     expect(mockH.response).toHaveBeenCalledWith(expectedResponseWithWarnings)
 
     expect(mockH.code).toHaveBeenCalledWith(200)
+
+    // Verify metrics are logged on success (with warnings case)
+    // Per-endpoint metrics with dimensions
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.warnings.count',
+      1,
+      { endpointType: 'put' }
+    )
+    // Total metrics without dimensions
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.warnings.count',
+      1
+    )
+    // Requests with warnings
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.with_warnings',
+      1,
+      { endpointType: 'put' }
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.with_warnings',
+      1
+    )
   })
 
   it('should successfully update a receipt movement without warnings', async () => {
@@ -124,6 +152,24 @@ describe('handleUpdateReceiptMovement', () => {
     expect(mockH.response).toHaveBeenCalledWith({})
 
     expect(mockH.code).toHaveBeenCalledWith(200)
+
+    // Verify metrics are logged on success (no warnings case)
+    // validation.warnings.count is NOT logged when there are no warnings
+    expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
+      'validation.warnings.count',
+      expect.anything(),
+      expect.anything()
+    )
+    // Requests without warnings
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_warnings',
+      1,
+      { endpointType: 'put' }
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_warnings',
+      1
+    )
   })
 
   it('should handle not found error', async () => {
@@ -143,5 +189,17 @@ describe('handleUpdateReceiptMovement', () => {
     await expect(
       handleUpdateReceiptMovement(mockRequest, mockH)
     ).rejects.toThrow(Boom.badRequest('Invalid input'))
+  })
+
+  it('should not log metrics when backend returns non-success status', async () => {
+    httpClients.wasteMovement.put.mockResolvedValueOnce({
+      statusCode: 400,
+      payload: { error: 'Bad Request' }
+    })
+
+    await handleUpdateReceiptMovement(mockRequest, mockH)
+
+    expect(metrics.metricsCounter).not.toHaveBeenCalled()
+    expect(mockH.code).toHaveBeenCalledWith(400)
   })
 })
