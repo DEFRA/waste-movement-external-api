@@ -117,6 +117,16 @@ describe('Create Receipt Movement Handler', () => {
     )
 
     // Verify metrics are logged on success (no warnings case)
+    // Requests without validation errors (passed validation)
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_errors',
+      1,
+      { endpointType: 'post' }
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_errors',
+      1
+    )
     // validation.warnings.count is NOT logged when there are no warnings
     expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
       'validation.warnings.count',
@@ -163,6 +173,16 @@ describe('Create Receipt Movement Handler', () => {
     await handleCreateReceiptMovement(requestWithWarnings, h)
 
     // Verify metrics are logged on success (with warnings case)
+    // Requests without validation errors (passed validation)
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_errors',
+      1,
+      { endpointType: 'post' }
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_errors',
+      1
+    )
     // Per-endpoint metrics with dimensions
     expect(metrics.metricsCounter).toHaveBeenCalledWith(
       'validation.warnings.count',
@@ -222,7 +242,7 @@ describe('Create Receipt Movement Handler', () => {
     expect(h.code).toHaveBeenCalledWith(500)
   })
 
-  it('should not log metrics when backend returns non-success status', async () => {
+  it('should log without_errors but not warning metrics when backend returns non-success status', async () => {
     // Mock backend returning error status code
     httpClients.wasteMovement.post.mockResolvedValue({
       statusCode: 400,
@@ -236,7 +256,23 @@ describe('Create Receipt Movement Handler', () => {
 
     await handleCreateReceiptMovement(request, h)
 
-    expect(metrics.metricsCounter).not.toHaveBeenCalled()
+    // without_errors should still be logged (request passed validation)
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_errors',
+      1,
+      { endpointType: 'post' }
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_errors',
+      1
+    )
+    // Warning metrics should NOT be logged
+    expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
+      'validation.requests.without_warnings',
+      expect.anything(),
+      expect.anything()
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledTimes(2)
     expect(h.code).toHaveBeenCalledWith(400)
   })
 })

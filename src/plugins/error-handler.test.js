@@ -1,5 +1,10 @@
 import { createServer } from '../server.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
+import * as metrics from '../common/helpers/metrics.js'
+
+jest.mock('../common/helpers/metrics.js', () => ({
+  metricsCounter: jest.fn()
+}))
 
 describe('Error Handler', () => {
   let server
@@ -10,6 +15,10 @@ describe('Error Handler', () => {
 
   afterAll(async () => {
     await server.stop()
+  })
+
+  beforeEach(() => {
+    jest.clearAllMocks()
   })
 
   test('should format validation errors correctly', async () => {
@@ -130,5 +139,97 @@ describe('Error Handler', () => {
       expect(err.key).not.toBe('object')
       expect(err.key).not.toBe('string')
     })
+  })
+
+  test('should log validation error metrics for POST receipt movement endpoint', async () => {
+    const response = await server.inject({
+      method: 'POST',
+      url: '/movements/receive',
+      payload: {
+        yourUniqueReference: 'test-reference'
+      }
+    })
+
+    expect(response.statusCode).toBe(400)
+    const responseBody = JSON.parse(response.payload)
+    const errorCount = responseBody.validation.errors.length
+
+    // Verify metrics were called with correct arguments
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.errors.count',
+      errorCount,
+      { endpointType: 'post' }
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.errors.count',
+      errorCount
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.with_errors',
+      1,
+      { endpointType: 'post' }
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.with_errors',
+      1
+    )
+  })
+
+  test('should log validation error metrics for PUT receipt movement endpoint', async () => {
+    const response = await server.inject({
+      method: 'PUT',
+      url: '/movements/test-tracking-id/receive',
+      payload: {
+        yourUniqueReference: 'test-reference'
+      }
+    })
+
+    expect(response.statusCode).toBe(400)
+    const responseBody = JSON.parse(response.payload)
+    const errorCount = responseBody.validation.errors.length
+
+    // Verify metrics were called with correct arguments
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.errors.count',
+      errorCount,
+      { endpointType: 'put' }
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.errors.count',
+      errorCount
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.with_errors',
+      1,
+      { endpointType: 'put' }
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.with_errors',
+      1
+    )
+  })
+
+  test('should not log metrics for non-receipt-movement endpoints', async () => {
+    // Hit a non-receipt-movement endpoint
+    const response = await server.inject({
+      method: 'GET',
+      url: '/health'
+    })
+
+    expect(response.statusCode).toBe(200)
+
+    // Verify metricsCounter was NOT called for non-receipt endpoints
+    expect(metrics.metricsCounter).not.toHaveBeenCalled()
+  })
+
+  test('should log correct number of metrics for validation errors', async () => {
+    await server.inject({
+      method: 'POST',
+      url: '/movements/receive',
+      payload: { yourUniqueReference: 'test' }
+    })
+
+    // Should have exactly 4 calls (2 for errors.count, 2 for requests.with_errors)
+    expect(metrics.metricsCounter).toHaveBeenCalledTimes(4)
   })
 })

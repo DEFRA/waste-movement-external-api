@@ -1,8 +1,21 @@
+import { metricsCounter } from '../common/helpers/metrics.js'
+
+/**
+ * Check if request is for receipt movement endpoints
+ */
+const isReceiptMovementEndpoint = (request) => {
+  const path = request.route.path
+  return (
+    path === '/movements/receive' ||
+    path === '/movements/{wasteTrackingId}/receive'
+  )
+}
+
 export const errorHandler = {
   plugin: {
     name: 'errorHandler',
     register: async (server) => {
-      server.ext('onPreResponse', (request, h) => {
+      server.ext('onPreResponse', async (request, h) => {
         const logger = request.logger
         const response = request.response
 
@@ -73,6 +86,30 @@ export const errorHandler = {
               { err: formattedErrors },
               `Validation failed ${JSON.stringify(formattedErrors)}`
             )
+          }
+
+          // Log validation error metrics for receipt movement endpoints
+          if (isReceiptMovementEndpoint(request)) {
+            const endpointType = request.method.toLowerCase()
+
+            // Error count metrics
+            await metricsCounter(
+              'validation.errors.count',
+              formattedErrors.length,
+              {
+                endpointType
+              }
+            )
+            await metricsCounter(
+              'validation.errors.count',
+              formattedErrors.length
+            )
+
+            // Request with errors metric
+            await metricsCounter('validation.requests.with_errors', 1, {
+              endpointType
+            })
+            await metricsCounter('validation.requests.with_errors', 1)
           }
 
           // Return the custom formatted error
