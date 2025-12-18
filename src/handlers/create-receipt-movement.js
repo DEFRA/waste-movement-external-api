@@ -52,6 +52,10 @@ export const handleCreateReceiptMovement = async (request, h) => {
 
     // Only log warning metrics for successful responses
     if (isSuccess) {
+      // Receipt received metrics
+      await metricsCounter('receipts.received', 1, { endpointType: 'post' })
+      await metricsCounter('receipts.received', 1)
+
       if (warnings.length > 0) {
         await metricsCounter('validation.warnings.count', warnings.length, {
           endpointType: 'post'

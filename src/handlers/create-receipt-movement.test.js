@@ -127,6 +127,13 @@ describe('Create Receipt Movement Handler', () => {
       'validation.requests.without_errors',
       1
     )
+    // Receipt received metrics
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'receipts.received',
+      1,
+      { endpointType: 'post' }
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledWith('receipts.received', 1)
     // validation.warnings.count is NOT logged when there are no warnings
     expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
       'validation.warnings.count',
@@ -183,6 +190,13 @@ describe('Create Receipt Movement Handler', () => {
       'validation.requests.without_errors',
       1
     )
+    // Receipt received metrics
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'receipts.received',
+      1,
+      { endpointType: 'post' }
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledWith('receipts.received', 1)
     // Per-endpoint metrics with dimensions
     expect(metrics.metricsCounter).toHaveBeenCalledWith(
       'validation.warnings.count',
@@ -242,7 +256,7 @@ describe('Create Receipt Movement Handler', () => {
     expect(h.code).toHaveBeenCalledWith(500)
   })
 
-  it('should log without_errors but not warning metrics when backend returns non-success status', async () => {
+  it('should log without_errors but not warning or receipt metrics when backend returns non-success status', async () => {
     // Mock backend returning error status code
     httpClients.wasteMovement.post.mockResolvedValue({
       statusCode: 400,
@@ -266,7 +280,12 @@ describe('Create Receipt Movement Handler', () => {
       'validation.requests.without_errors',
       1
     )
-    // Warning metrics should NOT be logged
+    // Receipt and warning metrics should NOT be logged
+    expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
+      'receipts.received',
+      expect.anything(),
+      expect.anything()
+    )
     expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
       'validation.requests.without_warnings',
       expect.anything(),
