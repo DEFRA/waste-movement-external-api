@@ -43,4 +43,27 @@ const logReceiptMetrics = async (endpointType) => {
   await metricsCounter('receipts.received', 1)
 }
 
-export { metricsCounter, logReceiptMetrics }
+/**
+ * Logs validation warning metrics with endpoint type dimension and total
+ * @param {Array} warnings - The validation warnings array
+ * @param {string} endpointType - The endpoint type ('post' or 'put')
+ */
+const logWarningMetrics = async (warnings, endpointType) => {
+  if (warnings.length > 0) {
+    await metricsCounter('validation.warnings.count', warnings.length, {
+      endpointType
+    })
+    await metricsCounter('validation.warnings.count', warnings.length)
+    await metricsCounter('validation.requests.with_warnings', 1, {
+      endpointType
+    })
+    await metricsCounter('validation.requests.with_warnings', 1)
+  } else {
+    await metricsCounter('validation.requests.without_warnings', 1, {
+      endpointType
+    })
+    await metricsCounter('validation.requests.without_warnings', 1)
+  }
+}
+
+export { metricsCounter, logReceiptMetrics, logWarningMetrics }
