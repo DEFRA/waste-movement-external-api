@@ -14,7 +14,8 @@ jest.mock('../common/helpers/http-client.js', () => ({
 }))
 
 jest.mock('../common/helpers/metrics.js', () => ({
-  metricsCounter: jest.fn()
+  metricsCounter: jest.fn(),
+  logReceiptMetrics: jest.fn()
 }))
 
 describe('updateReceiptMovement route', () => {
@@ -103,12 +104,7 @@ describe('handleUpdateReceiptMovement', () => {
       1
     )
     // Receipt received metrics
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'receipts.received',
-      1,
-      { endpointType: 'put' }
-    )
-    expect(metrics.metricsCounter).toHaveBeenCalledWith('receipts.received', 1)
+    expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('put')
     // Per-endpoint metrics with dimensions
     expect(metrics.metricsCounter).toHaveBeenCalledWith(
       'validation.warnings.count',
@@ -182,12 +178,7 @@ describe('handleUpdateReceiptMovement', () => {
       1
     )
     // Receipt received metrics
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'receipts.received',
-      1,
-      { endpointType: 'put' }
-    )
-    expect(metrics.metricsCounter).toHaveBeenCalledWith('receipts.received', 1)
+    expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('put')
     // validation.warnings.count is NOT logged when there are no warnings
     expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
       'validation.warnings.count',
@@ -244,11 +235,7 @@ describe('handleUpdateReceiptMovement', () => {
       1
     )
     // Receipt and warning metrics should NOT be logged
-    expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
-      'receipts.received',
-      expect.anything(),
-      expect.anything()
-    )
+    expect(metrics.logReceiptMetrics).not.toHaveBeenCalled()
     expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
       'validation.requests.without_warnings',
       expect.anything(),

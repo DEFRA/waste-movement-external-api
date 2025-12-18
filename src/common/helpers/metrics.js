@@ -34,4 +34,13 @@ const metricsCounter = async (metricName, value = 1, dimensions = {}) => {
   }
 }
 
-export { metricsCounter }
+/**
+ * Logs receipt received metrics with endpoint type dimension and total
+ * @param {string} endpointType - The endpoint type ('post' or 'put')
+ */
+const logReceiptMetrics = async (endpointType) => {
+  await metricsCounter('receipts.received', 1, { endpointType })
+  await metricsCounter('receipts.received', 1)
+}
+
+export { metricsCounter, logReceiptMetrics }
