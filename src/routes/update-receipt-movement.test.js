@@ -92,6 +92,16 @@ describe('handleUpdateReceiptMovement', () => {
     expect(mockH.code).toHaveBeenCalledWith(200)
 
     // Verify metrics are logged on success (with warnings case)
+    // Requests without validation errors (passed validation)
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_errors',
+      1,
+      { endpointType: 'put' }
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_errors',
+      1
+    )
     // Per-endpoint metrics with dimensions
     expect(metrics.metricsCounter).toHaveBeenCalledWith(
       'validation.warnings.count',
@@ -154,6 +164,16 @@ describe('handleUpdateReceiptMovement', () => {
     expect(mockH.code).toHaveBeenCalledWith(200)
 
     // Verify metrics are logged on success (no warnings case)
+    // Requests without validation errors (passed validation)
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_errors',
+      1,
+      { endpointType: 'put' }
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_errors',
+      1
+    )
     // validation.warnings.count is NOT logged when there are no warnings
     expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
       'validation.warnings.count',
@@ -191,7 +211,7 @@ describe('handleUpdateReceiptMovement', () => {
     ).rejects.toThrow(Boom.badRequest('Invalid input'))
   })
 
-  it('should not log metrics when backend returns non-success status', async () => {
+  it('should log without_errors but not warning metrics when backend returns non-success status', async () => {
     httpClients.wasteMovement.put.mockResolvedValueOnce({
       statusCode: 400,
       payload: { error: 'Bad Request' }
@@ -199,7 +219,23 @@ describe('handleUpdateReceiptMovement', () => {
 
     await handleUpdateReceiptMovement(mockRequest, mockH)
 
-    expect(metrics.metricsCounter).not.toHaveBeenCalled()
+    // without_errors should still be logged (request passed validation)
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_errors',
+      1,
+      { endpointType: 'put' }
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_errors',
+      1
+    )
+    // Warning metrics should NOT be logged
+    expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
+      'validation.requests.without_warnings',
+      expect.anything(),
+      expect.anything()
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledTimes(2)
     expect(mockH.code).toHaveBeenCalledWith(400)
   })
 })
