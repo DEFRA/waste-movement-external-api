@@ -562,7 +562,7 @@ export const validEwcCodes = [
     chapter:
       'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
     subChapter:
-      'Wastes from the production of alcoholic and non- alcoholic beverages (except coffee, tea and cocoa)',
+      'Wastes from the production of alcoholic and non-alcoholic beverages (except coffee, tea and cocoa)',
     description:
       'Wastes from washing, cleaning and mechanical reduction of raw materials'
   },
@@ -573,7 +573,7 @@ export const validEwcCodes = [
     chapter:
       'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
     subChapter:
-      'Wastes from the production of alcoholic and non- alcoholic beverages (except coffee, tea and cocoa)',
+      'Wastes from the production of alcoholic and non-alcoholic beverages (except coffee, tea and cocoa)',
     description: 'Wastes from spirits distillation'
   },
   {
@@ -583,7 +583,7 @@ export const validEwcCodes = [
     chapter:
       'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
     subChapter:
-      'Wastes from the production of alcoholic and non- alcoholic beverages (except coffee, tea and cocoa)',
+      'Wastes from the production of alcoholic and non-alcoholic beverages (except coffee, tea and cocoa)',
     description: 'Wastes from chemical treatment'
   },
   {
@@ -593,7 +593,7 @@ export const validEwcCodes = [
     chapter:
       'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
     subChapter:
-      'Wastes from the production of alcoholic and non- alcoholic beverages (except coffee, tea and cocoa)',
+      'Wastes from the production of alcoholic and non-alcoholic beverages (except coffee, tea and cocoa)',
     description: 'Materials unsuitable for consumption or processing'
   },
   {
@@ -603,7 +603,7 @@ export const validEwcCodes = [
     chapter:
       'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
     subChapter:
-      'Wastes from the production of alcoholic and non- alcoholic beverages (except coffee, tea and cocoa)',
+      'Wastes from the production of alcoholic and non-alcoholic beverages (except coffee, tea and cocoa)',
     description: 'Sludges from on-site effluent treatment'
   },
   {
@@ -613,7 +613,7 @@ export const validEwcCodes = [
     chapter:
       'Wastes from agriculture, horticulture, aquaculture, forestry, hunting and fishing, food preparation and processing',
     subChapter:
-      'Wastes from the production of alcoholic and non- alcoholic beverages (except coffee, tea and cocoa)',
+      'Wastes from the production of alcoholic and non-alcoholic beverages (except coffee, tea and cocoa)',
     description: 'Wastes not otherwise specified'
   },
   {
@@ -1577,7 +1577,7 @@ export const validEwcCodes = [
     subChapter:
       'Wastes from inorganic chemical processes not otherwise specified',
     description:
-      'Inorganic plant protection products, wood-preserving agents and other biocides.'
+      'Inorganic plant protection products, wood-preserving agents and other biocides'
   },
   {
     code: '061302',
@@ -4319,7 +4319,7 @@ export const validEwcCodes = [
     isHazardous: true,
     entryTypeDesc: 'Absolute hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter:
       'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
     description: 'Pickling acids'
@@ -4329,7 +4329,7 @@ export const validEwcCodes = [
     isHazardous: true,
     entryTypeDesc: 'Absolute hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter:
       'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
     description: 'Acids not otherwise specified'
@@ -4339,7 +4339,7 @@ export const validEwcCodes = [
     isHazardous: true,
     entryTypeDesc: 'Absolute hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter:
       'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
     description: 'Pickling bases'
@@ -4349,7 +4349,7 @@ export const validEwcCodes = [
     isHazardous: true,
     entryTypeDesc: 'Absolute hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter:
       'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
     description: 'Phosphatising sludges'
@@ -4359,7 +4359,7 @@ export const validEwcCodes = [
     isHazardous: true,
     entryTypeDesc: 'Mirror hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter:
       'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
     description: 'Sludges and filter cakes containing hazardous substances'
@@ -4369,7 +4369,7 @@ export const validEwcCodes = [
     isHazardous: false,
     entryTypeDesc: 'Mirror non-hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter:
       'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
     description:
@@ -4380,7 +4380,7 @@ export const validEwcCodes = [
     isHazardous: true,
     entryTypeDesc: 'Mirror hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter:
       'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
     description: 'Aqueous rinsing liquids containing hazardous substances'
@@ -4390,7 +4390,7 @@ export const validEwcCodes = [
     isHazardous: false,
     entryTypeDesc: 'Mirror non-hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter:
       'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
     description:
@@ -4401,7 +4401,7 @@ export const validEwcCodes = [
     isHazardous: true,
     entryTypeDesc: 'Mirror hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter:
       'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
     description: 'Degreasing wastes containing hazardous substances'
@@ -4411,7 +4411,7 @@ export const validEwcCodes = [
     isHazardous: false,
     entryTypeDesc: 'Mirror non-hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter:
       'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
     description: 'Degreasing wastes other than those mentioned in 11 01 13'
@@ -4421,7 +4421,7 @@ export const validEwcCodes = [
     isHazardous: true,
     entryTypeDesc: 'Mirror hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter:
       'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
     description:
@@ -4432,7 +4432,7 @@ export const validEwcCodes = [
     isHazardous: true,
     entryTypeDesc: 'Absolute hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter:
       'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
     description: 'Saturated or spent ion exchange resins'
@@ -4442,7 +4442,7 @@ export const validEwcCodes = [
     isHazardous: true,
     entryTypeDesc: 'Mirror hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter:
       'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
     description: 'Other wastes containing hazardous substances'
@@ -4452,7 +4452,7 @@ export const validEwcCodes = [
     isHazardous: false,
     entryTypeDesc: 'Mirror non-hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter:
       'Wastes from chemical surface treatment and coating of metals and other materials (for example galvanic processes, zinc coating processes, pickling processes, etching, phosphating, alkaline degreasing, anodising)',
     description: 'Wastes not otherwise specified'
@@ -4462,7 +4462,7 @@ export const validEwcCodes = [
     isHazardous: true,
     entryTypeDesc: 'Absolute hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter: 'Wastes from non-ferrous hydrometallurgical processes',
     description:
       'Sludges from zinc hydrometallurgy (including jarosite, goethite)'
@@ -4472,7 +4472,7 @@ export const validEwcCodes = [
     isHazardous: false,
     entryTypeDesc: 'Absolute non-hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter: 'Wastes from non-ferrous hydrometallurgical processes',
     description:
       'Wastes from the production of anodes for aqueous electrolytical processes'
@@ -4482,7 +4482,7 @@ export const validEwcCodes = [
     isHazardous: true,
     entryTypeDesc: 'Mirror hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter: 'Wastes from non-ferrous hydrometallurgical processes',
     description:
       'Wastes from copper hydrometallurgical processes containing hazardous substances'
@@ -4492,7 +4492,7 @@ export const validEwcCodes = [
     isHazardous: false,
     entryTypeDesc: 'Mirror non-hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter: 'Wastes from non-ferrous hydrometallurgical processes',
     description:
       'Wastes from copper hydrometallurgical processes other than those mentioned in 11 02 05'
@@ -4502,7 +4502,7 @@ export const validEwcCodes = [
     isHazardous: true,
     entryTypeDesc: 'Mirror hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter: 'Wastes from non-ferrous hydrometallurgical processes',
     description: 'Other wastes containing hazardous substances'
   },
@@ -4511,7 +4511,7 @@ export const validEwcCodes = [
     isHazardous: false,
     entryTypeDesc: 'Mirror non-hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter: 'Wastes from non-ferrous hydrometallurgical processes',
     description: 'Wastes not otherwise specified'
   },
@@ -4520,7 +4520,7 @@ export const validEwcCodes = [
     isHazardous: true,
     entryTypeDesc: 'Absolute hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter: 'Sludges and solids from tempering processes',
     description: 'Wastes containing cyanide'
   },
@@ -4529,7 +4529,7 @@ export const validEwcCodes = [
     isHazardous: true,
     entryTypeDesc: 'Absolute hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter: 'Sludges and solids from tempering processes',
     description: 'Other waste'
   },
@@ -4538,7 +4538,7 @@ export const validEwcCodes = [
     isHazardous: false,
     entryTypeDesc: 'Absolute non-hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter: 'Wastes from hot galvanising processes',
     description: 'Hard zinc'
   },
@@ -4547,7 +4547,7 @@ export const validEwcCodes = [
     isHazardous: false,
     entryTypeDesc: 'Absolute non-hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter: 'Wastes from hot galvanising processes',
     description: 'Zinc ash'
   },
@@ -4556,7 +4556,7 @@ export const validEwcCodes = [
     isHazardous: true,
     entryTypeDesc: 'Absolute hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter: 'Wastes from hot galvanising processes',
     description: 'Solid wastes from gas treatment'
   },
@@ -4565,7 +4565,7 @@ export const validEwcCodes = [
     isHazardous: true,
     entryTypeDesc: 'Absolute hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter: 'Wastes from hot galvanising processes',
     description: 'Spent flux'
   },
@@ -4574,7 +4574,7 @@ export const validEwcCodes = [
     isHazardous: false,
     entryTypeDesc: 'Absolute non-hazardous',
     chapter:
-      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro- metallurgy',
+      'Wastes from chemical surface treatment and coating of metals and other materials; non-ferrous hydro-metallurgy',
     subChapter: 'Wastes from hot galvanising processes',
     description: 'Wastes not otherwise specified'
   },
@@ -4837,7 +4837,7 @@ export const validEwcCodes = [
     chapter:
       'Oil wastes and wastes of liquid fuels (except edible oils, and those in chapters 05, 12 and 19)',
     subChapter: 'Waste hydraulic oils',
-    description: 'Non-chlorinated  emulsions'
+    description: 'Non-chlorinated emulsions'
   },
   {
     code: '130109',
@@ -5686,7 +5686,7 @@ export const validEwcCodes = [
     entryTypeDesc: 'Absolute hazardous',
     chapter: 'Wastes not otherwise specified in the list',
     subChapter: 'Batteries and accumulators',
-    description: 'Mercury-containing  batteries'
+    description: 'Mercury-containing batteries'
   },
   {
     code: '160604',
@@ -6259,7 +6259,7 @@ export const validEwcCodes = [
       'Construction and demolition wastes (including excavated soil from contaminated sites)',
     subChapter: 'Other construction and demolition wastes',
     description:
-      'Construction and demolition wastes containing pcb (for example pcb-containing sealants, pcb-containing resin-based floorings, \npcb-containing sealed glazing units, pcb-containing capacitors)'
+      'Construction and demolition wastes containing pcb (for example pcb-containing sealants, pcb-containing resin-based floorings, pcb-containing sealed glazing units, pcb-containing capacitors)'
   },
   {
     code: '170903',
@@ -6589,7 +6589,7 @@ export const validEwcCodes = [
     chapter:
       'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
     subChapter:
-      'Wastes from physico/chemical treatments of waste \n(including dechromatation, decyanidation, neutralisation)',
+      'Wastes from physico/chemical treatments of waste (including dechromatation, decyanidation, neutralisation)',
     description: 'Premixed wastes composed only of non-hazardous wastes'
   },
   {
@@ -6599,7 +6599,7 @@ export const validEwcCodes = [
     chapter:
       'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
     subChapter:
-      'Wastes from physico/chemical treatments of waste \n(including dechromatation, decyanidation, neutralisation)',
+      'Wastes from physico/chemical treatments of waste (including dechromatation, decyanidation, neutralisation)',
     description: 'Premixed wastes composed of at least one hazardous waste'
   },
   {
@@ -6609,7 +6609,7 @@ export const validEwcCodes = [
     chapter:
       'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
     subChapter:
-      'Wastes from physico/chemical treatments of waste \n(including dechromatation, decyanidation, neutralisation)',
+      'Wastes from physico/chemical treatments of waste (including dechromatation, decyanidation, neutralisation)',
     description:
       'Sludges from physico/chemical treatment containing hazardous substances'
   },
@@ -6620,7 +6620,7 @@ export const validEwcCodes = [
     chapter:
       'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
     subChapter:
-      'Wastes from physico/chemical treatments of waste \n(including dechromatation, decyanidation, neutralisation)',
+      'Wastes from physico/chemical treatments of waste (including dechromatation, decyanidation, neutralisation)',
     description:
       'Sludges from physico/chemical treatment other than those mentioned in 19 02 05'
   },
@@ -6631,7 +6631,7 @@ export const validEwcCodes = [
     chapter:
       'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
     subChapter:
-      'Wastes from physico/chemical treatments of waste \n(including dechromatation, decyanidation, neutralisation)',
+      'Wastes from physico/chemical treatments of waste (including dechromatation, decyanidation, neutralisation)',
     description: 'Oil and concentrates from separation'
   },
   {
@@ -6641,7 +6641,7 @@ export const validEwcCodes = [
     chapter:
       'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
     subChapter:
-      'Wastes from physico/chemical treatments of waste \n(including dechromatation, decyanidation, neutralisation)',
+      'Wastes from physico/chemical treatments of waste (including dechromatation, decyanidation, neutralisation)',
     description: 'Liquid combustible wastes containing hazardous substances'
   },
   {
@@ -6651,7 +6651,7 @@ export const validEwcCodes = [
     chapter:
       'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
     subChapter:
-      'Wastes from physico/chemical treatments of waste \n(including dechromatation, decyanidation, neutralisation)',
+      'Wastes from physico/chemical treatments of waste (including dechromatation, decyanidation, neutralisation)',
     description: 'Solid combustible wastes containing hazardous substances'
   },
   {
@@ -6661,7 +6661,7 @@ export const validEwcCodes = [
     chapter:
       'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
     subChapter:
-      'Wastes from physico/chemical treatments of waste \n(including dechromatation, decyanidation, neutralisation)',
+      'Wastes from physico/chemical treatments of waste (including dechromatation, decyanidation, neutralisation)',
     description:
       'Combustible wastes other than those mentioned in 19 02 08 and 19 02 09'
   },
@@ -6672,7 +6672,7 @@ export const validEwcCodes = [
     chapter:
       'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
     subChapter:
-      'Wastes from physico/chemical treatments of waste \n(including dechromatation, decyanidation, neutralisation)',
+      'Wastes from physico/chemical treatments of waste (including dechromatation, decyanidation, neutralisation)',
     description: 'Other wastes containing hazardous substances'
   },
   {
@@ -6682,7 +6682,7 @@ export const validEwcCodes = [
     chapter:
       'Wastes from waste management facilities, off-site waste water treatment plants and the preparation of water intended for human consumption and water for industrial use',
     subChapter:
-      'Wastes from physico/chemical treatments of waste \n(including dechromatation, decyanidation, neutralisation)',
+      'Wastes from physico/chemical treatments of waste (including dechromatation, decyanidation, neutralisation)',
     description: 'Wastes not otherwise specified'
   },
   {
