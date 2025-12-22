@@ -71,7 +71,7 @@ describe('Receipt Schema Validation - Containers', () => {
       )
     })
 
-    it.each(validContainerTypes)(
+    it.each(validContainerTypes.map(({ code }) => code))(
       'valid container types are accepted - %s',
       (containerType) => {
         const payload = createTestPayload({

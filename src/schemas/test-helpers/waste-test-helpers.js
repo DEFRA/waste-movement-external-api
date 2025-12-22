@@ -26,7 +26,7 @@ export const createTestPayload = (overrides = {}) => {
       isEstimate: TEST_CONSTANTS.DEFAULT_IS_ESTIMATE
     },
     numberOfContainers: 1,
-    typeOfContainers: validContainerTypes[0],
+    typeOfContainers: validContainerTypes[0].code,
     containsPops: false,
     containsHazardous: false
   }

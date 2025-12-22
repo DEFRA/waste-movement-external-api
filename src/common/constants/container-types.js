@@ -1,20 +1,68 @@
 export const validContainerTypes = [
-  'BAG', // Bag / Sack (e.g. rubble bag, refuse sack)
-  'BAL', // Bale
-  'BOX', // Box / Carton / Crate
-  'CAN', // Can / Jerrycan
-  'CAR', // Carrier (e.g. pallet cage)
-  'CAS', // Cask
-  'CON', // Container (unspecified)
-  'DRU', // Drum (typically 205L)
-  'FIB', // Fibre drum
-  'IBC', // Intermediate Bulk Container (e.g. 1000L)
-  'LOO', // Loose (no container)
-  'PAL', // Pallet (e.g. shrink‑wrapped items)
-  'ROR', // Roll‑on Roll‑off container (RoRo)
-  'SKI', // Skip
-  'TAN', // Tanker / Tank
-  'WBI' // Wheelie Bin (any size)
+  {
+    code: 'BAG',
+    description: 'Bag / Sack (e.g. rubble bag, refuse sack)'
+  },
+  {
+    code: 'BAL',
+    description: 'Bale'
+  },
+  {
+    code: 'BOX',
+    description: 'Box / Carton / Crate'
+  },
+  {
+    code: 'CAN',
+    description: 'Can / Jerrycan'
+  },
+  {
+    code: 'CAR',
+    description: 'Carrier (e.g. pallet cage)'
+  },
+  {
+    code: 'CAS',
+    description: 'Cask'
+  },
+  {
+    code: 'CON',
+    description: 'Container (unspecified)'
+  },
+  {
+    code: 'DRU',
+    description: 'Drum (typically 205L)'
+  },
+  {
+    code: 'FIB',
+    description: 'Fibre drum'
+  },
+  {
+    code: 'IBC',
+    description: 'Intermediate Bulk Container (e.g. 1000L)'
+  },
+  {
+    code: 'LOO',
+    description: 'Loose (no container)'
+  },
+  {
+    code: 'PAL',
+    description: 'Pallet (e.g. shrink‑wrapped items)'
+  },
+  {
+    code: 'ROR',
+    description: 'Roll‑on Roll‑off container (RoRo)'
+  },
+  {
+    code: 'SKI',
+    description: 'Skip'
+  },
+  {
+    code: 'TAN',
+    description: 'Tanker / Tank'
+  },
+  {
+    code: 'WBI',
+    description: 'Wheelie Bin (any size)'
+  }
 ]
 
 /**
@@ -26,5 +74,5 @@ export const validContainerTypes = [
  */
 export const isValidContainerType = (containerType) => {
   // Check if the container type is in the list of valid types
-  return validContainerTypes.includes(containerType)
+  return validContainerTypes.map(({ code }) => code).includes(containerType)
 }

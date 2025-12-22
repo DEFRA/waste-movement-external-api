@@ -17,7 +17,7 @@ const buildBasePayload = () => ({
         isEstimate: false
       },
       numberOfContainers: 1,
-      typeOfContainers: validContainerTypes[0],
+      typeOfContainers: validContainerTypes[0].code,
       containsPops: false,
       containsHazardous: false
     }
