@@ -53,7 +53,8 @@ describe('GET Container Types', () => {
       const containerTypesResponse = mapGetContainerTypesResponse()
 
       expect(containerTypesResponse[0]).toStrictEqual({
-        code: 'BAG'
+        code: 'BAG',
+        description: 'Bag / Sack (e.g. rubble bag, refuse sack)'
       })
     })
 
