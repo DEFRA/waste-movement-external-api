@@ -18,7 +18,9 @@ jest.mock('../common/helpers/http-client.js', () => ({
 
 // Mock metrics
 jest.mock('../common/helpers/metrics.js', () => ({
-  metricsCounter: jest.fn()
+  metricsCounter: jest.fn(),
+  logReceiptMetrics: jest.fn(),
+  logWarningMetrics: jest.fn()
 }))
 
 describe('Create Receipt Movement Handler', () => {
@@ -127,22 +129,9 @@ describe('Create Receipt Movement Handler', () => {
       'validation.requests.without_errors',
       1
     )
-    // validation.warnings.count is NOT logged when there are no warnings
-    expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
-      'validation.warnings.count',
-      expect.anything(),
-      expect.anything()
-    )
-    // Requests without warnings
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_warnings',
-      1,
-      { endpointType: 'post' }
-    )
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_warnings',
-      1
-    )
+    // Receipt received metrics
+    expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('post')
+    expect(metrics.logWarningMetrics).toHaveBeenCalledWith([], 'post')
   })
 
   it('should successfully create a waste movement with warnings and log metrics', async () => {
@@ -183,26 +172,16 @@ describe('Create Receipt Movement Handler', () => {
       'validation.requests.without_errors',
       1
     )
-    // Per-endpoint metrics with dimensions
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.warnings.count',
-      1,
-      { endpointType: 'post' }
-    )
-    // Total metrics without dimensions
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.warnings.count',
-      1
-    )
-    // Requests with warnings
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.with_warnings',
-      1,
-      { endpointType: 'post' }
-    )
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.with_warnings',
-      1
+    // Receipt received metrics
+    expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('post')
+    expect(metrics.logWarningMetrics).toHaveBeenCalledWith(
+      expect.arrayContaining([
+        expect.objectContaining({
+          errorType: 'NotProvided',
+          key: 'wasteItems.0.disposalOrRecoveryCodes'
+        })
+      ]),
+      'post'
     )
   })
 
@@ -242,7 +221,7 @@ describe('Create Receipt Movement Handler', () => {
     expect(h.code).toHaveBeenCalledWith(500)
   })
 
-  it('should log without_errors but not warning metrics when backend returns non-success status', async () => {
+  it('should log without_errors but not warning or receipt metrics when backend returns non-success status', async () => {
     // Mock backend returning error status code
     httpClients.wasteMovement.post.mockResolvedValue({
       statusCode: 400,
@@ -266,12 +245,9 @@ describe('Create Receipt Movement Handler', () => {
       'validation.requests.without_errors',
       1
     )
-    // Warning metrics should NOT be logged
-    expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
-      'validation.requests.without_warnings',
-      expect.anything(),
-      expect.anything()
-    )
+    // Receipt and warning metrics should NOT be logged
+    expect(metrics.logReceiptMetrics).not.toHaveBeenCalled()
+    expect(metrics.logWarningMetrics).not.toHaveBeenCalled()
     expect(metrics.metricsCounter).toHaveBeenCalledTimes(2)
     expect(h.code).toHaveBeenCalledWith(400)
   })

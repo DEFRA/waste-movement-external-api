@@ -4,7 +4,11 @@ import { handleBackendResponse } from './handle-backend-response.js'
 import { createLogger } from '../common/helpers/logging/logger.js'
 import { isSuccessStatusCode } from '../common/helpers/utils.js'
 import { generateAllValidationWarnings } from '../common/helpers/validation-warnings/validation-warnings.js'
-import { metricsCounter } from '../common/helpers/metrics.js'
+import {
+  metricsCounter,
+  logReceiptMetrics,
+  logWarningMetrics
+} from '../common/helpers/metrics.js'
 
 const logger = createLogger()
 
@@ -52,21 +56,8 @@ export const handleCreateReceiptMovement = async (request, h) => {
 
     // Only log warning metrics for successful responses
     if (isSuccess) {
-      if (warnings.length > 0) {
-        await metricsCounter('validation.warnings.count', warnings.length, {
-          endpointType: 'post'
-        })
-        await metricsCounter('validation.warnings.count', warnings.length)
-        await metricsCounter('validation.requests.with_warnings', 1, {
-          endpointType: 'post'
-        })
-        await metricsCounter('validation.requests.with_warnings', 1)
-      } else {
-        await metricsCounter('validation.requests.without_warnings', 1, {
-          endpointType: 'post'
-        })
-        await metricsCounter('validation.requests.without_warnings', 1)
-      }
+      await logReceiptMetrics('post')
+      await logWarningMetrics(warnings, 'post')
     }
 
     return handleBackendResponse(response, h, () => responseData)
