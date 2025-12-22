@@ -25,6 +25,7 @@ export const handleGetContainerTypes = async (_request, h) => {
 }
 
 export const mapGetContainerTypesResponse = () =>
-  validContainerTypes.map((containerType) => ({
-    code: containerType
+  validContainerTypes.map(({ code, description }) => ({
+    code,
+    description
   }))
