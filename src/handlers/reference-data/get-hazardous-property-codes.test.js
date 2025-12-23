@@ -53,7 +53,10 @@ describe('GET Hazardous Property Codes', () => {
       const hazPropertyCodesResponse = mapGetHazardousPropertyCodesResponse()
 
       expect(hazPropertyCodesResponse[0]).toStrictEqual({
-        code: 'HP_1'
+        code: 'HP_1',
+        shortDesc: 'Explosive',
+        longDesc:
+          'Waste that can cause dangerous chemical reactions, producing gas that can damage surroundings (e.g., pyrotechnic or self-reactive waste).'
       })
     })
 
