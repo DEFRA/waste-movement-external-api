@@ -20,7 +20,8 @@ jest.mock('../common/helpers/http-client.js', () => ({
 jest.mock('../common/helpers/metrics.js', () => ({
   metricsCounter: jest.fn(),
   logReceiptMetrics: jest.fn(),
-  logWarningMetrics: jest.fn()
+  logWarningMetrics: jest.fn(),
+  logDeveloperMetrics: jest.fn()
 }))
 
 describe('Create Receipt Movement Handler', () => {
@@ -81,12 +82,17 @@ describe('Create Receipt Movement Handler', () => {
     }
   }
 
+  const mockLogger = {
+    info: jest.fn()
+  }
+
   const request = {
     auth: {
       credentials: {
         clientId: 'test-client-id'
       }
     },
+    logger: mockLogger,
     payload: validPayload
   }
 
@@ -132,6 +138,8 @@ describe('Create Receipt Movement Handler', () => {
     // Receipt received metrics
     expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('post')
     expect(metrics.logWarningMetrics).toHaveBeenCalledWith([], 'post')
+    // Developer activity metrics
+    expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
   })
 
   it('should successfully create a waste movement with warnings and log metrics', async () => {
@@ -183,6 +191,8 @@ describe('Create Receipt Movement Handler', () => {
       ]),
       'post'
     )
+    // Developer activity metrics
+    expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
   })
 
   it('should return 500 when waste movement creation fails', async () => {
@@ -245,9 +255,10 @@ describe('Create Receipt Movement Handler', () => {
       'validation.requests.without_errors',
       1
     )
-    // Receipt and warning metrics should NOT be logged
+    // Receipt, warning, and developer metrics should NOT be logged
     expect(metrics.logReceiptMetrics).not.toHaveBeenCalled()
     expect(metrics.logWarningMetrics).not.toHaveBeenCalled()
+    expect(metrics.logDeveloperMetrics).not.toHaveBeenCalled()
     expect(metrics.metricsCounter).toHaveBeenCalledTimes(2)
     expect(h.code).toHaveBeenCalledWith(400)
   })

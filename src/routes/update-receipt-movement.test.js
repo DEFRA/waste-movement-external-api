@@ -16,7 +16,8 @@ jest.mock('../common/helpers/http-client.js', () => ({
 jest.mock('../common/helpers/metrics.js', () => ({
   metricsCounter: jest.fn(),
   logReceiptMetrics: jest.fn(),
-  logWarningMetrics: jest.fn()
+  logWarningMetrics: jest.fn(),
+  logDeveloperMetrics: jest.fn()
 }))
 
 describe('updateReceiptMovement route', () => {
@@ -43,12 +44,17 @@ describe('updateReceiptMovement route', () => {
 })
 
 describe('handleUpdateReceiptMovement', () => {
+  const mockLogger = {
+    info: jest.fn()
+  }
+
   const mockRequest = {
     auth: {
       credentials: {
         clientId: 'test-client-id'
       }
     },
+    logger: mockLogger,
     params: {
       wasteTrackingId: '123e4567-e89b-12d3-a456-426614174000'
     },
@@ -115,6 +121,8 @@ describe('handleUpdateReceiptMovement', () => {
       ]),
       'put'
     )
+    // Developer activity metrics
+    expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
   })
 
   it('should successfully update a receipt movement without warnings', async () => {
@@ -169,6 +177,8 @@ describe('handleUpdateReceiptMovement', () => {
     // Receipt received metrics
     expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('put')
     expect(metrics.logWarningMetrics).toHaveBeenCalledWith([], 'put')
+    // Developer activity metrics
+    expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
   })
 
   it('should handle not found error', async () => {
@@ -208,9 +218,10 @@ describe('handleUpdateReceiptMovement', () => {
       'validation.requests.without_errors',
       1
     )
-    // Receipt and warning metrics should NOT be logged
+    // Receipt, warning, and developer metrics should NOT be logged
     expect(metrics.logReceiptMetrics).not.toHaveBeenCalled()
     expect(metrics.logWarningMetrics).not.toHaveBeenCalled()
+    expect(metrics.logDeveloperMetrics).not.toHaveBeenCalled()
     expect(metrics.metricsCounter).toHaveBeenCalledTimes(2)
     expect(mockH.code).toHaveBeenCalledWith(400)
   })
