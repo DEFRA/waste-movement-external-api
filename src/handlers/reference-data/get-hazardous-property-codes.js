@@ -1,4 +1,4 @@
-import { validHazCodes } from '../../common/constants/haz-codes.js'
+import { hazardousPropertyCodes } from '../../common/constants/haz-codes.js'
 import { HTTP_STATUS } from '../../common/constants/http-status-codes.js'
 import { handleBackendResponse } from '../handle-backend-response.js'
 import { createLogger } from '../../common/helpers/logging/logger.js'
@@ -25,6 +25,8 @@ export const handleGetHazardousPropertyCodes = async (_request, h) => {
 }
 
 export const mapGetHazardousPropertyCodesResponse = () =>
-  validHazCodes.map((code) => ({
-    code
+  hazardousPropertyCodes.map(({ code, shortDesc, longDesc }) => ({
+    code,
+    shortDesc,
+    longDesc
   }))
