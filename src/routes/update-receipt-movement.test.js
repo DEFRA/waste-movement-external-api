@@ -195,6 +195,27 @@ describe('handleUpdateReceiptMovement', () => {
     ).rejects.toThrow(Boom.badRequest('Invalid input'))
   })
 
+  it('should not log developer metrics when clientId is not provided', async () => {
+    const requestWithoutAuth = {
+      params: {
+        wasteTrackingId: '123e4567-e89b-12d3-a456-426614174000'
+      },
+      payload: createMovementRequest()
+    }
+
+    httpClients.wasteMovement.put.mockResolvedValueOnce({
+      statusCode: 200
+    })
+
+    await handleUpdateReceiptMovement(requestWithoutAuth, mockH)
+
+    // Receipt and warning metrics should still be logged
+    expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('put')
+    expect(metrics.logWarningMetrics).toHaveBeenCalled()
+    // Developer metrics should NOT be logged when clientId is missing
+    expect(metrics.logDeveloperMetrics).not.toHaveBeenCalled()
+  })
+
   it('should log without_errors but not warning or receipt metrics when backend returns non-success status', async () => {
     httpClients.wasteMovement.put.mockResolvedValueOnce({
       statusCode: 400,
