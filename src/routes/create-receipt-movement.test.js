@@ -63,7 +63,6 @@ describe('Create Receipt Movement Route', () => {
           clientId: 'test-client-id'
         }
       },
-      logger: { info: jest.fn() },
       payload: validPayload
     }
     const h = {
@@ -104,7 +103,6 @@ describe('Create Receipt Movement Route', () => {
           clientId: 'test-client-id'
         }
       },
-      logger: { info: jest.fn() },
       payload: validPayload
     }
     const h = {
@@ -131,7 +129,6 @@ describe('Create Receipt Movement Route', () => {
           clientId: 'test-client-id'
         }
       },
-      logger: { info: jest.fn() },
       payload: validPayload
     }
     const h = {

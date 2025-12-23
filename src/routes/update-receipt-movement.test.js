@@ -44,17 +44,12 @@ describe('updateReceiptMovement route', () => {
 })
 
 describe('handleUpdateReceiptMovement', () => {
-  const mockLogger = {
-    info: jest.fn()
-  }
-
   const mockRequest = {
     auth: {
       credentials: {
         clientId: 'test-client-id'
       }
     },
-    logger: mockLogger,
     params: {
       wasteTrackingId: '123e4567-e89b-12d3-a456-426614174000'
     },

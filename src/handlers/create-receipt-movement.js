@@ -59,7 +59,10 @@ export const handleCreateReceiptMovement = async (request, h) => {
     if (isSuccess) {
       await logReceiptMetrics('post')
       await logWarningMetrics(warnings, 'post')
-      await logDeveloperMetrics(request.auth.credentials.clientId)
+      const clientId = request.auth?.credentials?.clientId
+      if (clientId) {
+        await logDeveloperMetrics(clientId)
+      }
     }
 
     return handleBackendResponse(response, h, () => responseData)

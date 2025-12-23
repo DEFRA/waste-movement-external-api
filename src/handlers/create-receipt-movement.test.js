@@ -82,17 +82,12 @@ describe('Create Receipt Movement Handler', () => {
     }
   }
 
-  const mockLogger = {
-    info: jest.fn()
-  }
-
   const request = {
     auth: {
       credentials: {
         clientId: 'test-client-id'
       }
     },
-    logger: mockLogger,
     payload: validPayload
   }
 

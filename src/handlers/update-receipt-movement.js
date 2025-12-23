@@ -50,7 +50,10 @@ export const handleUpdateReceiptMovement = async (request, h) => {
     if (isSuccessStatusCode(response.statusCode)) {
       await logReceiptMetrics('put')
       await logWarningMetrics(warnings, 'put')
-      await logDeveloperMetrics(request.auth.credentials.clientId)
+      const clientId = request.auth?.credentials?.clientId
+      if (clientId) {
+        await logDeveloperMetrics(clientId)
+      }
     }
 
     return handleBackendResponse(response, h, () => responseData)
