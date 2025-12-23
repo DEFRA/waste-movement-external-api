@@ -20,7 +20,8 @@ jest.mock('../common/helpers/http-client.js', () => ({
 jest.mock('../common/helpers/metrics.js', () => ({
   metricsCounter: jest.fn(),
   logReceiptMetrics: jest.fn(),
-  logWarningMetrics: jest.fn()
+  logWarningMetrics: jest.fn(),
+  logDeveloperMetrics: jest.fn()
 }))
 
 describe('Create Receipt Movement Handler', () => {
@@ -132,6 +133,8 @@ describe('Create Receipt Movement Handler', () => {
     // Receipt received metrics
     expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('post')
     expect(metrics.logWarningMetrics).toHaveBeenCalledWith([], 'post')
+    // Developer activity metrics
+    expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
   })
 
   it('should successfully create a waste movement with warnings and log metrics', async () => {
@@ -183,6 +186,8 @@ describe('Create Receipt Movement Handler', () => {
       ]),
       'post'
     )
+    // Developer activity metrics
+    expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
   })
 
   it('should return 500 when waste movement creation fails', async () => {
@@ -221,6 +226,30 @@ describe('Create Receipt Movement Handler', () => {
     expect(h.code).toHaveBeenCalledWith(500)
   })
 
+  it('should not log developer metrics when clientId is not provided', async () => {
+    // Mock successful waste movement creation
+    httpClients.wasteMovement.post.mockResolvedValue({
+      statusCode: 200
+    })
+
+    const requestWithoutAuth = {
+      payload: validPayload
+    }
+
+    const h = {
+      response: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis()
+    }
+
+    await handleCreateReceiptMovement(requestWithoutAuth, h)
+
+    // Receipt and warning metrics should still be logged
+    expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('post')
+    expect(metrics.logWarningMetrics).toHaveBeenCalled()
+    // Developer metrics should NOT be logged when clientId is missing
+    expect(metrics.logDeveloperMetrics).not.toHaveBeenCalled()
+  })
+
   it('should log without_errors but not warning or receipt metrics when backend returns non-success status', async () => {
     // Mock backend returning error status code
     httpClients.wasteMovement.post.mockResolvedValue({
@@ -245,9 +274,10 @@ describe('Create Receipt Movement Handler', () => {
       'validation.requests.without_errors',
       1
     )
-    // Receipt and warning metrics should NOT be logged
+    // Receipt, warning, and developer metrics should NOT be logged
     expect(metrics.logReceiptMetrics).not.toHaveBeenCalled()
     expect(metrics.logWarningMetrics).not.toHaveBeenCalled()
+    expect(metrics.logDeveloperMetrics).not.toHaveBeenCalled()
     expect(metrics.metricsCounter).toHaveBeenCalledTimes(2)
     expect(h.code).toHaveBeenCalledWith(400)
   })

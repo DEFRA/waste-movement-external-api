@@ -66,4 +66,18 @@ const logWarningMetrics = async (warnings, endpointType) => {
   }
 }
 
-export { metricsCounter, logReceiptMetrics, logWarningMetrics }
+/**
+ * Logs developer activity metrics with clientId dimension for unique counting
+ * @param {string} clientId - The developer's client ID
+ */
+const logDeveloperMetrics = async (clientId) => {
+  await metricsCounter('developers.active', 1, { clientId })
+  await metricsCounter('developers.active', 1)
+}
+
+export {
+  metricsCounter,
+  logReceiptMetrics,
+  logWarningMetrics,
+  logDeveloperMetrics
+}

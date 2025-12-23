@@ -3,6 +3,7 @@ import { httpClients } from '../common/helpers/http-client.js'
 import { createReceiptMovement } from './create-receipt-movement.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
+import * as metrics from '../common/helpers/metrics.js'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -14,6 +15,14 @@ jest.mock('../common/helpers/http-client.js', () => ({
       post: jest.fn()
     }
   }
+}))
+
+// Mock metrics
+jest.mock('../common/helpers/metrics.js', () => ({
+  metricsCounter: jest.fn(),
+  logReceiptMetrics: jest.fn(),
+  logWarningMetrics: jest.fn(),
+  logDeveloperMetrics: jest.fn()
 }))
 
 describe('Create Receipt Movement Route', () => {
@@ -69,6 +78,8 @@ describe('Create Receipt Movement Route', () => {
         warnings: [disposalOrRecoveryCodesWarning]
       }
     })
+    // Developer activity metrics
+    expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
 
     // Verify waste tracking ID was requested
     expect(httpClients.wasteTracking.get).toHaveBeenCalledWith('/next')

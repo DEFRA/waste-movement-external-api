@@ -16,7 +16,8 @@ jest.mock('../common/helpers/http-client.js', () => ({
 jest.mock('../common/helpers/metrics.js', () => ({
   metricsCounter: jest.fn(),
   logReceiptMetrics: jest.fn(),
-  logWarningMetrics: jest.fn()
+  logWarningMetrics: jest.fn(),
+  logDeveloperMetrics: jest.fn()
 }))
 
 describe('updateReceiptMovement route', () => {
@@ -115,6 +116,8 @@ describe('handleUpdateReceiptMovement', () => {
       ]),
       'put'
     )
+    // Developer activity metrics
+    expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
   })
 
   it('should successfully update a receipt movement without warnings', async () => {
@@ -169,6 +172,8 @@ describe('handleUpdateReceiptMovement', () => {
     // Receipt received metrics
     expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('put')
     expect(metrics.logWarningMetrics).toHaveBeenCalledWith([], 'put')
+    // Developer activity metrics
+    expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
   })
 
   it('should handle not found error', async () => {
@@ -190,6 +195,27 @@ describe('handleUpdateReceiptMovement', () => {
     ).rejects.toThrow(Boom.badRequest('Invalid input'))
   })
 
+  it('should not log developer metrics when clientId is not provided', async () => {
+    const requestWithoutAuth = {
+      params: {
+        wasteTrackingId: '123e4567-e89b-12d3-a456-426614174000'
+      },
+      payload: createMovementRequest()
+    }
+
+    httpClients.wasteMovement.put.mockResolvedValueOnce({
+      statusCode: 200
+    })
+
+    await handleUpdateReceiptMovement(requestWithoutAuth, mockH)
+
+    // Receipt and warning metrics should still be logged
+    expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('put')
+    expect(metrics.logWarningMetrics).toHaveBeenCalled()
+    // Developer metrics should NOT be logged when clientId is missing
+    expect(metrics.logDeveloperMetrics).not.toHaveBeenCalled()
+  })
+
   it('should log without_errors but not warning or receipt metrics when backend returns non-success status', async () => {
     httpClients.wasteMovement.put.mockResolvedValueOnce({
       statusCode: 400,
@@ -208,9 +234,10 @@ describe('handleUpdateReceiptMovement', () => {
       'validation.requests.without_errors',
       1
     )
-    // Receipt and warning metrics should NOT be logged
+    // Receipt, warning, and developer metrics should NOT be logged
     expect(metrics.logReceiptMetrics).not.toHaveBeenCalled()
     expect(metrics.logWarningMetrics).not.toHaveBeenCalled()
+    expect(metrics.logDeveloperMetrics).not.toHaveBeenCalled()
     expect(metrics.metricsCounter).toHaveBeenCalledTimes(2)
     expect(mockH.code).toHaveBeenCalledWith(400)
   })

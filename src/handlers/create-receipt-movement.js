@@ -7,7 +7,8 @@ import { generateAllValidationWarnings } from '../common/helpers/validation-warn
 import {
   metricsCounter,
   logReceiptMetrics,
-  logWarningMetrics
+  logWarningMetrics,
+  logDeveloperMetrics
 } from '../common/helpers/metrics.js'
 
 const logger = createLogger()
@@ -54,10 +55,14 @@ export const handleCreateReceiptMovement = async (request, h) => {
     })
     await metricsCounter('validation.requests.without_errors', 1)
 
-    // Only log warning metrics for successful responses
+    // Only log metrics for successful responses
     if (isSuccess) {
       await logReceiptMetrics('post')
       await logWarningMetrics(warnings, 'post')
+      const clientId = request.auth?.credentials?.clientId
+      if (clientId) {
+        await logDeveloperMetrics(clientId)
+      }
     }
 
     return handleBackendResponse(response, h, () => responseData)
