@@ -50,7 +50,8 @@ describe('GET POP Names', () => {
       const popNamesResponse = mapGetPopNamesResponse()
 
       expect(popNamesResponse[0]).toStrictEqual({
-        code: 'END'
+        code: 'END',
+        chemicalName: 'Endosulfan'
       })
     })
 

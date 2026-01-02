@@ -25,6 +25,7 @@ export const handleGetPopNames = async (_request, h) => {
 }
 
 export const mapGetPopNamesResponse = () =>
-  validPopNames.map((pop) => ({
-    code: pop.code
+  validPopNames.map(({ code, name }) => ({
+    code,
+    chemicalName: name
   }))
