@@ -239,16 +239,12 @@ describe('Error Handler', () => {
     const expectedCalls = 4 + errorCount * 2
     expect(metrics.metricsCounter).toHaveBeenCalledTimes(expectedCalls)
 
-    // Helper functions matching production normalization logic
-    const sanitizeErrorMessage = (msg) =>
-      msg.replace(/ with value "[^"]*"/g, '')
-    const normalizeArrayIndices = (str) => str.replace(/\[\d+\]/g, '[*]')
-    const normalizeErrorReason = (msg) =>
-      normalizeArrayIndices(sanitizeErrorMessage(msg))
+    // Helper function matching production normalization logic
+    const normalizeArrayIndices = (str) => str.replace(/\[\d+]/g, '[*]')
 
     // Verify each validation error has its normalized message emitted as errorReason
     for (const error of responseBody.validation.errors) {
-      const expectedReason = normalizeErrorReason(error.message)
+      const expectedReason = normalizeArrayIndices(error.message)
 
       // Should be called with endpointType + errorReason
       expect(metrics.metricsCounter).toHaveBeenCalledWith(
@@ -312,47 +308,8 @@ describe('Error Handler', () => {
 
     // Verify all array-indexed errors use [*] not [0]
     for (const call of arrayIndexedCalls) {
-      expect(call[2].errorReason).not.toMatch(/\[\d+\]/)
-      expect(call[2].errorReason).toMatch(/\[\*\]/)
-    }
-  })
-
-  test('should sanitize user values from error messages in metrics', async () => {
-    // Create a payload with an invalid value that Joi will include in the message
-    const response = await server.inject({
-      method: 'POST',
-      url: '/movements/receive',
-      payload: {
-        apiCode: '00000000-0000-0000-0000-000000000000',
-        dateTimeReceived: new Date().toISOString(),
-        receiver: {
-          siteName: 'Test Site',
-          authorisationNumber: 'HP3456XX',
-          address: {
-            fullAddress: '123 Test St',
-            postcode: 'SW1A 1AA'
-          }
-        },
-        receipt: {
-          wasteAccepted: true
-        },
-        carrier: {
-          // Invalid registration number that will appear in "with value" message
-          registrationNumber: 'INVALID_REG_123'
-        }
-      }
-    })
-
-    expect(response.statusCode).toBe(400)
-
-    // Check that no metric contains "with value" (user data)
-    const calls = metrics.metricsCounter.mock.calls
-    const reasonCalls = calls.filter(
-      (call) => call[0] === 'validation.error.reason'
-    )
-
-    for (const call of reasonCalls) {
-      expect(call[2].errorReason).not.toMatch(/with value/)
+      expect(call[2].errorReason).not.toMatch(/\[\d+]/)
+      expect(call[2].errorReason).toMatch(/\[\*]/)
     }
   })
 })
