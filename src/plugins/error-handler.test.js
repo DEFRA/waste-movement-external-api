@@ -222,14 +222,137 @@ describe('Error Handler', () => {
     expect(metrics.metricsCounter).not.toHaveBeenCalled()
   })
 
-  test('should log correct number of metrics for validation errors', async () => {
-    await server.inject({
+  test('should log per-error reason metrics with correct dimension values', async () => {
+    const response = await server.inject({
       method: 'POST',
       url: '/movements/receive',
       payload: { yourUniqueReference: 'test' }
     })
 
-    // Should have exactly 4 calls (2 for errors.count, 2 for requests.with_errors)
-    expect(metrics.metricsCounter).toHaveBeenCalledTimes(4)
+    const responseBody = JSON.parse(response.payload)
+    const errorCount = responseBody.validation.errors.length
+
+    // Should have:
+    // - 2 calls for errors.count (with dimension + without)
+    // - 2 calls for requests.with_errors (with dimension + without)
+    // - 2 calls per validation error for error.reason (with dimension + without)
+    const expectedCalls = 4 + errorCount * 2
+    expect(metrics.metricsCounter).toHaveBeenCalledTimes(expectedCalls)
+
+    // Helper functions matching production normalization logic
+    const sanitizeErrorMessage = (msg) =>
+      msg.replace(/ with value "[^"]*"/g, '')
+    const normalizeArrayIndices = (str) => str.replace(/\[\d+\]/g, '[*]')
+    const normalizeErrorReason = (msg) =>
+      normalizeArrayIndices(sanitizeErrorMessage(msg))
+
+    // Verify each validation error has its normalized message emitted as errorReason
+    for (const error of responseBody.validation.errors) {
+      const expectedReason = normalizeErrorReason(error.message)
+
+      // Should be called with endpointType + errorReason
+      expect(metrics.metricsCounter).toHaveBeenCalledWith(
+        'validation.error.reason',
+        1,
+        { endpointType: 'post', errorReason: expectedReason }
+      )
+      // Should also be called with just errorReason (for totals)
+      expect(metrics.metricsCounter).toHaveBeenCalledWith(
+        'validation.error.reason',
+        1,
+        { errorReason: expectedReason }
+      )
+    }
+  })
+
+  test('should normalize array indices in error reason metrics', async () => {
+    // Create a payload that will trigger array-indexed validation errors
+    const response = await server.inject({
+      method: 'POST',
+      url: '/movements/receive',
+      payload: {
+        apiCode: '00000000-0000-0000-0000-000000000000',
+        dateTimeReceived: new Date().toISOString(),
+        receiver: {
+          siteName: 'Test Site',
+          authorisationNumber: 'HP3456XX',
+          address: {
+            fullAddress: '123 Test St',
+            postcode: 'SW1A 1AA'
+          }
+        },
+        receipt: {
+          wasteAccepted: true
+        },
+        wasteItems: [
+          {
+            ewcCodes: ['170504'],
+            // Invalid value to trigger array-indexed error message
+            physicalForm: 'InvalidValue'
+          }
+        ]
+      }
+    })
+
+    expect(response.statusCode).toBe(400)
+
+    // Check that array indices are normalized in the errorReason
+    const calls = metrics.metricsCounter.mock.calls
+    const reasonCalls = calls.filter(
+      (call) => call[0] === 'validation.error.reason'
+    )
+
+    // Find any call with wasteItems in the errorReason
+    const arrayIndexedCalls = reasonCalls.filter((call) =>
+      call[2]?.errorReason?.includes('wasteItems')
+    )
+
+    // Assert that we actually produced array-indexed errors to test normalization
+    expect(arrayIndexedCalls.length).toBeGreaterThan(0)
+
+    // Verify all array-indexed errors use [*] not [0]
+    for (const call of arrayIndexedCalls) {
+      expect(call[2].errorReason).not.toMatch(/\[\d+\]/)
+      expect(call[2].errorReason).toMatch(/\[\*\]/)
+    }
+  })
+
+  test('should sanitize user values from error messages in metrics', async () => {
+    // Create a payload with an invalid value that Joi will include in the message
+    const response = await server.inject({
+      method: 'POST',
+      url: '/movements/receive',
+      payload: {
+        apiCode: '00000000-0000-0000-0000-000000000000',
+        dateTimeReceived: new Date().toISOString(),
+        receiver: {
+          siteName: 'Test Site',
+          authorisationNumber: 'HP3456XX',
+          address: {
+            fullAddress: '123 Test St',
+            postcode: 'SW1A 1AA'
+          }
+        },
+        receipt: {
+          wasteAccepted: true
+        },
+        carrier: {
+          // Invalid registration number that will appear in "with value" message
+          registrationNumber: 'INVALID_REG_123'
+        }
+      }
+    })
+
+    expect(response.statusCode).toBe(400)
+
+    // Check that no metric contains "with value" (user data)
+    const calls = metrics.metricsCounter.mock.calls
+    const reasonCalls = calls.filter(
+      (call) => call[0] === 'validation.error.reason'
+    )
+
+    for (const call of reasonCalls) {
+      expect(call[2].errorReason).not.toMatch(/with value/)
+    }
   })
 })
