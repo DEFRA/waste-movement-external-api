@@ -1,7 +1,7 @@
 import { StorageResolution, Unit } from 'aws-embedded-metrics'
 
 import { config } from '../../config.js'
-import { metricsCounter } from './metrics.js'
+import { metricsCounter, logWarningMetrics } from './metrics.js'
 
 const mockPutMetric = jest.fn()
 const mockPutDimensions = jest.fn()
@@ -115,5 +115,80 @@ describe('#metricsCounter', () => {
     test('Should log expected error', () => {
       expect(mockLoggerError).toHaveBeenCalledWith(Error(mockError), mockError)
     })
+  })
+})
+
+describe('#logWarningMetrics', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    config.set('isMetricsEnabled', true)
+  })
+
+  test('Should emit per-warning metrics with warningReason dimension', async () => {
+    const warnings = [
+      {
+        key: 'wasteItems[0].weight',
+        errorType: 'Warning',
+        message: '"wasteItems[0].weight.metric" is missing'
+      },
+      {
+        key: 'wasteItems[0].isEstimate',
+        errorType: 'Warning',
+        message: '"wasteItems[0].weight.isEstimate" is missing'
+      }
+    ]
+
+    await logWarningMetrics(warnings, 'post')
+
+    // Should emit validation.warning.reason for each warning
+    // With normalized array indices [0] -> [*]
+    expect(mockPutDimensions).toHaveBeenCalledWith({
+      endpointType: 'post',
+      warningReason: '"wasteItems[*].weight.metric" is missing'
+    })
+    expect(mockPutDimensions).toHaveBeenCalledWith({
+      warningReason: '"wasteItems[*].weight.metric" is missing'
+    })
+    expect(mockPutDimensions).toHaveBeenCalledWith({
+      endpointType: 'post',
+      warningReason: '"wasteItems[*].weight.isEstimate" is missing'
+    })
+    expect(mockPutDimensions).toHaveBeenCalledWith({
+      warningReason: '"wasteItems[*].weight.isEstimate" is missing'
+    })
+  })
+
+  test('Should normalize array indices in warning messages', async () => {
+    const warnings = [
+      {
+        key: 'wasteItems[5].code',
+        errorType: 'Warning',
+        message: '"wasteItems[5].disposalOrRecoveryCodes[2].code" is missing'
+      }
+    ]
+
+    await logWarningMetrics(warnings, 'put')
+
+    // Array indices should be normalized to [*]
+    expect(mockPutDimensions).toHaveBeenCalledWith({
+      endpointType: 'put',
+      warningReason:
+        '"wasteItems[*].disposalOrRecoveryCodes[*].code" is missing'
+    })
+  })
+
+  test('Should not emit per-warning metrics when no warnings', async () => {
+    await logWarningMetrics([], 'post')
+
+    // Should only emit without_warnings metrics, not warning.reason
+    expect(mockPutMetric).toHaveBeenCalledWith(
+      'validation.requests.without_warnings',
+      1,
+      Unit.Count,
+      StorageResolution.Standard
+    )
+    expect(mockPutDimensions).not.toHaveBeenCalledWith(
+      expect.objectContaining({ warningReason: expect.any(String) })
+    )
   })
 })
