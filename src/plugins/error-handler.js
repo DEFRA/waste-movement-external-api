@@ -11,6 +11,14 @@ const isReceiptMovementEndpoint = (request) => {
   )
 }
 
+/**
+ * Normalize array indices in error messages by replacing with wildcards
+ * e.g., "wasteItems[0].physicalForm" -> "wasteItems[*].physicalForm"
+ */
+const normalizeArrayIndices = (str) => {
+  return str.replace(/\[\d+]/g, '[*]')
+}
+
 export const errorHandler = {
   plugin: {
     name: 'errorHandler',
@@ -110,6 +118,18 @@ export const errorHandler = {
               endpointType
             })
             await metricsCounter('validation.requests.with_errors', 1)
+
+            // Per-error breakdown metrics
+            for (const error of formattedErrors) {
+              const errorReason = normalizeArrayIndices(error.message)
+              await metricsCounter('validation.error.reason', 1, {
+                endpointType,
+                errorReason
+              })
+              await metricsCounter('validation.error.reason', 1, {
+                errorReason
+              })
+            }
           }
 
           // Return the custom formatted error
