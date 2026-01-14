@@ -5,14 +5,7 @@ import {
 } from 'aws-embedded-metrics'
 import { config } from '../../config.js'
 import { createLogger } from './logging/logger.js'
-
-/**
- * Normalize array indices in messages by replacing with wildcards
- * e.g., "wasteItems[0].physicalForm" -> "wasteItems[*].physicalForm"
- */
-const normalizeArrayIndices = (str) => {
-  return str.replace(/\[\d+]/g, '[*]')
-}
+import { normalizeArrayIndices } from './utils.js'
 
 /**
  * Logs a counter metric with optional dimensions
