@@ -5,6 +5,7 @@ import {
 } from 'aws-embedded-metrics'
 import { config } from '../../config.js'
 import { createLogger } from './logging/logger.js'
+import { normalizeArrayIndices } from './utils.js'
 
 /**
  * Logs a counter metric with optional dimensions
@@ -58,6 +59,18 @@ const logWarningMetrics = async (warnings, endpointType) => {
       endpointType
     })
     await metricsCounter('validation.requests.with_warnings', 1)
+
+    // Per-warning breakdown metrics
+    for (const warning of warnings) {
+      const warningReason = normalizeArrayIndices(warning.message)
+      await metricsCounter('validation.warning.reason', 1, {
+        endpointType,
+        warningReason
+      })
+      await metricsCounter('validation.warning.reason', 1, {
+        warningReason
+      })
+    }
   } else {
     await metricsCounter('validation.requests.without_warnings', 1, {
       endpointType

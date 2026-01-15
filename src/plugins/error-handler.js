@@ -1,4 +1,5 @@
 import { metricsCounter } from '../common/helpers/metrics.js'
+import { normalizeArrayIndices } from '../common/helpers/utils.js'
 
 /**
  * Check if request is for receipt movement endpoints
@@ -9,14 +10,6 @@ const isReceiptMovementEndpoint = (request) => {
     path === '/movements/receive' ||
     path === '/movements/{wasteTrackingId}/receive'
   )
-}
-
-/**
- * Normalize array indices in error messages by replacing with wildcards
- * e.g., "wasteItems[0].physicalForm" -> "wasteItems[*].physicalForm"
- */
-const normalizeArrayIndices = (str) => {
-  return str.replace(/\[\d+]/g, '[*]')
 }
 
 export const errorHandler = {
