@@ -1,6 +1,69 @@
 import { metricsCounter } from '../common/helpers/metrics.js'
 import { normalizeArrayIndices } from '../common/helpers/utils.js'
 
+const JOI_TYPE_TO_CATEGORY = {
+  // NotProvided
+  'any.required': 'NotProvided',
+
+  // NotAllowed
+  'object.unknown': 'NotAllowed',
+  'any.unknown': 'NotAllowed',
+
+  // InvalidType
+  'string.base': 'InvalidType',
+  'number.base': 'InvalidType',
+  'boolean.base': 'InvalidType',
+  'array.base': 'InvalidType',
+  'object.base': 'InvalidType',
+  'date.base': 'InvalidType',
+
+  // InvalidFormat
+  'string.email': 'InvalidFormat',
+  'string.uuid': 'InvalidFormat',
+  'string.guid': 'InvalidFormat',
+  'string.pattern.base': 'InvalidFormat',
+  'date.format': 'InvalidFormat',
+  'alternatives.match': 'InvalidFormat',
+
+  // InvalidValue
+  'any.only': 'InvalidValue',
+  'any.invalid': 'InvalidValue',
+  'string.empty': 'InvalidValue',
+
+  // OutOfRange
+  'string.min': 'OutOfRange',
+  'string.max': 'OutOfRange',
+  'number.min': 'OutOfRange',
+  'number.max': 'OutOfRange',
+  'number.positive': 'OutOfRange',
+  'number.negative': 'OutOfRange',
+  'number.integer': 'OutOfRange',
+  'array.min': 'OutOfRange',
+  'array.max': 'OutOfRange'
+}
+
+function getErrorCategory(joiErrorType) {
+  if (JOI_TYPE_TO_CATEGORY[joiErrorType]) {
+    return JOI_TYPE_TO_CATEGORY[joiErrorType]
+  }
+
+  // Check for custom error types with category prefix (e.g., 'InvalidFormat.ewcCode')
+  const categories = [
+    'InvalidType',
+    'InvalidFormat',
+    'InvalidValue',
+    'OutOfRange',
+    'BusinessRuleViolation'
+  ]
+  for (const prefix of categories) {
+    if (joiErrorType.startsWith(`${prefix}.`)) {
+      return prefix
+    }
+  }
+
+  return 'UnexpectedError'
+}
+
 /**
  * Check if request is for receipt movement endpoints
  */
@@ -32,17 +95,9 @@ export const errorHandler = {
 
           // Transform validation errors to the required format
           const formattedErrors = validationErrors.map((err) => {
-            let errorType
-            switch (err.type) {
-              case 'any.required':
-                errorType = 'NotProvided'
-                break
-              case 'object.unknown':
-                errorType = 'NotAllowed'
-                break
-              default:
-                errorType = 'UnexpectedError'
-                unexpectedErrors.push(err)
+            const errorType = getErrorCategory(err.type)
+            if (errorType === 'UnexpectedError') {
+              unexpectedErrors.push(err)
             }
 
             // Determine the error key

@@ -68,10 +68,10 @@ const authorisationNumberSchema = Joi.string()
     if (isValidAuthorisationNumber(value)) {
       return value
     }
-    return helpers.error('authorisation.invalid')
+    return helpers.error('InvalidFormat.authorisationNumber')
   })
   .messages({
-    'authorisation.invalid': AUTHORISATION_ERRORS.INVALID
+    'InvalidFormat.authorisationNumber': AUTHORISATION_ERRORS.INVALID
   })
   .required()
 
@@ -174,13 +174,13 @@ export const receiveMovementRequestSchema = Joi.object({
     // Only validate if there are hazardous codes and no consignment code provided
     if (hasHazardous && !value.hazardousWasteConsignmentCode) {
       if (!value.reasonForNoConsignmentCode) {
-        return helpers.error('reasonForNoConsignmentCode.required', {
+        return helpers.error('BusinessRuleViolation.reasonRequired', {
           local: { fieldName: 'reasonForNoConsignmentCode' }
         })
       }
 
       if (!NO_CONSIGNMENT_REASONS.includes(value.reasonForNoConsignmentCode)) {
-        return helpers.error('reasonForNoConsignmentCode.only', {
+        return helpers.error('InvalidValue.reasonForNoConsignmentCode', {
           local: { fieldName: 'reasonForNoConsignmentCode' }
         })
       }
@@ -189,6 +189,6 @@ export const receiveMovementRequestSchema = Joi.object({
     return value
   })
   .messages({
-    'reasonForNoConsignmentCode.only': `${CONSIGNMENT_ERRORS.REASON_INVALID_PREFIX} ${NO_CONSIGNMENT_REASONS.join(', ')}`,
-    'reasonForNoConsignmentCode.required': CONSIGNMENT_ERRORS.REASON_REQUIRED
+    'InvalidValue.reasonForNoConsignmentCode': `${CONSIGNMENT_ERRORS.REASON_INVALID_PREFIX} ${NO_CONSIGNMENT_REASONS.join(', ')}`,
+    'BusinessRuleViolation.reasonRequired': CONSIGNMENT_ERRORS.REASON_REQUIRED
   })

@@ -174,8 +174,8 @@ describe('Hazardous Waste Consignment Note Code rules', () => {
     const { error } = receiveMovementRequestSchema.validate(payload)
     expect(error).toBeDefined()
     expect(error.details).toBeDefined()
-    expect(error.details[0].type).toBe('reasonForNoConsignmentCode.required')
-    // The error handler will extract 'reasonForNoConsignmentCode' from this type
+    expect(error.details[0].type).toBe('BusinessRuleViolation.reasonRequired')
+    // The error handler will extract 'BusinessRuleViolation' category from this type
   })
 
   it('Error type includes field name when invalid reason is provided', () => {
@@ -187,7 +187,9 @@ describe('Hazardous Waste Consignment Note Code rules', () => {
     const { error } = receiveMovementRequestSchema.validate(payload)
     expect(error).toBeDefined()
     expect(error.details).toBeDefined()
-    expect(error.details[0].type).toBe('reasonForNoConsignmentCode.only')
-    // The error handler will extract 'reasonForNoConsignmentCode' from this type
+    expect(error.details[0].type).toBe(
+      'InvalidValue.reasonForNoConsignmentCode'
+    )
+    // The error handler will extract 'InvalidValue' category from this type
   })
 })

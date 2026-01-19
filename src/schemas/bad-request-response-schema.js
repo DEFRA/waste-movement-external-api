@@ -8,6 +8,11 @@ export const badRequestResponseSchema = Joi.object({
         errorType: Joi.string().valid(
           'NotProvided',
           'NotAllowed',
+          'InvalidType',
+          'InvalidFormat',
+          'InvalidValue',
+          'OutOfRange',
+          'BusinessRuleViolation',
           'UnexpectedError'
         ),
         message: Joi.string().description('Validation error message')
