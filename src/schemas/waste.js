@@ -15,6 +15,10 @@ import { validSourceOfComponents } from '../common/constants/source-of-component
 
 const MAX_EWC_CODES_COUNT = 5
 
+// Joi message template placeholders
+const JOI_MESSAGE_TEMPLATE = '{{#message}}'
+const JOI_LABEL_TEMPLATE = '{{#label}}'
+
 const disposalOrRecoveryCodeSchema = Joi.object({
   code: Joi.string()
     .valid(...DISPOSAL_OR_RECOVERY_CODES)
@@ -42,7 +46,7 @@ const validatePopOrHazardousPresence = (value, helpers, popsOrHazardous) => {
       ? POPS_ERRORS.REQUIRED_WHEN_CONTAINS_POPS_TRUE
       : HAZARDOUS_ERRORS.REQUIRED_WHEN_CONTAINS_HAZARDOUS_TRUE
     ).replace(
-      '{{#label}}',
+      JOI_LABEL_TEMPLATE,
       `"wasteItems[${currentIndex}].${popsOrHazardous}.${field}"`
     )
 
@@ -87,7 +91,7 @@ const validatePopsOrHazardousComponents = (value, helpers, popsOrHazardous) => {
     return helpers.error('BusinessRuleViolation.componentsNotAllowed', {
       message:
         POPS_OR_HAZARDOUS_ERRORS.COMPONENTS_NOT_ALLOWED_NOT_PROVIDED.replace(
-          '{{#label}}',
+          JOI_LABEL_TEMPLATE,
           labelPath
         )
     })
@@ -104,7 +108,7 @@ const validatePopsOrHazardousComponents = (value, helpers, popsOrHazardous) => {
     return helpers.error(
       'BusinessRuleViolation.componentsNotAllowedWhenFalse',
       {
-        message: errorMessage.replace('{{#label}}', labelPath)
+        message: errorMessage.replace(JOI_LABEL_TEMPLATE, labelPath)
       }
     )
   }
@@ -144,8 +148,9 @@ const popsSchema = Joi.object({
       validatePopsOrHazardousComponents(value, helpers, 'pops')
     )
     .messages({
-      'BusinessRuleViolation.componentsNotAllowed': '{{#message}}',
-      'BusinessRuleViolation.componentsNotAllowedWhenFalse': '{{#message}}'
+      'BusinessRuleViolation.componentsNotAllowed': JOI_MESSAGE_TEMPLATE,
+      'BusinessRuleViolation.componentsNotAllowedWhenFalse':
+        JOI_MESSAGE_TEMPLATE
     })
 })
   .empty(null)
@@ -153,8 +158,8 @@ const popsSchema = Joi.object({
     validatePopOrHazardousPresence(value, helpers, 'pops')
   )
   .messages({
-    'BusinessRuleViolation.sourceOfComponentsRequired': '{{#message}}',
-    'BusinessRuleViolation.componentsRequired': '{{#message}}'
+    'BusinessRuleViolation.sourceOfComponentsRequired': JOI_MESSAGE_TEMPLATE,
+    'BusinessRuleViolation.componentsRequired': JOI_MESSAGE_TEMPLATE
   })
 
 const deduplicateHazCodes = (value) => {
@@ -182,8 +187,9 @@ const hazardousSchema = Joi.object({
       validatePopsOrHazardousComponents(value, helpers, 'hazardous')
     )
     .messages({
-      'BusinessRuleViolation.componentsNotAllowed': '{{#message}}',
-      'BusinessRuleViolation.componentsNotAllowedWhenFalse': '{{#message}}'
+      'BusinessRuleViolation.componentsNotAllowed': JOI_MESSAGE_TEMPLATE,
+      'BusinessRuleViolation.componentsNotAllowedWhenFalse':
+        JOI_MESSAGE_TEMPLATE
     })
 })
   .empty(null)
@@ -200,7 +206,7 @@ const hazardousSchema = Joi.object({
         // Joi doesn't run custom functions on undefined fields so this can't be attached
         // to the hazCodes field and needs to set {{#label}} dynamically
         message: HAZARDOUS_ERRORS.HAZ_CODES_REQUIRED.replace(
-          '{{#label}}',
+          JOI_LABEL_TEMPLATE,
           `"wasteItems[${wasteItemIndex}].hazardous.hazCodes"`
         )
       })
@@ -212,9 +218,9 @@ const hazardousSchema = Joi.object({
     validatePopOrHazardousPresence(value, helpers, 'hazardous')
   )
   .messages({
-    'BusinessRuleViolation.hazCodesRequired': '{{#message}}',
-    'BusinessRuleViolation.sourceOfComponentsRequired': '{{#message}}',
-    'BusinessRuleViolation.componentsRequired': '{{#message}}'
+    'BusinessRuleViolation.hazCodesRequired': JOI_MESSAGE_TEMPLATE,
+    'BusinessRuleViolation.sourceOfComponentsRequired': JOI_MESSAGE_TEMPLATE,
+    'BusinessRuleViolation.componentsRequired': JOI_MESSAGE_TEMPLATE
   })
 
 function validateEwcCode(value, helpers) {
