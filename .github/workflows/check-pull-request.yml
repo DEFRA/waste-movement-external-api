@@ -25,6 +25,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: |
+          npm audit --audit-level=high
           npm ci
           npm run format:check
           npm run lint
