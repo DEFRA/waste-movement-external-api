@@ -82,6 +82,26 @@ describe('Receipt Schema Validation - POPs', () => {
     )
   })
 
+  it('should return InvalidValue.popCode error type for invalid POP code', () => {
+    const payload = createTestPayload({
+      wasteItemOverrides: {
+        containsPops: true,
+        pops: {
+          sourceOfComponents: 'PROVIDED_WITH_WASTE',
+          components: [
+            {
+              code: 'INVALID',
+              concentration: 100
+            }
+          ]
+        }
+      }
+    })
+    const result = receiveMovementRequestSchema.validate(payload)
+    expect(result.error).toBeDefined()
+    expect(result.error.details[0].type).toBe('InvalidValue.popCode')
+  })
+
   it.each(validPopNames.map((pop) => pop.code))(
     'should accept valid POP code: "%s"',
     (popCode) => {

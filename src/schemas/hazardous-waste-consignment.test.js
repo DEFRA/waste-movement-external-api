@@ -192,4 +192,14 @@ describe('Hazardous Waste Consignment Note Code rules', () => {
     )
     // The error handler will extract 'InvalidValue' category from this type
   })
+
+  it('should return InvalidFormat.consignmentCode error type for invalid consignment code format', () => {
+    const payload = buildBasePayload()
+    payload.wasteItems[0].ewcCodes = ['030104'] // hazardous
+    payload.hazardousWasteConsignmentCode = 'INVALID_FORMAT'
+
+    const { error } = receiveMovementRequestSchema.validate(payload)
+    expect(error).toBeDefined()
+    expect(error.details[0].type).toBe('InvalidFormat.consignmentCode')
+  })
 })
