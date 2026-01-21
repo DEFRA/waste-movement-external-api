@@ -98,5 +98,15 @@ describe('Receipt Schema Validation - Containers', () => {
         '"wasteItems[0].typeOfContainers" must be a valid container type'
       )
     })
+
+    it('should return InvalidValue.containerType error type for invalid container type', () => {
+      const payload = createTestPayload({
+        wasteItemOverrides: { typeOfContainers: 'INVALID' }
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
+
+      expect(result.error).toBeDefined()
+      expect(result.error.details[0].type).toBe('InvalidValue.containerType')
+    })
   })
 })

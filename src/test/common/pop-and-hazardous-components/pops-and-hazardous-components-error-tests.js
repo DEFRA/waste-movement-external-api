@@ -518,4 +518,86 @@ export function popsAndHazardousComponentsErrorTests(
       }
     )
   })
+
+  describe(`${popsOrHazardous} Components Error Types`, () => {
+    it(`should return BusinessRuleViolation.componentsNotAllowed error type when components provided with sourceOfComponents NOT_PROVIDED`, () => {
+      const payload = createTestPayloadWithHazCodes({
+        wasteItemOverrides: {
+          [containsPopsOrHazardousField]: true,
+          [popsOrHazardousObjectProperty]: {
+            sourceOfComponents: 'NOT_PROVIDED',
+            components: [
+              {
+                [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
+                concentration: 100
+              }
+            ],
+            ...overrides
+          }
+        }
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
+      expect(result.error).toBeDefined()
+      expect(result.error.details[0].type).toBe(
+        'BusinessRuleViolation.componentsNotAllowed'
+      )
+    })
+
+    it(`should return BusinessRuleViolation.componentsNotAllowedWhenFalse error type when components provided with ${containsPopsOrHazardousField} false`, () => {
+      const payload = createTestPayloadWithHazCodes({
+        wasteItemOverrides: {
+          [containsPopsOrHazardousField]: false,
+          [popsOrHazardousObjectProperty]: {
+            sourceOfComponents: 'PROVIDED_WITH_WASTE',
+            components: [
+              {
+                [componentNameField]: isHazardous ? 'Aldrin' : 'ALD',
+                concentration: 100
+              }
+            ]
+          }
+        }
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
+      expect(result.error).toBeDefined()
+      expect(result.error.details[0].type).toBe(
+        'BusinessRuleViolation.componentsNotAllowedWhenFalse'
+      )
+    })
+
+    it(`should return BusinessRuleViolation.sourceOfComponentsRequired error type when sourceOfComponents missing with ${containsPopsOrHazardousField} true`, () => {
+      const payload = createTestPayloadWithHazCodes({
+        wasteItemOverrides: {
+          [containsPopsOrHazardousField]: true,
+          [popsOrHazardousObjectProperty]: {}
+        }
+      })
+      const result = receiveMovementRequestSchema.validate(payload)
+      expect(result.error).toBeDefined()
+      expect(result.error.details[0].type).toBe(
+        'BusinessRuleViolation.sourceOfComponentsRequired'
+      )
+    })
+
+    it.each(['GUIDANCE', 'OWN_TESTING'])(
+      `should return BusinessRuleViolation.componentsRequired error type when components missing with sourceOfComponents %s`,
+      (source) => {
+        const payload = createTestPayloadWithHazCodes({
+          wasteItemOverrides: {
+            [containsPopsOrHazardousField]: true,
+            [popsOrHazardousObjectProperty]: {
+              sourceOfComponents: source,
+              components: undefined,
+              ...overrides
+            }
+          }
+        })
+        const result = receiveMovementRequestSchema.validate(payload)
+        expect(result.error).toBeDefined()
+        expect(result.error.details[0].type).toBe(
+          'BusinessRuleViolation.componentsRequired'
+        )
+      }
+    )
+  })
 }

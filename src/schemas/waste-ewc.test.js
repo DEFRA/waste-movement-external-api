@@ -120,4 +120,31 @@ describe('Receipt Schema Validation - EWC', () => {
       )
     })
   })
+
+  describe('EWC Code Error Types', () => {
+    const validateEwcCode = (ewcCodeArray) => {
+      const payload = createTestPayload({
+        wasteItemOverrides: {
+          ewcCodes: ewcCodeArray,
+          containsPops: false,
+          pops: {}
+        }
+      })
+      return receiveMovementRequestSchema.validate(payload)
+    }
+
+    it('should return InvalidFormat.ewcCode error type for invalid format', () => {
+      const result = validateEwcCode(['ABCDEF'])
+
+      expect(result.error).toBeDefined()
+      expect(result.error.details[0].type).toBe('InvalidFormat.ewcCode')
+    })
+
+    it('should return InvalidValue.ewcCode error type for code not in official list', () => {
+      const result = validateEwcCode(['999999'])
+
+      expect(result.error).toBeDefined()
+      expect(result.error.details[0].type).toBe('InvalidValue.ewcCode')
+    })
+  })
 })

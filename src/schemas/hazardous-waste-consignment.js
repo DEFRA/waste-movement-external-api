@@ -29,7 +29,7 @@ export const hazardousWasteConsignmentCodeSchema = Joi.custom(
     // If hazardous EWC codes are present and code is explicitly null, require it
     // If code is undefined, let reasonForNoConsignmentCode validation handle the requirement
     if (hasHazardous && value === null && !payload.reasonForNoConsignmentCode) {
-      return helpers.error('hazardousWasteConsignmentCode.required')
+      return helpers.error('BusinessRuleViolation.hazardousConsignmentRequired')
     }
 
     // Validate format if value is provided
@@ -39,12 +39,13 @@ export const hazardousWasteConsignmentCodeSchema = Joi.custom(
         SEPA_PATTERN.test(value) ||
         NIEA_PATTERN.test(value)
       if (!valid) {
-        return helpers.error('string.consignmentFormat')
+        return helpers.error('InvalidFormat.consignmentCode')
       }
     }
     return value
   }
 ).messages({
-  'string.consignmentFormat': CONSIGNMENT_ERRORS.CODE_FORMAT,
-  'hazardousWasteConsignmentCode.required': CONSIGNMENT_ERRORS.CODE_REQUIRED
+  'InvalidFormat.consignmentCode': CONSIGNMENT_ERRORS.CODE_FORMAT,
+  'BusinessRuleViolation.hazardousConsignmentRequired':
+    CONSIGNMENT_ERRORS.CODE_REQUIRED
 })

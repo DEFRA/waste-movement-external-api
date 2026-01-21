@@ -15,6 +15,10 @@ import { validSourceOfComponents } from '../common/constants/source-of-component
 
 const MAX_EWC_CODES_COUNT = 5
 
+// Joi message template placeholders
+const JOI_MESSAGE_TEMPLATE = '{{#message}}'
+const JOI_LABEL_TEMPLATE = '{{#label}}'
+
 const disposalOrRecoveryCodeSchema = Joi.object({
   code: Joi.string()
     .valid(...DISPOSAL_OR_RECOVERY_CODES)
@@ -42,13 +46,15 @@ const validatePopOrHazardousPresence = (value, helpers, popsOrHazardous) => {
       ? POPS_ERRORS.REQUIRED_WHEN_CONTAINS_POPS_TRUE
       : HAZARDOUS_ERRORS.REQUIRED_WHEN_CONTAINS_HAZARDOUS_TRUE
     ).replace(
-      '{{#label}}',
+      JOI_LABEL_TEMPLATE,
       `"wasteItems[${currentIndex}].${popsOrHazardous}.${field}"`
     )
 
   if (wasteItem[containsPopsOrHazardousField] === true) {
     if (!sourceOfComponents) {
-      return helpers.message(validationMessage('sourceOfComponents'))
+      return helpers.error('BusinessRuleViolation.sourceOfComponentsRequired', {
+        message: validationMessage('sourceOfComponents')
+      })
     }
 
     // GUIDANCE and OWN_TESTING require components because the user actively determined them
@@ -57,7 +63,9 @@ const validatePopOrHazardousPresence = (value, helpers, popsOrHazardous) => {
       ['GUIDANCE', 'OWN_TESTING'].includes(sourceOfComponents) &&
       [undefined, null].includes(components)
     ) {
-      return helpers.message(validationMessage('components'))
+      return helpers.error('BusinessRuleViolation.componentsRequired', {
+        message: validationMessage('components')
+      })
     }
 
     // PROVIDED_WITH_WASTE: components are recommended but not required
@@ -72,25 +80,36 @@ const validatePopsOrHazardousComponents = (value, helpers, popsOrHazardous) => {
   const { sourceOfComponents, components } = wasteItem[popsOrHazardous]
   const { containsPopsOrHazardousField } =
     formatPopsOrHazardousFields(popsOrHazardous)
+  const currentIndex = helpers.state.path[1]
+  const labelPath = `"wasteItems[${currentIndex}].${popsOrHazardous}.components"`
 
   if (
     wasteItem[containsPopsOrHazardousField] === true &&
     sourceOfComponents === 'NOT_PROVIDED' &&
     hasArrayItems(components)
   ) {
-    return helpers.message(
-      POPS_OR_HAZARDOUS_ERRORS.COMPONENTS_NOT_ALLOWED_NOT_PROVIDED
-    )
+    return helpers.error('BusinessRuleViolation.componentsNotAllowed', {
+      message:
+        POPS_OR_HAZARDOUS_ERRORS.COMPONENTS_NOT_ALLOWED_NOT_PROVIDED.replace(
+          JOI_LABEL_TEMPLATE,
+          labelPath
+        )
+    })
   }
 
   if (
     wasteItem[containsPopsOrHazardousField] === false &&
     hasArrayItems(components)
   ) {
-    return helpers.message(
+    const errorMessage =
       popsOrHazardous === 'pops'
         ? POPS_ERRORS.COMPONENTS_NOT_ALLOWED_FALSE
         : HAZARDOUS_ERRORS.COMPONENTS_NOT_ALLOWED_FALSE
+    return helpers.error(
+      'BusinessRuleViolation.componentsNotAllowedWhenFalse',
+      {
+        message: errorMessage.replace(JOI_LABEL_TEMPLATE, labelPath)
+      }
     )
   }
 
@@ -109,13 +128,13 @@ const popComponentSchema = Joi.object({
     .empty(null)
     .custom((value, helpers) => {
       if (!isValidPopCode(value)) {
-        return helpers.error('any.invalid')
+        return helpers.error('InvalidValue.popCode')
       }
       return value
     })
     .required()
     .messages({
-      'any.invalid': POPS_ERRORS.POP_CODE_INVALID
+      'InvalidValue.popCode': POPS_ERRORS.POP_CODE_INVALID
     }),
   concentration: concentrationSchema()
 })
@@ -128,11 +147,20 @@ const popsSchema = Joi.object({
     .custom((value, helpers) =>
       validatePopsOrHazardousComponents(value, helpers, 'pops')
     )
+    .messages({
+      'BusinessRuleViolation.componentsNotAllowed': JOI_MESSAGE_TEMPLATE,
+      'BusinessRuleViolation.componentsNotAllowedWhenFalse':
+        JOI_MESSAGE_TEMPLATE
+    })
 })
   .empty(null)
   .custom((value, helpers) =>
     validatePopOrHazardousPresence(value, helpers, 'pops')
   )
+  .messages({
+    'BusinessRuleViolation.sourceOfComponentsRequired': JOI_MESSAGE_TEMPLATE,
+    'BusinessRuleViolation.componentsRequired': JOI_MESSAGE_TEMPLATE
+  })
 
 const deduplicateHazCodes = (value) => {
   // Automatically deduplicate HP codes if duplicates exist
@@ -158,6 +186,11 @@ const hazardousSchema = Joi.object({
     .custom((value, helpers) =>
       validatePopsOrHazardousComponents(value, helpers, 'hazardous')
     )
+    .messages({
+      'BusinessRuleViolation.componentsNotAllowed': JOI_MESSAGE_TEMPLATE,
+      'BusinessRuleViolation.componentsNotAllowedWhenFalse':
+        JOI_MESSAGE_TEMPLATE
+    })
 })
   .empty(null)
   .custom((value, helpers) => {
@@ -169,14 +202,14 @@ const hazardousSchema = Joi.object({
       wasteItem.hazardous.sourceOfComponents &&
       !hasArrayItems(wasteItem.hazardous.hazCodes)
     ) {
-      return helpers.message(
+      return helpers.error('BusinessRuleViolation.hazCodesRequired', {
         // Joi doesn't run custom functions on undefined fields so this can't be attached
         // to the hazCodes field and needs to set {{#label}} dynamically
-        HAZARDOUS_ERRORS.HAZ_CODES_REQUIRED.replace(
-          '{{#label}}',
+        message: HAZARDOUS_ERRORS.HAZ_CODES_REQUIRED.replace(
+          JOI_LABEL_TEMPLATE,
           `"wasteItems[${wasteItemIndex}].hazardous.hazCodes"`
         )
-      )
+      })
     }
 
     return value
@@ -184,16 +217,21 @@ const hazardousSchema = Joi.object({
   .custom((value, helpers) =>
     validatePopOrHazardousPresence(value, helpers, 'hazardous')
   )
+  .messages({
+    'BusinessRuleViolation.hazCodesRequired': JOI_MESSAGE_TEMPLATE,
+    'BusinessRuleViolation.sourceOfComponentsRequired': JOI_MESSAGE_TEMPLATE,
+    'BusinessRuleViolation.componentsRequired': JOI_MESSAGE_TEMPLATE
+  })
 
 function validateEwcCode(value, helpers) {
   // Check if it's a 6-digit numeric code
   if (!/^\d{6}$/.test(value)) {
-    return helpers.error('string.ewcCodeFormat', { value })
+    return helpers.error('InvalidFormat.ewcCode', { value })
   }
 
   // Check if it's in the list of valid EWC codes
   if (!isValidEwcCode(value)) {
-    return helpers.error('string.ewcCodeInvalid', { value })
+    return helpers.error('InvalidValue.ewcCode', { value })
   }
 
   return value
@@ -202,7 +240,7 @@ function validateEwcCode(value, helpers) {
 function validateContainerType(value, helpers) {
   // Check if it's in the list of valid container types
   if (!isValidContainerType(value)) {
-    return helpers.error('string.containerTypeInvalid', { value })
+    return helpers.error('InvalidValue.containerType', { value })
   }
 
   return value
@@ -212,8 +250,8 @@ export const wasteItemsSchema = Joi.object({
   ewcCodes: Joi.array()
     .items(
       Joi.string().custom(validateEwcCode, 'EWC code validation').messages({
-        'string.ewcCodeFormat': WASTE_ERRORS.EWC_CODE_FORMAT,
-        'string.ewcCodeInvalid': WASTE_ERRORS.EWC_CODE_INVALID
+        'InvalidFormat.ewcCode': WASTE_ERRORS.EWC_CODE_FORMAT,
+        'InvalidValue.ewcCode': WASTE_ERRORS.EWC_CODE_INVALID
       })
     )
     .required()
@@ -230,7 +268,7 @@ export const wasteItemsSchema = Joi.object({
     .required()
     .custom(validateContainerType, 'Container type validation')
     .messages({
-      'string.containerTypeInvalid': WASTE_ERRORS.CONTAINER_TYPE_INVALID
+      'InvalidValue.containerType': WASTE_ERRORS.CONTAINER_TYPE_INVALID
     }),
   weight: weightSchema,
   containsPops: Joi.boolean().strict().required(),

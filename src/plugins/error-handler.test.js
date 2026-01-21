@@ -58,12 +58,6 @@ describe('Error Handler', () => {
     )
     expect(requiredFieldError).toBeDefined()
     expect(requiredFieldError.errorType).toBe('NotProvided')
-
-    // Log the full response for debugging
-    console.log(
-      '[DEBUG_LOG] Validation error response:',
-      JSON.stringify(responseBody, null, 2)
-    )
   })
 
   test('should set correct key for custom schema-level validation errors', async () => {
@@ -95,12 +89,6 @@ describe('Error Handler', () => {
     expect(response.statusCode).toBe(400)
     const responseBody = JSON.parse(response.payload)
 
-    // Debug: log all errors to see what we got
-    console.log(
-      '[DEBUG] All validation errors:',
-      JSON.stringify(responseBody.validation.errors, null, 2)
-    )
-
     // Find the reasonForNoConsignmentCode error
     const reasonError = responseBody.validation.errors.find(
       (err) => err.message && err.message.includes('reasonForNoConsignmentCode')
@@ -109,7 +97,7 @@ describe('Error Handler', () => {
     // Verify the key is set correctly (not empty string)
     expect(reasonError).toBeDefined()
     expect(reasonError.key).toBe('reasonForNoConsignmentCode')
-    expect(reasonError.errorType).toBe('UnexpectedError')
+    expect(reasonError.errorType).toBe('BusinessRuleViolation')
   })
 
   test('should not create misleading keys from built-in Joi error types', async () => {
@@ -311,5 +299,290 @@ describe('Error Handler', () => {
       expect(call[2].errorReason).not.toMatch(/\[\d+]/)
       expect(call[2].errorReason).toMatch(/\[\*]/)
     }
+  })
+
+  describe('Granular Error Categories', () => {
+    test('should return InvalidType for wrong data type (string where number expected)', async () => {
+      const basePayload = createMovementRequest()
+      const payload = {
+        ...basePayload,
+        wasteItems: [
+          {
+            ...basePayload.wasteItems[0],
+            numberOfContainers: '100' // String instead of number, with .strict() this should fail
+          }
+        ]
+      }
+
+      const response = await server.inject({
+        method: 'POST',
+        url: '/movements/receive',
+        payload
+      })
+
+      expect(response.statusCode).toBe(400)
+      const responseBody = JSON.parse(response.payload)
+
+      const typeError = responseBody.validation.errors.find(
+        (err) => err.key === 'wasteItems.0.numberOfContainers'
+      )
+      expect(typeError).toBeDefined()
+      expect(typeError.errorType).toBe('InvalidType')
+    })
+
+    test('should return InvalidFormat for invalid UUID', async () => {
+      const response = await server.inject({
+        method: 'POST',
+        url: '/movements/receive',
+        payload: {
+          apiCode: 'not-a-valid-uuid',
+          dateTimeReceived: new Date().toISOString(),
+          receiver: {
+            siteName: 'Test Site',
+            authorisationNumber: 'HP3456XX'
+          },
+          receipt: {
+            address: {
+              fullAddress: '123 Test St',
+              postcode: 'SW1A 1AA'
+            }
+          }
+        }
+      })
+
+      expect(response.statusCode).toBe(400)
+      const responseBody = JSON.parse(response.payload)
+
+      const formatError = responseBody.validation.errors.find(
+        (err) => err.key === 'apiCode'
+      )
+      expect(formatError).toBeDefined()
+      expect(formatError.errorType).toBe('InvalidFormat')
+    })
+
+    test('should return InvalidValue for invalid enum value', async () => {
+      const basePayload = createMovementRequest()
+      const payload = {
+        ...basePayload,
+        wasteItems: [
+          {
+            ...basePayload.wasteItems[0],
+            physicalForm: 'InvalidPhysicalForm' // Not in the valid enum list
+          }
+        ]
+      }
+
+      const response = await server.inject({
+        method: 'POST',
+        url: '/movements/receive',
+        payload
+      })
+
+      expect(response.statusCode).toBe(400)
+      const responseBody = JSON.parse(response.payload)
+
+      const valueError = responseBody.validation.errors.find(
+        (err) => err.key === 'wasteItems.0.physicalForm'
+      )
+      expect(valueError).toBeDefined()
+      expect(valueError.errorType).toBe('InvalidValue')
+    })
+
+    test('should return OutOfRange for negative number where min(0) required', async () => {
+      const basePayload = createMovementRequest()
+      const payload = {
+        ...basePayload,
+        wasteItems: [
+          {
+            ...basePayload.wasteItems[0],
+            numberOfContainers: -5 // Negative number where min(0) is required
+          }
+        ]
+      }
+
+      const response = await server.inject({
+        method: 'POST',
+        url: '/movements/receive',
+        payload
+      })
+
+      expect(response.statusCode).toBe(400)
+      const responseBody = JSON.parse(response.payload)
+
+      const rangeError = responseBody.validation.errors.find(
+        (err) => err.key === 'wasteItems.0.numberOfContainers'
+      )
+      expect(rangeError).toBeDefined()
+      expect(rangeError.errorType).toBe('OutOfRange')
+    })
+
+    test('should return BusinessRuleViolation for hazardous waste without consignment code or reason', async () => {
+      const basePayload = createMovementRequest()
+      const payload = {
+        ...basePayload,
+        wasteItems: [
+          {
+            ...basePayload.wasteItems[0],
+            ewcCodes: ['200121'] // Hazardous EWC code
+          }
+        ]
+      }
+
+      // Remove consignment code and reason to trigger business rule violation
+      delete payload.hazardousWasteConsignmentCode
+      delete payload.reasonForNoConsignmentCode
+
+      const response = await server.inject({
+        method: 'POST',
+        url: '/movements/receive',
+        payload
+      })
+
+      expect(response.statusCode).toBe(400)
+      const responseBody = JSON.parse(response.payload)
+
+      // Should have a business rule violation error for the missing reason
+      const businessRuleError = responseBody.validation.errors.find(
+        (err) => err.errorType === 'BusinessRuleViolation'
+      )
+      expect(businessRuleError).toBeDefined()
+    })
+
+    test('should return InvalidFormat for invalid EWC code format', async () => {
+      const basePayload = createMovementRequest()
+      const payload = {
+        ...basePayload,
+        wasteItems: [
+          {
+            ...basePayload.wasteItems[0],
+            ewcCodes: ['INVALID'] // Not a 6-digit code
+          }
+        ]
+      }
+
+      const response = await server.inject({
+        method: 'POST',
+        url: '/movements/receive',
+        payload
+      })
+
+      expect(response.statusCode).toBe(400)
+      const responseBody = JSON.parse(response.payload)
+
+      const formatError = responseBody.validation.errors.find(
+        (err) =>
+          err.key === 'wasteItems.0.ewcCodes.0' &&
+          err.errorType === 'InvalidFormat'
+      )
+      expect(formatError).toBeDefined()
+    })
+
+    test('should return InvalidValue for invalid EWC code value (not in list)', async () => {
+      const basePayload = createMovementRequest()
+      const payload = {
+        ...basePayload,
+        wasteItems: [
+          {
+            ...basePayload.wasteItems[0],
+            ewcCodes: ['999999'] // 6-digit format but not a valid code
+          }
+        ]
+      }
+
+      const response = await server.inject({
+        method: 'POST',
+        url: '/movements/receive',
+        payload
+      })
+
+      expect(response.statusCode).toBe(400)
+      const responseBody = JSON.parse(response.payload)
+
+      const valueError = responseBody.validation.errors.find(
+        (err) =>
+          err.key === 'wasteItems.0.ewcCodes.0' &&
+          err.errorType === 'InvalidValue'
+      )
+      expect(valueError).toBeDefined()
+    })
+
+    test('should return InvalidFormat for invalid consignment code format', async () => {
+      const basePayload = createMovementRequest()
+      const payload = {
+        ...basePayload,
+        hazardousWasteConsignmentCode: 'INVALID_FORMAT',
+        wasteItems: [
+          {
+            ...basePayload.wasteItems[0],
+            ewcCodes: ['200121'] // Hazardous EWC code
+          }
+        ]
+      }
+
+      const response = await server.inject({
+        method: 'POST',
+        url: '/movements/receive',
+        payload
+      })
+
+      expect(response.statusCode).toBe(400)
+      const responseBody = JSON.parse(response.payload)
+
+      const formatError = responseBody.validation.errors.find(
+        (err) =>
+          err.key === 'hazardousWasteConsignmentCode' &&
+          err.errorType === 'InvalidFormat'
+      )
+      expect(formatError).toBeDefined()
+    })
+
+    test('should return InvalidFormat for invalid authorisation number', async () => {
+      const basePayload = createMovementRequest()
+      const payload = {
+        ...basePayload,
+        receiver: {
+          ...basePayload.receiver,
+          authorisationNumber: 'INVALID_AUTH_NUMBER'
+        }
+      }
+
+      const response = await server.inject({
+        method: 'POST',
+        url: '/movements/receive',
+        payload
+      })
+
+      expect(response.statusCode).toBe(400)
+      const responseBody = JSON.parse(response.payload)
+
+      const formatError = responseBody.validation.errors.find(
+        (err) =>
+          err.key === 'receiver.authorisationNumber' &&
+          err.errorType === 'InvalidFormat'
+      )
+      expect(formatError).toBeDefined()
+    })
+
+    test('should return NotAllowed for unknown field in payload', async () => {
+      const basePayload = createMovementRequest()
+      const payload = {
+        ...basePayload,
+        unknownField: 'some value'
+      }
+
+      const response = await server.inject({
+        method: 'POST',
+        url: '/movements/receive',
+        payload
+      })
+
+      expect(response.statusCode).toBe(400)
+      const responseBody = JSON.parse(response.payload)
+
+      const notAllowedError = responseBody.validation.errors.find(
+        (err) => err.key === 'unknownField' && err.errorType === 'NotAllowed'
+      )
+      expect(notAllowedError).toBeDefined()
+    })
   })
 })

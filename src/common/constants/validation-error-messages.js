@@ -54,7 +54,7 @@ export const HAZARDOUS_ERRORS = {
     '{{#label}} is required when containsHazardous is true',
   COMPONENTS_NOT_ALLOWED_FALSE:
     '{{#label}} must not be provided when containsHazardous is false',
-  HAZ_CODES_REQUIRED: '{{#label}} is required when containsHazardous is trues'
+  HAZ_CODES_REQUIRED: '{{#label}} is required when containsHazardous is true'
 }
 
 // Hazardous waste consignment messages
