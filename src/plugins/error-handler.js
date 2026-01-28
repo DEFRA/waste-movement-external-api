@@ -177,11 +177,47 @@ export const errorHandler = {
               await metricsCounter('validation.error.reason', 1, {
                 errorReason
               })
+
+              // Error category metrics (NotProvided, InvalidType, etc.)
+              await metricsCounter('validation.error.category', 1, {
+                endpointType,
+                errorCategory: error.errorType
+              })
+              await metricsCounter('validation.error.category', 1, {
+                errorCategory: error.errorType
+              })
             }
+
+            // HTTP status code metric for validation errors
+            await metricsCounter('errors.by_status_code', 1, {
+              endpointType,
+              statusCode: '400'
+            })
+            await metricsCounter('errors.by_status_code', 1, {
+              statusCode: '400'
+            })
           }
 
           // Return the custom formatted error
           return h.response(customError).code(400)
+        }
+
+        // Log HTTP status code metrics for non-400 Boom errors on receipt movement endpoints
+        if (
+          response.isBoom &&
+          response.output.statusCode !== 400 &&
+          isReceiptMovementEndpoint(request)
+        ) {
+          const endpointType = request.method.toLowerCase()
+          const statusCode = String(response.output.statusCode)
+
+          await metricsCounter('errors.by_status_code', 1, {
+            endpointType,
+            statusCode
+          })
+          await metricsCounter('errors.by_status_code', 1, {
+            statusCode
+          })
         }
 
         // If not a validation error, continue with the default response

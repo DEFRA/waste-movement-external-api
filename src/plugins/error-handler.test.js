@@ -1,9 +1,21 @@
 import { createServer } from '../server.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import * as metrics from '../common/helpers/metrics.js'
+import { httpClients } from '../common/helpers/http-client.js'
 
 jest.mock('../common/helpers/metrics.js', () => ({
   metricsCounter: jest.fn()
+}))
+
+jest.mock('../common/helpers/http-client.js', () => ({
+  httpClients: {
+    wasteMovement: {
+      put: jest.fn()
+    },
+    wasteTracking: {
+      get: jest.fn()
+    }
+  }
 }))
 
 describe('Error Handler', () => {
@@ -224,7 +236,9 @@ describe('Error Handler', () => {
     // - 2 calls for errors.count (with dimension + without)
     // - 2 calls for requests.with_errors (with dimension + without)
     // - 2 calls per validation error for error.reason (with dimension + without)
-    const expectedCalls = 4 + errorCount * 2
+    // - 2 calls per validation error for error.category (with dimension + without)
+    // - 2 calls for errors.by_status_code (with dimension + without)
+    const expectedCalls = 6 + errorCount * 4
     expect(metrics.metricsCounter).toHaveBeenCalledTimes(expectedCalls)
 
     // Helper function matching production normalization logic
@@ -583,6 +597,175 @@ describe('Error Handler', () => {
         (err) => err.key === 'unknownField' && err.errorType === 'NotAllowed'
       )
       expect(notAllowedError).toBeDefined()
+    })
+  })
+
+  describe('Error Category Metrics', () => {
+    test('should log error category metrics for each validation error', async () => {
+      const response = await server.inject({
+        method: 'POST',
+        url: '/movements/receive',
+        payload: {
+          yourUniqueReference: 'test-reference'
+        }
+      })
+
+      expect(response.statusCode).toBe(400)
+      const responseBody = JSON.parse(response.payload)
+
+      // Verify error category metrics were called for each error
+      for (const error of responseBody.validation.errors) {
+        expect(metrics.metricsCounter).toHaveBeenCalledWith(
+          'validation.error.category',
+          1,
+          { endpointType: 'post', errorCategory: error.errorType }
+        )
+        expect(metrics.metricsCounter).toHaveBeenCalledWith(
+          'validation.error.category',
+          1,
+          { errorCategory: error.errorType }
+        )
+      }
+    })
+
+    test('should log error category metrics with correct categories', async () => {
+      const basePayload = createMovementRequest()
+      const payload = {
+        ...basePayload,
+        unknownField: 'value', // NotAllowed
+        wasteItems: [
+          {
+            ...basePayload.wasteItems[0],
+            physicalForm: 'InvalidValue' // InvalidValue
+          }
+        ]
+      }
+
+      const response = await server.inject({
+        method: 'POST',
+        url: '/movements/receive',
+        payload
+      })
+
+      expect(response.statusCode).toBe(400)
+
+      // Check NotAllowed category metric was logged
+      expect(metrics.metricsCounter).toHaveBeenCalledWith(
+        'validation.error.category',
+        1,
+        { endpointType: 'post', errorCategory: 'NotAllowed' }
+      )
+
+      // Check InvalidValue category metric was logged
+      expect(metrics.metricsCounter).toHaveBeenCalledWith(
+        'validation.error.category',
+        1,
+        { endpointType: 'post', errorCategory: 'InvalidValue' }
+      )
+    })
+
+    test('should log error category metrics for PUT endpoint', async () => {
+      const response = await server.inject({
+        method: 'PUT',
+        url: '/movements/test-tracking-id/receive',
+        payload: {
+          yourUniqueReference: 'test-reference'
+        }
+      })
+
+      expect(response.statusCode).toBe(400)
+      const responseBody = JSON.parse(response.payload)
+
+      // Verify error category metrics were called with PUT endpoint type
+      for (const error of responseBody.validation.errors) {
+        expect(metrics.metricsCounter).toHaveBeenCalledWith(
+          'validation.error.category',
+          1,
+          { endpointType: 'put', errorCategory: error.errorType }
+        )
+        expect(metrics.metricsCounter).toHaveBeenCalledWith(
+          'validation.error.category',
+          1,
+          { errorCategory: error.errorType }
+        )
+      }
+    })
+  })
+
+  describe('HTTP Status Code Metrics', () => {
+    test('should log HTTP status code metric for 400 validation errors', async () => {
+      const response = await server.inject({
+        method: 'POST',
+        url: '/movements/receive',
+        payload: {
+          yourUniqueReference: 'test-reference'
+        }
+      })
+
+      expect(response.statusCode).toBe(400)
+
+      // Verify status code metrics were called
+      expect(metrics.metricsCounter).toHaveBeenCalledWith(
+        'errors.by_status_code',
+        1,
+        { endpointType: 'post', statusCode: '400' }
+      )
+      expect(metrics.metricsCounter).toHaveBeenCalledWith(
+        'errors.by_status_code',
+        1,
+        { statusCode: '400' }
+      )
+    })
+
+    test('should log HTTP status code metric for PUT endpoint', async () => {
+      const response = await server.inject({
+        method: 'PUT',
+        url: '/movements/test-tracking-id/receive',
+        payload: {
+          yourUniqueReference: 'test-reference'
+        }
+      })
+
+      expect(response.statusCode).toBe(400)
+
+      // Verify status code metrics were called with PUT endpoint type
+      expect(metrics.metricsCounter).toHaveBeenCalledWith(
+        'errors.by_status_code',
+        1,
+        { endpointType: 'put', statusCode: '400' }
+      )
+      expect(metrics.metricsCounter).toHaveBeenCalledWith(
+        'errors.by_status_code',
+        1,
+        { statusCode: '400' }
+      )
+    })
+
+    test('should log HTTP status code metric for non-400 errors (404)', async () => {
+      // Mock the httpClient to throw a NotFoundError
+      const notFoundError = new Error('Movement not found')
+      notFoundError.name = 'NotFoundError'
+      httpClients.wasteMovement.put.mockRejectedValueOnce(notFoundError)
+
+      const response = await server.inject({
+        method: 'PUT',
+        url: '/movements/test-tracking-id/receive',
+        payload: createMovementRequest()
+      })
+
+      expect(response.statusCode).toBe(404)
+
+      // Verify status code metrics were called with 404
+      expect(metrics.metricsCounter).toHaveBeenCalledWith(
+        'errors.by_status_code',
+        1,
+        { endpointType: 'put', statusCode: '404' }
+      )
+      expect(metrics.metricsCounter).toHaveBeenCalledWith(
+        'errors.by_status_code',
+        1,
+        { statusCode: '404' }
+      )
     })
   })
 })
