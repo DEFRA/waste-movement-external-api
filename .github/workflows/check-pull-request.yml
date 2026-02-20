@@ -57,7 +57,10 @@ jobs:
         env:
           ORG_API_CODES: ${{ secrets.ORG_API_CODES }}
           ACCESS_CRED_WASTE_MOVEMENT_EXTERNAL_API: ${{ secrets.ACCESS_CRED_WASTE_MOVEMENT_EXTERNAL_API }}
+          ACCESS_CRED_WASTE_MOVEMENT_BACKEND: ${{ secrets.ACCESS_CRED_WASTE_MOVEMENT_BACKEND }}
+          ACCESS_CRED_WASTE_ORGANISATION_BACKEND: ${{ secrets.ACCESS_CRED_WASTE_ORGANISATION_BACKEND }}
           SERVICE_AUTH_PASSWORD: ${{ secrets.SERVICE_AUTH_PASSWORD }}
+          SERVICE_AUTH_PASSWORD_WASTE_MOVEMENT_BACKEND: ${{ secrets.SERVICE_AUTH_PASSWORD_WASTE_MOVEMENT_BACKEND }}
         run: |
           docker compose up -d --wait
           docker compose ps
@@ -84,9 +87,14 @@ jobs:
         working-directory: integration-tests
         env:
           WASTE_MOVEMENT_EXTERNAL_API_BASE_URL: http://localhost:3001
+          WASTE_MOVEMENT_BACKEND_API_BASE_URL: http://localhost:3002
           AUTH_DISABLED: true
           API_LOGGING: true
           JIRA_BASE_URL: https://eaflood.atlassian.net/browse
+          PROFILE: integration
+          WASTE_MOVEMENT_EXTERNAL_API_TO_WASTE_MOVEMENT_BACKEND_PASSWORD: ${{ secrets.WASTE_MOVEMENT_EXTERNAL_API_TO_WASTE_MOVEMENT_BACKEND_PASSWORD }}
+          WASTE_ORGANISATION_BACKEND_TO_WASTE_MOVEMENT_BACKEND_PASSWORD: ${{ secrets.WASTE_ORGANISATION_BACKEND_TO_WASTE_MOVEMENT_BACKEND_PASSWORD }}
+
         run: |
           npm run test
 
@@ -123,5 +131,8 @@ jobs:
         env:
           ORG_API_CODES: ${{ secrets.ORG_API_CODES }}
           ACCESS_CRED_WASTE_MOVEMENT_EXTERNAL_API: ${{ secrets.ACCESS_CRED_WASTE_MOVEMENT_EXTERNAL_API }}
+          ACCESS_CRED_WASTE_MOVEMENT_BACKEND: ${{ secrets.ACCESS_CRED_WASTE_MOVEMENT_BACKEND }}
+          ACCESS_CRED_WASTE_ORGANISATION_BACKEND: ${{ secrets.ACCESS_CRED_WASTE_ORGANISATION_BACKEND }}
           SERVICE_AUTH_PASSWORD: ${{ secrets.SERVICE_AUTH_PASSWORD }}
+          SERVICE_AUTH_PASSWORD_WASTE_MOVEMENT_BACKEND: ${{ secrets.SERVICE_AUTH_PASSWORD_WASTE_MOVEMENT_BACKEND }}
         run: docker compose down
