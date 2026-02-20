@@ -158,7 +158,10 @@ function createServiceClient(baseUrl, httpClient) {
  */
 const httpClients = {
   wasteTracking: createServiceClient(config.get('services.wasteTracking')),
-  wasteMovement: createServiceClient(config.get('services.wasteMovement'))
+  wasteMovement: createServiceClient(config.get('services.wasteMovement')),
+  wasteOrganisation: createServiceClient(
+    config.get('services.wasteOrganisation')
+  )
 }
 
 export { httpClients, makeRequest, createServiceClient }

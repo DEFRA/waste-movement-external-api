@@ -15,6 +15,7 @@ services:
       MONGO_URI: mongodb://mongodb:27017/?replicaSet=rs0&directConnection=true
       WASTE_TRACKING_SERVICE_URL: http://waste-tracking-id-backend:3001
       WASTE_MOVEMENT_SERVICE_URL: http://waste-movement-backend:3001
+      WASTE_ORGANISATION_SERVICE_URL: http://waste-organisation-backend:3001
       SERVICE_AUTH_PASSWORD: ${SERVICE_AUTH_PASSWORD}
     networks:
       - cdp-tenant
@@ -60,6 +61,30 @@ services:
     networks:
       - cdp-tenant
 
+  waste-organisation-backend:
+    image: defradigital/waste-organisation-backend:${WASTE_ORGANISATION_BACKEND_VERSION:-latest}
+    ports:
+      - '3004:3001'
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      localstack:
+        condition: service_healthy
+    env_file:
+      - 'compose/aws.env'
+    environment:
+      PORT: 3001
+      NODE_ENV: development
+      ENVIRONMENT: local
+      MONGO_URI: mongodb://mongodb:27017/?replicaSet=rs0&directConnection=true
+      MONGO_READ_PREFERENCE: primary
+      WASTE_CLIENT_AUTH_WASTE_MOVEMENT_EXTERNAL_API: ${WASTE_CLIENT_AUTH_WASTE_MOVEMENT_EXTERNAL_API}
+      S3_ENDPOINT: http://localstack:4566
+      SQS_ENDPOINT: http://localstack:4566
+      AWS_S3_FORCE_PATH_STYLE: true
+    networks:
+      - cdp-tenant
+
   mongodb:
     image: mongo:6.0.13
     entrypoint: ['bash', '/compose/mongo_setup.sh']
@@ -77,6 +102,27 @@ services:
       timeout: 5s
       retries: 10
       start_period: 40s
+
+  localstack:
+    image: localstack/localstack:3.0.2
+    ports:
+      - '4566:4566' # LocalStack Gateway
+      - '4510-4559:4510-4559' # external services port range
+    environment:
+      DEBUG: ${DEBUG:-1}
+      LS_LOG: WARN # Localstack DEBUG Level
+      SERVICES: s3,sqs,sns,firehose
+      LOCALSTACK_HOST: 127.0.0.1
+    volumes:
+      - '${TMPDIR:-/tmp}/localstack:/var/lib/localstack:Z'
+      - ./compose/start-localstack.sh:/etc/localstack/init/ready.d/start-localstack.sh:Z
+    healthcheck:
+      test: ['CMD', 'stat', '/tmp/READY']
+      interval: 5s
+      start_period: 5s
+      retries: 3
+    networks:
+      - cdp-tenant
 
 volumes:
   mongodb-data:

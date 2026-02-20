@@ -159,6 +159,12 @@ const config = convict({
       format: String,
       default: 'https://waste-movement-backend.dev.cdp-int.defra.cloud',
       env: 'WASTE_MOVEMENT_SERVICE_URL'
+    },
+    wasteOrganisation: {
+      doc: 'Waste Organisation Service URL',
+      format: String,
+      default: 'https://waste-organisation-backend.dev.cdp-int.defra.cloud',
+      env: 'WASTE_ORGANISATION_SERVICE_URL'
     }
   },
   serviceAuth: {
@@ -180,7 +186,8 @@ const config = convict({
 const overrideConfig = {
   services: {
     wasteTracking: `https://waste-tracking-id-backend.${config.get('cdpEnvironment')}.cdp-int.defra.cloud`,
-    wasteMovement: `https://waste-movement-backend.${config.get('cdpEnvironment')}.cdp-int.defra.cloud`
+    wasteMovement: `https://waste-movement-backend.${config.get('cdpEnvironment')}.cdp-int.defra.cloud`,
+    wasteOrganisation: `https://waste-organisation-backend.${config.get('cdpEnvironment')}.cdp-int.defra.cloud`
   },
   jwt: {
     jwksUri: `https://cognito-idp.eu-west-2.amazonaws.com/${config.get('jwt.cognitoUserPoolId')}/.well-known/jwks.json`,
