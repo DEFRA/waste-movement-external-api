@@ -14,11 +14,9 @@ import {
 const logger = createLogger()
 
 export const handleCreateReceiptMovement = async (request, h) => {
-  let wasteTrackingId
-
   try {
-    wasteTrackingId = (await httpClients.wasteTracking.get('/next')).payload
-      .wasteTrackingId
+    const wasteTrackingId = (await httpClients.wasteTracking.get('/next'))
+      .payload.wasteTrackingId
 
     let response = await httpClients.wasteMovement.post(
       `/movements/${wasteTrackingId}/receive`,
