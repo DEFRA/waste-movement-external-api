@@ -14,6 +14,9 @@ jest.mock('../common/helpers/http-client.js', () => ({
     },
     wasteMovement: {
       post: jest.fn()
+    },
+    wasteOrganisation: {
+      get: jest.fn().mockResolvedValue({})
     }
   }
 }))
