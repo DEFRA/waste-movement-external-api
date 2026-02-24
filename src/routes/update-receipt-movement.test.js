@@ -9,6 +9,13 @@ jest.mock('../common/helpers/http-client.js', () => ({
   httpClients: {
     wasteMovement: {
       put: jest.fn()
+    },
+    wasteOrganisation: {
+      get: jest.fn().mockResolvedValue({
+        payload: {
+          defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+        }
+      })
     }
   }
 }))
@@ -88,7 +95,12 @@ describe('handleUpdateReceiptMovement', () => {
 
     expect(httpClients.wasteMovement.put).toHaveBeenCalledWith(
       `/movements/${mockRequest.params.wasteTrackingId}/receive`,
-      { movement: mockRequest.payload }
+      {
+        movement: mockRequest.payload,
+        submittingOrganisation: {
+          defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+        }
+      }
     )
     expect(mockH.response).toHaveBeenCalledWith(expectedResponseWithWarnings)
 
@@ -120,7 +132,7 @@ describe('handleUpdateReceiptMovement', () => {
     expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
   })
 
-  it('should successfully update a receipt movement without warnings', async () => {
+  it('should successfully update a receipt movement without warnings and with submittingOrganisation', async () => {
     // Create a complete payload with all required fields to avoid warnings
     const completePayload = {
       ...mockRequest.payload,
@@ -152,7 +164,75 @@ describe('handleUpdateReceiptMovement', () => {
 
     expect(httpClients.wasteMovement.put).toHaveBeenCalledWith(
       `/movements/${mockRequest.params.wasteTrackingId}/receive`,
-      { movement: completePayload }
+      {
+        movement: completePayload,
+        submittingOrganisation: {
+          defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+        }
+      }
+    )
+    expect(mockH.response).toHaveBeenCalledWith({})
+
+    expect(mockH.code).toHaveBeenCalledWith(200)
+
+    // Verify metrics are logged on success (no warnings case)
+    // Requests without validation errors (passed validation)
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_errors',
+      1,
+      { endpointType: 'put' }
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_errors',
+      1
+    )
+    // Receipt received metrics
+    expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('put')
+    expect(metrics.logWarningMetrics).toHaveBeenCalledWith([], 'put')
+    // Developer activity metrics
+    expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
+  })
+
+  it('should successfully update a receipt movement without warnings and without submittingOrganisation', async () => {
+    // Create a complete payload with all required fields to avoid warnings
+    const completePayload = {
+      ...mockRequest.payload,
+      wasteItems: mockRequest.payload.wasteItems.map((item) => ({
+        ...item,
+        disposalOrRecoveryCodes: [
+          {
+            code: 'R1',
+            weight: {
+              metric: 'Tonnes',
+              amount: 10,
+              isEstimate: false
+            }
+          }
+        ]
+      }))
+    }
+
+    const completeRequest = {
+      ...mockRequest,
+      payload: completePayload
+    }
+
+    httpClients.wasteMovement.put.mockResolvedValueOnce({
+      statusCode: 200
+    })
+
+    httpClients.wasteOrganisation.get.mockResolvedValueOnce({
+      payload: { statusCode: 404 }
+    })
+
+    await handleUpdateReceiptMovement(completeRequest, mockH)
+
+    expect(httpClients.wasteMovement.put).toHaveBeenCalledWith(
+      `/movements/${mockRequest.params.wasteTrackingId}/receive`,
+      {
+        movement: completePayload,
+        submittingOrganisation: undefined
+      }
     )
     expect(mockH.response).toHaveBeenCalledWith({})
 
