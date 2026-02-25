@@ -14,6 +14,13 @@ jest.mock('../common/helpers/http-client.js', () => ({
     },
     wasteTracking: {
       get: jest.fn()
+    },
+    wasteOrganisation: {
+      get: jest.fn().mockResolvedValue({
+        payload: {
+          defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+        }
+      })
     }
   }
 }))

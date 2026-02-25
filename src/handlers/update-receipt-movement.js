@@ -19,17 +19,26 @@ import { isSuccessStatusCode } from '../common/helpers/utils.js'
 export const handleUpdateReceiptMovement = async (request, h) => {
   try {
     const { wasteTrackingId } = request.params
-    const movement = request.payload
+    const requestData = { movement: request.payload }
+
+    const submittingOrganisation = await httpClients.wasteOrganisation
+      .get(`/organisation/${request.payload.apiCode}`)
+      .then(({ payload }) => payload)
+
+    if (submittingOrganisation?.defraCustomerOrganisationId) {
+      requestData.submittingOrganisation = submittingOrganisation
+    }
 
     const response = await httpClients.wasteMovement.put(
       `/movements/${wasteTrackingId}/receive`,
-      {
-        movement
-      }
+      requestData
     )
 
     // Generate validation warnings
-    const warnings = generateAllValidationWarnings(movement, wasteTrackingId)
+    const warnings = generateAllValidationWarnings(
+      requestData.movement,
+      wasteTrackingId
+    )
 
     const responseData = {}
 
@@ -61,6 +70,6 @@ export const handleUpdateReceiptMovement = async (request, h) => {
     if (error.name === 'NotFoundError') {
       throw Boom.notFound('Movement not found')
     }
-    throw Boom.badRequest(error.message)
+    throw Boom.internal(error.message)
   }
 }

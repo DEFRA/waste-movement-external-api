@@ -12,6 +12,13 @@ jest.mock('../common/helpers/http-client.js', () => ({
     },
     wasteMovement: {
       post: jest.fn()
+    },
+    wasteOrganisation: {
+      get: jest.fn().mockResolvedValue({
+        payload: {
+          defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+        }
+      })
     }
   }
 }))
@@ -91,7 +98,7 @@ describe('Create Receipt Movement Handler', () => {
     payload: validPayload
   }
 
-  it('should successfully create a waste movement', async () => {
+  it('should successfully create a waste movement with submittingOrganisation', async () => {
     // Mock successful waste movement creation
     httpClients.wasteMovement.post.mockResolvedValue({
       statusCode: 200
@@ -115,7 +122,61 @@ describe('Create Receipt Movement Handler', () => {
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
       `/movements/${mockWasteTrackingId}/receive`,
       {
-        movement: validPayload
+        movement: validPayload,
+        submittingOrganisation: {
+          defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+        }
+      }
+    )
+
+    // Verify metrics are logged on success (no warnings case)
+    // Requests without validation errors (passed validation)
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_errors',
+      1,
+      { endpointType: 'post' }
+    )
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_errors',
+      1
+    )
+    // Receipt received metrics
+    expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('post')
+    expect(metrics.logWarningMetrics).toHaveBeenCalledWith([], 'post')
+    // Developer activity metrics
+    expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
+  })
+
+  it('should successfully create a waste movement without submittingOrganisation', async () => {
+    // Mock successful waste movement creation
+    httpClients.wasteMovement.post.mockResolvedValue({
+      statusCode: 200
+    })
+
+    httpClients.wasteOrganisation.get.mockResolvedValue({
+      payload: { statusCode: 404 }
+    })
+
+    const h = {
+      response: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis()
+    }
+
+    await handleCreateReceiptMovement(request, h)
+
+    expect(h.response).toHaveBeenCalledWith({
+      wasteTrackingId: mockWasteTrackingId
+    })
+
+    // Verify waste tracking ID was requested
+    expect(httpClients.wasteTracking.get).toHaveBeenCalledWith('/next')
+
+    // Verify waste movement was created
+    expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
+      `/movements/${mockWasteTrackingId}/receive`,
+      {
+        movement: validPayload,
+        submittingOrganisation: undefined
       }
     )
 

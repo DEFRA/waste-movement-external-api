@@ -14,15 +14,23 @@ import {
 const logger = createLogger()
 
 export const handleCreateReceiptMovement = async (request, h) => {
-  let wasteTrackingId
-
   try {
-    wasteTrackingId = (await httpClients.wasteTracking.get('/next')).payload
-      .wasteTrackingId
+    const requestData = { movement: request.payload }
+
+    const wasteTrackingId = (await httpClients.wasteTracking.get('/next'))
+      .payload.wasteTrackingId
+
+    const submittingOrganisation = await httpClients.wasteOrganisation
+      .get(`/organisation/${request.payload.apiCode}`)
+      .then(({ payload }) => payload)
+
+    if (submittingOrganisation?.defraCustomerOrganisationId) {
+      requestData.submittingOrganisation = submittingOrganisation
+    }
 
     let response = await httpClients.wasteMovement.post(
       `/movements/${wasteTrackingId}/receive`,
-      { movement: request.payload }
+      requestData
     )
 
     // Generate validation warnings
