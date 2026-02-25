@@ -70,6 +70,6 @@ export const handleUpdateReceiptMovement = async (request, h) => {
     if (error.name === 'NotFoundError') {
       throw Boom.notFound('Movement not found')
     }
-    throw Boom.badRequest(error.message)
+    throw Boom.internal(error.message)
   }
 }
