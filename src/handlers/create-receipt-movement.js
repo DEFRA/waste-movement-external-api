@@ -10,23 +10,18 @@ import {
   logWarningMetrics,
   logDeveloperMetrics
 } from '../common/helpers/metrics.js'
+import { addSubmittingOrganisationToRequest } from '../common/helpers/submitting-organisation.js'
 
 const logger = createLogger()
 
 export const handleCreateReceiptMovement = async (request, h) => {
   try {
-    const requestData = { movement: request.payload }
+    let requestData = { movement: request.payload }
 
     const wasteTrackingId = (await httpClients.wasteTracking.get('/next'))
       .payload.wasteTrackingId
 
-    const submittingOrganisation = await httpClients.wasteOrganisation
-      .get(`/organisation/${request.payload.apiCode}`)
-      .then(({ payload }) => payload)
-
-    if (submittingOrganisation?.defraCustomerOrganisationId) {
-      requestData.submittingOrganisation = submittingOrganisation
-    }
+    requestData = await addSubmittingOrganisationToRequest(requestData)
 
     let response = await httpClients.wasteMovement.post(
       `/movements/${wasteTrackingId}/receive`,

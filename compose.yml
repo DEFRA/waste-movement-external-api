@@ -17,6 +17,7 @@ services:
       WASTE_MOVEMENT_SERVICE_URL: http://waste-movement-backend:3001
       WASTE_ORGANISATION_SERVICE_URL: http://waste-organisation-backend:3001
       SERVICE_AUTH_PASSWORD: ${SERVICE_AUTH_PASSWORD}
+      IS_WASTE_ORGANISATION_BACKEND_AVAILABLE: ${IS_WASTE_ORGANISATION_BACKEND_AVAILABLE:-false}
     networks:
       - cdp-tenant
     volumes:
