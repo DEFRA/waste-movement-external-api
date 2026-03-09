@@ -4,6 +4,7 @@ import { updateReceiptMovement } from './update-receipt-movement.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import Boom from '@hapi/boom'
 import * as metrics from '../common/helpers/metrics.js'
+import { config } from '../config.js'
 
 jest.mock('../common/helpers/http-client.js', () => ({
   httpClients: {
@@ -86,7 +87,9 @@ describe('handleUpdateReceiptMovement', () => {
     jest.clearAllMocks()
   })
 
-  it('should successfully update a receipt movement with warnings', async () => {
+  it('should successfully update a receipt movement with warnings and with submittingOrganisation', async () => {
+    config.set('isWasteOrganisationBackendAvailable', true)
+
     httpClients.wasteMovement.put.mockResolvedValueOnce({
       statusCode: 200
     })
@@ -133,6 +136,8 @@ describe('handleUpdateReceiptMovement', () => {
   })
 
   it('should successfully update a receipt movement without warnings and with submittingOrganisation', async () => {
+    config.set('isWasteOrganisationBackendAvailable', true)
+
     // Create a complete payload with all required fields to avoid warnings
     const completePayload = {
       ...mockRequest.payload,
@@ -194,6 +199,8 @@ describe('handleUpdateReceiptMovement', () => {
   })
 
   it('should successfully update a receipt movement without warnings and without submittingOrganisation', async () => {
+    config.set('isWasteOrganisationBackendAvailable', false)
+
     // Create a complete payload with all required fields to avoid warnings
     const completePayload = {
       ...mockRequest.payload,

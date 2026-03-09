@@ -3,6 +3,7 @@ import { httpClients } from '../common/helpers/http-client.js'
 import { handleCreateReceiptMovement } from './create-receipt-movement.js'
 import { v4 as uuidv4 } from 'uuid'
 import * as metrics from '../common/helpers/metrics.js'
+import { config } from '../config.js'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -99,6 +100,8 @@ describe('Create Receipt Movement Handler', () => {
   }
 
   it('should successfully create a waste movement with submittingOrganisation', async () => {
+    config.set('isWasteOrganisationBackendAvailable', true)
+
     // Mock successful waste movement creation
     httpClients.wasteMovement.post.mockResolvedValue({
       statusCode: 200
@@ -148,6 +151,8 @@ describe('Create Receipt Movement Handler', () => {
   })
 
   it('should successfully create a waste movement without submittingOrganisation', async () => {
+    config.set('isWasteOrganisationBackendAvailable', false)
+
     // Mock successful waste movement creation
     httpClients.wasteMovement.post.mockResolvedValue({
       statusCode: 200

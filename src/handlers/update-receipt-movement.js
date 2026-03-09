@@ -9,6 +9,7 @@ import {
   logDeveloperMetrics
 } from '../common/helpers/metrics.js'
 import { isSuccessStatusCode } from '../common/helpers/utils.js'
+import { addSubmittingOrganisationToRequest } from '../common/helpers/submitting-organisation.js'
 
 /**
  * Handler for updating a receipt movement
@@ -19,15 +20,9 @@ import { isSuccessStatusCode } from '../common/helpers/utils.js'
 export const handleUpdateReceiptMovement = async (request, h) => {
   try {
     const { wasteTrackingId } = request.params
-    const requestData = { movement: request.payload }
+    let requestData = { movement: request.payload }
 
-    const submittingOrganisation = await httpClients.wasteOrganisation
-      .get(`/organisation/${request.payload.apiCode}`)
-      .then(({ payload }) => payload)
-
-    if (submittingOrganisation?.defraCustomerOrganisationId) {
-      requestData.submittingOrganisation = submittingOrganisation
-    }
+    requestData = await addSubmittingOrganisationToRequest(requestData)
 
     const response = await httpClients.wasteMovement.put(
       `/movements/${wasteTrackingId}/receive`,
