@@ -56,6 +56,8 @@ describe('submitting-organisation', () => {
     })
 
     it('should not add submittingOrganisation to the request when isWasteOrganisationBackendAvailable is false (default value)', async () => {
+      config.set('isWasteOrganisationBackendAvailable', undefined)
+
       const result = await addSubmittingOrganisationToRequest(requestData)
 
       expect(result).toEqual(requestData)
