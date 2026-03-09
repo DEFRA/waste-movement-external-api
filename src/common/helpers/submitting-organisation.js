@@ -1,8 +1,5 @@
 import { config } from '../../config.js'
 import { httpClients } from './http-client.js'
-import { createLogger } from './logging/logger.js'
-
-const logger = createLogger()
 
 /**
  * If IS_WASTE_ORGANISATION_BACKEND_AVAILABLE = true then gets the Organisation
@@ -33,10 +30,6 @@ export async function addSubmittingOrganisationToRequest(requestData) {
     if (submittingOrganisation?.defraCustomerOrganisationId) {
       requestData.submittingOrganisation = submittingOrganisation
     }
-  } else {
-    logger.info(
-      'Unable to get submittingOrganisation as IS_WASTE_ORGANISATION_BACKEND_AVAILABLE env var = false'
-    )
   }
 
   return requestData
