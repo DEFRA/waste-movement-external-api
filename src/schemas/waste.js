@@ -36,7 +36,8 @@ export const formatPopsOrHazardousFields = (popsOrHazardous) => ({
 const validatePopOrHazardousPresence = (value, helpers, popsOrHazardous) => {
   const wasteItem = helpers.state.ancestors[0]
   const { sourceOfComponents, components } = wasteItem[popsOrHazardous]
-  const currentIndex = helpers.state.path[1]
+  const pathIndex = Number.isInteger(helpers.state.path[0]) ? 2 : 1
+  const currentIndex = helpers.state.path[pathIndex]
   const { containsPopsOrHazardousField } =
     formatPopsOrHazardousFields(popsOrHazardous)
   // Joi doesn't run custom functions on undefined fields so this can't be attached
@@ -50,11 +51,20 @@ const validatePopOrHazardousPresence = (value, helpers, popsOrHazardous) => {
       `"wasteItems[${currentIndex}].${popsOrHazardous}.${field}"`
     )
 
+  // Build a state override that appends the specific field to the error path
+  // so the error key points to the actual field (e.g. "wasteItems.0.pops.sourceOfComponents")
+  // rather than the parent object (e.g. "wasteItems.0.pops")
+  const errorState = (field) => ({
+    path: [...helpers.state.path, field]
+  })
+
   if (wasteItem[containsPopsOrHazardousField] === true) {
     if (!sourceOfComponents) {
-      return helpers.error('BusinessRuleViolation.sourceOfComponentsRequired', {
-        message: validationMessage('sourceOfComponents')
-      })
+      return helpers.error(
+        'BusinessRuleViolation.sourceOfComponentsRequired',
+        { message: validationMessage('sourceOfComponents') },
+        errorState('sourceOfComponents')
+      )
     }
 
     // GUIDANCE and OWN_TESTING require components because the user actively determined them
@@ -63,9 +73,11 @@ const validatePopOrHazardousPresence = (value, helpers, popsOrHazardous) => {
       ['GUIDANCE', 'OWN_TESTING'].includes(sourceOfComponents) &&
       [undefined, null].includes(components)
     ) {
-      return helpers.error('BusinessRuleViolation.componentsRequired', {
-        message: validationMessage('components')
-      })
+      return helpers.error(
+        'BusinessRuleViolation.componentsRequired',
+        { message: validationMessage('components') },
+        errorState('components')
+      )
     }
 
     // PROVIDED_WITH_WASTE: components are recommended but not required
@@ -80,7 +92,8 @@ const validatePopsOrHazardousComponents = (value, helpers, popsOrHazardous) => {
   const { sourceOfComponents, components } = wasteItem[popsOrHazardous]
   const { containsPopsOrHazardousField } =
     formatPopsOrHazardousFields(popsOrHazardous)
-  const currentIndex = helpers.state.path[1]
+  const pathIndex = Number.isInteger(helpers.state.path[0]) ? 2 : 1
+  const currentIndex = helpers.state.path[pathIndex]
   const labelPath = `"wasteItems[${currentIndex}].${popsOrHazardous}.components"`
 
   if (
@@ -194,7 +207,8 @@ const hazardousSchema = Joi.object({
 })
   .empty(null)
   .custom((value, helpers) => {
-    const wasteItemIndex = helpers.state.path[1]
+    const pathIndex = Number.isInteger(helpers.state.path[0]) ? 2 : 1
+    const wasteItemIndex = helpers.state.path[pathIndex]
     const wasteItem = helpers.state.ancestors[1][wasteItemIndex]
 
     if (
