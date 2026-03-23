@@ -36,8 +36,7 @@ export const formatPopsOrHazardousFields = (popsOrHazardous) => ({
 const validatePopOrHazardousPresence = (value, helpers, popsOrHazardous) => {
   const wasteItem = helpers.state.ancestors[0]
   const { sourceOfComponents, components } = wasteItem[popsOrHazardous]
-  const pathIndex = Number.isInteger(helpers.state.path[0]) ? 2 : 1
-  const currentIndex = helpers.state.path[pathIndex]
+  const currentIndex = helpers.state.path[1]
   const { containsPopsOrHazardousField } =
     formatPopsOrHazardousFields(popsOrHazardous)
   // Joi doesn't run custom functions on undefined fields so this can't be attached
@@ -92,8 +91,7 @@ const validatePopsOrHazardousComponents = (value, helpers, popsOrHazardous) => {
   const { sourceOfComponents, components } = wasteItem[popsOrHazardous]
   const { containsPopsOrHazardousField } =
     formatPopsOrHazardousFields(popsOrHazardous)
-  const pathIndex = Number.isInteger(helpers.state.path[0]) ? 2 : 1
-  const currentIndex = helpers.state.path[pathIndex]
+  const currentIndex = helpers.state.path[1]
   const labelPath = `"wasteItems[${currentIndex}].${popsOrHazardous}.components"`
 
   if (
@@ -207,8 +205,7 @@ const hazardousSchema = Joi.object({
 })
   .empty(null)
   .custom((value, helpers) => {
-    const pathIndex = Number.isInteger(helpers.state.path[0]) ? 2 : 1
-    const wasteItemIndex = helpers.state.path[pathIndex]
+    const wasteItemIndex = helpers.state.path[1]
     const wasteItem = helpers.state.ancestors[1][wasteItemIndex]
 
     if (
