@@ -50,11 +50,20 @@ const validatePopOrHazardousPresence = (value, helpers, popsOrHazardous) => {
       `"wasteItems[${currentIndex}].${popsOrHazardous}.${field}"`
     )
 
+  // Build a state override that appends the specific field to the error path
+  // so the error key points to the actual field (e.g. "wasteItems.0.pops.sourceOfComponents")
+  // rather than the parent object (e.g. "wasteItems.0.pops")
+  const errorState = (field) => ({
+    path: [...helpers.state.path, field]
+  })
+
   if (wasteItem[containsPopsOrHazardousField] === true) {
     if (!sourceOfComponents) {
-      return helpers.error('BusinessRuleViolation.sourceOfComponentsRequired', {
-        message: validationMessage('sourceOfComponents')
-      })
+      return helpers.error(
+        'BusinessRuleViolation.sourceOfComponentsRequired',
+        { message: validationMessage('sourceOfComponents') },
+        errorState('sourceOfComponents')
+      )
     }
 
     // GUIDANCE and OWN_TESTING require components because the user actively determined them
@@ -63,9 +72,11 @@ const validatePopOrHazardousPresence = (value, helpers, popsOrHazardous) => {
       ['GUIDANCE', 'OWN_TESTING'].includes(sourceOfComponents) &&
       [undefined, null].includes(components)
     ) {
-      return helpers.error('BusinessRuleViolation.componentsRequired', {
-        message: validationMessage('components')
-      })
+      return helpers.error(
+        'BusinessRuleViolation.componentsRequired',
+        { message: validationMessage('components') },
+        errorState('components')
+      )
     }
 
     // PROVIDED_WITH_WASTE: components are recommended but not required
