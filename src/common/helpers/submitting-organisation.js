@@ -1,34 +1,25 @@
-import { config } from '../../config.js'
 import { httpClients } from './http-client.js'
 
 /**
- * If IS_WASTE_ORGANISATION_BACKEND_AVAILABLE = true then gets the Organisation
- * Id from the Waste Organisation Backend for the given API Code
- *
- * If the Organisation Id is returned then it is added to the request as
- * submittingOrganisation
- *
- * If the Organisation Id doesn't exist then submittingOrganisation is not
- * added to the request
- *
- * If IS_WASTE_ORGANISATION_BACKEND_AVAILABLE = false then the Waste Organisation
- * Backend service is not called and the original request data is returned
+ * Looks up the Organisation Id from the Waste Organisation Backend for
+ * the given API Code, adds submittingOrganisation inside the movement
+ * object and strips apiCode before sending to the backend.
  *
  * @param {Object} requestData - The request data
- * @returns {Promise<Object>} The request data
+ * @returns {Promise<Object>} The request data with submittingOrganisation in movement and apiCode removed
  */
 export async function addSubmittingOrganisationToRequest(requestData) {
-  const isWasteOrganisationBackendAvailable = config.get(
-    'isWasteOrganisationBackendAvailable'
-  )
+  const { apiCode, ...movementWithoutApiCode } = requestData.movement
 
-  if (isWasteOrganisationBackendAvailable) {
-    const submittingOrganisation = await httpClients.wasteOrganisation
-      .get(`/organisation/${requestData.movement.apiCode}`)
-      .then(({ payload }) => payload)
+  const submittingOrganisation = await httpClients.wasteOrganisation
+    .get(`/organisation/${apiCode}`)
+    .then(({ payload }) => payload)
 
-    if (submittingOrganisation?.defraCustomerOrganisationId) {
-      requestData.submittingOrganisation = submittingOrganisation
+  requestData.movement = {
+    ...movementWithoutApiCode,
+    submittingOrganisation: {
+      defraCustomerOrganisationId:
+        submittingOrganisation.defraCustomerOrganisationId
     }
   }
 

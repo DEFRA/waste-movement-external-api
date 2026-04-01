@@ -3,7 +3,6 @@ import { httpClients } from '../common/helpers/http-client.js'
 import { handleCreateReceiptMovement } from './create-receipt-movement.js'
 import { v4 as uuidv4 } from 'uuid'
 import * as metrics from '../common/helpers/metrics.js'
-import { config } from '../config.js'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -44,6 +43,13 @@ describe('Create Receipt Movement Handler', () => {
     httpClients.wasteTracking.get.mockResolvedValue({
       payload: {
         wasteTrackingId: mockWasteTrackingId
+      }
+    })
+
+    // Mock organisation lookup
+    httpClients.wasteOrganisation.get.mockResolvedValue({
+      payload: {
+        defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
       }
     })
   })
@@ -100,8 +106,6 @@ describe('Create Receipt Movement Handler', () => {
   }
 
   it('should successfully create a waste movement with submittingOrganisation', async () => {
-    config.set('isWasteOrganisationBackendAvailable', true)
-
     // Mock successful waste movement creation
     httpClients.wasteMovement.post.mockResolvedValue({
       statusCode: 200
@@ -121,13 +125,16 @@ describe('Create Receipt Movement Handler', () => {
     // Verify waste tracking ID was requested
     expect(httpClients.wasteTracking.get).toHaveBeenCalledWith('/next')
 
-    // Verify waste movement was created
+    // Verify waste movement was created with submittingOrganisation inside movement and apiCode stripped
+    const { apiCode, ...payloadWithoutApiCode } = validPayload
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
       `/movements/${mockWasteTrackingId}/receive`,
       {
-        movement: validPayload,
-        submittingOrganisation: {
-          defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+        movement: {
+          ...payloadWithoutApiCode,
+          submittingOrganisation: {
+            defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+          }
         }
       }
     )
@@ -150,17 +157,10 @@ describe('Create Receipt Movement Handler', () => {
     expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
   })
 
-  it('should successfully create a waste movement without submittingOrganisation', async () => {
-    config.set('isWasteOrganisationBackendAvailable', false)
-
-    // Mock successful waste movement creation
-    httpClients.wasteMovement.post.mockResolvedValue({
-      statusCode: 200
-    })
-
-    httpClients.wasteOrganisation.get.mockResolvedValue({
-      payload: { statusCode: 404 }
-    })
+  it('should return 500 when organisation lookup fails', async () => {
+    httpClients.wasteOrganisation.get.mockRejectedValue(
+      new Error('Organisation service unavailable')
+    )
 
     const h = {
       response: jest.fn().mockReturnThis(),
@@ -170,37 +170,10 @@ describe('Create Receipt Movement Handler', () => {
     await handleCreateReceiptMovement(request, h)
 
     expect(h.response).toHaveBeenCalledWith({
-      wasteTrackingId: mockWasteTrackingId
+      error: 'Internal Server Error',
+      message: 'Failed to create waste movement'
     })
-
-    // Verify waste tracking ID was requested
-    expect(httpClients.wasteTracking.get).toHaveBeenCalledWith('/next')
-
-    // Verify waste movement was created
-    expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
-      `/movements/${mockWasteTrackingId}/receive`,
-      {
-        movement: validPayload,
-        submittingOrganisation: undefined
-      }
-    )
-
-    // Verify metrics are logged on success (no warnings case)
-    // Requests without validation errors (passed validation)
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_errors',
-      1,
-      { endpointType: 'post' }
-    )
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_errors',
-      1
-    )
-    // Receipt received metrics
-    expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('post')
-    expect(metrics.logWarningMetrics).toHaveBeenCalledWith([], 'post')
-    // Developer activity metrics
-    expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
+    expect(h.code).toHaveBeenCalledWith(500)
   })
 
   it('should successfully create a waste movement with warnings and log metrics', async () => {

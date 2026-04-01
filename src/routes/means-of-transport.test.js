@@ -17,7 +17,11 @@ jest.mock('../common/helpers/http-client.js', () => ({
       post: jest.fn()
     },
     wasteOrganisation: {
-      get: jest.fn().mockResolvedValue({})
+      get: jest.fn().mockResolvedValue({
+        payload: {
+          defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+        }
+      })
     }
   }
 }))
@@ -151,9 +155,18 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
 
         expectSuccessfulResponse(h)
 
+        const { apiCode, ...payloadWithoutApiCode } = payload
         expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
           `/movements/${mockWasteTrackingId}/receive`,
-          { movement: payload }
+          {
+            movement: {
+              ...payloadWithoutApiCode,
+              submittingOrganisation: {
+                defraCustomerOrganisationId:
+                  'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+              }
+            }
+          }
         )
       })
 
