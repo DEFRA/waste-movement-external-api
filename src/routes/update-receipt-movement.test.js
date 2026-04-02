@@ -4,6 +4,7 @@ import { updateReceiptMovement } from './update-receipt-movement.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import Boom from '@hapi/boom'
 import * as metrics from '../common/helpers/metrics.js'
+import { config } from '../config.js'
 
 jest.mock('../common/helpers/http-client.js', () => ({
   httpClients: {
@@ -87,6 +88,8 @@ describe('handleUpdateReceiptMovement', () => {
   })
 
   it('should successfully update a receipt movement with warnings and with submittingOrganisation', async () => {
+    config.set('isWasteOrganisationBackendAvailable', true)
+
     httpClients.wasteMovement.put.mockResolvedValueOnce({
       statusCode: 200
     })
@@ -136,6 +139,8 @@ describe('handleUpdateReceiptMovement', () => {
   })
 
   it('should successfully update a receipt movement without warnings and with submittingOrganisation', async () => {
+    config.set('isWasteOrganisationBackendAvailable', true)
+
     // Create a complete payload with all required fields to avoid warnings
     const completePayload = {
       ...mockRequest.payload,
@@ -199,14 +204,45 @@ describe('handleUpdateReceiptMovement', () => {
     expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
   })
 
-  it('should throw internal error when organisation lookup fails', async () => {
-    httpClients.wasteOrganisation.get.mockRejectedValueOnce(
-      new Error('Organisation service unavailable')
-    )
+  it('should successfully update a receipt movement without submittingOrganisation when org backend is unavailable', async () => {
+    config.set('isWasteOrganisationBackendAvailable', false)
 
-    await expect(
-      handleUpdateReceiptMovement(mockRequest, mockH)
-    ).rejects.toThrow(Boom.internal('Organisation service unavailable'))
+    const completePayload = {
+      ...mockRequest.payload,
+      wasteItems: mockRequest.payload.wasteItems.map((item) => ({
+        ...item,
+        disposalOrRecoveryCodes: [
+          {
+            code: 'R1',
+            weight: {
+              metric: 'Tonnes',
+              amount: 10,
+              isEstimate: false
+            }
+          }
+        ]
+      }))
+    }
+
+    const completeRequest = {
+      ...mockRequest,
+      payload: completePayload
+    }
+
+    httpClients.wasteMovement.put.mockResolvedValueOnce({
+      statusCode: 200
+    })
+
+    await handleUpdateReceiptMovement(completeRequest, mockH)
+
+    expect(httpClients.wasteMovement.put).toHaveBeenCalledWith(
+      `/movements/${mockRequest.params.wasteTrackingId}/receive`,
+      {
+        movement: completePayload
+      }
+    )
+    expect(mockH.response).toHaveBeenCalledWith({})
+    expect(mockH.code).toHaveBeenCalledWith(200)
   })
 
   it('should handle not found error', async () => {

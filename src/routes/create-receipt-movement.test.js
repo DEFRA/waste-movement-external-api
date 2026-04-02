@@ -4,6 +4,7 @@ import { createReceiptMovement } from './create-receipt-movement.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
 import * as metrics from '../common/helpers/metrics.js'
+import { config } from '../config.js'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -59,6 +60,8 @@ describe('Create Receipt Movement Route', () => {
   }
 
   it('should successfully create a waste movement', async () => {
+    config.set('isWasteOrganisationBackendAvailable', true)
+
     // Mock successful waste movement creation
     httpClients.wasteMovement.post.mockResolvedValue({
       statusCode: HTTP_STATUS.CREATED

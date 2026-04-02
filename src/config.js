@@ -180,6 +180,12 @@ const config = convict({
       default: '',
       env: 'SERVICE_AUTH_PASSWORD'
     }
+  },
+  isWasteOrganisationBackendAvailable: {
+    doc: 'Determines if the Waste Organisation Backend is available',
+    format: Boolean,
+    default: false,
+    env: 'IS_WASTE_ORGANISATION_BACKEND_AVAILABLE'
   }
 })
 

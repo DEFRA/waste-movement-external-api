@@ -1,5 +1,6 @@
 import { jest } from '@jest/globals'
 import { httpClients } from '../common/helpers/http-client.js'
+import { config } from '../config.js'
 import { createReceiptMovement } from './create-receipt-movement.js'
 import { receiveMovementRequestSchema } from '../schemas/receipt.js'
 import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
@@ -195,6 +196,8 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
   describe('Handler Tests for Disposal/Recovery Codes', () => {
     describe('Successful submissions with valid codes', () => {
       it('should successfully create movement with R1 code', async () => {
+        config.set('isWasteOrganisationBackendAvailable', true)
+
         const validPayload = createPayload({
           disposalOrRecoveryCodes: [
             {

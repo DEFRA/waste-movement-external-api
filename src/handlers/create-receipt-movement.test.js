@@ -3,6 +3,7 @@ import { httpClients } from '../common/helpers/http-client.js'
 import { handleCreateReceiptMovement } from './create-receipt-movement.js'
 import { v4 as uuidv4 } from 'uuid'
 import * as metrics from '../common/helpers/metrics.js'
+import { config } from '../config.js'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -106,6 +107,8 @@ describe('Create Receipt Movement Handler', () => {
   }
 
   it('should successfully create a waste movement with submittingOrganisation', async () => {
+    config.set('isWasteOrganisationBackendAvailable', true)
+
     // Mock successful waste movement creation
     httpClients.wasteMovement.post.mockResolvedValue({
       statusCode: 200
@@ -157,10 +160,13 @@ describe('Create Receipt Movement Handler', () => {
     expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
   })
 
-  it('should return 500 when organisation lookup fails', async () => {
-    httpClients.wasteOrganisation.get.mockRejectedValue(
-      new Error('Organisation service unavailable')
-    )
+  it('should successfully create a waste movement without submittingOrganisation when org backend is unavailable', async () => {
+    config.set('isWasteOrganisationBackendAvailable', false)
+
+    // Mock successful waste movement creation
+    httpClients.wasteMovement.post.mockResolvedValue({
+      statusCode: 200
+    })
 
     const h = {
       response: jest.fn().mockReturnThis(),
@@ -170,10 +176,16 @@ describe('Create Receipt Movement Handler', () => {
     await handleCreateReceiptMovement(request, h)
 
     expect(h.response).toHaveBeenCalledWith({
-      error: 'Internal Server Error',
-      message: 'Failed to create waste movement'
+      wasteTrackingId: mockWasteTrackingId
     })
-    expect(h.code).toHaveBeenCalledWith(500)
+
+    // Verify waste movement was created with apiCode in movement (no submittingOrganisation)
+    expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
+      `/movements/${mockWasteTrackingId}/receive`,
+      {
+        movement: validPayload
+      }
+    )
   })
 
   it('should successfully create a waste movement with warnings and log metrics', async () => {
