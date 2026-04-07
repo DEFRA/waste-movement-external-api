@@ -99,8 +99,9 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
       invalidMeansOfTransport.forEach((meansOfTransport) => {
         it(`should reject invalid means of transport: ${meansOfTransport}`, () => {
           const invalidPayload = {
-            apiCode: uuidv4(),
-            dateTimeReceived: '2024-01-15T14:30:00Z',
+            ...createMovementRequest({
+              dateTimeReceived: new Date().toISOString()
+            }),
             carrier: {
               registrationNumber: 'CBDU123456',
               organisationName: 'Test Carrier',

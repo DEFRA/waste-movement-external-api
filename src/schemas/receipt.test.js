@@ -200,5 +200,37 @@ describe('receiveMovementRequestSchema - otherReferencesForMovement validation',
       expect(error).toBeDefined()
       expect(error.message).toContain('"receipt" is required')
     })
+
+    it('should reject when wasteItems is missing', () => {
+      const payload = {
+        ...basePayload,
+        wasteItems: undefined
+      }
+      const { error } = receiveMovementRequestSchema.validate(payload)
+      expect(error).toBeDefined()
+      expect(error.message).toContain('"wasteItems" is required')
+    })
+
+    it('should reject when wasteItems is null', () => {
+      const payload = {
+        ...basePayload,
+        wasteItems: null
+      }
+      const { error } = receiveMovementRequestSchema.validate(payload)
+      expect(error).toBeDefined()
+      expect(error.message).toContain('"wasteItems" must be an array')
+    })
+
+    it('should reject when wasteItems is an empty array', () => {
+      const payload = {
+        ...basePayload,
+        wasteItems: []
+      }
+      const { error } = receiveMovementRequestSchema.validate(payload)
+      expect(error).toBeDefined()
+      expect(error.message).toContain(
+        '"wasteItems" must contain at least 1 items'
+      )
+    })
   })
 })
