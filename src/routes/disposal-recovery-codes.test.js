@@ -1,5 +1,6 @@
 import { jest } from '@jest/globals'
 import { httpClients } from '../common/helpers/http-client.js'
+import { config } from '../config.js'
 import { createReceiptMovement } from './create-receipt-movement.js'
 import { receiveMovementRequestSchema } from '../schemas/receipt.js'
 import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
@@ -16,7 +17,11 @@ jest.mock('../common/helpers/http-client.js', () => ({
       post: jest.fn()
     },
     wasteOrganisation: {
-      get: jest.fn().mockResolvedValue({})
+      get: jest.fn().mockResolvedValue({
+        payload: {
+          defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+        }
+      })
     }
   }
 }))
@@ -191,6 +196,8 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
   describe('Handler Tests for Disposal/Recovery Codes', () => {
     describe('Successful submissions with valid codes', () => {
       it('should successfully create movement with R1 code', async () => {
+        config.set('isWasteOrganisationBackendAvailable', true)
+
         const validPayload = createPayload({
           disposalOrRecoveryCodes: [
             {
@@ -227,9 +234,18 @@ describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {
           wasteTrackingId: mockWasteTrackingId
         })
 
+        const { apiCode, ...payloadWithoutApiCode } = validPayload
         expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
           `/movements/${mockWasteTrackingId}/receive`,
-          { movement: validPayload }
+          {
+            movement: {
+              ...payloadWithoutApiCode,
+              submittingOrganisation: {
+                defraCustomerOrganisationId:
+                  'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+              }
+            }
+          }
         )
       })
 

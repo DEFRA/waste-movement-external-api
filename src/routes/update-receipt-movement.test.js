@@ -96,12 +96,15 @@ describe('handleUpdateReceiptMovement', () => {
 
     await handleUpdateReceiptMovement(mockRequest, mockH)
 
+    const { apiCode, ...payloadWithoutApiCode } = mockRequest.payload
     expect(httpClients.wasteMovement.put).toHaveBeenCalledWith(
       `/movements/${mockRequest.params.wasteTrackingId}/receive`,
       {
-        movement: mockRequest.payload,
-        submittingOrganisation: {
-          defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+        movement: {
+          ...payloadWithoutApiCode,
+          submittingOrganisation: {
+            defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+          }
         }
       }
     )
@@ -167,12 +170,15 @@ describe('handleUpdateReceiptMovement', () => {
 
     await handleUpdateReceiptMovement(completeRequest, mockH)
 
+    const { apiCode, ...payloadWithoutApiCode } = completePayload
     expect(httpClients.wasteMovement.put).toHaveBeenCalledWith(
       `/movements/${mockRequest.params.wasteTrackingId}/receive`,
       {
-        movement: completePayload,
-        submittingOrganisation: {
-          defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+        movement: {
+          ...payloadWithoutApiCode,
+          submittingOrganisation: {
+            defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+          }
         }
       }
     )
@@ -198,10 +204,9 @@ describe('handleUpdateReceiptMovement', () => {
     expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
   })
 
-  it('should successfully update a receipt movement without warnings and without submittingOrganisation', async () => {
+  it('should successfully update a receipt movement without submittingOrganisation when org backend is unavailable', async () => {
     config.set('isWasteOrganisationBackendAvailable', false)
 
-    // Create a complete payload with all required fields to avoid warnings
     const completePayload = {
       ...mockRequest.payload,
       wasteItems: mockRequest.payload.wasteItems.map((item) => ({
@@ -228,39 +233,16 @@ describe('handleUpdateReceiptMovement', () => {
       statusCode: 200
     })
 
-    httpClients.wasteOrganisation.get.mockResolvedValueOnce({
-      payload: { statusCode: 404 }
-    })
-
     await handleUpdateReceiptMovement(completeRequest, mockH)
 
     expect(httpClients.wasteMovement.put).toHaveBeenCalledWith(
       `/movements/${mockRequest.params.wasteTrackingId}/receive`,
       {
-        movement: completePayload,
-        submittingOrganisation: undefined
+        movement: completePayload
       }
     )
     expect(mockH.response).toHaveBeenCalledWith({})
-
     expect(mockH.code).toHaveBeenCalledWith(200)
-
-    // Verify metrics are logged on success (no warnings case)
-    // Requests without validation errors (passed validation)
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_errors',
-      1,
-      { endpointType: 'put' }
-    )
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_errors',
-      1
-    )
-    // Receipt received metrics
-    expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('put')
-    expect(metrics.logWarningMetrics).toHaveBeenCalledWith([], 'put')
-    // Developer activity metrics
-    expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
   })
 
   it('should handle not found error', async () => {

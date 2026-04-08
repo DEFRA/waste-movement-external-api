@@ -4,6 +4,7 @@ import { createReceiptMovement } from './create-receipt-movement.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
 import * as metrics from '../common/helpers/metrics.js'
+import { config } from '../config.js'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -15,7 +16,11 @@ jest.mock('../common/helpers/http-client.js', () => ({
       post: jest.fn()
     },
     wasteOrganisation: {
-      get: jest.fn().mockResolvedValue({})
+      get: jest.fn().mockResolvedValue({
+        payload: {
+          defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+        }
+      })
     }
   }
 }))
@@ -55,6 +60,8 @@ describe('Create Receipt Movement Route', () => {
   }
 
   it('should successfully create a waste movement', async () => {
+    config.set('isWasteOrganisationBackendAvailable', true)
+
     // Mock successful waste movement creation
     httpClients.wasteMovement.post.mockResolvedValue({
       statusCode: HTTP_STATUS.CREATED
@@ -87,11 +94,17 @@ describe('Create Receipt Movement Route', () => {
     // Verify waste tracking ID was requested
     expect(httpClients.wasteTracking.get).toHaveBeenCalledWith('/next')
 
-    // Verify waste movement was created
+    // Verify waste movement was created with submittingOrganisation inside movement and apiCode stripped
+    const { apiCode, ...payloadWithoutApiCode } = validPayload
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
       `/movements/${mockWasteTrackingId}/receive`,
       {
-        movement: validPayload
+        movement: {
+          ...payloadWithoutApiCode,
+          submittingOrganisation: {
+            defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+          }
+        }
       }
     )
   })

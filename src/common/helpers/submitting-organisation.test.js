@@ -23,44 +23,54 @@ jest.mock('./http-client.js', () => ({
 describe('submitting-organisation', () => {
   describe('#addSubmittingOrganisationToRequest', () => {
     const requestData = {
-      movement: { apiCode: '3ba4f421-e165-4c96-8280-4087939025ed' }
+      movement: {
+        apiCode: '3ba4f421-e165-4c96-8280-4087939025ed',
+        dateTimeReceived: '2021-01-01T00:00:00.000Z'
+      }
     }
 
-    it('should add submittingOrganisation to the request when isWasteOrganisationBackendAvailable is true and Organisation Id is found', async () => {
+    it('should add submittingOrganisation inside movement and strip apiCode when org backend is available and Organisation Id is found', async () => {
       config.set('isWasteOrganisationBackendAvailable', true)
 
-      const result = await addSubmittingOrganisationToRequest(requestData)
+      const result = await addSubmittingOrganisationToRequest({
+        ...requestData,
+        movement: { ...requestData.movement }
+      })
 
       expect(result).toEqual({
-        ...requestData,
-        submittingOrganisation: {
-          defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+        movement: {
+          dateTimeReceived: '2021-01-01T00:00:00.000Z',
+          submittingOrganisation: {
+            defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+          }
         }
       })
     })
 
-    it('should not add submittingOrganisation to the request when isWasteOrganisationBackendAvailable is true and Organisation Id is not found', async () => {
+    it('should not add submittingOrganisation when org backend is available but Organisation Id is not found', async () => {
       config.set('isWasteOrganisationBackendAvailable', true)
 
-      const result = await addSubmittingOrganisationToRequest(requestData)
+      const result = await addSubmittingOrganisationToRequest({
+        ...requestData,
+        movement: { ...requestData.movement }
+      })
 
-      expect(result).toEqual(requestData)
+      expect(result).toEqual({
+        movement: requestData.movement
+      })
     })
 
-    it('should not add submittingOrganisation to the request when isWasteOrganisationBackendAvailable is false (explicitly set)', async () => {
+    it('should not add submittingOrganisation when org backend is not available', async () => {
       config.set('isWasteOrganisationBackendAvailable', false)
 
-      const result = await addSubmittingOrganisationToRequest(requestData)
+      const result = await addSubmittingOrganisationToRequest({
+        ...requestData,
+        movement: { ...requestData.movement }
+      })
 
-      expect(result).toEqual(requestData)
-    })
-
-    it('should not add submittingOrganisation to the request when isWasteOrganisationBackendAvailable is false (default value)', async () => {
-      config.set('isWasteOrganisationBackendAvailable', undefined)
-
-      const result = await addSubmittingOrganisationToRequest(requestData)
-
-      expect(result).toEqual(requestData)
+      expect(result).toEqual({
+        movement: requestData.movement
+      })
     })
   })
 })

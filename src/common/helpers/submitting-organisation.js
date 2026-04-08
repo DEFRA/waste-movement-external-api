@@ -3,16 +3,11 @@ import { httpClients } from './http-client.js'
 
 /**
  * If IS_WASTE_ORGANISATION_BACKEND_AVAILABLE = true then gets the Organisation
- * Id from the Waste Organisation Backend for the given API Code
+ * Id from the Waste Organisation Backend for the given API Code and adds
+ * submittingOrganisation inside the movement object, stripping apiCode.
  *
- * If the Organisation Id is returned then it is added to the request as
- * submittingOrganisation
- *
- * If the Organisation Id doesn't exist then submittingOrganisation is not
- * added to the request
- *
- * If IS_WASTE_ORGANISATION_BACKEND_AVAILABLE = false then the Waste Organisation
- * Backend service is not called and the original request data is returned
+ * If IS_WASTE_ORGANISATION_BACKEND_AVAILABLE = false then the original
+ * request data is returned unchanged (apiCode stays in the movement).
  *
  * @param {Object} requestData - The request data
  * @returns {Promise<Object>} The request data
@@ -23,12 +18,20 @@ export async function addSubmittingOrganisationToRequest(requestData) {
   )
 
   if (isWasteOrganisationBackendAvailable) {
+    const { apiCode, ...movementWithoutApiCode } = requestData.movement
+
     const submittingOrganisation = await httpClients.wasteOrganisation
-      .get(`/organisation/${requestData.movement.apiCode}`)
+      .get(`/organisation/${apiCode}`)
       .then(({ payload }) => payload)
 
     if (submittingOrganisation?.defraCustomerOrganisationId) {
-      requestData.submittingOrganisation = submittingOrganisation
+      requestData.movement = {
+        ...movementWithoutApiCode,
+        submittingOrganisation: {
+          defraCustomerOrganisationId:
+            submittingOrganisation.defraCustomerOrganisationId
+        }
+      }
     }
   }
 

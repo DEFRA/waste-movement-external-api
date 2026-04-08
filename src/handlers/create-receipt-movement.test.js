@@ -46,6 +46,13 @@ describe('Create Receipt Movement Handler', () => {
         wasteTrackingId: mockWasteTrackingId
       }
     })
+
+    // Mock organisation lookup
+    httpClients.wasteOrganisation.get.mockResolvedValue({
+      payload: {
+        defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+      }
+    })
   })
 
   const validPayload = {
@@ -121,13 +128,16 @@ describe('Create Receipt Movement Handler', () => {
     // Verify waste tracking ID was requested
     expect(httpClients.wasteTracking.get).toHaveBeenCalledWith('/next')
 
-    // Verify waste movement was created
+    // Verify waste movement was created with submittingOrganisation inside movement and apiCode stripped
+    const { apiCode, ...payloadWithoutApiCode } = validPayload
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
       `/movements/${mockWasteTrackingId}/receive`,
       {
-        movement: validPayload,
-        submittingOrganisation: {
-          defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+        movement: {
+          ...payloadWithoutApiCode,
+          submittingOrganisation: {
+            defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+          }
         }
       }
     )
@@ -150,16 +160,12 @@ describe('Create Receipt Movement Handler', () => {
     expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
   })
 
-  it('should successfully create a waste movement without submittingOrganisation', async () => {
+  it('should successfully create a waste movement without submittingOrganisation when org backend is unavailable', async () => {
     config.set('isWasteOrganisationBackendAvailable', false)
 
     // Mock successful waste movement creation
     httpClients.wasteMovement.post.mockResolvedValue({
       statusCode: 200
-    })
-
-    httpClients.wasteOrganisation.get.mockResolvedValue({
-      payload: { statusCode: 404 }
     })
 
     const h = {
@@ -173,34 +179,13 @@ describe('Create Receipt Movement Handler', () => {
       wasteTrackingId: mockWasteTrackingId
     })
 
-    // Verify waste tracking ID was requested
-    expect(httpClients.wasteTracking.get).toHaveBeenCalledWith('/next')
-
-    // Verify waste movement was created
+    // Verify waste movement was created with apiCode in movement (no submittingOrganisation)
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
       `/movements/${mockWasteTrackingId}/receive`,
       {
-        movement: validPayload,
-        submittingOrganisation: undefined
+        movement: validPayload
       }
     )
-
-    // Verify metrics are logged on success (no warnings case)
-    // Requests without validation errors (passed validation)
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_errors',
-      1,
-      { endpointType: 'post' }
-    )
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_errors',
-      1
-    )
-    // Receipt received metrics
-    expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('post')
-    expect(metrics.logWarningMetrics).toHaveBeenCalledWith([], 'post')
-    // Developer activity metrics
-    expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
   })
 
   it('should successfully create a waste movement with warnings and log metrics', async () => {

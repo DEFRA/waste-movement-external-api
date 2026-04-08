@@ -1,5 +1,6 @@
 import { jest } from '@jest/globals'
 import { httpClients } from '../common/helpers/http-client.js'
+import { config } from '../config.js'
 import { createReceiptMovement } from './create-receipt-movement.js'
 import { receiveMovementRequestSchema } from '../schemas/receipt.js'
 import { MEANS_OF_TRANSPORT } from '../common/constants/means-of-transport.js'
@@ -17,7 +18,11 @@ jest.mock('../common/helpers/http-client.js', () => ({
       post: jest.fn()
     },
     wasteOrganisation: {
-      get: jest.fn().mockResolvedValue({})
+      get: jest.fn().mockResolvedValue({
+        payload: {
+          defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+        }
+      })
     }
   }
 }))
@@ -133,6 +138,8 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
   describe('Handler Tests for Means of Transport', () => {
     describe('Successful submissions with valid means of transport', () => {
       it('should successfully create movement with Road transport', async () => {
+        config.set('isWasteOrganisationBackendAvailable', true)
+
         const payload = {
           apiCode: uuidv4(),
           carrier: {
@@ -152,9 +159,18 @@ describe('Create Receipt Movement - Means of Transport Validation', () => {
 
         expectSuccessfulResponse(h)
 
+        const { apiCode, ...payloadWithoutApiCode } = payload
         expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
           `/movements/${mockWasteTrackingId}/receive`,
-          { movement: payload }
+          {
+            movement: {
+              ...payloadWithoutApiCode,
+              submittingOrganisation: {
+                defraCustomerOrganisationId:
+                  'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+              }
+            }
+          }
         )
       })
 
