@@ -60,7 +60,7 @@ export const HAZARDOUS_ERRORS = {
 // Hazardous waste consignment messages
 export const CONSIGNMENT_ERRORS = {
   CODE_FORMAT:
-    '{{#label}} must be in one of the valid formats: EA/NRW (e.g. CJTILE/A0001), SEPA (SA|SB|SC followed by 7 digits), or NIEA (DA|DB|DC followed by 7 digits)',
+    '{{#label}} must be in one of the valid formats: EA/NRW (2 or more alphanumeric characters followed by / and 5-6 alphanumeric characters, e.g. CJTILE/A0001), SEPA (SA|SB|SC followed by 7 digits), or NIEA (DA|DB|DC followed by 7 digits)',
   CODE_REQUIRED: '{{#label}} is required when hazardous EWC codes are present',
   REASON_REQUIRED:
     '"reasonForNoConsignmentCode" is required when wasteItems[*].ewcCodes contains a hazardous code and hazardousWasteConsignmentCode is not provided',

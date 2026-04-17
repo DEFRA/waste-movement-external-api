@@ -193,6 +193,15 @@ describe('Hazardous Waste Consignment Note Code rules', () => {
     // The error handler will extract 'InvalidValue' category from this type
   })
 
+  it('Accept EA/NRW consignment code with alphanumeric prefix (letters and numbers before slash)', () => {
+    const payload = buildBasePayload()
+    payload.wasteItems[0].ewcCodes = ['030104'] // hazardous
+    payload.hazardousWasteConsignmentCode = 'CJ123E/A0001'
+
+    const { error } = receiveMovementRequestSchema.validate(payload)
+    expect(error).toBeUndefined()
+  })
+
   it('should return InvalidFormat.consignmentCode error type for invalid consignment code format', () => {
     const payload = buildBasePayload()
     payload.wasteItems[0].ewcCodes = ['030104'] // hazardous
