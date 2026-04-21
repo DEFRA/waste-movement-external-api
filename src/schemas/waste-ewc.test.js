@@ -99,7 +99,7 @@ describe('Receipt Schema Validation - EWC', () => {
 
       expect(result.error).toBeDefined()
       expect(result.error.message).toContain(
-        'At least one EWC code is required'
+        '"wasteItems[0].ewcCodes" must contain at least 1 items'
       )
     })
 

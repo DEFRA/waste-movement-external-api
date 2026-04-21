@@ -269,7 +269,6 @@ export const wasteItemsSchema = Joi.object({
     .min(1)
     .max(MAX_EWC_CODES_COUNT)
     .messages({
-      'array.min': WASTE_ERRORS.EWC_CODES_MIN,
       'array.max': WASTE_ERRORS.EWC_CODES_MAX
     }),
   wasteDescription: Joi.string().required(),
