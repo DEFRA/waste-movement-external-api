@@ -32,6 +32,7 @@ export const WASTE_ERRORS = {
   EWC_CODE_FORMAT: '{{#label}} must be a valid 6-digit numeric code',
   EWC_CODE_INVALID:
     '{{#label}} must be a valid EWC code from the official list',
+  EWC_CODES_MIN: 'At least one EWC code is required',
   EWC_CODES_MAX: '{{#label}} must contain no more than 5 EWC codes',
   CONTAINER_TYPE_INVALID: '{{#label}} must be a valid container type'
 }
