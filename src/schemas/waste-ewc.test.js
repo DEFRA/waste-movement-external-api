@@ -94,6 +94,15 @@ describe('Receipt Schema Validation - EWC', () => {
       )
     })
 
+    it('should reject an empty EWC codes array', () => {
+      const result = validateEwcCode([])
+
+      expect(result.error).toBeDefined()
+      expect(result.error.message).toContain(
+        '"wasteItems[0].ewcCodes" must contain at least 1 items'
+      )
+    })
+
     it('should require the EWC code field', () => {
       // Test with missing EWC code - need to build manually as ewcCodes is required
       const payload = {
