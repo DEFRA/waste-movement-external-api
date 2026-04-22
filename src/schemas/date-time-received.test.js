@@ -1,4 +1,4 @@
-import { receiveMovementRequestSchema } from '../schemas/receipt.js'
+import { receiveMovementRequestSchema } from './receipt.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import { v4 as uuidv4 } from 'uuid'
 
