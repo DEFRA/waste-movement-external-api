@@ -1,6 +1,5 @@
 import { jest } from '@jest/globals'
 import { httpClients } from '../common/helpers/http-client.js'
-import { config } from '../config.js'
 import { createReceiptMovement } from './create-receipt-movement.js'
 import { v4 as uuidv4 } from 'uuid'
 import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
@@ -67,8 +66,6 @@ describe('Create Receipt Movement - Means of Transport Handler', () => {
   describe('Handler Tests for Means of Transport', () => {
     describe('Successful submissions with valid means of transport', () => {
       it('should successfully create movement with Road transport', async () => {
-        config.set('isWasteOrganisationBackendAvailable', true)
-
         const payload = {
           apiCode: uuidv4(),
           carrier: {
