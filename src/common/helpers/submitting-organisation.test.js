@@ -1,4 +1,3 @@
-import { config } from '../../config.js'
 import { addSubmittingOrganisationToRequest } from './submitting-organisation.js'
 
 jest.mock('./http-client.js', () => ({
@@ -30,8 +29,6 @@ describe('submitting-organisation', () => {
     }
 
     it('should add submittingOrganisation inside movement and strip apiCode when org backend is available and Organisation Id is found', async () => {
-      config.set('isWasteOrganisationBackendAvailable', true)
-
       const result = await addSubmittingOrganisationToRequest({
         ...requestData,
         movement: { ...requestData.movement }
@@ -48,21 +45,6 @@ describe('submitting-organisation', () => {
     })
 
     it('should not add submittingOrganisation when org backend is available but Organisation Id is not found', async () => {
-      config.set('isWasteOrganisationBackendAvailable', true)
-
-      const result = await addSubmittingOrganisationToRequest({
-        ...requestData,
-        movement: { ...requestData.movement }
-      })
-
-      expect(result).toEqual({
-        movement: requestData.movement
-      })
-    })
-
-    it('should not add submittingOrganisation when org backend is not available', async () => {
-      config.set('isWasteOrganisationBackendAvailable', false)
-
       const result = await addSubmittingOrganisationToRequest({
         ...requestData,
         movement: { ...requestData.movement }
