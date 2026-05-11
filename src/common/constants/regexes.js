@@ -35,6 +35,7 @@ const ENGLAND_SITE_AUTHORISATION_NUMBER_REGEXES = [
 const SCOTLAND_SITE_AUTHORISATION_NUMBER_REGEXES = [
   /^PPC\/[AWEN]\/\d{7}$/i, // PPC/A/9999999
   /^WML\/[LWEN]\/\d{7}$/i, // WML/L/9999999
+  /^WML\/[LWEN]\/\d{7}\/\d{2}$/i, // WML/L/9999999/99
   /^PPC\/A\/SEPA\d{4}-\d{4}$/i, // PPC/A/SEPA9999-9999
   /^WML\/L\/SEPA\d{4}-\d{4}$/i, // WML/L/SEPA9999-9999
   /^EAS\/P\/\d{6}$/i // EAS/P/999999
