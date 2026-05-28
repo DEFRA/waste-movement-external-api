@@ -1,5 +1,6 @@
 import { metricsCounter } from '../common/helpers/metrics.js'
 import { normalizeArrayIndices } from '../common/helpers/utils.js'
+import { isReceiptMovementEndpoint } from '../common/helpers/receipt-movement-endpoint.js'
 
 const JOI_TYPE_TO_CATEGORY = {
   // NotProvided
@@ -62,17 +63,6 @@ function getErrorCategory(joiErrorType) {
   }
 
   return 'UnexpectedError'
-}
-
-/**
- * Check if request is for receipt movement endpoints
- */
-const isReceiptMovementEndpoint = (request) => {
-  const path = request.route.path
-  return (
-    path === '/movements/receive' ||
-    path === '/movements/{wasteTrackingId}/receive'
-  )
 }
 
 export const errorHandler = {
@@ -147,6 +137,7 @@ export const errorHandler = {
           // Log validation error metrics for receipt movement endpoints
           if (isReceiptMovementEndpoint(request)) {
             const endpointType = request.method.toLowerCase()
+            const clientId = request.auth?.credentials?.clientId
 
             // Error count metrics
             await metricsCounter(
@@ -167,6 +158,26 @@ export const errorHandler = {
             })
             await metricsCounter('validation.requests.with_errors', 1)
 
+            if (clientId) {
+              await metricsCounter(
+                'validation.errors.count',
+                formattedErrors.length,
+                { endpointType, clientId }
+              )
+              await metricsCounter(
+                'validation.errors.count',
+                formattedErrors.length,
+                { clientId }
+              )
+              await metricsCounter('validation.requests.with_errors', 1, {
+                endpointType,
+                clientId
+              })
+              await metricsCounter('validation.requests.with_errors', 1, {
+                clientId
+              })
+            }
+
             // Per-error breakdown metrics
             for (const error of formattedErrors) {
               const errorReason = normalizeArrayIndices(error.message)
@@ -186,6 +197,27 @@ export const errorHandler = {
               await metricsCounter('validation.error.category', 1, {
                 errorCategory: error.errorType
               })
+
+              if (clientId) {
+                await metricsCounter('validation.error.reason', 1, {
+                  endpointType,
+                  errorReason,
+                  clientId
+                })
+                await metricsCounter('validation.error.reason', 1, {
+                  errorReason,
+                  clientId
+                })
+                await metricsCounter('validation.error.category', 1, {
+                  endpointType,
+                  errorCategory: error.errorType,
+                  clientId
+                })
+                await metricsCounter('validation.error.category', 1, {
+                  errorCategory: error.errorType,
+                  clientId
+                })
+              }
             }
 
             // HTTP status code metric for validation errors
@@ -196,6 +228,17 @@ export const errorHandler = {
             await metricsCounter('errors.by_status_code', 1, {
               statusCode: '400'
             })
+            if (clientId) {
+              await metricsCounter('errors.by_status_code', 1, {
+                endpointType,
+                statusCode: '400',
+                clientId
+              })
+              await metricsCounter('errors.by_status_code', 1, {
+                statusCode: '400',
+                clientId
+              })
+            }
           }
 
           // Return the custom formatted error
@@ -210,6 +253,7 @@ export const errorHandler = {
         ) {
           const endpointType = request.method.toLowerCase()
           const statusCode = String(response.output.statusCode)
+          const clientId = request.auth?.credentials?.clientId
 
           await metricsCounter('errors.by_status_code', 1, {
             endpointType,
@@ -218,6 +262,17 @@ export const errorHandler = {
           await metricsCounter('errors.by_status_code', 1, {
             statusCode
           })
+          if (clientId) {
+            await metricsCounter('errors.by_status_code', 1, {
+              endpointType,
+              statusCode,
+              clientId
+            })
+            await metricsCounter('errors.by_status_code', 1, {
+              statusCode,
+              clientId
+            })
+          }
         }
 
         // If not a validation error, continue with the default response

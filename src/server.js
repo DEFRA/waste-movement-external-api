@@ -13,6 +13,7 @@ import { setupProxy } from './common/helpers/proxy/setup-proxy.js'
 import { swagger } from './plugins/swagger.js'
 import { errorHandler } from './plugins/error-handler.js'
 import { jwtAuth } from './plugins/jwt-auth.js'
+import { requestMetrics } from './plugins/request-metrics.js'
 import { createLogger } from './common/helpers/logging/logger.js'
 
 async function createServer() {
@@ -94,7 +95,8 @@ async function createServer() {
     requestTracing,
     secureContext,
     pulse,
-    errorHandler
+    errorHandler,
+    requestMetrics
   ])
 
   return server

@@ -191,4 +191,64 @@ describe('#logWarningMetrics', () => {
       expect.objectContaining({ warningReason: expect.any(String) })
     )
   })
+
+  test('Should emit clientId-scoped variants when clientId provided', async () => {
+    const warnings = [
+      {
+        key: 'wasteItems[0].weight',
+        errorType: 'Warning',
+        message: '"wasteItems[0].weight.metric" is missing'
+      }
+    ]
+
+    await logWarningMetrics(warnings, 'post', 'test-client-id')
+
+    // Original dim-sets still emitted
+    expect(mockPutDimensions).toHaveBeenCalledWith({ endpointType: 'post' })
+    expect(mockPutDimensions).toHaveBeenCalledWith({
+      endpointType: 'post',
+      warningReason: '"wasteItems[*].weight.metric" is missing'
+    })
+
+    // ClientId-scoped variants
+    expect(mockPutDimensions).toHaveBeenCalledWith({
+      endpointType: 'post',
+      clientId: 'test-client-id'
+    })
+    expect(mockPutDimensions).toHaveBeenCalledWith({
+      clientId: 'test-client-id'
+    })
+    expect(mockPutDimensions).toHaveBeenCalledWith({
+      endpointType: 'post',
+      warningReason: '"wasteItems[*].weight.metric" is missing',
+      clientId: 'test-client-id'
+    })
+    expect(mockPutDimensions).toHaveBeenCalledWith({
+      warningReason: '"wasteItems[*].weight.metric" is missing',
+      clientId: 'test-client-id'
+    })
+  })
+
+  test('Should emit clientId-scoped without_warnings when no warnings and clientId provided', async () => {
+    await logWarningMetrics([], 'put', 'test-client-id')
+
+    expect(mockPutDimensions).toHaveBeenCalledWith({
+      endpointType: 'put',
+      clientId: 'test-client-id'
+    })
+    expect(mockPutDimensions).toHaveBeenCalledWith({
+      clientId: 'test-client-id'
+    })
+  })
+
+  test('Should not emit clientId variants when clientId omitted', async () => {
+    await logWarningMetrics(
+      [{ key: 'x', errorType: 'Warning', message: 'something is missing' }],
+      'post'
+    )
+
+    expect(mockPutDimensions).not.toHaveBeenCalledWith(
+      expect.objectContaining({ clientId: expect.anything() })
+    )
+  })
 })

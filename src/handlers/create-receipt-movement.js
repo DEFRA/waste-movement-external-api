@@ -52,17 +52,27 @@ export const handleCreateReceiptMovement = async (request, h) => {
       }
     }
 
+    const clientId = request.auth?.credentials?.clientId
+
     // Request passed validation (no validation errors) - log regardless of backend response
     await metricsCounter('validation.requests.without_errors', 1, {
       endpointType: 'post'
     })
     await metricsCounter('validation.requests.without_errors', 1)
+    if (clientId) {
+      await metricsCounter('validation.requests.without_errors', 1, {
+        endpointType: 'post',
+        clientId
+      })
+      await metricsCounter('validation.requests.without_errors', 1, {
+        clientId
+      })
+    }
 
     // Only log metrics for successful responses
     if (isSuccess) {
-      await logReceiptMetrics('post')
-      await logWarningMetrics(warnings, 'post')
-      const clientId = request.auth?.credentials?.clientId
+      await logReceiptMetrics('post', clientId)
+      await logWarningMetrics(warnings, 'post', clientId)
       if (clientId) {
         await logDeveloperMetrics(clientId)
       }

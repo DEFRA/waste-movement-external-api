@@ -775,4 +775,172 @@ describe('Error Handler', () => {
       )
     })
   })
+
+  describe('ClientId-scoped metrics', () => {
+    let injectClientId
+
+    beforeAll(() => {
+      // JWT is disabled in test/local env (no strategy registered).
+      // Use an onPostAuth hook (fires after auth, before validation) to
+      // inject mock credentials so error-handler's
+      // request.auth?.credentials?.clientId resolves even when validation
+      // short-circuits the handler.
+      server.ext('onPostAuth', (request, h) => {
+        if (injectClientId && request.auth) {
+          request.auth.credentials = { clientId: injectClientId }
+        }
+        return h.continue
+      })
+    })
+
+    beforeEach(() => {
+      injectClientId = 'test-client-id'
+    })
+
+    afterEach(() => {
+      injectClientId = null
+    })
+
+    test('should emit clientId-scoped variants for POST validation errors', async () => {
+      const response = await server.inject({
+        method: 'POST',
+        url: '/movements/receive',
+        payload: { yourUniqueReference: 'test' }
+      })
+
+      expect(response.statusCode).toBe(400)
+      const responseBody = JSON.parse(response.payload)
+
+      // Aggregate counts (errors.count, requests.with_errors) — clientId variants
+      expect(metrics.metricsCounter).toHaveBeenCalledWith(
+        'validation.errors.count',
+        responseBody.validation.errors.length,
+        { endpointType: 'post', clientId: 'test-client-id' }
+      )
+      expect(metrics.metricsCounter).toHaveBeenCalledWith(
+        'validation.errors.count',
+        responseBody.validation.errors.length,
+        { clientId: 'test-client-id' }
+      )
+      expect(metrics.metricsCounter).toHaveBeenCalledWith(
+        'validation.requests.with_errors',
+        1,
+        { endpointType: 'post', clientId: 'test-client-id' }
+      )
+      expect(metrics.metricsCounter).toHaveBeenCalledWith(
+        'validation.requests.with_errors',
+        1,
+        { clientId: 'test-client-id' }
+      )
+
+      // Per-error breakdown — clientId variants
+      const normalizeArrayIndices = (str) => str.replace(/\[\d+]/g, '[*]')
+      for (const error of responseBody.validation.errors) {
+        const errorReason = normalizeArrayIndices(error.message)
+        expect(metrics.metricsCounter).toHaveBeenCalledWith(
+          'validation.error.reason',
+          1,
+          { endpointType: 'post', errorReason, clientId: 'test-client-id' }
+        )
+        expect(metrics.metricsCounter).toHaveBeenCalledWith(
+          'validation.error.reason',
+          1,
+          { errorReason, clientId: 'test-client-id' }
+        )
+        expect(metrics.metricsCounter).toHaveBeenCalledWith(
+          'validation.error.category',
+          1,
+          {
+            endpointType: 'post',
+            errorCategory: error.errorType,
+            clientId: 'test-client-id'
+          }
+        )
+        expect(metrics.metricsCounter).toHaveBeenCalledWith(
+          'validation.error.category',
+          1,
+          { errorCategory: error.errorType, clientId: 'test-client-id' }
+        )
+      }
+
+      // Status code — clientId variants
+      expect(metrics.metricsCounter).toHaveBeenCalledWith(
+        'errors.by_status_code',
+        1,
+        {
+          endpointType: 'post',
+          statusCode: '400',
+          clientId: 'test-client-id'
+        }
+      )
+      expect(metrics.metricsCounter).toHaveBeenCalledWith(
+        'errors.by_status_code',
+        1,
+        { statusCode: '400', clientId: 'test-client-id' }
+      )
+    })
+
+    test('should emit clientId-scoped variants for PUT validation errors', async () => {
+      const response = await server.inject({
+        method: 'PUT',
+        url: '/movements/test-tracking-id/receive',
+        payload: { yourUniqueReference: 'test' }
+      })
+
+      expect(response.statusCode).toBe(400)
+
+      expect(metrics.metricsCounter).toHaveBeenCalledWith(
+        'validation.requests.with_errors',
+        1,
+        { endpointType: 'put', clientId: 'test-client-id' }
+      )
+      expect(metrics.metricsCounter).toHaveBeenCalledWith(
+        'errors.by_status_code',
+        1,
+        { endpointType: 'put', statusCode: '400', clientId: 'test-client-id' }
+      )
+    })
+
+    test('should emit clientId-scoped variant for non-400 errors', async () => {
+      const notFoundError = new Error('Movement not found')
+      notFoundError.name = 'NotFoundError'
+      httpClients.wasteMovement.put.mockRejectedValueOnce(notFoundError)
+
+      const response = await server.inject({
+        method: 'PUT',
+        url: '/movements/test-tracking-id/receive',
+        payload: createMovementRequest()
+      })
+
+      expect(response.statusCode).toBe(404)
+
+      expect(metrics.metricsCounter).toHaveBeenCalledWith(
+        'errors.by_status_code',
+        1,
+        { endpointType: 'put', statusCode: '404', clientId: 'test-client-id' }
+      )
+      expect(metrics.metricsCounter).toHaveBeenCalledWith(
+        'errors.by_status_code',
+        1,
+        { statusCode: '404', clientId: 'test-client-id' }
+      )
+    })
+
+    test('should not emit clientId variants when clientId absent', async () => {
+      injectClientId = null
+
+      const response = await server.inject({
+        method: 'POST',
+        url: '/movements/receive',
+        payload: { yourUniqueReference: 'test' }
+      })
+
+      expect(response.statusCode).toBe(400)
+      expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
+        expect.any(String),
+        expect.any(Number),
+        expect.objectContaining({ clientId: expect.anything() })
+      )
+    })
+  })
 })
