@@ -6,6 +6,7 @@ import {
 import { config } from '../../config.js'
 import { createLogger } from './logging/logger.js'
 import { normalizeArrayIndices } from './utils.js'
+import { METRIC_NAMES } from '../constants/metric-names.js'
 
 /**
  * Logs a counter metric with optional dimensions
@@ -41,11 +42,14 @@ const metricsCounter = async (metricName, value = 1, dimensions = {}) => {
  * @param {string} [clientId] - Optional clientId for per-vendor breakdown
  */
 const logReceiptMetrics = async (endpointType, clientId) => {
-  await metricsCounter('receipts.received', 1, { endpointType })
-  await metricsCounter('receipts.received', 1)
+  await metricsCounter(METRIC_NAMES.RECEIPTS_RECEIVED, 1, { endpointType })
+  await metricsCounter(METRIC_NAMES.RECEIPTS_RECEIVED, 1)
   if (clientId) {
-    await metricsCounter('receipts.received', 1, { endpointType, clientId })
-    await metricsCounter('receipts.received', 1, { clientId })
+    await metricsCounter(METRIC_NAMES.RECEIPTS_RECEIVED, 1, {
+      endpointType,
+      clientId
+    })
+    await metricsCounter(METRIC_NAMES.RECEIPTS_RECEIVED, 1, { clientId })
   }
 }
 
@@ -57,28 +61,36 @@ const logReceiptMetrics = async (endpointType, clientId) => {
  */
 const logWarningMetrics = async (warnings, endpointType, clientId) => {
   if (warnings.length > 0) {
-    await metricsCounter('validation.warnings.count', warnings.length, {
+    await metricsCounter(
+      METRIC_NAMES.VALIDATION_WARNINGS_COUNT,
+      warnings.length,
+      { endpointType }
+    )
+    await metricsCounter(
+      METRIC_NAMES.VALIDATION_WARNINGS_COUNT,
+      warnings.length
+    )
+    await metricsCounter(METRIC_NAMES.VALIDATION_REQUESTS_WITH_WARNINGS, 1, {
       endpointType
     })
-    await metricsCounter('validation.warnings.count', warnings.length)
-    await metricsCounter('validation.requests.with_warnings', 1, {
-      endpointType
-    })
-    await metricsCounter('validation.requests.with_warnings', 1)
+    await metricsCounter(METRIC_NAMES.VALIDATION_REQUESTS_WITH_WARNINGS, 1)
 
     if (clientId) {
-      await metricsCounter('validation.warnings.count', warnings.length, {
+      await metricsCounter(
+        METRIC_NAMES.VALIDATION_WARNINGS_COUNT,
+        warnings.length,
+        { endpointType, clientId }
+      )
+      await metricsCounter(
+        METRIC_NAMES.VALIDATION_WARNINGS_COUNT,
+        warnings.length,
+        { clientId }
+      )
+      await metricsCounter(METRIC_NAMES.VALIDATION_REQUESTS_WITH_WARNINGS, 1, {
         endpointType,
         clientId
       })
-      await metricsCounter('validation.warnings.count', warnings.length, {
-        clientId
-      })
-      await metricsCounter('validation.requests.with_warnings', 1, {
-        endpointType,
-        clientId
-      })
-      await metricsCounter('validation.requests.with_warnings', 1, {
+      await metricsCounter(METRIC_NAMES.VALIDATION_REQUESTS_WITH_WARNINGS, 1, {
         clientId
       })
     }
@@ -86,38 +98,41 @@ const logWarningMetrics = async (warnings, endpointType, clientId) => {
     // Per-warning breakdown metrics
     for (const warning of warnings) {
       const warningReason = normalizeArrayIndices(warning.message)
-      await metricsCounter('validation.warning.reason', 1, {
+      await metricsCounter(METRIC_NAMES.VALIDATION_WARNING_REASON, 1, {
         endpointType,
         warningReason
       })
-      await metricsCounter('validation.warning.reason', 1, {
+      await metricsCounter(METRIC_NAMES.VALIDATION_WARNING_REASON, 1, {
         warningReason
       })
       if (clientId) {
-        await metricsCounter('validation.warning.reason', 1, {
+        await metricsCounter(METRIC_NAMES.VALIDATION_WARNING_REASON, 1, {
           endpointType,
           warningReason,
           clientId
         })
-        await metricsCounter('validation.warning.reason', 1, {
+        await metricsCounter(METRIC_NAMES.VALIDATION_WARNING_REASON, 1, {
           warningReason,
           clientId
         })
       }
     }
   } else {
-    await metricsCounter('validation.requests.without_warnings', 1, {
+    await metricsCounter(METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_WARNINGS, 1, {
       endpointType
     })
-    await metricsCounter('validation.requests.without_warnings', 1)
+    await metricsCounter(METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_WARNINGS, 1)
     if (clientId) {
-      await metricsCounter('validation.requests.without_warnings', 1, {
-        endpointType,
-        clientId
-      })
-      await metricsCounter('validation.requests.without_warnings', 1, {
-        clientId
-      })
+      await metricsCounter(
+        METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_WARNINGS,
+        1,
+        { endpointType, clientId }
+      )
+      await metricsCounter(
+        METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_WARNINGS,
+        1,
+        { clientId }
+      )
     }
   }
 }
@@ -129,8 +144,8 @@ const logWarningMetrics = async (warnings, endpointType, clientId) => {
  * @param {string} clientId - The developer's client ID
  */
 const logDeveloperMetrics = async (clientId) => {
-  await metricsCounter('developers.active', 1, { clientId })
-  await metricsCounter('developers.active', 1)
+  await metricsCounter(METRIC_NAMES.DEVELOPERS_ACTIVE, 1, { clientId })
+  await metricsCounter(METRIC_NAMES.DEVELOPERS_ACTIVE, 1)
 }
 
 /**
@@ -141,8 +156,8 @@ const logDeveloperMetrics = async (clientId) => {
  * @param {string} clientId - The developer's client ID
  */
 const logAttemptedDeveloperMetrics = async (clientId) => {
-  await metricsCounter('developers.attempted', 1, { clientId })
-  await metricsCounter('developers.attempted', 1)
+  await metricsCounter(METRIC_NAMES.DEVELOPERS_ATTEMPTED, 1, { clientId })
+  await metricsCounter(METRIC_NAMES.DEVELOPERS_ATTEMPTED, 1)
 }
 
 export {

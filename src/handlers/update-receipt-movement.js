@@ -8,6 +8,7 @@ import {
   logWarningMetrics,
   logDeveloperMetrics
 } from '../common/helpers/metrics.js'
+import { METRIC_NAMES } from '../common/constants/metric-names.js'
 import { isSuccessStatusCode } from '../common/helpers/utils.js'
 import { addSubmittingOrganisationToRequest } from '../common/helpers/submitting-organisation.js'
 
@@ -47,16 +48,16 @@ export const handleUpdateReceiptMovement = async (request, h) => {
     const clientId = request.auth?.credentials?.clientId
 
     // Request passed validation (no validation errors) - log regardless of backend response
-    await metricsCounter('validation.requests.without_errors', 1, {
+    await metricsCounter(METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_ERRORS, 1, {
       endpointType: 'put'
     })
-    await metricsCounter('validation.requests.without_errors', 1)
+    await metricsCounter(METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_ERRORS, 1)
     if (clientId) {
-      await metricsCounter('validation.requests.without_errors', 1, {
+      await metricsCounter(METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_ERRORS, 1, {
         endpointType: 'put',
         clientId
       })
-      await metricsCounter('validation.requests.without_errors', 1, {
+      await metricsCounter(METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_ERRORS, 1, {
         clientId
       })
     }
