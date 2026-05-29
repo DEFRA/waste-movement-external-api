@@ -1,5 +1,4 @@
-import { validEwcCodes } from '../../common/constants/ewc-codes.js'
-import { HTTP_STATUS } from '../../common/constants/http-status-codes.js'
+import { validEwcCodes, HTTP_STATUS } from 'waste-movement-utils'
 import { handleBackendResponse } from '../handle-backend-response.js'
 import { createLogger } from '../../common/helpers/logging/logger.js'
 

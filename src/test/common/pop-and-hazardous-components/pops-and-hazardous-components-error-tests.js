@@ -1,7 +1,7 @@
 import {
   sourceOfComponentsProvided,
   validSourceOfComponents
-} from '../../../common/constants/source-of-components.js'
+} from 'waste-movement-utils'
 import { receiveMovementRequestSchema } from '../../../schemas/receipt.js'
 import { createTestPayload } from '../../../schemas/test-helpers/waste-test-helpers.js'
 import { formatPopsOrHazardousFields } from '../../../schemas/waste.js'

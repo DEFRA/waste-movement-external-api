@@ -1,5 +1,5 @@
 // Test Constants
-import { validContainerTypes } from '../../common/constants/container-types.js'
+import { validContainerTypes } from 'waste-movement-utils'
 import { createMovementRequest } from '../../test/utils/createMovementRequest.js'
 
 export const TEST_CONSTANTS = {

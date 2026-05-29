@@ -2,7 +2,7 @@ import {
   RECEIPT_WARNINGS,
   VALIDATION_WARNING_TYPES,
   WASTE_WARNINGS
-} from '../../../constants/validation-warning-messages.js'
+} from 'waste-movement-utils'
 
 export const disposalOrRecoveryCodesWarningValidators = {
   key: 'wasteItems.disposalOrRecoveryCodes',

@@ -1,7 +1,6 @@
-import { HTTP_STATUS } from '../../common/constants/http-status-codes.js'
+import { HTTP_STATUS, validContainerTypes } from 'waste-movement-utils'
 import { handleBackendResponse } from '../handle-backend-response.js'
 import { createLogger } from '../../common/helpers/logging/logger.js'
-import { validContainerTypes } from '../../common/constants/container-types.js'
 
 const logger = createLogger()
 

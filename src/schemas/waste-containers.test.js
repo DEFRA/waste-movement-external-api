@@ -1,4 +1,4 @@
-import { validContainerTypes } from '../common/constants/container-types.js'
+import { validContainerTypes } from 'waste-movement-utils'
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createTestPayload } from './test-helpers/waste-test-helpers.js'
 

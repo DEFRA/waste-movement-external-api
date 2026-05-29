@@ -1,6 +1,8 @@
 import Joi from 'joi'
-import { isValidHazardousEwcCode } from '../common/constants/ewc-codes.js'
-import { CONSIGNMENT_ERRORS } from '../common/constants/validation-error-messages.js'
+import {
+  isValidHazardousEwcCode,
+  CONSIGNMENT_ERRORS
+} from 'waste-movement-utils'
 
 // Consignment note code formats, e.g.
 // CJTILE/A0001 or CJ123E/A0001
