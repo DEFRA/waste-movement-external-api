@@ -49,7 +49,9 @@ export const handleUpdateReceiptMovement = async (request, h) => {
 
     // Request passed validation (no validation errors) - log regardless of backend response
     const withoutErrorsDims = { endpointType: 'put' }
-    if (clientId) withoutErrorsDims.clientId = clientId
+    if (clientId) {
+      withoutErrorsDims.clientId = clientId
+    }
     await metricsCounter(
       METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_ERRORS,
       1,
