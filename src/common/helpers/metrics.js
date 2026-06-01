@@ -36,128 +36,82 @@ const metricsCounter = async (metricName, value = 1, dimensions = {}) => {
   }
 }
 
+// Build dimensions object including clientId only when present.
+// Dashboards aggregate across clientId via SEARCH() wildcards.
+const withClientId = (dims, clientId) =>
+  clientId ? { ...dims, clientId } : dims
+
 /**
- * Logs receipt received metrics with endpoint type dimension and total
+ * Logs receipt received metric.
  * @param {string} endpointType - The endpoint type ('post' or 'put')
  * @param {string} [clientId] - Optional clientId for per-vendor breakdown
  */
 const logReceiptMetrics = async (endpointType, clientId) => {
-  await metricsCounter(METRIC_NAMES.RECEIPTS_RECEIVED, 1, { endpointType })
-  await metricsCounter(METRIC_NAMES.RECEIPTS_RECEIVED, 1)
-  if (clientId) {
-    await metricsCounter(METRIC_NAMES.RECEIPTS_RECEIVED, 1, {
-      endpointType,
-      clientId
-    })
-    await metricsCounter(METRIC_NAMES.RECEIPTS_RECEIVED, 1, { clientId })
-  }
+  await metricsCounter(
+    METRIC_NAMES.RECEIPTS_RECEIVED,
+    1,
+    withClientId({ endpointType }, clientId)
+  )
 }
 
 /**
- * Logs validation warning metrics with endpoint type dimension and total
+ * Logs validation warning metrics.
  * @param {Array} warnings - The validation warnings array
  * @param {string} endpointType - The endpoint type ('post' or 'put')
  * @param {string} [clientId] - Optional clientId for per-vendor breakdown
  */
 const logWarningMetrics = async (warnings, endpointType, clientId) => {
+  const baseDims = withClientId({ endpointType }, clientId)
+
   if (warnings.length > 0) {
     await metricsCounter(
       METRIC_NAMES.VALIDATION_WARNINGS_COUNT,
       warnings.length,
-      { endpointType }
+      baseDims
     )
     await metricsCounter(
-      METRIC_NAMES.VALIDATION_WARNINGS_COUNT,
-      warnings.length
+      METRIC_NAMES.VALIDATION_REQUESTS_WITH_WARNINGS,
+      1,
+      baseDims
     )
-    await metricsCounter(METRIC_NAMES.VALIDATION_REQUESTS_WITH_WARNINGS, 1, {
-      endpointType
-    })
-    await metricsCounter(METRIC_NAMES.VALIDATION_REQUESTS_WITH_WARNINGS, 1)
 
-    if (clientId) {
-      await metricsCounter(
-        METRIC_NAMES.VALIDATION_WARNINGS_COUNT,
-        warnings.length,
-        { endpointType, clientId }
-      )
-      await metricsCounter(
-        METRIC_NAMES.VALIDATION_WARNINGS_COUNT,
-        warnings.length,
-        { clientId }
-      )
-      await metricsCounter(METRIC_NAMES.VALIDATION_REQUESTS_WITH_WARNINGS, 1, {
-        endpointType,
-        clientId
-      })
-      await metricsCounter(METRIC_NAMES.VALIDATION_REQUESTS_WITH_WARNINGS, 1, {
-        clientId
-      })
-    }
-
-    // Per-warning breakdown metrics
     for (const warning of warnings) {
       const warningReason = normalizeArrayIndices(warning.message)
       await metricsCounter(METRIC_NAMES.VALIDATION_WARNING_REASON, 1, {
-        endpointType,
+        ...baseDims,
         warningReason
       })
-      await metricsCounter(METRIC_NAMES.VALIDATION_WARNING_REASON, 1, {
-        warningReason
-      })
-      if (clientId) {
-        await metricsCounter(METRIC_NAMES.VALIDATION_WARNING_REASON, 1, {
-          endpointType,
-          warningReason,
-          clientId
-        })
-        await metricsCounter(METRIC_NAMES.VALIDATION_WARNING_REASON, 1, {
-          warningReason,
-          clientId
-        })
-      }
     }
   } else {
-    await metricsCounter(METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_WARNINGS, 1, {
-      endpointType
-    })
-    await metricsCounter(METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_WARNINGS, 1)
-    if (clientId) {
-      await metricsCounter(
-        METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_WARNINGS,
-        1,
-        { endpointType, clientId }
-      )
-      await metricsCounter(
-        METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_WARNINGS,
-        1,
-        { clientId }
-      )
-    }
+    await metricsCounter(
+      METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_WARNINGS,
+      1,
+      baseDims
+    )
   }
 }
 
 /**
- * Logs developer activity metrics with clientId dimension for unique counting.
- * Emitted on successful receipt movements only — represents developers
- * actively transacting.
+ * Logs developer activity metric. Emitted on successful receipt movements
+ * only — represents developers actively transacting.
  * @param {string} clientId - The developer's client ID
  */
 const logDeveloperMetrics = async (clientId) => {
   await metricsCounter(METRIC_NAMES.DEVELOPERS_ACTIVE, 1, { clientId })
-  await metricsCounter(METRIC_NAMES.DEVELOPERS_ACTIVE, 1)
 }
 
 /**
- * Logs attempted developer activity metrics with clientId dimension.
- * Emitted on every authenticated receipt movement attempt, regardless of
- * outcome — represents developers who have hit the API at all (the canonical
- * source for the "Active Client IDs" panel).
+ * Logs attempted developer activity metric. Emitted on every authenticated
+ * receipt movement attempt regardless of outcome — represents developers
+ * who have hit the API at all (canonical source for the "Active Client IDs"
+ * panel).
  * @param {string} clientId - The developer's client ID
  */
 const logAttemptedDeveloperMetrics = async (clientId) => {
+  if (!clientId) {
+    return
+  }
   await metricsCounter(METRIC_NAMES.DEVELOPERS_ATTEMPTED, 1, { clientId })
-  await metricsCounter(METRIC_NAMES.DEVELOPERS_ATTEMPTED, 1)
 }
 
 export {

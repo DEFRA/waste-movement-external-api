@@ -161,24 +161,16 @@ describe('Error Handler', () => {
     const responseBody = JSON.parse(response.payload)
     const errorCount = responseBody.validation.errors.length
 
-    // Verify metrics were called with correct arguments
+    // Single emission per metric with endpointType dim (no clientId in test env)
     expect(metrics.metricsCounter).toHaveBeenCalledWith(
       'validation.errors.count',
       errorCount,
       { endpointType: 'post' }
     )
     expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.errors.count',
-      errorCount
-    )
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
       'validation.requests.with_errors',
       1,
       { endpointType: 'post' }
-    )
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.with_errors',
-      1
     )
   })
 
@@ -195,24 +187,16 @@ describe('Error Handler', () => {
     const responseBody = JSON.parse(response.payload)
     const errorCount = responseBody.validation.errors.length
 
-    // Verify metrics were called with correct arguments
+    // Single emission per metric with endpointType dim (no clientId in test env)
     expect(metrics.metricsCounter).toHaveBeenCalledWith(
       'validation.errors.count',
       errorCount,
       { endpointType: 'put' }
     )
     expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.errors.count',
-      errorCount
-    )
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
       'validation.requests.with_errors',
       1,
       { endpointType: 'put' }
-    )
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.with_errors',
-      1
     )
   })
 
@@ -239,13 +223,13 @@ describe('Error Handler', () => {
     const responseBody = JSON.parse(response.payload)
     const errorCount = responseBody.validation.errors.length
 
-    // Should have:
-    // - 2 calls for errors.count (with dimension + without)
-    // - 2 calls for requests.with_errors (with dimension + without)
-    // - 2 calls per validation error for error.reason (with dimension + without)
-    // - 2 calls per validation error for error.category (with dimension + without)
-    // - 2 calls for errors.by_status_code (with dimension + without)
-    const expectedCalls = 6 + errorCount * 4
+    // Single emission per metric (no clientId in this test — auth disabled):
+    // - 1 call for errors.count
+    // - 1 call for requests.with_errors
+    // - 1 call per error for error.reason
+    // - 1 call per error for error.category
+    // - 1 call for errors.by_status_code
+    const expectedCalls = 3 + errorCount * 2
     expect(metrics.metricsCounter).toHaveBeenCalledTimes(expectedCalls)
 
     // Helper function matching production normalization logic
@@ -255,17 +239,10 @@ describe('Error Handler', () => {
     for (const error of responseBody.validation.errors) {
       const expectedReason = normalizeArrayIndices(error.message)
 
-      // Should be called with endpointType + errorReason
       expect(metrics.metricsCounter).toHaveBeenCalledWith(
         'validation.error.reason',
         1,
         { endpointType: 'post', errorReason: expectedReason }
-      )
-      // Should also be called with just errorReason (for totals)
-      expect(metrics.metricsCounter).toHaveBeenCalledWith(
-        'validation.error.reason',
-        1,
-        { errorReason: expectedReason }
       )
     }
   })
@@ -620,17 +597,12 @@ describe('Error Handler', () => {
       expect(response.statusCode).toBe(400)
       const responseBody = JSON.parse(response.payload)
 
-      // Verify error category metrics were called for each error
+      // Single emission per error with endpointType + errorCategory
       for (const error of responseBody.validation.errors) {
         expect(metrics.metricsCounter).toHaveBeenCalledWith(
           'validation.error.category',
           1,
           { endpointType: 'post', errorCategory: error.errorType }
-        )
-        expect(metrics.metricsCounter).toHaveBeenCalledWith(
-          'validation.error.category',
-          1,
-          { errorCategory: error.errorType }
         )
       }
     })
@@ -683,17 +655,12 @@ describe('Error Handler', () => {
       expect(response.statusCode).toBe(400)
       const responseBody = JSON.parse(response.payload)
 
-      // Verify error category metrics were called with PUT endpoint type
+      // Single emission per error with endpointType + errorCategory
       for (const error of responseBody.validation.errors) {
         expect(metrics.metricsCounter).toHaveBeenCalledWith(
           'validation.error.category',
           1,
           { endpointType: 'put', errorCategory: error.errorType }
-        )
-        expect(metrics.metricsCounter).toHaveBeenCalledWith(
-          'validation.error.category',
-          1,
-          { errorCategory: error.errorType }
         )
       }
     })
@@ -711,16 +678,11 @@ describe('Error Handler', () => {
 
       expect(response.statusCode).toBe(400)
 
-      // Verify status code metrics were called
+      // Single emission with endpointType + statusCode
       expect(metrics.metricsCounter).toHaveBeenCalledWith(
         'errors.by_status_code',
         1,
         { endpointType: 'post', statusCode: '400' }
-      )
-      expect(metrics.metricsCounter).toHaveBeenCalledWith(
-        'errors.by_status_code',
-        1,
-        { statusCode: '400' }
       )
     })
 
@@ -735,16 +697,11 @@ describe('Error Handler', () => {
 
       expect(response.statusCode).toBe(400)
 
-      // Verify status code metrics were called with PUT endpoint type
+      // Single emission with endpointType + statusCode
       expect(metrics.metricsCounter).toHaveBeenCalledWith(
         'errors.by_status_code',
         1,
         { endpointType: 'put', statusCode: '400' }
-      )
-      expect(metrics.metricsCounter).toHaveBeenCalledWith(
-        'errors.by_status_code',
-        1,
-        { statusCode: '400' }
       )
     })
 
@@ -762,16 +719,11 @@ describe('Error Handler', () => {
 
       expect(response.statusCode).toBe(404)
 
-      // Verify status code metrics were called with 404
+      // Single emission with endpointType + statusCode
       expect(metrics.metricsCounter).toHaveBeenCalledWith(
         'errors.by_status_code',
         1,
         { endpointType: 'put', statusCode: '404' }
-      )
-      expect(metrics.metricsCounter).toHaveBeenCalledWith(
-        'errors.by_status_code',
-        1,
-        { statusCode: '404' }
       )
     })
   })
@@ -801,7 +753,7 @@ describe('Error Handler', () => {
       injectClientId = null
     })
 
-    test('should emit clientId-scoped variants for POST validation errors', async () => {
+    test('should include clientId in all metric dim sets for POST validation errors', async () => {
       const response = await server.inject({
         method: 'POST',
         url: '/movements/receive',
@@ -811,29 +763,19 @@ describe('Error Handler', () => {
       expect(response.statusCode).toBe(400)
       const responseBody = JSON.parse(response.payload)
 
-      // Aggregate counts (errors.count, requests.with_errors) — clientId variants
+      // Aggregate counts — single emission with endpointType + clientId
       expect(metrics.metricsCounter).toHaveBeenCalledWith(
         'validation.errors.count',
         responseBody.validation.errors.length,
         { endpointType: 'post', clientId: 'test-client-id' }
       )
       expect(metrics.metricsCounter).toHaveBeenCalledWith(
-        'validation.errors.count',
-        responseBody.validation.errors.length,
-        { clientId: 'test-client-id' }
-      )
-      expect(metrics.metricsCounter).toHaveBeenCalledWith(
         'validation.requests.with_errors',
         1,
         { endpointType: 'post', clientId: 'test-client-id' }
-      )
-      expect(metrics.metricsCounter).toHaveBeenCalledWith(
-        'validation.requests.with_errors',
-        1,
-        { clientId: 'test-client-id' }
       )
 
-      // Per-error breakdown — clientId variants
+      // Per-error breakdown with endpointType + clientId
       const normalizeArrayIndices = (str) => str.replace(/\[\d+]/g, '[*]')
       for (const error of responseBody.validation.errors) {
         const errorReason = normalizeArrayIndices(error.message)
@@ -841,11 +783,6 @@ describe('Error Handler', () => {
           'validation.error.reason',
           1,
           { endpointType: 'post', errorReason, clientId: 'test-client-id' }
-        )
-        expect(metrics.metricsCounter).toHaveBeenCalledWith(
-          'validation.error.reason',
-          1,
-          { errorReason, clientId: 'test-client-id' }
         )
         expect(metrics.metricsCounter).toHaveBeenCalledWith(
           'validation.error.category',
@@ -856,14 +793,9 @@ describe('Error Handler', () => {
             clientId: 'test-client-id'
           }
         )
-        expect(metrics.metricsCounter).toHaveBeenCalledWith(
-          'validation.error.category',
-          1,
-          { errorCategory: error.errorType, clientId: 'test-client-id' }
-        )
       }
 
-      // Status code — clientId variants
+      // Status code with endpointType + clientId
       expect(metrics.metricsCounter).toHaveBeenCalledWith(
         'errors.by_status_code',
         1,
@@ -873,14 +805,16 @@ describe('Error Handler', () => {
           clientId: 'test-client-id'
         }
       )
-      expect(metrics.metricsCounter).toHaveBeenCalledWith(
-        'errors.by_status_code',
+
+      // Old un-clientId-scoped emissions no longer happen
+      expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
+        'validation.requests.with_errors',
         1,
-        { statusCode: '400', clientId: 'test-client-id' }
+        { endpointType: 'post' }
       )
     })
 
-    test('should emit clientId-scoped variants for PUT validation errors', async () => {
+    test('should include clientId for PUT validation errors', async () => {
       const response = await server.inject({
         method: 'PUT',
         url: '/movements/test-tracking-id/receive',
@@ -901,7 +835,7 @@ describe('Error Handler', () => {
       )
     })
 
-    test('should emit clientId-scoped variant for non-400 errors', async () => {
+    test('should include clientId for non-400 errors', async () => {
       const notFoundError = new Error('Movement not found')
       notFoundError.name = 'NotFoundError'
       httpClients.wasteMovement.put.mockRejectedValueOnce(notFoundError)
@@ -919,14 +853,9 @@ describe('Error Handler', () => {
         1,
         { endpointType: 'put', statusCode: '404', clientId: 'test-client-id' }
       )
-      expect(metrics.metricsCounter).toHaveBeenCalledWith(
-        'errors.by_status_code',
-        1,
-        { statusCode: '404', clientId: 'test-client-id' }
-      )
     })
 
-    test('should not emit clientId variants when clientId absent', async () => {
+    test('should omit clientId from dim sets when clientId absent', async () => {
       injectClientId = null
 
       const response = await server.inject({

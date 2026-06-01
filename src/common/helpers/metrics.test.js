@@ -1,7 +1,12 @@
 import { StorageResolution, Unit } from 'aws-embedded-metrics'
 
 import { config } from '../../config.js'
-import { metricsCounter, logWarningMetrics } from './metrics.js'
+import {
+  metricsCounter,
+  logWarningMetrics,
+  logReceiptMetrics,
+  logAttemptedDeveloperMetrics
+} from './metrics.js'
 
 const mockPutMetric = jest.fn()
 const mockPutDimensions = jest.fn()
@@ -147,13 +152,7 @@ describe('#logWarningMetrics', () => {
       warningReason: '"wasteItems[*].weight.metric" is missing'
     })
     expect(mockPutDimensions).toHaveBeenCalledWith({
-      warningReason: '"wasteItems[*].weight.metric" is missing'
-    })
-    expect(mockPutDimensions).toHaveBeenCalledWith({
       endpointType: 'post',
-      warningReason: '"wasteItems[*].weight.isEstimate" is missing'
-    })
-    expect(mockPutDimensions).toHaveBeenCalledWith({
       warningReason: '"wasteItems[*].weight.isEstimate" is missing'
     })
   })
@@ -192,7 +191,7 @@ describe('#logWarningMetrics', () => {
     )
   })
 
-  test('Should emit clientId-scoped variants when clientId provided', async () => {
+  test('Should append clientId to all dimensions when provided', async () => {
     const warnings = [
       {
         key: 'wasteItems[0].weight',
@@ -203,19 +202,9 @@ describe('#logWarningMetrics', () => {
 
     await logWarningMetrics(warnings, 'post', 'test-client-id')
 
-    // Original dim-sets still emitted
-    expect(mockPutDimensions).toHaveBeenCalledWith({ endpointType: 'post' })
+    // Single emission per metric with maximal dim set including clientId
     expect(mockPutDimensions).toHaveBeenCalledWith({
       endpointType: 'post',
-      warningReason: '"wasteItems[*].weight.metric" is missing'
-    })
-
-    // ClientId-scoped variants
-    expect(mockPutDimensions).toHaveBeenCalledWith({
-      endpointType: 'post',
-      clientId: 'test-client-id'
-    })
-    expect(mockPutDimensions).toHaveBeenCalledWith({
       clientId: 'test-client-id'
     })
     expect(mockPutDimensions).toHaveBeenCalledWith({
@@ -223,22 +212,19 @@ describe('#logWarningMetrics', () => {
       warningReason: '"wasteItems[*].weight.metric" is missing',
       clientId: 'test-client-id'
     })
-    expect(mockPutDimensions).toHaveBeenCalledWith({
-      warningReason: '"wasteItems[*].weight.metric" is missing',
-      clientId: 'test-client-id'
-    })
+    // Old un-clientId-scoped variants no longer emitted
+    expect(mockPutDimensions).not.toHaveBeenCalledWith({ endpointType: 'post' })
   })
 
-  test('Should emit clientId-scoped without_warnings when no warnings and clientId provided', async () => {
+  test('Should emit without_warnings with clientId when no warnings and clientId provided', async () => {
     await logWarningMetrics([], 'put', 'test-client-id')
 
     expect(mockPutDimensions).toHaveBeenCalledWith({
       endpointType: 'put',
       clientId: 'test-client-id'
     })
-    expect(mockPutDimensions).toHaveBeenCalledWith({
-      clientId: 'test-client-id'
-    })
+    // Only one emission, not two
+    expect(mockPutDimensions).toHaveBeenCalledTimes(1)
   })
 
   test('Should not emit clientId variants when clientId omitted', async () => {
@@ -250,5 +236,71 @@ describe('#logWarningMetrics', () => {
     expect(mockPutDimensions).not.toHaveBeenCalledWith(
       expect.objectContaining({ clientId: expect.anything() })
     )
+  })
+})
+
+describe('#logReceiptMetrics', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    config.set('isMetricsEnabled', true)
+  })
+
+  test('Should emit a single endpointType-scoped metric when clientId omitted', async () => {
+    await logReceiptMetrics('post')
+
+    expect(mockPutDimensions).toHaveBeenCalledWith({ endpointType: 'post' })
+    expect(mockPutDimensions).toHaveBeenCalledTimes(1)
+    expect(mockPutMetric).toHaveBeenCalledWith(
+      'receipts.received',
+      1,
+      Unit.Count,
+      StorageResolution.Standard
+    )
+    expect(mockPutMetric).toHaveBeenCalledTimes(1)
+  })
+
+  test('Should append clientId to dimensions when provided', async () => {
+    await logReceiptMetrics('post', 'test-client-id')
+
+    expect(mockPutDimensions).toHaveBeenCalledWith({
+      endpointType: 'post',
+      clientId: 'test-client-id'
+    })
+    expect(mockPutDimensions).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('#logAttemptedDeveloperMetrics', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    config.set('isMetricsEnabled', true)
+  })
+
+  test('Should emit developers.attempted with clientId dim', async () => {
+    await logAttemptedDeveloperMetrics('test-client-id')
+
+    expect(mockPutDimensions).toHaveBeenCalledWith({
+      clientId: 'test-client-id'
+    })
+    expect(mockPutMetric).toHaveBeenCalledWith(
+      'developers.attempted',
+      1,
+      Unit.Count,
+      StorageResolution.Standard
+    )
+    expect(mockPutMetric).toHaveBeenCalledTimes(1)
+  })
+
+  test('Should not emit when clientId is absent', async () => {
+    await logAttemptedDeveloperMetrics()
+
+    expect(mockPutMetric).not.toHaveBeenCalled()
+    expect(mockPutDimensions).not.toHaveBeenCalled()
+  })
+
+  test('Should not emit when clientId is empty string', async () => {
+    await logAttemptedDeveloperMetrics('')
+
+    expect(mockPutMetric).not.toHaveBeenCalled()
   })
 })

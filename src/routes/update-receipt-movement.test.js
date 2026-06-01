@@ -109,28 +109,13 @@ describe('handleUpdateReceiptMovement', () => {
 
     expect(mockH.code).toHaveBeenCalledWith(200)
 
-    // Verify metrics are logged on success (with warnings case)
-    // Requests without validation errors (passed validation)
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_errors',
-      1,
-      { endpointType: 'put' }
-    )
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_errors',
-      1
-    )
-    // ClientId-scoped variants
+    // Single emission with clientId-scoped dim set
     expect(metrics.metricsCounter).toHaveBeenCalledWith(
       'validation.requests.without_errors',
       1,
       { endpointType: 'put', clientId: 'test-client-id' }
     )
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_errors',
-      1,
-      { clientId: 'test-client-id' }
-    )
+    expect(metrics.metricsCounter).toHaveBeenCalledTimes(1)
     // Receipt received metrics
     expect(metrics.logReceiptMetrics).toHaveBeenCalledWith(
       'put',
@@ -196,28 +181,13 @@ describe('handleUpdateReceiptMovement', () => {
 
     expect(mockH.code).toHaveBeenCalledWith(200)
 
-    // Verify metrics are logged on success (no warnings case)
-    // Requests without validation errors (passed validation)
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_errors',
-      1,
-      { endpointType: 'put' }
-    )
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_errors',
-      1
-    )
-    // ClientId-scoped variants
+    // Single emission with clientId-scoped dim set
     expect(metrics.metricsCounter).toHaveBeenCalledWith(
       'validation.requests.without_errors',
       1,
       { endpointType: 'put', clientId: 'test-client-id' }
     )
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_errors',
-      1,
-      { clientId: 'test-client-id' }
-    )
+    expect(metrics.metricsCounter).toHaveBeenCalledTimes(1)
     // Receipt received metrics
     expect(metrics.logReceiptMetrics).toHaveBeenCalledWith(
       'put',
@@ -270,7 +240,12 @@ describe('handleUpdateReceiptMovement', () => {
     expect(metrics.logWarningMetrics).toHaveBeenCalled()
     // Developer metrics should NOT be logged when clientId is missing
     expect(metrics.logDeveloperMetrics).not.toHaveBeenCalled()
-    // ClientId-scoped without_errors variants should NOT be emitted
+    // without_errors emission omits clientId when absent
+    expect(metrics.metricsCounter).toHaveBeenCalledWith(
+      'validation.requests.without_errors',
+      1,
+      { endpointType: 'put' }
+    )
     expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
       'validation.requests.without_errors',
       1,
@@ -286,32 +261,17 @@ describe('handleUpdateReceiptMovement', () => {
 
     await handleUpdateReceiptMovement(mockRequest, mockH)
 
-    // without_errors should still be logged (request passed validation)
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_errors',
-      1,
-      { endpointType: 'put' }
-    )
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_errors',
-      1
-    )
-    // ClientId-scoped variants also emitted (clientId present on request)
+    // without_errors logged with clientId-scoped dim set
     expect(metrics.metricsCounter).toHaveBeenCalledWith(
       'validation.requests.without_errors',
       1,
       { endpointType: 'put', clientId: 'test-client-id' }
     )
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_errors',
-      1,
-      { clientId: 'test-client-id' }
-    )
     // Receipt, warning, and developer metrics should NOT be logged
     expect(metrics.logReceiptMetrics).not.toHaveBeenCalled()
     expect(metrics.logWarningMetrics).not.toHaveBeenCalled()
     expect(metrics.logDeveloperMetrics).not.toHaveBeenCalled()
-    expect(metrics.metricsCounter).toHaveBeenCalledTimes(4)
+    expect(metrics.metricsCounter).toHaveBeenCalledTimes(1)
     expect(mockH.code).toHaveBeenCalledWith(400)
   })
 })
