@@ -1,5 +1,11 @@
 import { metricsCounter } from '../common/helpers/metrics.js'
 import { normalizeArrayIndices } from '../common/helpers/utils.js'
+import { isReceiptMovementEndpoint } from '../common/helpers/receipt-movement-endpoint.js'
+import { METRIC_NAMES } from '../common/constants/metric-names.js'
+
+// Build dimensions object including clientId only when present.
+const withClientId = (dims, clientId) =>
+  clientId ? { ...dims, clientId } : dims
 
 const JOI_TYPE_TO_CATEGORY = {
   // NotProvided
@@ -62,17 +68,6 @@ function getErrorCategory(joiErrorType) {
   }
 
   return 'UnexpectedError'
-}
-
-/**
- * Check if request is for receipt movement endpoints
- */
-const isReceiptMovementEndpoint = (request) => {
-  const path = request.route.path
-  return (
-    path === '/movements/receive' ||
-    path === '/movements/{wasteTrackingId}/receive'
-  )
 }
 
 export const errorHandler = {
@@ -147,53 +142,34 @@ export const errorHandler = {
           // Log validation error metrics for receipt movement endpoints
           if (isReceiptMovementEndpoint(request)) {
             const endpointType = request.method.toLowerCase()
+            const clientId = request.auth?.credentials?.clientId
+            const baseDims = withClientId({ endpointType }, clientId)
 
-            // Error count metrics
             await metricsCounter(
-              'validation.errors.count',
+              METRIC_NAMES.VALIDATION_ERRORS_COUNT,
               formattedErrors.length,
-              {
-                endpointType
-              }
+              baseDims
             )
             await metricsCounter(
-              'validation.errors.count',
-              formattedErrors.length
+              METRIC_NAMES.VALIDATION_REQUESTS_WITH_ERRORS,
+              1,
+              baseDims
             )
 
-            // Request with errors metric
-            await metricsCounter('validation.requests.with_errors', 1, {
-              endpointType
-            })
-            await metricsCounter('validation.requests.with_errors', 1)
-
-            // Per-error breakdown metrics
             for (const error of formattedErrors) {
               const errorReason = normalizeArrayIndices(error.message)
-              await metricsCounter('validation.error.reason', 1, {
-                endpointType,
+              await metricsCounter(METRIC_NAMES.VALIDATION_ERROR_REASON, 1, {
+                ...baseDims,
                 errorReason
               })
-              await metricsCounter('validation.error.reason', 1, {
-                errorReason
-              })
-
-              // Error category metrics (NotProvided, InvalidType, etc.)
-              await metricsCounter('validation.error.category', 1, {
-                endpointType,
-                errorCategory: error.errorType
-              })
-              await metricsCounter('validation.error.category', 1, {
+              await metricsCounter(METRIC_NAMES.VALIDATION_ERROR_CATEGORY, 1, {
+                ...baseDims,
                 errorCategory: error.errorType
               })
             }
 
-            // HTTP status code metric for validation errors
-            await metricsCounter('errors.by_status_code', 1, {
-              endpointType,
-              statusCode: '400'
-            })
-            await metricsCounter('errors.by_status_code', 1, {
+            await metricsCounter(METRIC_NAMES.ERRORS_BY_STATUS_CODE, 1, {
+              ...baseDims,
               statusCode: '400'
             })
           }
@@ -210,12 +186,10 @@ export const errorHandler = {
         ) {
           const endpointType = request.method.toLowerCase()
           const statusCode = String(response.output.statusCode)
+          const clientId = request.auth?.credentials?.clientId
 
-          await metricsCounter('errors.by_status_code', 1, {
-            endpointType,
-            statusCode
-          })
-          await metricsCounter('errors.by_status_code', 1, {
+          await metricsCounter(METRIC_NAMES.ERRORS_BY_STATUS_CODE, 1, {
+            ...withClientId({ endpointType }, clientId),
             statusCode
           })
         }
