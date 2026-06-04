@@ -1,5 +1,5 @@
 import { receiveMovementRequestSchema } from './receipt.js'
-import { MEANS_OF_TRANSPORT } from '../common/constants/means-of-transport.js'
+import { MEANS_OF_TRANSPORT } from 'waste-movement-utils'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 
 describe('Create Receipt Movement - Means of Transport Validation', () => {

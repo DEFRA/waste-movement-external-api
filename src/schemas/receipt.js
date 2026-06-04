@@ -1,27 +1,25 @@
 import Joi from 'joi'
-import { MEANS_OF_TRANSPORT } from '../common/constants/means-of-transport.js'
-import { wasteItemsSchema } from './waste.js'
 import {
-  hasHazardousEwcCodes,
-  hazardousWasteConsignmentCodeSchema
-} from './hazardous-waste-consignment.js'
-import {
+  MEANS_OF_TRANSPORT,
   ENGLAND_CARRIER_REGISTRATION_NUMBER_REGEX,
   IRL_POSTCODE_REGEX,
   NI_CARRIER_REGISTRATION_NUMBER_REGEX,
   NRU_CARRIER_REGISTRATION_NUMBER_REGEX,
   SEPA_CARRIER_REGISTRATION_NUMBER_REGEX,
   UK_POSTCODE_REGEX,
-  ALL_SITE_AUTHORISATION_NUMBER_REGEXES
-} from '../common/constants/regexes.js'
-import {
+  ALL_SITE_AUTHORISATION_NUMBER_REGEXES,
   CARRIER_ERRORS,
   ADDRESS_ERRORS,
   CONSIGNMENT_ERRORS,
-  AUTHORISATION_ERRORS
-} from '../common/constants/validation-error-messages.js'
-import { REASONS_FOR_NO_REGISTRATION_NUMBER } from '../common/constants/reasons-for-no-registration-number.js'
-import { NO_CONSIGNMENT_REASONS } from '../common/constants/no-consignment-reasons.js'
+  AUTHORISATION_ERRORS,
+  REASONS_FOR_NO_REGISTRATION_NUMBER,
+  NO_CONSIGNMENT_REASONS
+} from 'waste-movement-utils'
+import { wasteItemsSchema } from './waste.js'
+import {
+  hasHazardousEwcCodes,
+  hazardousWasteConsignmentCodeSchema
+} from './hazardous-waste-consignment.js'
 
 const MIN_STRING_LENGTH = 1
 const LONG_STRING_MAX_LENGTH = 5000

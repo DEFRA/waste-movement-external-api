@@ -1,8 +1,8 @@
 import {
   DISPOSAL_CODES,
-  RECOVERY_CODES
-} from '../../common/constants/treatment-codes.js'
-import { HTTP_STATUS } from '../../common/constants/http-status-codes.js'
+  RECOVERY_CODES,
+  HTTP_STATUS
+} from 'waste-movement-utils'
 import { handleBackendResponse } from '../handle-backend-response.js'
 import { createLogger } from '../../common/helpers/logging/logger.js'
 

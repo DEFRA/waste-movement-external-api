@@ -1,17 +1,17 @@
 import Joi from 'joi'
-import { isValidEwcCode } from '../common/constants/ewc-codes.js'
-import { isValidPopCode } from '../common/constants/pop-names.js'
-import { weightSchema } from './weight.js'
-import { isValidContainerType } from '../common/constants/container-types.js'
-import { validHazCodes } from '../common/constants/haz-codes.js'
-import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
 import {
+  isValidEwcCode,
+  isValidPopCode,
+  isValidContainerType,
+  validHazCodes,
+  DISPOSAL_OR_RECOVERY_CODES,
   HAZARDOUS_ERRORS,
   POPS_ERRORS,
   POPS_OR_HAZARDOUS_ERRORS,
-  WASTE_ERRORS
-} from '../common/constants/validation-error-messages.js'
-import { validSourceOfComponents } from '../common/constants/source-of-components.js'
+  WASTE_ERRORS,
+  validSourceOfComponents
+} from 'waste-movement-utils'
+import { weightSchema } from './weight.js'
 
 const MAX_EWC_CODES_COUNT = 5
 

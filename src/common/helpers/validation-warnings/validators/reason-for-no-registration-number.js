@@ -1,7 +1,7 @@
 import {
   CARRIER_WARNINGS,
   VALIDATION_WARNING_TYPES
-} from '../../../constants/validation-warning-messages.js'
+} from 'waste-movement-utils'
 
 export const reasonForNoRegistrationNumberWarningValidators = {
   key: 'carrier.reasonForNoRegistrationNumber',

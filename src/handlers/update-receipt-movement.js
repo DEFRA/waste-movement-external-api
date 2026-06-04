@@ -8,7 +8,7 @@ import {
   logWarningMetrics,
   logDeveloperMetrics
 } from '../common/helpers/metrics.js'
-import { METRIC_NAMES } from '../common/constants/metric-names.js'
+import { METRIC_NAMES } from 'waste-movement-utils'
 import { isSuccessStatusCode } from '../common/helpers/utils.js'
 import { addSubmittingOrganisationToRequest } from '../common/helpers/submitting-organisation.js'
 

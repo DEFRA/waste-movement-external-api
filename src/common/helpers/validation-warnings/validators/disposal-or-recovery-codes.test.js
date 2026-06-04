@@ -1,4 +1,4 @@
-import { VALIDATION_WARNING_TYPES } from '../../../constants/validation-warning-messages.js'
+import { VALIDATION_WARNING_TYPES } from 'waste-movement-utils'
 import { processValidationWarnings } from '../validation-warnings.js'
 import { disposalOrRecoveryCodesWarningValidators } from './disposal-or-recovery-codes.js'
 import { v4 as uuidv4 } from 'uuid'
