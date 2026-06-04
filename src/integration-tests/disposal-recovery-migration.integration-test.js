@@ -1,4 +1,4 @@
-import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
+import { HTTP_STATUS } from 'waste-movement-utils'
 import { createServer } from '../server.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import { v4 as uuidv4 } from 'uuid'

@@ -1,4 +1,4 @@
-import { HTTP_STATUS } from '../constants/http-status-codes.js'
+import { HTTP_STATUS } from 'waste-movement-utils'
 import { isSuccessStatusCode, normalizeArrayIndices } from './utils.js'
 
 describe('Utils tests', () => {

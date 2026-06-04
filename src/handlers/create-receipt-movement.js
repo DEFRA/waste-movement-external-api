@@ -1,5 +1,5 @@
 import { httpClients } from '../common/helpers/http-client.js'
-import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
+import { HTTP_STATUS, METRIC_NAMES } from 'waste-movement-utils'
 import { handleBackendResponse } from './handle-backend-response.js'
 import { createLogger } from '../common/helpers/logging/logger.js'
 import { isSuccessStatusCode } from '../common/helpers/utils.js'
@@ -10,7 +10,6 @@ import {
   logWarningMetrics,
   logDeveloperMetrics
 } from '../common/helpers/metrics.js'
-import { METRIC_NAMES } from '../common/constants/metric-names.js'
 import { addSubmittingOrganisationToRequest } from '../common/helpers/submitting-organisation.js'
 
 const logger = createLogger()

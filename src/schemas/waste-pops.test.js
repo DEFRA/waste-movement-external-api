@@ -1,6 +1,6 @@
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createTestPayload } from './test-helpers/waste-test-helpers.js'
-import { isValidPopCode, validPopNames } from '../common/constants/pop-names.js'
+import { isValidPopCode, validPopNames } from 'waste-movement-utils'
 import { popsAndHazardousComponentsErrorTests } from '../test/common/pop-and-hazardous-components/pops-and-hazardous-components-error-tests.js'
 
 describe('Receipt Schema Validation - POPs', () => {

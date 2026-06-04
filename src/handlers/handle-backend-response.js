@@ -1,4 +1,4 @@
-import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
+import { HTTP_STATUS } from 'waste-movement-utils'
 import { isSuccessStatusCode } from '../common/helpers/utils.js'
 
 export function handleBackendResponse(response, h, responseBodyFn) {

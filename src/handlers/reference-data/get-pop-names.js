@@ -1,7 +1,6 @@
-import { HTTP_STATUS } from '../../common/constants/http-status-codes.js'
+import { HTTP_STATUS, validPopNames } from 'waste-movement-utils'
 import { handleBackendResponse } from '../handle-backend-response.js'
 import { createLogger } from '../../common/helpers/logging/logger.js'
-import { validPopNames } from '../../common/constants/pop-names.js'
 
 const logger = createLogger()
 

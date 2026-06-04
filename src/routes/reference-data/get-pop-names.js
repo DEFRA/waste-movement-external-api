@@ -1,4 +1,4 @@
-import { HTTP_STATUS } from '../../common/constants/http-status-codes.js'
+import { HTTP_STATUS } from 'waste-movement-utils'
 import { handleGetPopNames } from '../../handlers/reference-data/get-pop-names.js'
 
 const getPopNames = {

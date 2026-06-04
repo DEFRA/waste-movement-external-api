@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals'
 import { handleBackendResponse } from './handle-backend-response.js'
-import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
+import { HTTP_STATUS } from 'waste-movement-utils'
 
 describe('handleBackendResponse', () => {
   const mockH = {

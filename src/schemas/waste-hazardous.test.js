@@ -1,8 +1,8 @@
-import { validHazCodes } from '../common/constants/haz-codes.js'
 import {
+  validHazCodes,
   sourceOfComponentsNotProvided,
   validSourceOfComponents
-} from '../common/constants/source-of-components.js'
+} from 'waste-movement-utils'
 import { popsAndHazardousComponentsErrorTests } from '../test/common/pop-and-hazardous-components/pops-and-hazardous-components-error-tests.js'
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createTestPayload } from './test-helpers/waste-test-helpers.js'

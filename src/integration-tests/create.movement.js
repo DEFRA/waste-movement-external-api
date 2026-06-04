@@ -1,6 +1,6 @@
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import { createLogger } from '../common/helpers/logging/logger.js'
-import { HTTP_STATUS } from '../common/constants/http-status-codes.js'
+import { HTTP_STATUS } from 'waste-movement-utils'
 
 const logger = createLogger()
 

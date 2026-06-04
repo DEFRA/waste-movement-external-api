@@ -1,5 +1,5 @@
 import { receiveMovementRequestSchema } from './receipt.js'
-import { DISPOSAL_OR_RECOVERY_CODES } from '../common/constants/treatment-codes.js'
+import { DISPOSAL_OR_RECOVERY_CODES } from 'waste-movement-utils'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 
 describe('Create Receipt Movement - Disposal/Recovery Code Validation', () => {

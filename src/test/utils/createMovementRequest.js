@@ -1,10 +1,10 @@
 import { v4 as uuidv4 } from 'uuid'
 import {
   sourceOfComponentsNotProvided,
-  sourceOfComponentsProvided
-} from '../../common/constants/source-of-components.js'
+  sourceOfComponentsProvided,
+  validPopNames
+} from 'waste-movement-utils'
 import { TEST_DATA } from '../../schemas/test-constants.js'
-import { validPopNames } from '../../common/constants/pop-names.js'
 
 export function createMovementRequest(overrides) {
   const defaultMovementRequest = {

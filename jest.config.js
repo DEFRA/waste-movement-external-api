@@ -26,7 +26,8 @@ export default {
     `node_modules/(?!${[
       '@defra/hapi-tracing', // Supports ESM only
       'node-fetch', // Supports ESM only
-      'uuid'
+      'uuid',
+      'waste-movement-utils'
     ].join('|')}/)`
   ]
 }

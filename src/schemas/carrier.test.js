@@ -1,12 +1,14 @@
 import { receiveMovementRequestSchema } from './receipt.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
-import { MEANS_OF_TRANSPORT } from '../common/constants/means-of-transport.js'
+import {
+  MEANS_OF_TRANSPORT,
+  REASONS_FOR_NO_REGISTRATION_NUMBER
+} from 'waste-movement-utils'
 import { carrierBrokerDealerRegistrationNumberErrorTests } from '../test/common/carrier-broker-dealer-regisration-number/carrier-broker-dealer-registration-number-error-tests.js'
 import {
   invalidCarrierRegistrationNumbers,
   validCarrierRegistrationNumbers
 } from '../test/data/carrier-registration-numbers.js'
-import { REASONS_FOR_NO_REGISTRATION_NUMBER } from '../common/constants/reasons-for-no-registration-number.js'
 
 describe('Carrier Registration Validation', () => {
   const basePayload = createMovementRequest()

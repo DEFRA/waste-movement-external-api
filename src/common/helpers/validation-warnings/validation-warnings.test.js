@@ -1,4 +1,4 @@
-import { VALIDATION_WARNING_TYPES } from '../../constants/validation-warning-messages.js'
+import { VALIDATION_WARNING_TYPES } from 'waste-movement-utils'
 import {
   generateAllValidationWarnings,
   processValidationWarnings

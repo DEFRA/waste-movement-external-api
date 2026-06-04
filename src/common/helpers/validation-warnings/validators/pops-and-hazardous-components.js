@@ -2,7 +2,7 @@ import { formatPopsOrHazardousFields } from '../../../../schemas/waste.js'
 import {
   POPS_OR_HAZARDOUS_WARNINGS,
   VALIDATION_WARNING_TYPES
-} from '../../../constants/validation-warning-messages.js'
+} from 'waste-movement-utils'
 
 export const hazardousComponentsWarningValidators = {
   key: 'wasteItems.hazardous.components',

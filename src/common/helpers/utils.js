@@ -1,4 +1,4 @@
-import { HTTP_STATUS } from '../constants/http-status-codes.js'
+import { HTTP_STATUS } from 'waste-movement-utils'
 
 /**
  * Determines if a response status code is a success status code
