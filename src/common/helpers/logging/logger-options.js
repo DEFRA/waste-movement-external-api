@@ -33,5 +33,8 @@ export const loggerOptions = {
       mixinValues.trace = { id: traceId }
     }
     return mixinValues
-  }
+  },
+  getChildBindings: (req) => ({
+    clientId: req.auth?.credentials?.clientId
+  })
 }
