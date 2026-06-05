@@ -14,6 +14,3 @@ coverage
 
 # @shelf/jest-mongodb generated file
 globalConfig.json
-
-# ZAP scan reports
-zap-reports/
