@@ -107,22 +107,6 @@ services:
       retries: 10
       start_period: 40s
 
-  zap:
-    image: ghcr.io/zaproxy/zaproxy:stable
-    command: zap.sh -daemon -host 0.0.0.0 -port 8080
-      -config api.addrs.addr.name=.*
-      -config api.addrs.addr.regex=true
-      -config api.key=${ZAP_API_KEY}
-      -config api.disablekey=false
-    ports:
-      - '8080:8080' # Proxy port - point your UAT test pack here
-    extra_hosts:
-      - 'localhost:host-gateway'
-    volumes:
-      - ./zap-reports:/zap/reports:Z
-    networks:
-      - cdp-tenant
-
   localstack:
     image: localstack/localstack:3.0.2
     ports:
@@ -142,6 +126,18 @@ services:
       timeout: 5s
       retries: 10
       start_period: 40s
+    networks:
+      - cdp-tenant
+
+  zap:
+    image: ghcr.io/zaproxy/zaproxy:stable
+    command:  >-
+      zap.sh -daemon -silent -host 0.0.0.0 -port 8080
+      -config api.addrs.addr.name=.*
+      -config api.addrs.addr.regex=true
+      -config api.key=${ZAP_API_KEY}
+    ports:
+      - '8080:8080' # Proxy port - point your UAT test pack here
     networks:
       - cdp-tenant
 
