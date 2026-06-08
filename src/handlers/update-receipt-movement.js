@@ -1,16 +1,21 @@
 import Boom from '@hapi/boom'
 import { httpClients } from '../common/helpers/http-client.js'
 import { handleBackendResponse } from './handle-backend-response.js'
-import { generateAllValidationWarnings } from '../common/helpers/validation-warnings/validation-warnings.js'
 import {
   metricsCounter,
   logReceiptMetrics,
   logWarningMetrics,
   logDeveloperMetrics
 } from '../common/helpers/metrics.js'
-import { METRIC_NAMES } from 'waste-movement-utils'
+import {
+  METRIC_NAMES,
+  generateAllValidationWarnings
+} from 'waste-movement-utils'
 import { isSuccessStatusCode } from '../common/helpers/utils.js'
 import { addSubmittingOrganisationToRequest } from '../common/helpers/submitting-organisation.js'
+import { createLogger } from '../common/helpers/logging/logger.js'
+
+const logger = createLogger()
 
 /**
  * Handler for updating a receipt movement
@@ -33,7 +38,8 @@ export const handleUpdateReceiptMovement = async (request, h) => {
     // Generate validation warnings
     const warnings = generateAllValidationWarnings(
       requestData.movement,
-      wasteTrackingId
+      wasteTrackingId,
+      logger
     )
 
     const responseData = {}
