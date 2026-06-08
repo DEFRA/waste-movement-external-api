@@ -76,8 +76,6 @@ jobs:
         with:
           repository: DEFRA/digital-waste-tracking-uat
           path: integration-tests
-          # TODO: remove once integrate-with-zap-proxy is merged in digital-waste-tracking-uat
-          ref: integrate-with-zap-proxy
 
       - name: Setup Node.js for Integration Test Suite
         uses: actions/setup-node@v4
