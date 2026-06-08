@@ -1,9 +1,12 @@
 import { httpClients } from '../common/helpers/http-client.js'
-import { HTTP_STATUS, METRIC_NAMES } from 'waste-movement-utils'
+import {
+  HTTP_STATUS,
+  METRIC_NAMES,
+  generateAllValidationWarnings
+} from 'waste-movement-utils'
 import { handleBackendResponse } from './handle-backend-response.js'
 import { createLogger } from '../common/helpers/logging/logger.js'
 import { isSuccessStatusCode } from '../common/helpers/utils.js'
-import { generateAllValidationWarnings } from '../common/helpers/validation-warnings/validation-warnings.js'
 import {
   metricsCounter,
   logReceiptMetrics,
@@ -31,7 +34,8 @@ export const handleCreateReceiptMovement = async (request, h) => {
     // Generate validation warnings
     const warnings = generateAllValidationWarnings(
       request.payload,
-      wasteTrackingId
+      wasteTrackingId,
+      logger
     )
 
     const responseData = {
