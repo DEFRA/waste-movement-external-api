@@ -66,6 +66,7 @@ jobs:
           AUTH_PASSWORD_QA_NON_PROD: ${{ secrets.AUTH_PASSWORD_QA_NON_PROD }}
           ACCESS_CRED_PRODUCTION_APPROVAL_TESTS: ${{ secrets.ACCESS_CRED_PRODUCTION_APPROVAL_TESTS }}
           EXCLUDED_SUBMITTING_ORGANISATION_IDS: ${{ secrets.EXCLUDED_SUBMITTING_ORGANISATION_IDS }}
+          ZAP_API_KEY: ${{ secrets.ZAP_API_KEY }}
         run: |
           docker compose up -d --wait
           docker compose ps
@@ -91,9 +92,12 @@ jobs:
         id: integration-tests
         working-directory: integration-tests
         env:
-          WASTE_MOVEMENT_EXTERNAL_API_BASE_URL: http://localhost:3001
-          WASTE_MOVEMENT_BACKEND_API_BASE_URL: http://localhost:3002
-          WASTE_ORGANISATION_BACKEND_API_BASE_URL: http://localhost:3004
+          WASTE_MOVEMENT_EXTERNAL_API_BASE_URL: http://waste-tracking-external-api:3001
+          WASTE_MOVEMENT_BACKEND_API_BASE_URL: http://waste-movement-backend:3001
+          WASTE_ORGANISATION_BACKEND_API_BASE_URL: http://waste-organisation-backend:3001
+          HTTP_PROXY: http://localhost:8080
+          PROXY_MODE: zap
+          ZAP_API_KEY: ${{ secrets.ZAP_API_KEY }}
           AUTH_DISABLED: true
           API_LOGGING: true
           JIRA_BASE_URL: https://eaflood.atlassian.net/browse
@@ -102,9 +106,9 @@ jobs:
           SERVICE_AUTH_PASSWORD_WASTE_ORGANISATION_BACKEND: ${{ secrets.SERVICE_AUTH_PASSWORD_WASTE_ORGANISATION_BACKEND }}
           AUTH_PASSWORD_QA_NON_PROD: ${{ secrets.AUTH_PASSWORD_QA_NON_PROD }}
           AUTH_PASSWORD_PRODUCTION_APPROVAL_TESTS: ${{ secrets.AUTH_PASSWORD_PRODUCTION_APPROVAL_TESTS }}
-
         run: |
           npm run test
+          npm run test:zap-gate
 
       - name: Generate Test Report
         if: always()
