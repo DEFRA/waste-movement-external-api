@@ -1,7 +1,6 @@
-import { receiveMovementRequestSchema } from '../schemas/receipt.js'
+import { receiveMovementRequestSchema, HTTP_STATUS } from 'waste-movement-utils'
 import { handleCreateReceiptMovement } from '../handlers/create-receipt-movement.js'
 import Joi from 'joi'
-import { HTTP_STATUS } from 'waste-movement-utils'
 import { badRequestResponseSchema } from '../schemas/bad-request-response-schema.js'
 
 const createReceiptMovement = {
