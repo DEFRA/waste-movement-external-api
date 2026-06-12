@@ -43,7 +43,7 @@
     "global-agent": "3.0.0",
     "hapi-pino": "12.1.0",
     "hapi-pulse": "3.0.0",
-    "hapi-swagger": "13.1.0",
+    "hapi-swagger": "17.3.2",
     "https-proxy-agent": "7.0.5",
     "joi": "18.2.1",
     "mongo-locks": "3.0.2",
