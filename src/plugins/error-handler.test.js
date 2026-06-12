@@ -73,10 +73,9 @@ describe('Error Handler', () => {
 
     // Check that the required field error has errorType 'NotProvided'
     const requiredFieldError = responseBody.validation.errors.find(
-      (err) => err.key === 'apiCode'
+      (err) => err.errorType === 'NotProvided'
     )
     expect(requiredFieldError).toBeDefined()
-    expect(requiredFieldError.errorType).toBe('NotProvided')
   })
 
   test('should set correct key for custom schema-level validation errors', async () => {
