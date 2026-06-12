@@ -1,74 +1,11 @@
 import { metricsCounter } from '../common/helpers/metrics.js'
 import { normalizeArrayIndices } from '../common/helpers/utils.js'
 import { isReceiptMovementEndpoint } from '../common/helpers/receipt-movement-endpoint.js'
-import { METRIC_NAMES } from 'waste-movement-utils'
+import { METRIC_NAMES, validationErrorFormatter } from 'waste-movement-utils'
 
 // Build dimensions object including clientId only when present.
 const withClientId = (dims, clientId) =>
   clientId ? { ...dims, clientId } : dims
-
-const JOI_TYPE_TO_CATEGORY = {
-  // NotProvided
-  'any.required': 'NotProvided',
-
-  // NotAllowed
-  'object.unknown': 'NotAllowed',
-  'any.unknown': 'NotAllowed',
-
-  // InvalidType
-  'string.base': 'InvalidType',
-  'number.base': 'InvalidType',
-  'boolean.base': 'InvalidType',
-  'array.base': 'InvalidType',
-  'object.base': 'InvalidType',
-  'date.base': 'InvalidType',
-
-  // InvalidFormat
-  'string.email': 'InvalidFormat',
-  'string.uuid': 'InvalidFormat',
-  'string.guid': 'InvalidFormat',
-  'string.pattern.base': 'InvalidFormat',
-  'date.format': 'InvalidFormat',
-  'alternatives.match': 'InvalidFormat',
-
-  // InvalidValue
-  'any.only': 'InvalidValue',
-  'any.invalid': 'InvalidValue',
-  'string.empty': 'InvalidValue',
-
-  // OutOfRange
-  'string.min': 'OutOfRange',
-  'string.max': 'OutOfRange',
-  'number.min': 'OutOfRange',
-  'number.max': 'OutOfRange',
-  'number.positive': 'OutOfRange',
-  'number.negative': 'OutOfRange',
-  'number.integer': 'OutOfRange',
-  'array.min': 'OutOfRange',
-  'array.max': 'OutOfRange'
-}
-
-function getErrorCategory(joiErrorType) {
-  if (JOI_TYPE_TO_CATEGORY[joiErrorType]) {
-    return JOI_TYPE_TO_CATEGORY[joiErrorType]
-  }
-
-  // Check for custom error types with category prefix (e.g., 'InvalidFormat.ewcCode')
-  const categories = [
-    'InvalidType',
-    'InvalidFormat',
-    'InvalidValue',
-    'OutOfRange',
-    'BusinessRuleViolation'
-  ]
-  for (const prefix of categories) {
-    if (joiErrorType.startsWith(`${prefix}.`)) {
-      return prefix
-    }
-  }
-
-  return 'UnexpectedError'
-}
 
 export const errorHandler = {
   plugin: {
@@ -84,60 +21,7 @@ export const errorHandler = {
 
         // Check if it's a validation error (Boom error with status 400)
         if (response.isBoom && response.output.statusCode === 400) {
-          // Access the validation error details
-          const validationErrors = response.details || []
-          const unexpectedErrors = []
-
-          // Transform validation errors to the required format
-          const formattedErrors = validationErrors.map((err) => {
-            const errorType = getErrorCategory(err.type)
-            if (errorType === 'UnexpectedError') {
-              unexpectedErrors.push(err)
-            }
-
-            // Determine the error key
-            // For most errors, Joi provides the path (e.g., ['fieldName'])
-            // However, custom validators at the schema level don't have path context
-            let key = err.path.join('.')
-
-            // For schema-level custom validations that pass fieldName metadata via local context,
-            // use that instead of the empty path
-            // This allows custom validations to specify which field the error relates to
-            if (!key && err.context?.local?.fieldName) {
-              key = err.context.local.fieldName
-            }
-
-            return {
-              key,
-              errorType,
-              message: err.message
-            }
-          })
-
-          // Create the custom error format
-          const customError = {
-            validation: {
-              errors: formattedErrors
-            }
-          }
-
-          // Log all validation errors in a single consolidated entry
-          if (unexpectedErrors.length > 0) {
-            logger.error(
-              {
-                validationErrors: formattedErrors,
-                unexpectedErrors,
-                totalErrors: formattedErrors.length,
-                unexpectedCount: unexpectedErrors.length
-              },
-              `Validation failed with unexpected error types, mapped to UnexpectedError`
-            )
-          } else {
-            logger.error(
-              { err: formattedErrors },
-              `Validation failed ${JSON.stringify(formattedErrors)}`
-            )
-          }
+          const customError = validationErrorFormatter(response, logger)
 
           // Log validation error metrics for receipt movement endpoints
           if (isReceiptMovementEndpoint(request)) {
@@ -147,7 +31,7 @@ export const errorHandler = {
 
             await metricsCounter(
               METRIC_NAMES.VALIDATION_ERRORS_COUNT,
-              formattedErrors.length,
+              customError.validation.errors.length,
               baseDims
             )
             await metricsCounter(
@@ -156,7 +40,7 @@ export const errorHandler = {
               baseDims
             )
 
-            for (const error of formattedErrors) {
+            for (const error of customError.validation.errors) {
               const errorReason = normalizeArrayIndices(error.message)
               await metricsCounter(METRIC_NAMES.VALIDATION_ERROR_REASON, 1, {
                 ...baseDims,
