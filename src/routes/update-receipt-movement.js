@@ -1,7 +1,8 @@
-import { receiveMovementRequestSchema, HTTP_STATUS } from 'waste-movement-utils'
+import { HTTP_STATUS } from 'waste-movement-utils'
 import { handleUpdateReceiptMovement } from '../handlers/update-receipt-movement.js'
 import Joi from 'joi'
 import { badRequestResponseSchema } from '../schemas/bad-request-response-schema.js'
+import { receiveMovementInputSchema } from '../schemas/receive-movement-input.js'
 
 const updateReceiptMovement = {
   method: 'PUT',
@@ -16,7 +17,7 @@ const updateReceiptMovement = {
           .required()
           .description('The globally unique id of the movement.')
       }),
-      payload: receiveMovementRequestSchema
+      payload: receiveMovementInputSchema
     },
     plugins: {
       'hapi-swagger': {
