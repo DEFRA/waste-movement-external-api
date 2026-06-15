@@ -1,18 +1,16 @@
 import { describe, it, expect } from '@jest/globals'
 import { receiveMovementInputSchema } from './receive-movement-input.js'
-import { createMovementRequest } from '../test/utils/createMovementRequest.js'
+import { createTestPayload } from './test-helpers/waste-test-helpers.js'
 
 describe('receiveMovementInputSchema', () => {
   it('should accept a valid payload with an apiCode', () => {
-    const { error } = receiveMovementInputSchema.validate(
-      createMovementRequest()
-    )
+    const { error } = receiveMovementInputSchema.validate(createTestPayload())
 
     expect(error).toBeUndefined()
   })
 
   it('should require apiCode', () => {
-    const { apiCode, ...payloadWithoutApiCode } = createMovementRequest()
+    const { apiCode, ...payloadWithoutApiCode } = createTestPayload()
 
     const { error } = receiveMovementInputSchema.validate(payloadWithoutApiCode)
 
@@ -24,7 +22,7 @@ describe('receiveMovementInputSchema', () => {
   })
 
   it('should forbid submittingOrganisation as input', () => {
-    const payload = createMovementRequest({
+    const payload = createTestPayload({
       submittingOrganisation: {
         defraCustomerOrganisationId: 'org-123'
       }
