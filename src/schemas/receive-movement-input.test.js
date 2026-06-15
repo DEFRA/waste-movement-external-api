@@ -9,16 +9,35 @@ describe('receiveMovementInputSchema', () => {
     expect(error).toBeUndefined()
   })
 
-  it('should require apiCode', () => {
+  it('should require apiCode without surfacing the shared xor rule', () => {
     const { apiCode, ...payloadWithoutApiCode } = createTestPayload()
 
-    const { error } = receiveMovementInputSchema.validate(payloadWithoutApiCode)
+    const { error } = receiveMovementInputSchema.validate(
+      payloadWithoutApiCode,
+      { abortEarly: false }
+    )
 
     expect(error).toBeDefined()
-    expect(error.details[0]).toMatchObject({
-      path: ['apiCode'],
-      type: 'any.required'
+    expect(error.details).toEqual([
+      expect.objectContaining({ path: ['apiCode'], type: 'any.required' })
+    ])
+  })
+
+  it('should still apply the shared consignment custom validation', () => {
+    const payload = createTestPayload({
+      wasteItemOverrides: { ewcCodes: ['180103'], containsHazardous: true }
     })
+    delete payload.hazardousWasteConsignmentCode
+    delete payload.reasonForNoConsignmentCode
+
+    const { error } = receiveMovementInputSchema.validate(payload, {
+      abortEarly: false
+    })
+
+    expect(error).toBeDefined()
+    expect(error.details).toContainEqual(
+      expect.objectContaining({ type: 'BusinessRuleViolation.reasonRequired' })
+    )
   })
 
   it('should forbid submittingOrganisation as input', () => {
