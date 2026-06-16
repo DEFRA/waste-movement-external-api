@@ -94,7 +94,7 @@ jobs:
         env:
           WASTE_MOVEMENT_EXTERNAL_API_BASE_URL: http://waste-tracking-external-api:3001
           WASTE_MOVEMENT_BACKEND_API_BASE_URL: http://waste-movement-backend:3001
-          WASTE_ORGANISATION_BACKEND_API_BASE_URL: http://waste-organisation-backend:3001
+          WASTE_ORGANISATION_BACKEND_API_BASE_URL: http://localhost:3001
           HTTP_PROXY: http://localhost:8080
           PROXY_MODE: zap
           ZAP_API_KEY: ${{ secrets.ZAP_API_KEY }}
