@@ -1,5 +1,8 @@
 import { describe, it, expect } from '@jest/globals'
-import { receiveMovementInputSchema } from './receive-movement-input.js'
+import {
+  receiveMovementInputSchema,
+  isApiCodeOrgXor
+} from './receive-movement-input.js'
 import { createTestPayload } from './test-helpers/waste-test-helpers.js'
 
 describe('receiveMovementInputSchema', () => {
@@ -38,6 +41,27 @@ describe('receiveMovementInputSchema', () => {
     expect(error.details).toContainEqual(
       expect.objectContaining({ type: 'BusinessRuleViolation.reasonRequired' })
     )
+  })
+
+  describe('isApiCodeOrgXor', () => {
+    const xor = (...keys) => ({
+      rel: 'xor',
+      peers: keys.map((key) => ({ key }))
+    })
+
+    it('should match only the apiCode/submittingOrganisation xor', () => {
+      expect(isApiCodeOrgXor(xor('apiCode', 'submittingOrganisation'))).toBe(
+        true
+      )
+    })
+
+    it('should leave other dependency rules untouched', () => {
+      expect(isApiCodeOrgXor(xor('a', 'b'))).toBe(false)
+      expect(isApiCodeOrgXor({ rel: 'and', peers: [] })).toBe(false)
+      expect(
+        isApiCodeOrgXor(xor('apiCode', 'submittingOrganisation', 'a'))
+      ).toBe(false)
+    })
   })
 
   it('should forbid submittingOrganisation as input', () => {
