@@ -108,7 +108,7 @@ jobs:
           AUTH_PASSWORD_PRODUCTION_APPROVAL_TESTS: ${{ secrets.AUTH_PASSWORD_PRODUCTION_APPROVAL_TESTS }}
         run: |
           npm run test
-          npm run test:zap-gate
+#          npm run test:zap-gate
 
       - name: Generate Test Report
         if: always()

@@ -77,8 +77,6 @@
     "@hapi/hapi": {
       "@hapi/content": "6.0.2"
     },
-    "hapi-swagger": {
-      "joi": "$joi"
-    }
+    "joi": "$joi"
   }
 }
