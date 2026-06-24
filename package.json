@@ -53,7 +53,7 @@
     "pino-pretty": "13.0.0",
     "undici": "7.24.5",
     "uuid": "13.0.2",
-    "waste-movement-utils": "github:DEFRA/waste-movement-utils#a479432f6f7c5808ca9f2e6d2a0abe473a3506e6"
+    "waste-movement-utils": "github:DEFRA/waste-movement-utils#eccac1a8ac8a70e8f0174ce93ac90096cf3f75c0"
   },
   "devDependencies": {
     "@babel/core": "7.29.7",
