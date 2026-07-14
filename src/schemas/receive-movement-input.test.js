@@ -28,7 +28,11 @@ describe('receiveMovementInputSchema', () => {
 
   it('should still apply the shared consignment custom validation', () => {
     const payload = createTestPayload({
-      wasteItemOverrides: { ewcCodes: ['180103'], containsHazardous: true }
+      wasteItemOverrides: {
+        ewcCodes: ['180103'],
+        containsHazardous: true,
+        hazardous: { sourceOfComponents: 'NOT_PROVIDED', hazCodes: ['HP_1'] }
+      }
     })
     delete payload.hazardousWasteConsignmentCode
     delete payload.reasonForNoConsignmentCode
