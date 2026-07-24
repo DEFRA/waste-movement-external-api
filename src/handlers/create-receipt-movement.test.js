@@ -125,7 +125,8 @@ describe('Create Receipt Movement Handler', () => {
     // Verify waste tracking ID was requested
     expect(httpClients.wasteTracking.get).toHaveBeenCalledWith('/next')
 
-    // Verify waste movement was created with submittingOrganisation inside movement and apiCode stripped
+    // Verify waste movement was created with submittingOrganisation and clientId
+    // inside movement and apiCode stripped
     const { apiCode, ...payloadWithoutApiCode } = validPayload
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
       `/movements/${mockWasteTrackingId}/receive`,
@@ -134,7 +135,8 @@ describe('Create Receipt Movement Handler', () => {
           ...payloadWithoutApiCode,
           submittingOrganisation: {
             defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
-          }
+          },
+          clientId: 'test-client-id'
         }
       }
     )

@@ -27,8 +27,13 @@ export const handleUpdateReceiptMovement = async (request, h) => {
   try {
     const { wasteTrackingId } = request.params
     let requestData = { movement: request.payload }
+    const clientId = request.auth?.credentials?.clientId
 
     requestData = await addSubmittingOrganisationToRequest(requestData)
+
+    if (clientId) {
+      requestData.movement.clientId = clientId
+    }
 
     const response = await httpClients.wasteMovement.put(
       `/movements/${wasteTrackingId}/receive`,
@@ -50,8 +55,6 @@ export const handleUpdateReceiptMovement = async (request, h) => {
         warnings
       }
     }
-
-    const clientId = request.auth?.credentials?.clientId
 
     // Request passed validation (no validation errors) - log regardless of backend response
     const withoutErrorsDims = { endpointType: 'put' }

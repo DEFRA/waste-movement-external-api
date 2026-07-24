@@ -20,11 +20,16 @@ const logger = createLogger()
 export const handleCreateReceiptMovement = async (request, h) => {
   try {
     let requestData = { movement: request.payload }
+    const clientId = request.auth?.credentials?.clientId
 
     const wasteTrackingId = (await httpClients.wasteTracking.get('/next'))
       .payload.wasteTrackingId
 
     requestData = await addSubmittingOrganisationToRequest(requestData)
+
+    if (clientId) {
+      requestData.movement.clientId = clientId
+    }
 
     let response = await httpClients.wasteMovement.post(
       `/movements/${wasteTrackingId}/receive`,
@@ -55,8 +60,6 @@ export const handleCreateReceiptMovement = async (request, h) => {
         warnings
       }
     }
-
-    const clientId = request.auth?.credentials?.clientId
 
     // Request passed validation (no validation errors) - log regardless of backend response
     const withoutErrorsDims = { endpointType: 'post' }

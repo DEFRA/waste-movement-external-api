@@ -104,7 +104,8 @@ describe('Create Receipt Movement - Disposal/Recovery Code Handler', () => {
               submittingOrganisation: {
                 defraCustomerOrganisationId:
                   'd829f66d-857f-401d-b5e9-5061b7dbb29d'
-              }
+              },
+              clientId: 'test-client-id'
             }
           }
         )

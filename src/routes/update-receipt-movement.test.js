@@ -101,7 +101,8 @@ describe('handleUpdateReceiptMovement', () => {
           ...payloadWithoutApiCode,
           submittingOrganisation: {
             defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
-          }
+          },
+          clientId: 'test-client-id'
         }
       }
     )
@@ -173,7 +174,8 @@ describe('handleUpdateReceiptMovement', () => {
           ...payloadWithoutApiCode,
           submittingOrganisation: {
             defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
-          }
+          },
+          clientId: 'test-client-id'
         }
       }
     )
@@ -234,6 +236,11 @@ describe('handleUpdateReceiptMovement', () => {
     })
 
     await handleUpdateReceiptMovement(requestWithoutAuth, mockH)
+
+    // clientId must not be added to the forwarded movement when absent
+    const forwardedMovement =
+      httpClients.wasteMovement.put.mock.calls[0][1].movement
+    expect(forwardedMovement).not.toHaveProperty('clientId')
 
     // Receipt and warning metrics should still be logged (clientId undefined)
     expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('put', undefined)

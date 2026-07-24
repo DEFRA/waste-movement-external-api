@@ -91,7 +91,8 @@ describe('Create Receipt Movement Route', () => {
     // Verify waste tracking ID was requested
     expect(httpClients.wasteTracking.get).toHaveBeenCalledWith('/next')
 
-    // Verify waste movement was created with submittingOrganisation inside movement and apiCode stripped
+    // Verify waste movement was created with submittingOrganisation and clientId
+    // inside movement and apiCode stripped
     const { apiCode, ...payloadWithoutApiCode } = validPayload
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
       `/movements/${mockWasteTrackingId}/receive`,
@@ -100,10 +101,32 @@ describe('Create Receipt Movement Route', () => {
           ...payloadWithoutApiCode,
           submittingOrganisation: {
             defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
-          }
+          },
+          clientId: 'test-client-id'
         }
       }
     )
+  })
+
+  it('should not add clientId to the movement when the caller is unauthenticated', async () => {
+    httpClients.wasteMovement.post.mockResolvedValue({
+      statusCode: HTTP_STATUS.CREATED
+    })
+
+    const request = {
+      auth: {},
+      payload: validPayload
+    }
+    const h = {
+      response: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis()
+    }
+
+    await createReceiptMovement.handler(request, h)
+
+    const forwardedMovement =
+      httpClients.wasteMovement.post.mock.calls[0][1].movement
+    expect(forwardedMovement).not.toHaveProperty('clientId')
   })
 
   it('should return 500 when waste movement creation fails', async () => {
