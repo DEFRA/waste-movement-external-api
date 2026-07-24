@@ -78,6 +78,6 @@
       "@hapi/content": "6.0.2"
     },
     "joi": "$joi",
-    "js-yaml": "4.2.0"
+    "js-yaml": "4.3.0"
   }
 }
