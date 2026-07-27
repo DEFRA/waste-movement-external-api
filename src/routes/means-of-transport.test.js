@@ -94,8 +94,7 @@ describe('Create Receipt Movement - Means of Transport Handler', () => {
               submittingOrganisation: {
                 defraCustomerOrganisationId:
                   'd829f66d-857f-401d-b5e9-5061b7dbb29d'
-              },
-              clientId: 'test-client-id'
+              }
             }
           }
         )

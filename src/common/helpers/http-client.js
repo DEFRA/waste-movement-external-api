@@ -1,6 +1,7 @@
 import Wreck from '@hapi/wreck'
 import { config } from '../../config.js'
 import { withTraceId } from '@defra/hapi-tracing'
+import { withClientId, CLIENT_ID_HEADER } from './client-context.js'
 
 /**
  * Base configuration for the HTTP clients
@@ -53,7 +54,10 @@ async function makeRequest(options, httpClient) {
   const client =
     httpClient ||
     createClient({
-      headers: withTraceId(config.get('tracing.header'), headers)
+      headers: withClientId(
+        CLIENT_ID_HEADER,
+        withTraceId(config.get('tracing.header'), headers)
+      )
     })
 
   try {

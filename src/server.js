@@ -14,6 +14,7 @@ import { swagger } from './plugins/swagger.js'
 import { errorHandler } from './plugins/error-handler.js'
 import { jwtAuth } from './plugins/jwt-auth.js'
 import { requestMetrics } from './plugins/request-metrics.js'
+import { clientContext } from './common/helpers/client-context.js'
 import { createLogger } from './common/helpers/logging/logger.js'
 
 async function createServer() {
@@ -96,7 +97,8 @@ async function createServer() {
     secureContext,
     pulse,
     errorHandler,
-    requestMetrics
+    requestMetrics,
+    clientContext
   ])
 
   return server

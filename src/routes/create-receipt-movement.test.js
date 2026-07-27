@@ -91,8 +91,9 @@ describe('Create Receipt Movement Route', () => {
     // Verify waste tracking ID was requested
     expect(httpClients.wasteTracking.get).toHaveBeenCalledWith('/next')
 
-    // Verify waste movement was created with submittingOrganisation and clientId
-    // inside movement and apiCode stripped
+    // Verify waste movement was created with submittingOrganisation inside
+    // movement and apiCode stripped. clientId is forwarded as the
+    // x-dwt-client-id header (see client-context.js), not in the payload.
     const { apiCode, ...payloadWithoutApiCode } = validPayload
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
       `/movements/${mockWasteTrackingId}/receive`,
@@ -101,20 +102,23 @@ describe('Create Receipt Movement Route', () => {
           ...payloadWithoutApiCode,
           submittingOrganisation: {
             defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
-          },
-          clientId: 'test-client-id'
+          }
         }
       }
     )
   })
 
-  it('should not add clientId to the movement when the caller is unauthenticated', async () => {
+  it('never puts clientId in the forwarded movement payload', async () => {
     httpClients.wasteMovement.post.mockResolvedValue({
       statusCode: HTTP_STATUS.CREATED
     })
 
     const request = {
-      auth: {},
+      auth: {
+        credentials: {
+          clientId: 'test-client-id'
+        }
+      },
       payload: validPayload
     }
     const h = {

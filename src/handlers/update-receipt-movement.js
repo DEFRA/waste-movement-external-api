@@ -31,10 +31,6 @@ export const handleUpdateReceiptMovement = async (request, h) => {
 
     requestData = await addSubmittingOrganisationToRequest(requestData)
 
-    if (clientId) {
-      requestData.movement.clientId = clientId
-    }
-
     const response = await httpClients.wasteMovement.put(
       `/movements/${wasteTrackingId}/receive`,
       requestData
