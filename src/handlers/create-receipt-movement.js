@@ -14,6 +14,7 @@ import {
   logDeveloperMetrics
 } from '../common/helpers/metrics.js'
 import { addSubmittingOrganisationToRequest } from '../common/helpers/submitting-organisation.js'
+import { handleErrorResponse } from '../common/helpers/handle-error-response.js'
 
 const logger = createLogger()
 
@@ -79,12 +80,7 @@ export const handleCreateReceiptMovement = async (request, h) => {
 
     return handleBackendResponse(response, h, () => responseData)
   } catch (error) {
-    logger.error({ err: error }, 'Error creating waste movement')
-    return h
-      .response({
-        error: 'Internal Server Error',
-        message: 'Failed to create waste movement'
-      })
-      .code(HTTP_STATUS.INTERNAL_SERVER_ERROR)
+    logger.error({ error }, 'Error creating waste movement')
+    handleErrorResponse(error)
   }
 }
