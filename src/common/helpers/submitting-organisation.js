@@ -1,4 +1,6 @@
+import { HTTP_STATUS } from 'waste-movement-utils'
 import { httpClients } from './http-client.js'
+import { PaymentRequiredError } from './errors/payment-required-error.js'
 
 /**
  * Gets the Defra Customer Organisation Id from the Waste Organisation Backend based
@@ -14,16 +16,20 @@ import { httpClients } from './http-client.js'
 export async function addSubmittingOrganisationToRequest(requestData) {
   const { apiCode, ...movementWithoutApiCode } = requestData.movement
 
-  const submittingOrganisation = await httpClients.wasteOrganisation
+  const wasteOrganisationResponse = await httpClients.wasteOrganisation
     .get(`/organisation/${apiCode}`)
     .then(({ payload }) => payload)
 
-  if (submittingOrganisation?.defraCustomerOrganisationId) {
+  if (wasteOrganisationResponse.statusCode === HTTP_STATUS.PAYMENT_REQUIRED) {
+    throw new PaymentRequiredError(wasteOrganisationResponse.message)
+  }
+
+  if (wasteOrganisationResponse?.defraCustomerOrganisationId) {
     requestData.movement = {
       ...movementWithoutApiCode,
       submittingOrganisation: {
         defraCustomerOrganisationId:
-          submittingOrganisation.defraCustomerOrganisationId
+          wasteOrganisationResponse.defraCustomerOrganisationId
       }
     }
   }

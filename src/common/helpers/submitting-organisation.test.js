@@ -15,6 +15,12 @@ jest.mock('./http-client.js', () => ({
             statusCode: 404
           }
         })
+        .mockResolvedValueOnce({
+          payload: {
+            statusCode: 402,
+            message: 'Payment is required'
+          }
+        })
     }
   }
 }))
@@ -53,6 +59,15 @@ describe('submitting-organisation', () => {
       expect(result).toEqual({
         movement: requestData.movement
       })
+    })
+
+    it('should throw an error when a 402 Payment Required response is received from Waste Organisation Backend', async () => {
+      await expect(() =>
+        addSubmittingOrganisationToRequest({
+          ...requestData,
+          movement: { ...requestData.movement }
+        })
+      ).rejects.toThrowError('Payment is required')
     })
   })
 })
