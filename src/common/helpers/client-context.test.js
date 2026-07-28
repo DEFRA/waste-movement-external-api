@@ -13,6 +13,10 @@ describe('#withClientId', () => {
     })
   })
 
+  test('defaults to a new headers object when none is provided', () => {
+    expect(withClientId(CLIENT_ID_HEADER)).toEqual({})
+  })
+
   test('getClientId returns null outside of a request', () => {
     expect(getClientId()).toBeNull()
   })
