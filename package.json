@@ -78,6 +78,11 @@
       "@hapi/content": "6.0.2"
     },
     "joi": "$joi",
-    "js-yaml": "4.3.0"
+    "js-yaml": "4.3.0",
+    "postcss": "^8.5.18",
+    "brace-expansion": "5.0.8",
+    "minimatch": "^10.2.5",
+    "babel-plugin-istanbul": "^7.0.0",
+    "test-exclude": "^7.0.1"
   }
 }
