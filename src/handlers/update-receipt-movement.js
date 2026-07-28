@@ -1,4 +1,3 @@
-import Boom from '@hapi/boom'
 import { httpClients } from '../common/helpers/http-client.js'
 import { handleBackendResponse } from './handle-backend-response.js'
 import {
@@ -14,6 +13,7 @@ import {
 import { isSuccessStatusCode } from '../common/helpers/utils.js'
 import { addSubmittingOrganisationToRequest } from '../common/helpers/submitting-organisation.js'
 import { createLogger } from '../common/helpers/logging/logger.js'
+import { handleErrorResponse } from '../common/helpers/handle-error-response.js'
 
 const logger = createLogger()
 
@@ -74,9 +74,7 @@ export const handleUpdateReceiptMovement = async (request, h) => {
 
     return handleBackendResponse(response, h, () => responseData)
   } catch (error) {
-    if (error.name === 'NotFoundError') {
-      throw Boom.notFound('Movement not found')
-    }
-    throw Boom.internal(error.message)
+    logger.error({ error }, 'Error updating waste movement')
+    handleErrorResponse(error)
   }
 }
