@@ -75,6 +75,6 @@ export const handleUpdateReceiptMovement = async (request, h) => {
     return handleBackendResponse(response, h, () => responseData)
   } catch (error) {
     logger.error({ error }, 'Error updating waste movement')
-    handleErrorResponse(error)
+    return handleErrorResponse(error)
   }
 }
