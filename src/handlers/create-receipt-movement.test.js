@@ -125,7 +125,9 @@ describe('Create Receipt Movement Handler', () => {
     // Verify waste tracking ID was requested
     expect(httpClients.wasteTracking.get).toHaveBeenCalledWith('/next')
 
-    // Verify waste movement was created with submittingOrganisation inside movement and apiCode stripped
+    // Verify waste movement was created with submittingOrganisation inside
+    // movement and apiCode stripped. clientId is forwarded as the
+    // x-dwt-client-id header (see client-context.js), not in the payload.
     const { apiCode, ...payloadWithoutApiCode } = validPayload
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
       `/movements/${mockWasteTrackingId}/receive`,

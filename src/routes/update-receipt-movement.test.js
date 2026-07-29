@@ -235,6 +235,12 @@ describe('handleUpdateReceiptMovement', () => {
 
     await handleUpdateReceiptMovement(requestWithoutAuth, mockH)
 
+    // clientId is never carried in the forwarded movement payload (it is sent
+    // as the x-dwt-client-id header instead, see client-context.js)
+    const forwardedMovement =
+      httpClients.wasteMovement.put.mock.calls[0][1].movement
+    expect(forwardedMovement).not.toHaveProperty('clientId')
+
     // Receipt and warning metrics should still be logged (clientId undefined)
     expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('put', undefined)
     expect(metrics.logWarningMetrics).toHaveBeenCalled()
