@@ -15,7 +15,6 @@ import { errorHandler } from './plugins/error-handler.js'
 import { jwtAuth } from './plugins/jwt-auth.js'
 import { requestMetrics } from './plugins/request-metrics.js'
 import { clientContext } from './common/helpers/client-context.js'
-import { createLogger } from './common/helpers/logging/logger.js'
 
 async function createServer() {
   setupProxy()
@@ -76,16 +75,10 @@ async function createServer() {
   // Register Swagger before routes
   await server.register(swagger)
 
-  const logger = createLogger()
-
-  // Register JWT authentication before routes
-  if (config.get('cdpEnvironment') === 'local') {
-    logger.error(
-      'WARNING: Local environment detected. JWT authentication is disabled.'
-    )
-  } else {
-    await server.register(jwtAuth)
-  }
+  // Register JWT authentication before routes. It is always registered so the
+  // client id can be extracted from the JWT and forwarded to the backend,
+  // regardless of the environment the app runs in (see DWTA-337).
+  await server.register(jwtAuth)
 
   // Register routes
   await server.register(router)
