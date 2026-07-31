@@ -3,6 +3,7 @@ import { httpClients } from '../common/helpers/http-client.js'
 import { createReceiptMovement } from './create-receipt-movement.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import { HTTP_STATUS } from 'waste-movement-utils'
+import Boom from '@hapi/boom'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -189,12 +190,9 @@ describe('Create Receipt Movement - Disposal/Recovery Code Handler', () => {
           code: jest.fn().mockReturnThis()
         }
 
-        await createReceiptMovement.handler(request, h)
-
-        expect(h.response).toHaveBeenCalledWith({
-          error: 'Internal Server Error',
-          message: 'Failed to create waste movement'
-        })
+        await expect(() =>
+          createReceiptMovement.handler(request, h)
+        ).rejects.toThrow(Boom.internal('Backend Error'))
       })
     })
   })

@@ -4,6 +4,7 @@ import { createReceiptMovement } from './create-receipt-movement.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import { HTTP_STATUS } from 'waste-movement-utils'
 import * as metrics from '../common/helpers/metrics.js'
+import Boom from '@hapi/boom'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -133,7 +134,7 @@ describe('Create Receipt Movement Route', () => {
     expect(forwardedMovement).not.toHaveProperty('clientId')
   })
 
-  it('should return 500 when waste movement creation fails', async () => {
+  it('should throw a 500 error when waste movement creation fails', async () => {
     // Mock waste movement creation failure
     httpClients.wasteMovement.post.mockRejectedValue(new Error('API Error'))
 
@@ -150,16 +151,12 @@ describe('Create Receipt Movement Route', () => {
       code: jest.fn().mockReturnThis()
     }
 
-    await createReceiptMovement.handler(request, h)
-
-    expect(h.response).toHaveBeenCalledWith({
-      error: 'Internal Server Error',
-      message: 'Failed to create waste movement'
-    })
-    expect(h.code).toHaveBeenCalledWith(500)
+    await expect(() =>
+      createReceiptMovement.handler(request, h)
+    ).rejects.toThrow(Boom.internal('API Error'))
   })
 
-  it('should return 500 when waste tracking ID request fails', async () => {
+  it('should throw a 500 error when waste tracking ID request fails', async () => {
     // Mock waste tracking ID request failure
     httpClients.wasteTracking.get.mockRejectedValue(new Error('API Error'))
 
@@ -176,12 +173,35 @@ describe('Create Receipt Movement Route', () => {
       code: jest.fn().mockReturnThis()
     }
 
-    await createReceiptMovement.handler(request, h)
+    await expect(() =>
+      createReceiptMovement.handler(request, h)
+    ).rejects.toThrow(Boom.internal('API Error'))
+  })
 
-    expect(h.response).toHaveBeenCalledWith({
-      error: 'Internal Server Error',
-      message: 'Failed to create waste movement'
+  it('should throw an error when a 402 Payment Required response is received from Waste Organisation Backend', async () => {
+    // Mock successful waste movement creation
+    httpClients.wasteOrganisation.get.mockResolvedValue({
+      payload: {
+        statusCode: 402,
+        message: 'Payment is required'
+      }
     })
-    expect(h.code).toHaveBeenCalledWith(500)
+
+    const request = {
+      auth: {
+        credentials: {
+          clientId: 'test-client-id'
+        }
+      },
+      payload: validPayload
+    }
+    const h = {
+      response: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis()
+    }
+
+    await expect(() =>
+      createReceiptMovement.handler(request, h)
+    ).rejects.toThrow(Boom.internal('Payment is required'))
   })
 })

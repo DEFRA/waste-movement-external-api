@@ -3,6 +3,7 @@ import { httpClients } from '../common/helpers/http-client.js'
 import { handleCreateReceiptMovement } from './create-receipt-movement.js'
 import { v4 as uuidv4 } from 'uuid'
 import * as metrics from '../common/helpers/metrics.js'
+import Boom from '@hapi/boom'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -215,7 +216,7 @@ describe('Create Receipt Movement Handler', () => {
     expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
   })
 
-  it('should return 500 when waste movement creation fails', async () => {
+  it('should throw a 500 error when waste movement creation fails', async () => {
     // Mock waste movement creation failure
     httpClients.wasteMovement.post.mockRejectedValue(new Error('API Error'))
 
@@ -224,16 +225,12 @@ describe('Create Receipt Movement Handler', () => {
       code: jest.fn().mockReturnThis()
     }
 
-    await handleCreateReceiptMovement(request, h)
-
-    expect(h.response).toHaveBeenCalledWith({
-      error: 'Internal Server Error',
-      message: 'Failed to create waste movement'
-    })
-    expect(h.code).toHaveBeenCalledWith(500)
+    await expect(() => handleCreateReceiptMovement(request, h)).rejects.toThrow(
+      Boom.internal('API Error')
+    )
   })
 
-  it('should return 500 when waste tracking ID request fails', async () => {
+  it('should throw a 500 error when waste tracking ID request fails', async () => {
     // Mock waste tracking ID request failure
     httpClients.wasteTracking.get.mockRejectedValue(new Error('API Error'))
 
@@ -242,13 +239,9 @@ describe('Create Receipt Movement Handler', () => {
       code: jest.fn().mockReturnThis()
     }
 
-    await handleCreateReceiptMovement(request, h)
-
-    expect(h.response).toHaveBeenCalledWith({
-      error: 'Internal Server Error',
-      message: 'Failed to create waste movement'
-    })
-    expect(h.code).toHaveBeenCalledWith(500)
+    await expect(() => handleCreateReceiptMovement(request, h)).rejects.toThrow(
+      Boom.internal('API Error')
+    )
   })
 
   it('should not log developer metrics when clientId is not provided', async () => {
@@ -312,5 +305,24 @@ describe('Create Receipt Movement Handler', () => {
     expect(metrics.logDeveloperMetrics).not.toHaveBeenCalled()
     expect(metrics.metricsCounter).toHaveBeenCalledTimes(1)
     expect(h.code).toHaveBeenCalledWith(400)
+  })
+
+  it('should throw an error when a 402 Payment Required response is received from Waste Organisation Backend', async () => {
+    // Mock successful waste movement creation
+    httpClients.wasteOrganisation.get.mockResolvedValue({
+      payload: {
+        statusCode: 402,
+        message: 'Payment is required'
+      }
+    })
+
+    const h = {
+      response: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis()
+    }
+
+    await expect(() => handleCreateReceiptMovement(request, h)).rejects.toThrow(
+      Boom.internal('Payment is required')
+    )
   })
 })
