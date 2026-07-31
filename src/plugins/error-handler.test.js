@@ -4,8 +4,7 @@ import * as metrics from '../common/helpers/metrics.js'
 import { httpClients } from '../common/helpers/http-client.js'
 
 jest.mock('../common/helpers/metrics.js', () => ({
-  metricsCounter: jest.fn(),
-  logAttemptedDeveloperMetrics: jest.fn()
+  metricsCounter: jest.fn()
 }))
 
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -22,28 +21,6 @@ jest.mock('../common/helpers/http-client.js', () => ({
           defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
         }
       })
-    }
-  }
-}))
-
-// The receive routes require authentication (DWTA-337 removed the local-env
-// bypass), so stub jwt-auth with a scheme that authenticates with empty
-// credentials (no clientId). Tests that need a clientId inject one via their own
-// onPostAuth hook (see the ClientId-scoped metrics block); the rest assert the
-// no-clientId dimension sets.
-jest.mock('./jwt-auth.js', () => ({
-  jwtAuth: {
-    plugin: {
-      name: 'jwt-auth',
-      register(server) {
-        server.auth.scheme('jwt', () => ({
-          authenticate(request, h) {
-            return h.authenticated({ credentials: {} })
-          }
-        }))
-        server.auth.strategy('jwt', 'jwt')
-        server.auth.default('jwt')
-      }
     }
   }
 }))
