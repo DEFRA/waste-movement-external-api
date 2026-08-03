@@ -15,6 +15,8 @@ import { errorHandler } from './plugins/error-handler.js'
 import { jwtAuth } from './plugins/jwt-auth.js'
 import { requestMetrics } from './plugins/request-metrics.js'
 import { clientContext } from './common/helpers/client-context.js'
+import { addSubmittingOrganisationToRequest } from './plugins/add-submitting-organisation-to-request.js'
+import { setCustomResponseHeaders } from './plugins/set-custom-response-headers.js'
 
 async function createServer() {
   setupProxy()
@@ -89,9 +91,11 @@ async function createServer() {
     requestTracing,
     secureContext,
     pulse,
+    setCustomResponseHeaders,
     errorHandler,
     requestMetrics,
-    clientContext
+    clientContext,
+    addSubmittingOrganisationToRequest
   ])
 
   return server
