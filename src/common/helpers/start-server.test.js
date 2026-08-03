@@ -118,32 +118,12 @@ describe('#startServer', () => {
       ])
     })
 
-    test('Should start with jwt auth disabled in local environment', async () => {
-      // process.env.ENVIRONMENT = 'local' // Ensure we're in local mode
+    test('Should register jwt auth regardless of environment (DWTA-337)', async () => {
       config.load({
         cdpEnvironment: 'local'
       })
       await startServerImport.startServer()
 
-      expect(mockServer.register).toHaveBeenCalledWith(expect.any(Array))
-      expect(mockServer.register).not.toHaveBeenCalledWith(
-        expect.objectContaining({
-          plugin: {
-            name: 'jwt-auth',
-            register: expect.any(Function)
-          }
-        })
-      )
-    })
-
-    test.skip('Should start with jwt auth enabled in non-local environment', async () => {
-      // process.env.ENVIRONMENT = 'prod' // Ensure we're in non-local mode
-      config.load({
-        cdpEnvironment: 'prod'
-      })
-      await startServerImport.startServer()
-
-      expect(mockServer.register).toHaveBeenCalledWith(expect.any(Array))
       expect(mockServer.register).toHaveBeenCalledWith(
         expect.objectContaining({
           plugin: {

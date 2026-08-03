@@ -96,9 +96,13 @@ jobs:
           WASTE_MOVEMENT_BACKEND_API_BASE_URL: http://waste-movement-backend:3001
           WASTE_ORGANISATION_BACKEND_API_BASE_URL: http://waste-organisation-backend:3001
           HTTP_PROXY: http://localhost:8080
-          PROXY_MODE: zap
+          PROXY_MODE: ${{ vars.PROXY_MODE }}
           ZAP_API_KEY: ${{ secrets.ZAP_API_KEY }}
-          AUTH_DISABLED: true
+          AUTH_DISABLED: ${{ vars.AUTH_DISABLED }}
+          COGNITO_CLIENT_ID: ${{ secrets.COGNITO_CLIENT_ID }}
+          COGNITO_CLIENT_SECRET: ${{ secrets.COGNITO_CLIENT_SECRET }}
+          COGNITO_OAUTH_BASE_URL: ${{ secrets.COGNITO_OAUTH_BASE_URL }}
+          ENVIRONMENT: ${{ vars.ENVIRONMENT }}
           API_LOGGING: true
           JIRA_BASE_URL: https://eaflood.atlassian.net/browse
           PROFILE: integration
