@@ -11,7 +11,6 @@ import {
   generateAllValidationWarnings
 } from 'waste-movement-utils'
 import { isSuccessStatusCode } from '../common/helpers/utils.js'
-import { addSubmittingOrganisationToRequest } from '../common/helpers/submitting-organisation.js'
 import { createLogger } from '../common/helpers/logging/logger.js'
 import { handleErrorResponse } from '../common/helpers/handle-error-response.js'
 
@@ -26,10 +25,14 @@ const logger = createLogger()
 export const handleUpdateReceiptMovement = async (request, h) => {
   try {
     const { wasteTrackingId } = request.params
-    let requestData = { movement: request.payload }
+    const requestData = { movement: request.payload }
     const clientId = request.auth?.credentials?.clientId
 
-    requestData = await addSubmittingOrganisationToRequest(requestData)
+    if (request.submittingOrganisation) {
+      requestData.movement.submittingOrganisation =
+        request.submittingOrganisation
+      delete requestData.movement.apiCode
+    }
 
     const response = await httpClients.wasteMovement.put(
       `/movements/${wasteTrackingId}/receive`,

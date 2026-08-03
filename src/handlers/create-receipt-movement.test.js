@@ -13,13 +13,6 @@ jest.mock('../common/helpers/http-client.js', () => ({
     },
     wasteMovement: {
       post: jest.fn()
-    },
-    wasteOrganisation: {
-      get: jest.fn().mockResolvedValue({
-        payload: {
-          defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
-        }
-      })
     }
   }
 }))
@@ -46,14 +39,11 @@ describe('Create Receipt Movement Handler', () => {
         wasteTrackingId: mockWasteTrackingId
       }
     })
-
-    // Mock organisation lookup
-    httpClients.wasteOrganisation.get.mockResolvedValue({
-      payload: {
-        defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
-      }
-    })
   })
+
+  const submittingOrganisation = {
+    defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+  }
 
   const validPayload = {
     apiCode: uuidv4(),
@@ -103,7 +93,8 @@ describe('Create Receipt Movement Handler', () => {
         clientId: 'test-client-id'
       }
     },
-    payload: validPayload
+    payload: validPayload,
+    submittingOrganisation
   }
 
   it('should successfully create a waste movement with submittingOrganisation', async () => {
@@ -135,9 +126,7 @@ describe('Create Receipt Movement Handler', () => {
       {
         movement: {
           ...payloadWithoutApiCode,
-          submittingOrganisation: {
-            defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
-          }
+          submittingOrganisation
         }
       }
     )
@@ -305,24 +294,5 @@ describe('Create Receipt Movement Handler', () => {
     expect(metrics.logDeveloperMetrics).not.toHaveBeenCalled()
     expect(metrics.metricsCounter).toHaveBeenCalledTimes(1)
     expect(h.code).toHaveBeenCalledWith(400)
-  })
-
-  it('should throw an error when a 402 Payment Required response is received from Waste Organisation Backend', async () => {
-    // Mock successful waste movement creation
-    httpClients.wasteOrganisation.get.mockResolvedValue({
-      payload: {
-        statusCode: 402,
-        message: 'Payment is required'
-      }
-    })
-
-    const h = {
-      response: jest.fn().mockReturnThis(),
-      code: jest.fn().mockReturnThis()
-    }
-
-    await expect(() => handleCreateReceiptMovement(request, h)).rejects.toThrow(
-      Boom.internal('Payment is required')
-    )
   })
 })

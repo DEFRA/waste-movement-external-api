@@ -51,6 +51,10 @@ describe('updateReceiptMovement route', () => {
 })
 
 describe('handleUpdateReceiptMovement', () => {
+  const submittingOrganisation = {
+    defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+  }
+
   const mockRequest = {
     auth: {
       credentials: {
@@ -60,7 +64,8 @@ describe('handleUpdateReceiptMovement', () => {
     params: {
       wasteTrackingId: '123e4567-e89b-12d3-a456-426614174000'
     },
-    payload: createMovementRequest()
+    payload: createMovementRequest(),
+    submittingOrganisation
   }
 
   const mockH = {
@@ -99,9 +104,7 @@ describe('handleUpdateReceiptMovement', () => {
       {
         movement: {
           ...payloadWithoutApiCode,
-          submittingOrganisation: {
-            defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
-          }
+          submittingOrganisation
         }
       }
     )
@@ -156,7 +159,8 @@ describe('handleUpdateReceiptMovement', () => {
 
     const completeRequest = {
       ...mockRequest,
-      payload: completePayload
+      payload: completePayload,
+      submittingOrganisation
     }
 
     httpClients.wasteMovement.put.mockResolvedValueOnce({
@@ -171,9 +175,7 @@ describe('handleUpdateReceiptMovement', () => {
       {
         movement: {
           ...payloadWithoutApiCode,
-          submittingOrganisation: {
-            defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
-          }
+          submittingOrganisation
         }
       }
     )

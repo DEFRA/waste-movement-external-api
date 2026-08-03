@@ -1,16 +1,7 @@
 import Boom from '@hapi/boom'
-import { PaymentRequiredError } from './errors/payment-required-error'
 import { handleErrorResponse } from './handle-error-response.js'
 
 describe('#handleErrorResponse', () => {
-  it('should throw a Payment Required Error', () => {
-    const error = new PaymentRequiredError('Payment is required')
-
-    expect(() => handleErrorResponse(error)).toThrowError(
-      Boom.paymentRequired('Payment is required')
-    )
-  })
-
   it('should throw a Not Found Error', () => {
     const error = { name: 'NotFoundError' }
 

@@ -51,6 +51,10 @@ describe('Create Receipt Movement Route', () => {
 
   const validPayload = createMovementRequest()
 
+  const submittingOrganisation = {
+    defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+  }
+
   // Common validation warnings
   const disposalOrRecoveryCodesWarning = {
     errorType: 'NotProvided',
@@ -71,7 +75,8 @@ describe('Create Receipt Movement Route', () => {
           clientId: 'test-client-id'
         }
       },
-      payload: validPayload
+      payload: validPayload,
+      submittingOrganisation
     }
     const h = {
       response: jest.fn().mockReturnThis(),
@@ -101,9 +106,7 @@ describe('Create Receipt Movement Route', () => {
       {
         movement: {
           ...payloadWithoutApiCode,
-          submittingOrganisation: {
-            defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
-          }
+          submittingOrganisation
         }
       }
     )
@@ -176,32 +179,5 @@ describe('Create Receipt Movement Route', () => {
     await expect(() =>
       createReceiptMovement.handler(request, h)
     ).rejects.toThrow(Boom.internal('API Error'))
-  })
-
-  it('should throw an error when a 402 Payment Required response is received from Waste Organisation Backend', async () => {
-    // Mock successful waste movement creation
-    httpClients.wasteOrganisation.get.mockResolvedValue({
-      payload: {
-        statusCode: 402,
-        message: 'Payment is required'
-      }
-    })
-
-    const request = {
-      auth: {
-        credentials: {
-          clientId: 'test-client-id'
-        }
-      },
-      payload: validPayload
-    }
-    const h = {
-      response: jest.fn().mockReturnThis(),
-      code: jest.fn().mockReturnThis()
-    }
-
-    await expect(() =>
-      createReceiptMovement.handler(request, h)
-    ).rejects.toThrow(Boom.internal('Payment is required'))
   })
 })
