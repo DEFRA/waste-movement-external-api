@@ -6,7 +6,8 @@ export const setCustomResponseHeaders = {
       server.ext('onPreResponse', async (request, h) => {
         const response = request.response
         const headersToSet = {
-          'service-charge-expiry-date': request.serviceChargeExpiryDate
+          'service-charge-expiry-date':
+            request.serviceChargeExpiryDate ?? 'not available'
         }
 
         if (response.isBoom) {

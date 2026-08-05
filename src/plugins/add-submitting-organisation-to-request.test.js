@@ -83,7 +83,7 @@ describe('addSubmittingOrganisationToRequest', () => {
     )
   })
 
-  it("should set not set submittingOrganisation but set serviceChargeExpiryDate to 'not available' on the request when API Code is missing", async () => {
+  it('should set not set submittingOrganisation or serviceChargeExpiryDate on the request when API Code is missing', async () => {
     const { request } = await server.inject({
       method: 'POST',
       url: '/movements/receive',
@@ -94,7 +94,7 @@ describe('addSubmittingOrganisationToRequest', () => {
     })
 
     expect(request).not.toHaveProperty('submittingOrganisation')
-    expect(request).toHaveProperty('serviceChargeExpiryDate', 'not available')
+    expect(request).not.toHaveProperty('serviceChargeExpiryDate')
   })
 
   it('should set submittingOrganisation and serviceChargeExpiryDate on the request when request data validation fails', async () => {
@@ -117,7 +117,7 @@ describe('addSubmittingOrganisationToRequest', () => {
     )
   })
 
-  it("should not set submittingOrganisation but set serviceChargeExpiryDate to 'not available' on the request when Waste Organisation Backend returns a 404 error", async () => {
+  it('should not set submittingOrganisation or serviceChargeExpiryDate on the request when Waste Organisation Backend returns a 404 error', async () => {
     httpClients.wasteOrganisation.get.mockResolvedValue({
       payload: {
         statusCode: HTTP_STATUS.NOT_FOUND
@@ -131,10 +131,10 @@ describe('addSubmittingOrganisationToRequest', () => {
     })
 
     expect(request).not.toHaveProperty('submittingOrganisation')
-    expect(request).toHaveProperty('serviceChargeExpiryDate', 'not available')
+    expect(request).not.toHaveProperty('serviceChargeExpiryDate')
   })
 
-  it("should not set submittingOrganisation but set serviceChargeExpiryDate to 'not available' on the request when Waste Organisation Backend returns a 402 error", async () => {
+  it('should not set submittingOrganisation or serviceChargeExpiryDate on the request when Waste Organisation Backend returns a 402 error', async () => {
     httpClients.wasteOrganisation.get.mockResolvedValue({
       payload: {
         statusCode: HTTP_STATUS.PAYMENT_REQUIRED
@@ -148,10 +148,10 @@ describe('addSubmittingOrganisationToRequest', () => {
     })
 
     expect(request).not.toHaveProperty('submittingOrganisation')
-    expect(request).toHaveProperty('serviceChargeExpiryDate', 'not available')
+    expect(request).not.toHaveProperty('serviceChargeExpiryDate')
   })
 
-  it("should set submittingOrganisation and set serviceChargeExpiryDate to 'not available' on the request when Waste Organisation Backend doesn't return disableAfter", async () => {
+  it("should set submittingOrganisation but not serviceChargeExpiryDate on the request when Waste Organisation Backend doesn't return disableAfter", async () => {
     httpClients.wasteOrganisation.get.mockResolvedValue({
       payload: {
         ...submittingOrganisation,
@@ -168,7 +168,7 @@ describe('addSubmittingOrganisationToRequest', () => {
     })
 
     expect(request).toHaveProperty('submittingOrganisation')
-    expect(request).toHaveProperty('serviceChargeExpiryDate', 'not available')
+    expect(request).not.toHaveProperty('serviceChargeExpiryDate')
   })
 
   it('should return a POST 402 Payment Required error when Waste Organisation Backend returns a 402 response', async () => {

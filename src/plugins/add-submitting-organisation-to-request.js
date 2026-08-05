@@ -12,15 +12,6 @@ export const addSubmittingOrganisationToRequest = {
 
         let wasteOrganisationResponse
 
-        /*
-         * Set serviceChargeExpiryDate default value for the following scenarios:
-         * - Missing API Code
-         * - Waste Organisation Backend returns a 404 error
-         * - Waste Organisation Backend returns a 402 error
-         * - Waste Organisation Backend doesn't return disableAfter
-         */
-        request.serviceChargeExpiryDate = 'not available'
-
         // Don't need to handle a missing API Code as this is handled by the validation
         if (apiCode) {
           wasteOrganisationResponse = await httpClients.wasteOrganisation

@@ -1,3 +1,4 @@
+import { httpClients } from '../common/helpers/http-client.js'
 import { createServer } from '../server.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 
@@ -11,14 +12,7 @@ jest.mock('../common/helpers/http-client.js', () => ({
       })
     },
     wasteOrganisation: {
-      get: jest.fn().mockResolvedValue({
-        payload: {
-          defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d',
-          metaData: {
-            disableAfter: '2026-07-31T15:25:00.000Z'
-          }
-        }
-      })
+      get: jest.fn()
     },
     wasteMovement: {
       post: jest.fn().mockResolvedValue({
@@ -49,6 +43,13 @@ jest.mock('./jwt-auth.js', () => ({
 describe('addSubmittingOrganisationToRequest', () => {
   let server
 
+  const wasteOrgansiationBackendSuccessPayload = {
+    defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d',
+    metaData: {
+      disableAfter: '2026-07-31T15:25:00.000Z'
+    }
+  }
+
   beforeAll(async () => {
     server = await createServer()
   })
@@ -58,6 +59,10 @@ describe('addSubmittingOrganisationToRequest', () => {
   })
 
   it('should set service-charge-expiry-date response header when a Boom error is thrown', async () => {
+    httpClients.wasteOrganisation.get.mockResolvedValue({
+      payload: wasteOrgansiationBackendSuccessPayload
+    })
+
     const { headers } = await server.inject({
       method: 'POST',
       url: '/movements/receive',
@@ -74,6 +79,10 @@ describe('addSubmittingOrganisationToRequest', () => {
   })
 
   it('should set service-charge-expiry-date response header when a Boom error is not thrown', async () => {
+    httpClients.wasteOrganisation.get.mockResolvedValue({
+      payload: wasteOrgansiationBackendSuccessPayload
+    })
+
     const { headers } = await server.inject({
       method: 'POST',
       url: '/movements/receive',
@@ -83,6 +92,23 @@ describe('addSubmittingOrganisationToRequest', () => {
     expect(headers).toHaveProperty(
       'service-charge-expiry-date',
       '2026-07-31T15:25:00.000Z'
+    )
+  })
+
+  it('should set default service-charge-expiry-date response header when serviceChargeExpiryDate is not available on the request', async () => {
+    httpClients.wasteOrganisation.get.mockResolvedValue({
+      payload: {}
+    })
+
+    const { headers } = await server.inject({
+      method: 'POST',
+      url: '/movements/receive',
+      payload: createMovementRequest()
+    })
+
+    expect(headers).toHaveProperty(
+      'service-charge-expiry-date',
+      'not available'
     )
   })
 })
