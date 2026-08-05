@@ -37,10 +37,15 @@ describe('Create Receipt Movement - Means of Transport Handler', () => {
     })
   })
 
+  const submittingOrganisation = {
+    defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+  }
+
   // Test helpers
   const createTestRequest = (payload) => ({
     auth: { credentials: { clientId: 'test-client-id' } },
-    payload
+    payload,
+    submittingOrganisation
   })
 
   const createMockResponse = () => ({
@@ -92,10 +97,7 @@ describe('Create Receipt Movement - Means of Transport Handler', () => {
           {
             movement: {
               ...payloadWithoutApiCode,
-              submittingOrganisation: {
-                defraCustomerOrganisationId:
-                  'd829f66d-857f-401d-b5e9-5061b7dbb29d'
-              }
+              submittingOrganisation
             }
           }
         )

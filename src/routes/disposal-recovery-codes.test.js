@@ -60,6 +60,10 @@ describe('Create Receipt Movement - Disposal/Recovery Code Handler', () => {
   describe('Handler Tests for Disposal/Recovery Codes', () => {
     describe('Successful submissions with valid codes', () => {
       it('should successfully create movement with R1 code', async () => {
+        const submittingOrganisation = {
+          defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
+        }
+
         const validPayload = createPayload({
           disposalOrRecoveryCodes: [
             {
@@ -83,7 +87,8 @@ describe('Create Receipt Movement - Disposal/Recovery Code Handler', () => {
               clientId: 'test-client-id'
             }
           },
-          payload: validPayload
+          payload: validPayload,
+          submittingOrganisation
         }
         const h = {
           response: jest.fn().mockReturnThis(),
@@ -102,10 +107,7 @@ describe('Create Receipt Movement - Disposal/Recovery Code Handler', () => {
           {
             movement: {
               ...payloadWithoutApiCode,
-              submittingOrganisation: {
-                defraCustomerOrganisationId:
-                  'd829f66d-857f-401d-b5e9-5061b7dbb29d'
-              }
+              submittingOrganisation
             }
           }
         )

@@ -58,8 +58,17 @@ export const errorHandler = {
             })
           }
 
-          // Return the custom formatted error
-          return h.response(customError).code(400)
+          // Create the custom error response
+          const errorResponse = h.response(customError).code(400)
+
+          // Ensure headers are added to the custom error response
+          if (response.output.headers) {
+            Object.entries(response.output.headers).forEach(([key, value]) =>
+              errorResponse.header(key, value)
+            )
+          }
+
+          return errorResponse
         }
 
         // Log HTTP status code metrics for non-400 Boom errors on receipt movement endpoints

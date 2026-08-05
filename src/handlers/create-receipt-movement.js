@@ -13,20 +13,22 @@ import {
   logWarningMetrics,
   logDeveloperMetrics
 } from '../common/helpers/metrics.js'
-import { addSubmittingOrganisationToRequest } from '../common/helpers/submitting-organisation.js'
 import { handleErrorResponse } from '../common/helpers/handle-error-response.js'
 
 const logger = createLogger()
 
 export const handleCreateReceiptMovement = async (request, h) => {
   try {
-    let requestData = { movement: request.payload }
+    const requestData = { movement: request.payload }
     const clientId = request.auth?.credentials?.clientId
-
     const wasteTrackingId = (await httpClients.wasteTracking.get('/next'))
       .payload.wasteTrackingId
 
-    requestData = await addSubmittingOrganisationToRequest(requestData)
+    if (request.submittingOrganisation) {
+      requestData.movement.submittingOrganisation =
+        request.submittingOrganisation
+      delete requestData.movement.apiCode
+    }
 
     let response = await httpClients.wasteMovement.post(
       `/movements/${wasteTrackingId}/receive`,
