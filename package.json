@@ -53,7 +53,7 @@
     "pino-pretty": "13.0.0",
     "undici": "7.29.0",
     "uuid": "13.0.2",
-    "waste-movement-utils": "github:DEFRA/waste-movement-utils#e7b6c1d9edd8b4388cb6fa0d4ae099acd5bd8a55"
+    "waste-movement-utils": "github:DEFRA/waste-movement-utils#47a96cffeadb6ecd84339dac1fcbe62796972b09"
   },
   "devDependencies": {
     "@babel/core": "7.29.7",
@@ -78,7 +78,6 @@
       "@hapi/content": "6.0.2"
     },
     "joi": "$joi",
-    "js-yaml": "4.3.0",
     "postcss": "^8.5.18",
     "minimatch": "^10.2.5",
     "babel-plugin-istanbul": "^7.0.0",
