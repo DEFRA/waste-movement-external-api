@@ -1,4 +1,4 @@
-import { HTTP_STATUS } from 'waste-movement-utils'
+import { HTTP_STATUS } from '@defra/waste-movement-utils'
 import { handleGetContainerTypes } from '../../handlers/reference-data/get-container-types.js'
 
 const getContainerTypes = {

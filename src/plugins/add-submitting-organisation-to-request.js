@@ -1,6 +1,6 @@
 import Boom from '@hapi/boom'
 import { httpClients } from '../common/helpers/http-client.js'
-import { HTTP_STATUS } from 'waste-movement-utils'
+import { HTTP_STATUS } from '@defra/waste-movement-utils'
 
 export const addSubmittingOrganisationToRequest = {
   plugin: {

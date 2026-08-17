@@ -1,4 +1,4 @@
-import { receiveMovementRequestSchema } from 'waste-movement-utils'
+import { receiveMovementRequestSchema } from '@defra/waste-movement-utils'
 
 // Public input schema for the external API. Customers must supply `apiCode`;
 // `submittingOrganisation` is an internal field resolved from `apiCode` before

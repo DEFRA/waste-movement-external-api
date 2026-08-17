@@ -1,4 +1,4 @@
-import { HTTP_STATUS } from 'waste-movement-utils'
+import { HTTP_STATUS } from '@defra/waste-movement-utils'
 import { httpClients } from '../common/helpers/http-client.js'
 import { createServer } from '../server.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'

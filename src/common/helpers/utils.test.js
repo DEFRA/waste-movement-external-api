@@ -1,4 +1,4 @@
-import { HTTP_STATUS } from 'waste-movement-utils'
+import { HTTP_STATUS } from '@defra/waste-movement-utils'
 import { isSuccessStatusCode, normalizeArrayIndices } from './utils.js'
 
 describe('Utils tests', () => {
