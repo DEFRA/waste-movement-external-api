@@ -1,4 +1,4 @@
-import { HTTP_STATUS } from 'waste-movement-utils'
+import { HTTP_STATUS } from '@defra/waste-movement-utils'
 import { handleCreateReceiptMovement } from '../handlers/create-receipt-movement.js'
 import Joi from 'joi'
 import { badRequestResponseSchema } from '../schemas/bad-request-response-schema.js'

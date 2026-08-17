@@ -9,7 +9,7 @@ import {
 import {
   METRIC_NAMES,
   generateAllValidationWarnings
-} from 'waste-movement-utils'
+} from '@defra/waste-movement-utils'
 import { isSuccessStatusCode } from '../common/helpers/utils.js'
 import { createLogger } from '../common/helpers/logging/logger.js'
 import { handleErrorResponse } from '../common/helpers/handle-error-response.js'

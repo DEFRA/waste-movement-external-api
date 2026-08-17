@@ -1,4 +1,4 @@
-import { HTTP_STATUS, validPopNames } from 'waste-movement-utils'
+import { HTTP_STATUS, validPopNames } from '@defra/waste-movement-utils'
 import { handleBackendResponse } from '../handle-backend-response.js'
 import { createLogger } from '../../common/helpers/logging/logger.js'
 

@@ -2,7 +2,7 @@ import { jest } from '@jest/globals'
 import { httpClients } from '../common/helpers/http-client.js'
 import { createReceiptMovement } from './create-receipt-movement.js'
 import { v4 as uuidv4 } from 'uuid'
-import { HTTP_STATUS } from 'waste-movement-utils'
+import { HTTP_STATUS } from '@defra/waste-movement-utils'
 import Boom from '@hapi/boom'
 
 // Mock the httpClients

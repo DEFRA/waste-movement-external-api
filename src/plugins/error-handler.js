@@ -1,7 +1,10 @@
 import { metricsCounter } from '../common/helpers/metrics.js'
 import { normalizeArrayIndices } from '../common/helpers/utils.js'
 import { isReceiptMovementEndpoint } from '../common/helpers/receipt-movement-endpoint.js'
-import { METRIC_NAMES, validationErrorFormatter } from 'waste-movement-utils'
+import {
+  METRIC_NAMES,
+  validationErrorFormatter
+} from '@defra/waste-movement-utils'
 
 // Build dimensions object including clientId only when present.
 const withClientId = (dims, clientId) =>

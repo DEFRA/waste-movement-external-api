@@ -1,4 +1,4 @@
-import { HTTP_STATUS } from 'waste-movement-utils'
+import { HTTP_STATUS } from '@defra/waste-movement-utils'
 import { handleGetEwcCodes } from '../../handlers/reference-data/get-ewc-codes.js'
 
 const getEwcCodes = {

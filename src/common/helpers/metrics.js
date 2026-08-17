@@ -6,7 +6,7 @@ import {
 import { config } from '../../config.js'
 import { createLogger } from './logging/logger.js'
 import { normalizeArrayIndices } from './utils.js'
-import { METRIC_NAMES } from 'waste-movement-utils'
+import { METRIC_NAMES } from '@defra/waste-movement-utils'
 
 /**
  * Logs a counter metric with optional dimensions
