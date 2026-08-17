@@ -29,6 +29,7 @@
   "license": "OGL-UK-3.0",
   "dependencies": {
     "@defra/hapi-tracing": "1.30.0",
+    "@defra/waste-movement-utils": "1.0.0",
     "@elastic/ecs-pino-format": "1.5.0",
     "@hapi/boom": "10.0.1",
     "@hapi/hapi": "21.3.12",
@@ -52,8 +53,7 @@
     "pino": "9.5.0",
     "pino-pretty": "13.0.0",
     "undici": "7.29.0",
-    "uuid": "13.0.2",
-    "waste-movement-utils": "github:DEFRA/waste-movement-utils#e7b6c1d9edd8b4388cb6fa0d4ae099acd5bd8a55"
+    "uuid": "13.0.2"
   },
   "devDependencies": {
     "@babel/core": "7.29.7",

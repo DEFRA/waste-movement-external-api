@@ -3,7 +3,7 @@ import {
   HTTP_STATUS,
   METRIC_NAMES,
   generateAllValidationWarnings
-} from 'waste-movement-utils'
+} from '@defra/waste-movement-utils'
 import { handleBackendResponse } from './handle-backend-response.js'
 import { createLogger } from '../common/helpers/logging/logger.js'
 import { isSuccessStatusCode } from '../common/helpers/utils.js'

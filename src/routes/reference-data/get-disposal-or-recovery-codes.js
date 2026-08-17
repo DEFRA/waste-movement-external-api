@@ -1,4 +1,4 @@
-import { HTTP_STATUS } from 'waste-movement-utils'
+import { HTTP_STATUS } from '@defra/waste-movement-utils'
 import { handleGetDisposalOrRecoveryCodes } from '../../handlers/reference-data/get-disposal-or-recovery-codes.js'
 
 const getDisposalOrRecoveryCodes = {

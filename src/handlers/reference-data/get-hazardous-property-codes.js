@@ -1,4 +1,7 @@
-import { hazardousPropertyCodes, HTTP_STATUS } from 'waste-movement-utils'
+import {
+  hazardousPropertyCodes,
+  HTTP_STATUS
+} from '@defra/waste-movement-utils'
 import { handleBackendResponse } from '../handle-backend-response.js'
 import { createLogger } from '../../common/helpers/logging/logger.js'
 

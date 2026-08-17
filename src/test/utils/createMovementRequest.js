@@ -4,7 +4,7 @@ import {
   sourceOfComponentsProvided,
   validPopNames,
   TEST_DATA
-} from 'waste-movement-utils'
+} from '@defra/waste-movement-utils'
 
 export function createMovementRequest(overrides) {
   const defaultMovementRequest = {

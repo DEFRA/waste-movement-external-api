@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import { HTTP_STATUS } from 'waste-movement-utils'
+import { HTTP_STATUS } from '@defra/waste-movement-utils'
 
 export const errorResponseSchema = (statusCode) =>
   Joi.object({

@@ -1,6 +1,6 @@
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import { createLogger } from '../common/helpers/logging/logger.js'
-import { HTTP_STATUS } from 'waste-movement-utils'
+import { HTTP_STATUS } from '@defra/waste-movement-utils'
 
 const logger = createLogger()
 
