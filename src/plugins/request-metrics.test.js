@@ -138,7 +138,7 @@ describe('requestMetrics plugin', () => {
     expect(loggerInfo).toHaveBeenCalledWith(
       {
         client: { id: 'test-client-id' },
-        organization: { id: 'test-org-id' }
+        organisation: { id: 'test-org-id' }
       },
       'Receipt movement attempted'
     )
@@ -157,7 +157,7 @@ describe('requestMetrics plugin', () => {
     expect(loggerInfo).toHaveBeenCalledWith(
       {
         client: { id: 'test-client-id' },
-        organization: undefined
+        organisation: undefined
       },
       'Receipt movement attempted'
     )

@@ -33,7 +33,7 @@ export const requestMetrics = {
           request.logger.info(
             {
               client: clientId ? { id: clientId } : undefined,
-              organization: organisationId ? { id: organisationId } : undefined
+              organisation: organisationId ? { id: organisationId } : undefined
             },
             'Receipt movement attempted'
           )
