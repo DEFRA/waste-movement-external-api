@@ -122,7 +122,7 @@ describe('requestMetrics plugin', () => {
     expect(metrics.logAttemptedDeveloperMetrics).not.toHaveBeenCalled()
   })
 
-  it('logs client and organisation ids for receipt movement attempts', async () => {
+  it('logs tenant and event reference ids for receipt movement attempts', async () => {
     const server = await buildServer({
       withAuth: true,
       withSubmittingOrganisation: true
@@ -137,14 +137,17 @@ describe('requestMetrics plugin', () => {
     expect(loggerInfo).toHaveBeenCalledTimes(1)
     expect(loggerInfo).toHaveBeenCalledWith(
       {
-        client: { id: 'test-client-id' },
-        organisation: { id: 'test-org-id' }
+        tenant: { id: 'test-client-id' },
+        event: {
+          reference: 'test-org-id',
+          action: 'receipt-movement-attempted'
+        }
       },
       'Receipt movement attempted'
     )
   })
 
-  it('logs without organisation id when none is resolved', async () => {
+  it('logs without an event reference when no organisation is resolved', async () => {
     const server = await buildServer({ withAuth: true })
 
     await server.inject({
@@ -156,8 +159,11 @@ describe('requestMetrics plugin', () => {
     expect(loggerInfo).toHaveBeenCalledTimes(1)
     expect(loggerInfo).toHaveBeenCalledWith(
       {
-        client: { id: 'test-client-id' },
-        organisation: undefined
+        tenant: { id: 'test-client-id' },
+        event: {
+          reference: undefined,
+          action: 'receipt-movement-attempted'
+        }
       },
       'Receipt movement attempted'
     )
