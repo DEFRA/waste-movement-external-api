@@ -6,8 +6,26 @@ jest.mock('../common/helpers/metrics.js', () => ({
   logAttemptedDeveloperMetrics: jest.fn()
 }))
 
-const buildServer = async ({ withAuth }) => {
+const loggerInfo = jest.fn()
+
+const submittingOrganisationStub = {
+  plugin: {
+    name: 'addSubmittingOrganisationToRequest',
+    register: async (server) => {
+      server.ext('onPostAuth', (request, h) => {
+        request.submittingOrganisation = {
+          defraCustomerOrganisationId: 'test-org-id'
+        }
+        return h.continue
+      })
+    }
+  }
+}
+
+const buildServer = async ({ withAuth, withSubmittingOrganisation }) => {
   const server = Hapi.server()
+
+  server.decorate('request', 'logger', { info: loggerInfo })
 
   if (withAuth) {
     server.auth.scheme('mock', () => ({
@@ -37,7 +55,12 @@ const buildServer = async ({ withAuth }) => {
     }
   ])
 
+  // Mirror the registration order in server.js: requestMetrics first,
+  // addSubmittingOrganisationToRequest afterwards.
   await server.register(requestMetrics)
+  if (withSubmittingOrganisation) {
+    await server.register(submittingOrganisationStub)
+  }
   return server
 }
 
@@ -97,5 +120,57 @@ describe('requestMetrics plugin', () => {
     })
 
     expect(metrics.logAttemptedDeveloperMetrics).not.toHaveBeenCalled()
+  })
+
+  it('logs client and organisation ids for receipt movement attempts', async () => {
+    const server = await buildServer({
+      withAuth: true,
+      withSubmittingOrganisation: true
+    })
+
+    await server.inject({
+      method: 'POST',
+      url: '/movements/receive',
+      payload: {}
+    })
+
+    expect(loggerInfo).toHaveBeenCalledTimes(1)
+    expect(loggerInfo).toHaveBeenCalledWith(
+      {
+        client: { id: 'test-client-id' },
+        organisation: { id: 'test-org-id' }
+      },
+      'Receipt movement attempted'
+    )
+  })
+
+  it('logs without organisation id when none is resolved', async () => {
+    const server = await buildServer({ withAuth: true })
+
+    await server.inject({
+      method: 'PUT',
+      url: '/movements/abc-123/receive',
+      payload: {}
+    })
+
+    expect(loggerInfo).toHaveBeenCalledTimes(1)
+    expect(loggerInfo).toHaveBeenCalledWith(
+      {
+        client: { id: 'test-client-id' },
+        organisation: undefined
+      },
+      'Receipt movement attempted'
+    )
+  })
+
+  it('does not log attempts for non-receipt-movement routes', async () => {
+    const server = await buildServer({ withAuth: true })
+
+    await server.inject({
+      method: 'GET',
+      url: '/health'
+    })
+
+    expect(loggerInfo).not.toHaveBeenCalled()
   })
 })

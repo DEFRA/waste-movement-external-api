@@ -20,6 +20,27 @@ export const requestMetrics = {
         }
         return h.continue
       })
+
+      server.ext(
+        'onPostAuth',
+        (request, h) => {
+          if (!isReceiptMovementEndpoint(request)) {
+            return h.continue
+          }
+          const clientId = request.auth?.credentials?.clientId
+          const organisationId =
+            request.submittingOrganisation?.defraCustomerOrganisationId
+          request.logger.info(
+            {
+              client: clientId ? { id: clientId } : undefined,
+              organisation: organisationId ? { id: organisationId } : undefined
+            },
+            'Receipt movement attempted'
+          )
+          return h.continue
+        },
+        { after: 'addSubmittingOrganisationToRequest' }
+      )
     }
   }
 }
