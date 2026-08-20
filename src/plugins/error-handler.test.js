@@ -321,6 +321,46 @@ describe('Error Handler', () => {
     }
   })
 
+  describe('Malformed JSON payload', () => {
+    test('should return 400 with validation error for invalid JSON escape sequence', async () => {
+      const response = await server.inject({
+        method: 'POST',
+        url: '/movements/receive',
+        headers: { 'content-type': 'application/json' },
+        payload: '{"receiver":{"authorisationNumber":"po9099ci\\D12345"}}'
+      })
+
+      expect(response.statusCode).toBe(400)
+      const responseBody = JSON.parse(response.payload)
+
+      expect(responseBody).toEqual({
+        validation: {
+          errors: [
+            {
+              key: 'payload',
+              errorType: 'InvalidFormat',
+              message: 'Invalid request payload JSON format'
+            }
+          ]
+        }
+      })
+    })
+
+    test('should return 400 for structurally malformed JSON', async () => {
+      const response = await server.inject({
+        method: 'POST',
+        url: '/movements/receive',
+        headers: { 'content-type': 'application/json' },
+        payload: '{"receiver" "value"}'
+      })
+
+      expect(response.statusCode).toBe(400)
+      const responseBody = JSON.parse(response.payload)
+
+      expect(responseBody.validation.errors[0].errorType).toBe('InvalidFormat')
+    })
+  })
+
   describe('Granular Error Categories', () => {
     test('should return InvalidType for wrong data type (string where number expected)', async () => {
       const basePayload = createMovementRequest()

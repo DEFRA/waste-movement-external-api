@@ -10,6 +10,18 @@ import {
 const withClientId = (dims, clientId) =>
   clientId ? { ...dims, clientId } : dims
 
+const formatPayloadParseError = (response) => ({
+  validation: {
+    errors: [
+      {
+        key: 'payload',
+        errorType: 'InvalidFormat',
+        message: response.output.payload.message
+      }
+    ]
+  }
+})
+
 export const errorHandler = {
   plugin: {
     name: 'errorHandler',
@@ -24,7 +36,9 @@ export const errorHandler = {
 
         // Check if it's a validation error (Boom error with status 400)
         if (response.isBoom && response.output.statusCode === 400) {
-          const customError = validationErrorFormatter(response, logger)
+          const customError = Array.isArray(response.details)
+            ? validationErrorFormatter(response, logger)
+            : formatPayloadParseError(response)
 
           // Log validation error metrics for receipt movement endpoints
           if (isReceiptMovementEndpoint(request)) {
