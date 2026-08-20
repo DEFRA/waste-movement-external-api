@@ -7,11 +7,13 @@ import {
   logReceiptMetrics,
   logAttemptedDeveloperMetrics
 } from './metrics.js'
+import { METRIC_NAMES } from '@defra/waste-movement-utils'
 
 const mockPutMetric = jest.fn()
 const mockPutDimensions = jest.fn()
 const mockFlush = jest.fn()
 const mockLoggerError = jest.fn()
+const mockLoggerInfo = jest.fn()
 
 jest.mock('aws-embedded-metrics', () => ({
   ...jest.requireActual('aws-embedded-metrics'),
@@ -22,7 +24,10 @@ jest.mock('aws-embedded-metrics', () => ({
   })
 }))
 jest.mock('./logging/logger.js', () => ({
-  createLogger: () => ({ error: (...args) => mockLoggerError(...args) })
+  createLogger: () => ({
+    error: (...args) => mockLoggerError(...args),
+    info: (...args) => mockLoggerInfo(...args)
+  })
 }))
 
 const mockMetricsName = 'mock-metrics-name'
@@ -155,6 +160,16 @@ describe('#logWarningMetrics', () => {
       endpointType: 'post',
       warningReason: '"wasteItems[*].weight.isEstimate" is missing'
     })
+
+    expect(mockLoggerInfo).toHaveBeenCalledWith(
+      METRIC_NAMES.VALIDATION_REQUESTS_WITH_WARNINGS
+    )
+    expect(mockLoggerInfo).toHaveBeenCalledWith(
+      `${METRIC_NAMES.VALIDATION_WARNING_REASON} - "wasteItems[*].weight.metric" is missing`
+    )
+    expect(mockLoggerInfo).toHaveBeenCalledWith(
+      `${METRIC_NAMES.VALIDATION_WARNING_REASON} - "wasteItems[*].weight.isEstimate" is missing`
+    )
   })
 
   test('Should normalize array indices in warning messages', async () => {
@@ -174,6 +189,13 @@ describe('#logWarningMetrics', () => {
       warningReason:
         '"wasteItems[*].disposalOrRecoveryCodes[*].code" is missing'
     })
+
+    expect(mockLoggerInfo).toHaveBeenCalledWith(
+      METRIC_NAMES.VALIDATION_REQUESTS_WITH_WARNINGS
+    )
+    expect(mockLoggerInfo).toHaveBeenCalledWith(
+      `${METRIC_NAMES.VALIDATION_WARNING_REASON} - "wasteItems[*].disposalOrRecoveryCodes[*].code" is missing`
+    )
   })
 
   test('Should not emit per-warning metrics when no warnings', async () => {
@@ -188,6 +210,10 @@ describe('#logWarningMetrics', () => {
     )
     expect(mockPutDimensions).not.toHaveBeenCalledWith(
       expect.objectContaining({ warningReason: expect.any(String) })
+    )
+
+    expect(mockLoggerInfo).toHaveBeenCalledWith(
+      METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_WARNINGS
     )
   })
 
@@ -257,6 +283,10 @@ describe('#logReceiptMetrics', () => {
       StorageResolution.Standard
     )
     expect(mockPutMetric).toHaveBeenCalledTimes(1)
+
+    expect(mockLoggerInfo).toHaveBeenCalledWith(
+      `${METRIC_NAMES.RECEIPTS_RECEIVED} - post`
+    )
   })
 
   test('Should append clientId to dimensions when provided', async () => {
@@ -267,6 +297,10 @@ describe('#logReceiptMetrics', () => {
       clientId: 'test-client-id'
     })
     expect(mockPutDimensions).toHaveBeenCalledTimes(1)
+
+    expect(mockLoggerInfo).toHaveBeenCalledWith(
+      `${METRIC_NAMES.RECEIPTS_RECEIVED} - post`
+    )
   })
 })
 
@@ -289,6 +323,10 @@ describe('#logAttemptedDeveloperMetrics', () => {
       StorageResolution.Standard
     )
     expect(mockPutMetric).toHaveBeenCalledTimes(1)
+
+    expect(mockLoggerInfo).toHaveBeenCalledWith(
+      METRIC_NAMES.DEVELOPERS_ATTEMPTED
+    )
   })
 
   test('Should not emit when clientId is absent', async () => {

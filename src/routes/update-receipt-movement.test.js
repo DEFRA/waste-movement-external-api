@@ -4,6 +4,8 @@ import { updateReceiptMovement } from './update-receipt-movement.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import Boom from '@hapi/boom'
 import * as metrics from '../common/helpers/metrics.js'
+import * as logger from '../common/helpers/logging/logger.js'
+import { METRIC_NAMES } from '@defra/waste-movement-utils'
 
 jest.mock('../common/helpers/http-client.js', () => ({
   httpClients: {
@@ -96,6 +98,8 @@ describe('handleUpdateReceiptMovement', () => {
       statusCode: 200
     })
 
+    const infoLoggerSpy = jest.spyOn(logger.createLogger(), 'info')
+
     await handleUpdateReceiptMovement(mockRequest, mockH)
 
     const { apiCode, ...payloadWithoutApiCode } = mockRequest.payload
@@ -136,6 +140,10 @@ describe('handleUpdateReceiptMovement', () => {
     )
     // Developer activity metrics
     expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
+
+    expect(infoLoggerSpy).toHaveBeenCalledWith(
+      `${METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_ERRORS} - put`
+    )
   })
 
   it('should successfully update a receipt movement without warnings and with submittingOrganisation', async () => {
@@ -166,6 +174,8 @@ describe('handleUpdateReceiptMovement', () => {
     httpClients.wasteMovement.put.mockResolvedValueOnce({
       statusCode: 200
     })
+
+    const infoLoggerSpy = jest.spyOn(logger.createLogger(), 'info')
 
     await handleUpdateReceiptMovement(completeRequest, mockH)
 
@@ -202,6 +212,10 @@ describe('handleUpdateReceiptMovement', () => {
     )
     // Developer activity metrics
     expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
+
+    expect(infoLoggerSpy).toHaveBeenCalledWith(
+      `${METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_ERRORS} - put`
+    )
   })
 
   it('should handle not found error', async () => {
@@ -267,6 +281,8 @@ describe('handleUpdateReceiptMovement', () => {
       payload: { error: 'Bad Request' }
     })
 
+    const infoLoggerSpy = jest.spyOn(logger.createLogger(), 'info')
+
     await handleUpdateReceiptMovement(mockRequest, mockH)
 
     // without_errors logged with clientId-scoped dim set
@@ -281,5 +297,9 @@ describe('handleUpdateReceiptMovement', () => {
     expect(metrics.logDeveloperMetrics).not.toHaveBeenCalled()
     expect(metrics.metricsCounter).toHaveBeenCalledTimes(1)
     expect(mockH.code).toHaveBeenCalledWith(400)
+
+    expect(infoLoggerSpy).toHaveBeenCalledWith(
+      `${METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_ERRORS} - put`
+    )
   })
 })

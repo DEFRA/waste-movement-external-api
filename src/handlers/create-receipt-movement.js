@@ -70,6 +70,7 @@ export const handleCreateReceiptMovement = async (request, h) => {
       1,
       withoutErrorsDims
     )
+    logger.info(`${METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_ERRORS} - post`)
 
     // Only log metrics for successful responses
     if (isSuccess) {
