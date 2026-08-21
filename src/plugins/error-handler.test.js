@@ -2,6 +2,8 @@ import { createServer } from '../server.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
 import * as metrics from '../common/helpers/metrics.js'
 import { httpClients } from '../common/helpers/http-client.js'
+import { handleErrors } from './error-handler.js'
+import { HTTP_STATUS, METRIC_NAMES } from '@defra/waste-movement-utils'
 
 jest.mock('../common/helpers/metrics.js', () => ({
   metricsCounter: jest.fn(),
@@ -932,6 +934,84 @@ describe('Error Handler', () => {
         expect.any(Number),
         expect.objectContaining({ clientId: expect.anything() })
       )
+    })
+  })
+
+  describe('#handleErrors', () => {
+    let request
+
+    const h = {
+      response: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis()
+    }
+
+    beforeEach(() => {
+      request = {
+        response: {
+          isBoom: true,
+          output: {},
+          details: [
+            {
+              message: '"apiCode" is required',
+              path: ['apiCode'],
+              type: 'any.required',
+              context: { label: 'apiCode', key: 'apiCode' }
+            },
+            {
+              message: '"dateTimeReceived" is required',
+              path: ['dateTimeReceived'],
+              type: 'any.required',
+              context: { label: 'dateTimeReceived', key: 'dateTimeReceived' }
+            }
+          ]
+        },
+        logger: {
+          info: jest.fn(),
+          error: jest.fn()
+        },
+        method: 'POST',
+        route: {
+          path: '/movements/receive'
+        }
+      }
+    })
+
+    it('should log errors with a 400 response code', async () => {
+      const infoLoggerSpy = jest.spyOn(request.logger, 'info')
+
+      request.response.output.statusCode = HTTP_STATUS.BAD_REQUEST
+
+      await handleErrors(request, h)
+
+      expect(infoLoggerSpy).toHaveBeenCalledWith(
+        `${METRIC_NAMES.VALIDATION_REQUESTS_WITH_ERRORS} - post`
+      )
+      expect(infoLoggerSpy).toHaveBeenCalledWith(
+        `${METRIC_NAMES.VALIDATION_ERROR_REASON} - "apiCode" is required`
+      )
+      expect(infoLoggerSpy).toHaveBeenCalledWith(
+        `${METRIC_NAMES.VALIDATION_ERROR_REASON} - "dateTimeReceived" is required`
+      )
+      expect(infoLoggerSpy).toHaveBeenCalledWith(
+        `${METRIC_NAMES.VALIDATION_ERROR_CATEGORY} - NotProvided`
+      )
+      expect(infoLoggerSpy).toHaveBeenCalledWith(
+        `${METRIC_NAMES.ERRORS_BY_STATUS_CODE} - ${HTTP_STATUS.BAD_REQUEST}`
+      )
+      expect(infoLoggerSpy).toHaveBeenCalledTimes(6)
+    })
+
+    it('should log errors with a non-400 response code', async () => {
+      const infoLoggerSpy = jest.spyOn(request.logger, 'info')
+
+      request.response.output.statusCode = HTTP_STATUS.INTERNAL_SERVER_ERROR
+
+      await handleErrors(request, h)
+
+      expect(infoLoggerSpy).toHaveBeenCalledWith(
+        `${METRIC_NAMES.ERRORS_BY_STATUS_CODE} - ${HTTP_STATUS.INTERNAL_SERVER_ERROR}`
+      )
+      expect(infoLoggerSpy).toHaveBeenCalledTimes(1)
     })
   })
 })

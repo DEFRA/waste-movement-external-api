@@ -8,6 +8,8 @@ import { createLogger } from './logging/logger.js'
 import { normalizeArrayIndices } from './utils.js'
 import { METRIC_NAMES } from '@defra/waste-movement-utils'
 
+const logger = createLogger()
+
 /**
  * Logs a counter metric with optional dimensions
  * @param {string} metricName - Metric name (dot notation recommended)
@@ -32,7 +34,7 @@ const metricsCounter = async (metricName, value = 1, dimensions = {}) => {
     )
     await metricsLogger.flush()
   } catch (error) {
-    createLogger().error(error, error.message)
+    logger.error(error, error.message)
   }
 }
 
@@ -52,6 +54,7 @@ const logReceiptMetrics = async (endpointType, clientId) => {
     1,
     withClientId({ endpointType }, clientId)
   )
+  logger.info(`${METRIC_NAMES.RECEIPTS_RECEIVED} - ${endpointType}`)
 }
 
 /**
@@ -74,6 +77,7 @@ const logWarningMetrics = async (warnings, endpointType, clientId) => {
       1,
       baseDims
     )
+    logger.info(METRIC_NAMES.VALIDATION_REQUESTS_WITH_WARNINGS)
 
     for (const warning of warnings) {
       const warningReason = normalizeArrayIndices(warning.message)
@@ -81,6 +85,9 @@ const logWarningMetrics = async (warnings, endpointType, clientId) => {
         ...baseDims,
         warningReason
       })
+      logger.info(
+        `${METRIC_NAMES.VALIDATION_WARNING_REASON} - ${warningReason}`
+      )
     }
   } else {
     await metricsCounter(
@@ -88,6 +95,7 @@ const logWarningMetrics = async (warnings, endpointType, clientId) => {
       1,
       baseDims
     )
+    logger.info(METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_WARNINGS)
   }
 }
 
@@ -98,6 +106,7 @@ const logWarningMetrics = async (warnings, endpointType, clientId) => {
  */
 const logDeveloperMetrics = async (clientId) => {
   await metricsCounter(METRIC_NAMES.DEVELOPERS_ACTIVE, 1, { clientId })
+  logger.info(METRIC_NAMES.DEVELOPERS_ACTIVE)
 }
 
 /**
@@ -108,6 +117,7 @@ const logDeveloperMetrics = async (clientId) => {
  * @param {string} clientId - The developer's client ID
  */
 const logAttemptedDeveloperMetrics = async (clientId) => {
+  logger.info(METRIC_NAMES.DEVELOPERS_ATTEMPTED)
   if (!clientId) {
     return
   }

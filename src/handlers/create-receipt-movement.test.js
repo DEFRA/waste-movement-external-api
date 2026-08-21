@@ -4,6 +4,8 @@ import { handleCreateReceiptMovement } from './create-receipt-movement.js'
 import { v4 as uuidv4 } from 'uuid'
 import * as metrics from '../common/helpers/metrics.js'
 import Boom from '@hapi/boom'
+import * as logger from '../common/helpers/logging/logger.js'
+import { METRIC_NAMES } from '@defra/waste-movement-utils'
 
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
@@ -103,6 +105,8 @@ describe('Create Receipt Movement Handler', () => {
       statusCode: 200
     })
 
+    const infoLoggerSpy = jest.spyOn(logger.createLogger(), 'info')
+
     const h = {
       response: jest.fn().mockReturnThis(),
       code: jest.fn().mockReturnThis()
@@ -150,6 +154,10 @@ describe('Create Receipt Movement Handler', () => {
     )
     // Developer activity metrics
     expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
+
+    expect(infoLoggerSpy).toHaveBeenCalledWith(
+      `${METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_ERRORS} - post`
+    )
   })
 
   it('should successfully create a waste movement with warnings and log metrics', async () => {
@@ -171,6 +179,8 @@ describe('Create Receipt Movement Handler', () => {
     httpClients.wasteMovement.post.mockResolvedValue({
       statusCode: 200
     })
+
+    const infoLoggerSpy = jest.spyOn(logger.createLogger(), 'info')
 
     const h = {
       response: jest.fn().mockReturnThis(),
@@ -203,12 +213,18 @@ describe('Create Receipt Movement Handler', () => {
     )
     // Developer activity metrics
     expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
+
+    expect(infoLoggerSpy).toHaveBeenCalledWith(
+      `${METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_ERRORS} - post`
+    )
   })
 
   it('should throw a 500 error when waste movement creation fails', async () => {
     // Mock waste movement creation failure
     httpClients.wasteMovement.post.mockRejectedValue(new Error('API Error'))
 
+    const infoLoggerSpy = jest.spyOn(logger.createLogger(), 'info')
+
     const h = {
       response: jest.fn().mockReturnThis(),
       code: jest.fn().mockReturnThis()
@@ -217,12 +233,16 @@ describe('Create Receipt Movement Handler', () => {
     await expect(() => handleCreateReceiptMovement(request, h)).rejects.toThrow(
       Boom.internal('API Error')
     )
+
+    expect(infoLoggerSpy).not.toHaveBeenCalled()
   })
 
   it('should throw a 500 error when waste tracking ID request fails', async () => {
     // Mock waste tracking ID request failure
     httpClients.wasteTracking.get.mockRejectedValue(new Error('API Error'))
 
+    const infoLoggerSpy = jest.spyOn(logger.createLogger(), 'info')
+
     const h = {
       response: jest.fn().mockReturnThis(),
       code: jest.fn().mockReturnThis()
@@ -231,6 +251,8 @@ describe('Create Receipt Movement Handler', () => {
     await expect(() => handleCreateReceiptMovement(request, h)).rejects.toThrow(
       Boom.internal('API Error')
     )
+
+    expect(infoLoggerSpy).not.toHaveBeenCalled()
   })
 
   it('should not log developer metrics when clientId is not provided', async () => {
@@ -275,6 +297,8 @@ describe('Create Receipt Movement Handler', () => {
       payload: { error: 'Bad Request' }
     })
 
+    const infoLoggerSpy = jest.spyOn(logger.createLogger(), 'info')
+
     const h = {
       response: jest.fn().mockReturnThis(),
       code: jest.fn().mockReturnThis()
@@ -294,5 +318,9 @@ describe('Create Receipt Movement Handler', () => {
     expect(metrics.logDeveloperMetrics).not.toHaveBeenCalled()
     expect(metrics.metricsCounter).toHaveBeenCalledTimes(1)
     expect(h.code).toHaveBeenCalledWith(400)
+
+    expect(infoLoggerSpy).toHaveBeenCalledWith(
+      `${METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_ERRORS} - post`
+    )
   })
 })
