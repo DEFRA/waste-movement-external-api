@@ -1,8 +1,8 @@
 import { ecsFormat } from '@elastic/ecs-pino-format'
 import { config } from '../../../config.js'
 import { getTraceId } from '@defra/hapi-tracing'
-import { getOrganisationId } from '../../../plugins/request-custom-logger.js'
 import { getClientId } from '../client-context.js'
+import { getOrganisationId } from '../../../plugins/add-submitting-organisation-to-request.js'
 
 const logConfig = config.get('log')
 const serviceName = config.get('serviceName')
