@@ -1,6 +1,8 @@
 import { ecsFormat } from '@elastic/ecs-pino-format'
 import { config } from '../../../config.js'
 import { getTraceId } from '@defra/hapi-tracing'
+import { getOrganisationId } from '../../../plugins/request-custom-logger.js'
+import { getClientId } from '../client-context.js'
 
 const logConfig = config.get('log')
 const serviceName = config.get('serviceName')
@@ -29,12 +31,17 @@ export const loggerOptions = {
   mixin() {
     const mixinValues = {}
     const traceId = getTraceId()
+    const organisationId = getOrganisationId()
+    const clientId = getClientId()
     if (traceId) {
       mixinValues.trace = { id: traceId }
     }
+    if (organisationId) {
+      mixinValues.event = { reference: organisationId }
+    }
+    if (clientId) {
+      mixinValues.tenant = { id: clientId }
+    }
     return mixinValues
-  },
-  getChildBindings: (req) => ({
-    clientId: req.auth?.credentials?.clientId
-  })
+  }
 }
