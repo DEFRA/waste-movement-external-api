@@ -133,12 +133,6 @@ const config = convict({
     default: isProduction,
     env: 'ENABLE_SECURE_CONTEXT'
   },
-  isMetricsEnabled: {
-    doc: 'Enable metrics reporting',
-    format: Boolean,
-    default: isProduction,
-    env: 'ENABLE_METRICS'
-  },
   tracing: {
     header: {
       doc: 'CDP tracing header name',

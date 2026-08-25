@@ -78,9 +78,6 @@ describe('requestMetrics plugin', () => {
       payload: {}
     })
 
-    expect(metrics.logAttemptedDeveloperMetrics).toHaveBeenCalledWith(
-      'test-client-id'
-    )
     expect(metrics.logAttemptedDeveloperMetrics).toHaveBeenCalledTimes(1)
   })
 
@@ -93,9 +90,6 @@ describe('requestMetrics plugin', () => {
       payload: {}
     })
 
-    expect(metrics.logAttemptedDeveloperMetrics).toHaveBeenCalledWith(
-      'test-client-id'
-    )
     expect(metrics.logAttemptedDeveloperMetrics).toHaveBeenCalledTimes(1)
   })
 

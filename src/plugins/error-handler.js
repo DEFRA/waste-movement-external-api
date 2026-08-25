@@ -1,4 +1,3 @@
-import { metricsCounter } from '../common/helpers/metrics.js'
 import { normalizeArrayIndices } from '../common/helpers/utils.js'
 import { isReceiptMovementEndpoint } from '../common/helpers/receipt-movement-endpoint.js'
 import {
@@ -6,10 +5,6 @@ import {
   METRIC_NAMES,
   validationErrorFormatter
 } from '@defra/waste-movement-utils'
-
-// Build dimensions object including clientId only when present.
-const withClientId = (dims, clientId) =>
-  clientId ? { ...dims, clientId } : dims
 
 const formatPayloadParseError = (response) => ({
   validation: {
@@ -49,46 +44,22 @@ export async function handleErrors(request, h) {
       ? validationErrorFormatter(response, logger)
       : formatPayloadParseError(response)
 
-    // Log validation error metrics for receipt movement endpoints
+    // Log validation errors for receipt movement endpoints
     if (isReceiptMovementEndpoint(request)) {
       const endpointType = request.method.toLowerCase()
-      const clientId = request.auth?.credentials?.clientId
-      const baseDims = withClientId({ endpointType }, clientId)
 
-      await metricsCounter(
-        METRIC_NAMES.VALIDATION_ERRORS_COUNT,
-        customError.validation.errors.length,
-        baseDims
-      )
-      await metricsCounter(
-        METRIC_NAMES.VALIDATION_REQUESTS_WITH_ERRORS,
-        1,
-        baseDims
-      )
       logger.info(
         `${METRIC_NAMES.VALIDATION_REQUESTS_WITH_ERRORS} - ${endpointType}`
       )
 
       for (const error of customError.validation.errors) {
         const errorReason = normalizeArrayIndices(error.message)
-        await metricsCounter(METRIC_NAMES.VALIDATION_ERROR_REASON, 1, {
-          ...baseDims,
-          errorReason
-        })
         logger.info(`${METRIC_NAMES.VALIDATION_ERROR_REASON} - ${errorReason}`)
-        await metricsCounter(METRIC_NAMES.VALIDATION_ERROR_CATEGORY, 1, {
-          ...baseDims,
-          errorCategory: error.errorType
-        })
         logger.info(
           `${METRIC_NAMES.VALIDATION_ERROR_CATEGORY} - ${error.errorType}`
         )
       }
 
-      await metricsCounter(METRIC_NAMES.ERRORS_BY_STATUS_CODE, 1, {
-        ...baseDims,
-        statusCode: '400'
-      })
       logger.info(
         `${METRIC_NAMES.ERRORS_BY_STATUS_CODE} - ${HTTP_STATUS.BAD_REQUEST}`
       )
@@ -107,20 +78,14 @@ export async function handleErrors(request, h) {
     return errorResponse
   }
 
-  // Log HTTP status code metrics for non-400 Boom errors on receipt movement endpoints
+  // Log HTTP status codes for non-400 Boom errors on receipt movement endpoints
   if (
     response.isBoom &&
     response.output.statusCode !== HTTP_STATUS.BAD_REQUEST &&
     isReceiptMovementEndpoint(request)
   ) {
-    const endpointType = request.method.toLowerCase()
     const statusCode = String(response.output.statusCode)
-    const clientId = request.auth?.credentials?.clientId
 
-    await metricsCounter(METRIC_NAMES.ERRORS_BY_STATUS_CODE, 1, {
-      ...withClientId({ endpointType }, clientId),
-      statusCode
-    })
     logger.info(`${METRIC_NAMES.ERRORS_BY_STATUS_CODE} - ${statusCode}`)
   }
 

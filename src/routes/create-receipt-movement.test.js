@@ -27,7 +27,6 @@ jest.mock('../common/helpers/http-client.js', () => ({
 
 // Mock metrics
 jest.mock('../common/helpers/metrics.js', () => ({
-  metricsCounter: jest.fn(),
   logReceiptMetrics: jest.fn(),
   logWarningMetrics: jest.fn(),
   logDeveloperMetrics: jest.fn()
@@ -92,7 +91,7 @@ describe('Create Receipt Movement Route', () => {
       }
     })
     // Developer activity metrics
-    expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
+    expect(metrics.logDeveloperMetrics).toHaveBeenCalled()
 
     // Verify waste tracking ID was requested
     expect(httpClients.wasteTracking.get).toHaveBeenCalledWith('/next')

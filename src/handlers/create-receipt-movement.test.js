@@ -21,7 +21,6 @@ jest.mock('../common/helpers/http-client.js', () => ({
 
 // Mock metrics
 jest.mock('../common/helpers/metrics.js', () => ({
-  metricsCounter: jest.fn(),
   logReceiptMetrics: jest.fn(),
   logWarningMetrics: jest.fn(),
   logDeveloperMetrics: jest.fn()
@@ -135,25 +134,11 @@ describe('Create Receipt Movement Handler', () => {
       }
     )
 
-    // Single emission with clientId-scoped dim set
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_errors',
-      1,
-      { endpointType: 'post', clientId: 'test-client-id' }
-    )
-    expect(metrics.metricsCounter).toHaveBeenCalledTimes(1)
     // Receipt received metrics
-    expect(metrics.logReceiptMetrics).toHaveBeenCalledWith(
-      'post',
-      'test-client-id'
-    )
-    expect(metrics.logWarningMetrics).toHaveBeenCalledWith(
-      [],
-      'post',
-      'test-client-id'
-    )
+    expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('post')
+    expect(metrics.logWarningMetrics).toHaveBeenCalledWith([])
     // Developer activity metrics
-    expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
+    expect(metrics.logDeveloperMetrics).toHaveBeenCalled()
 
     expect(infoLoggerSpy).toHaveBeenCalledWith(
       `${METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_ERRORS} - post`
@@ -189,30 +174,18 @@ describe('Create Receipt Movement Handler', () => {
 
     await handleCreateReceiptMovement(requestWithWarnings, h)
 
-    // Single emission with clientId-scoped dim set
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_errors',
-      1,
-      { endpointType: 'post', clientId: 'test-client-id' }
-    )
-    expect(metrics.metricsCounter).toHaveBeenCalledTimes(1)
     // Receipt received metrics
-    expect(metrics.logReceiptMetrics).toHaveBeenCalledWith(
-      'post',
-      'test-client-id'
-    )
+    expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('post')
     expect(metrics.logWarningMetrics).toHaveBeenCalledWith(
       expect.arrayContaining([
         expect.objectContaining({
           errorType: 'NotProvided',
           key: 'wasteItems.0.disposalOrRecoveryCodes'
         })
-      ]),
-      'post',
-      'test-client-id'
+      ])
     )
     // Developer activity metrics
-    expect(metrics.logDeveloperMetrics).toHaveBeenCalledWith('test-client-id')
+    expect(metrics.logDeveloperMetrics).toHaveBeenCalled()
 
     expect(infoLoggerSpy).toHaveBeenCalledWith(
       `${METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_ERRORS} - post`
@@ -272,22 +245,11 @@ describe('Create Receipt Movement Handler', () => {
 
     await handleCreateReceiptMovement(requestWithoutAuth, h)
 
-    // Receipt and warning metrics should still be logged (clientId undefined)
-    expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('post', undefined)
+    // Receipt and warning logs should still be written
+    expect(metrics.logReceiptMetrics).toHaveBeenCalledWith('post')
     expect(metrics.logWarningMetrics).toHaveBeenCalled()
-    // Developer metrics should NOT be logged when clientId is missing
+    // Developer activity should NOT be logged when clientId is missing
     expect(metrics.logDeveloperMetrics).not.toHaveBeenCalled()
-    // without_errors emission omits clientId when absent
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_errors',
-      1,
-      { endpointType: 'post' }
-    )
-    expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
-      'validation.requests.without_errors',
-      1,
-      expect.objectContaining({ clientId: expect.anything() })
-    )
   })
 
   it('should log without_errors but not warning or receipt metrics when backend returns non-success status', async () => {
@@ -306,17 +268,10 @@ describe('Create Receipt Movement Handler', () => {
 
     await handleCreateReceiptMovement(request, h)
 
-    // without_errors logged with clientId-scoped dim set
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.without_errors',
-      1,
-      { endpointType: 'post', clientId: 'test-client-id' }
-    )
-    // Receipt, warning, and developer metrics should NOT be logged
+    // Receipt, warning, and developer activity should NOT be logged
     expect(metrics.logReceiptMetrics).not.toHaveBeenCalled()
     expect(metrics.logWarningMetrics).not.toHaveBeenCalled()
     expect(metrics.logDeveloperMetrics).not.toHaveBeenCalled()
-    expect(metrics.metricsCounter).toHaveBeenCalledTimes(1)
     expect(h.code).toHaveBeenCalledWith(400)
 
     expect(infoLoggerSpy).toHaveBeenCalledWith(

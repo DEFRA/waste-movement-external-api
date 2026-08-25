@@ -8,7 +8,6 @@ import { handleBackendResponse } from './handle-backend-response.js'
 import { createLogger } from '../common/helpers/logging/logger.js'
 import { isSuccessStatusCode } from '../common/helpers/utils.js'
 import {
-  metricsCounter,
   logReceiptMetrics,
   logWarningMetrics,
   logDeveloperMetrics
@@ -61,23 +60,14 @@ export const handleCreateReceiptMovement = async (request, h) => {
     }
 
     // Request passed validation (no validation errors) - log regardless of backend response
-    const withoutErrorsDims = { endpointType: 'post' }
-    if (clientId) {
-      withoutErrorsDims.clientId = clientId
-    }
-    await metricsCounter(
-      METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_ERRORS,
-      1,
-      withoutErrorsDims
-    )
     logger.info(`${METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_ERRORS} - post`)
 
-    // Only log metrics for successful responses
+    // Only log successful responses
     if (isSuccess) {
-      await logReceiptMetrics('post', clientId)
-      await logWarningMetrics(warnings, 'post', clientId)
+      logReceiptMetrics('post')
+      logWarningMetrics(warnings)
       if (clientId) {
-        await logDeveloperMetrics(clientId)
+        logDeveloperMetrics()
       }
     }
 
