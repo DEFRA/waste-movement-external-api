@@ -17,7 +17,6 @@ import { requestMetrics } from './plugins/request-metrics.js'
 import { clientContext } from './common/helpers/client-context.js'
 import { addSubmittingOrganisationToRequest } from './plugins/add-submitting-organisation-to-request.js'
 import { setCustomResponseHeaders } from './plugins/set-custom-response-headers.js'
-import { requestCustomLogger } from './plugins/request-custom-logger.js'
 
 async function createServer() {
   setupProxy()
@@ -96,8 +95,7 @@ async function createServer() {
     errorHandler,
     requestMetrics,
     clientContext,
-    addSubmittingOrganisationToRequest,
-    requestCustomLogger
+    addSubmittingOrganisationToRequest
   ])
 
   return server
