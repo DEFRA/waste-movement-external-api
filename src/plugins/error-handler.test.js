@@ -1,14 +1,7 @@
 import { createServer } from '../server.js'
 import { createMovementRequest } from '../test/utils/createMovementRequest.js'
-import * as metrics from '../common/helpers/metrics.js'
-import { httpClients } from '../common/helpers/http-client.js'
 import { handleErrors } from './error-handler.js'
 import { HTTP_STATUS, METRIC_NAMES } from '@defra/waste-movement-utils'
-
-jest.mock('../common/helpers/metrics.js', () => ({
-  metricsCounter: jest.fn(),
-  logAttemptedDeveloperMetrics: jest.fn()
-}))
 
 jest.mock('../common/helpers/http-client.js', () => ({
   httpClients: {
@@ -30,9 +23,7 @@ jest.mock('../common/helpers/http-client.js', () => ({
 
 // The receive routes require authentication (DWTA-337 removed the local-env
 // bypass), so stub jwt-auth with a scheme that authenticates with empty
-// credentials (no clientId). Tests that need a clientId inject one via their own
-// onPostAuth hook (see the ClientId-scoped metrics block); the rest assert the
-// no-clientId dimension sets.
+// credentials.
 jest.mock('./jwt-auth.js', () => ({
   jwtAuth: {
     plugin: {
@@ -170,157 +161,6 @@ describe('Error Handler', () => {
       expect(err.key).not.toBe('object')
       expect(err.key).not.toBe('string')
     })
-  })
-
-  test('should log validation error metrics for POST receipt movement endpoint', async () => {
-    const response = await server.inject({
-      method: 'POST',
-      url: '/movements/receive',
-      payload: {
-        yourUniqueReference: 'test-reference'
-      }
-    })
-
-    expect(response.statusCode).toBe(400)
-    const responseBody = JSON.parse(response.payload)
-    const errorCount = responseBody.validation.errors.length
-
-    // Single emission per metric with endpointType dim (no clientId in test env)
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.errors.count',
-      errorCount,
-      { endpointType: 'post' }
-    )
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.with_errors',
-      1,
-      { endpointType: 'post' }
-    )
-  })
-
-  test('should log validation error metrics for PUT receipt movement endpoint', async () => {
-    const response = await server.inject({
-      method: 'PUT',
-      url: '/movements/test-tracking-id/receive',
-      payload: {
-        yourUniqueReference: 'test-reference'
-      }
-    })
-
-    expect(response.statusCode).toBe(400)
-    const responseBody = JSON.parse(response.payload)
-    const errorCount = responseBody.validation.errors.length
-
-    // Single emission per metric with endpointType dim (no clientId in test env)
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.errors.count',
-      errorCount,
-      { endpointType: 'put' }
-    )
-    expect(metrics.metricsCounter).toHaveBeenCalledWith(
-      'validation.requests.with_errors',
-      1,
-      { endpointType: 'put' }
-    )
-  })
-
-  test('should not log metrics for non-receipt-movement endpoints', async () => {
-    // Hit a non-receipt-movement endpoint
-    const response = await server.inject({
-      method: 'GET',
-      url: '/health'
-    })
-
-    expect(response.statusCode).toBe(200)
-
-    // Verify metricsCounter was NOT called for non-receipt endpoints
-    expect(metrics.metricsCounter).not.toHaveBeenCalled()
-  })
-
-  test('should log per-error reason metrics with correct dimension values', async () => {
-    const response = await server.inject({
-      method: 'POST',
-      url: '/movements/receive',
-      payload: { yourUniqueReference: 'test' }
-    })
-
-    const responseBody = JSON.parse(response.payload)
-    const errorCount = responseBody.validation.errors.length
-
-    // Single emission per metric (no clientId in this test — auth disabled):
-    // - 1 call for errors.count
-    // - 1 call for requests.with_errors
-    // - 1 call per error for error.reason
-    // - 1 call per error for error.category
-    // - 1 call for errors.by_status_code
-    const expectedCalls = 3 + errorCount * 2
-    expect(metrics.metricsCounter).toHaveBeenCalledTimes(expectedCalls)
-
-    // Helper function matching production normalization logic
-    const normalizeArrayIndices = (str) => str.replace(/\[\d+]/g, '[*]')
-
-    // Verify each validation error has its normalized message emitted as errorReason
-    for (const error of responseBody.validation.errors) {
-      const expectedReason = normalizeArrayIndices(error.message)
-
-      expect(metrics.metricsCounter).toHaveBeenCalledWith(
-        'validation.error.reason',
-        1,
-        { endpointType: 'post', errorReason: expectedReason }
-      )
-    }
-  })
-
-  test('should normalize array indices in error reason metrics', async () => {
-    // Create a payload that will trigger array-indexed validation errors
-    const response = await server.inject({
-      method: 'POST',
-      url: '/movements/receive',
-      payload: {
-        apiCode: '00000000-0000-0000-0000-000000000000',
-        dateTimeReceived: new Date().toISOString(),
-        receiver: {
-          siteName: 'Test Site',
-          authorisationNumber: 'HP3456XX',
-          address: {
-            fullAddress: '123 Test St',
-            postcode: 'SW1A 1AA'
-          }
-        },
-        receipt: {
-          wasteAccepted: true
-        },
-        wasteItems: [
-          {
-            ewcCodes: ['170504'],
-            // Invalid value to trigger array-indexed error message
-            physicalForm: 'InvalidValue'
-          }
-        ]
-      }
-    })
-
-    expect(response.statusCode).toBe(400)
-
-    // Check that array indices are normalized in the errorReason
-    const calls = metrics.metricsCounter.mock.calls
-    const reasonCalls = calls.filter(
-      (call) => call[0] === 'validation.error.reason'
-    )
-
-    // Find any call with wasteItems in the errorReason
-    const arrayIndexedCalls = reasonCalls.filter((call) =>
-      call[2]?.errorReason?.includes('wasteItems')
-    )
-
-    // Assert that we actually produced array-indexed errors to test normalization
-    expect(arrayIndexedCalls.length).toBeGreaterThan(0)
-
-    // Verify all array-indexed errors use [*] not [0]
-    for (const call of arrayIndexedCalls) {
-      expect(call[2].errorReason).not.toMatch(/\[\d+]/)
-      expect(call[2].errorReason).toMatch(/\[\*]/)
-    }
   })
 
   describe('Malformed JSON payload', () => {
@@ -648,295 +488,6 @@ describe('Error Handler', () => {
     })
   })
 
-  describe('Error Category Metrics', () => {
-    test('should log error category metrics for each validation error', async () => {
-      const response = await server.inject({
-        method: 'POST',
-        url: '/movements/receive',
-        payload: {
-          yourUniqueReference: 'test-reference'
-        }
-      })
-
-      expect(response.statusCode).toBe(400)
-      const responseBody = JSON.parse(response.payload)
-
-      // Single emission per error with endpointType + errorCategory
-      for (const error of responseBody.validation.errors) {
-        expect(metrics.metricsCounter).toHaveBeenCalledWith(
-          'validation.error.category',
-          1,
-          { endpointType: 'post', errorCategory: error.errorType }
-        )
-      }
-    })
-
-    test('should log error category metrics with correct categories', async () => {
-      const basePayload = createMovementRequest()
-      const payload = {
-        ...basePayload,
-        unknownField: 'value', // NotAllowed
-        wasteItems: [
-          {
-            ...basePayload.wasteItems[0],
-            physicalForm: 'InvalidValue' // InvalidValue
-          }
-        ]
-      }
-
-      const response = await server.inject({
-        method: 'POST',
-        url: '/movements/receive',
-        payload
-      })
-
-      expect(response.statusCode).toBe(400)
-
-      // Check NotAllowed category metric was logged
-      expect(metrics.metricsCounter).toHaveBeenCalledWith(
-        'validation.error.category',
-        1,
-        { endpointType: 'post', errorCategory: 'NotAllowed' }
-      )
-
-      // Check InvalidValue category metric was logged
-      expect(metrics.metricsCounter).toHaveBeenCalledWith(
-        'validation.error.category',
-        1,
-        { endpointType: 'post', errorCategory: 'InvalidValue' }
-      )
-    })
-
-    test('should log error category metrics for PUT endpoint', async () => {
-      const response = await server.inject({
-        method: 'PUT',
-        url: '/movements/test-tracking-id/receive',
-        payload: {
-          yourUniqueReference: 'test-reference'
-        }
-      })
-
-      expect(response.statusCode).toBe(400)
-      const responseBody = JSON.parse(response.payload)
-
-      // Single emission per error with endpointType + errorCategory
-      for (const error of responseBody.validation.errors) {
-        expect(metrics.metricsCounter).toHaveBeenCalledWith(
-          'validation.error.category',
-          1,
-          { endpointType: 'put', errorCategory: error.errorType }
-        )
-      }
-    })
-  })
-
-  describe('HTTP Status Code Metrics', () => {
-    test('should log HTTP status code metric for 400 validation errors', async () => {
-      const response = await server.inject({
-        method: 'POST',
-        url: '/movements/receive',
-        payload: {
-          yourUniqueReference: 'test-reference'
-        }
-      })
-
-      expect(response.statusCode).toBe(400)
-
-      // Single emission with endpointType + statusCode
-      expect(metrics.metricsCounter).toHaveBeenCalledWith(
-        'errors.by_status_code',
-        1,
-        { endpointType: 'post', statusCode: '400' }
-      )
-    })
-
-    test('should log HTTP status code metric for PUT endpoint', async () => {
-      const response = await server.inject({
-        method: 'PUT',
-        url: '/movements/test-tracking-id/receive',
-        payload: {
-          yourUniqueReference: 'test-reference'
-        }
-      })
-
-      expect(response.statusCode).toBe(400)
-
-      // Single emission with endpointType + statusCode
-      expect(metrics.metricsCounter).toHaveBeenCalledWith(
-        'errors.by_status_code',
-        1,
-        { endpointType: 'put', statusCode: '400' }
-      )
-    })
-
-    test('should log HTTP status code metric for non-400 errors (404)', async () => {
-      // Mock the httpClient to throw a NotFoundError
-      const notFoundError = new Error('Movement not found')
-      notFoundError.name = 'NotFoundError'
-      httpClients.wasteMovement.put.mockRejectedValueOnce(notFoundError)
-
-      const response = await server.inject({
-        method: 'PUT',
-        url: '/movements/test-tracking-id/receive',
-        payload: createMovementRequest()
-      })
-
-      expect(response.statusCode).toBe(404)
-
-      // Single emission with endpointType + statusCode
-      expect(metrics.metricsCounter).toHaveBeenCalledWith(
-        'errors.by_status_code',
-        1,
-        { endpointType: 'put', statusCode: '404' }
-      )
-    })
-  })
-
-  describe('ClientId-scoped metrics', () => {
-    let injectClientId
-
-    beforeAll(() => {
-      // JWT is disabled in test/local env (no strategy registered).
-      // Use an onPostAuth hook (fires after auth, before validation) to
-      // inject mock credentials so error-handler's
-      // request.auth?.credentials?.clientId resolves even when validation
-      // short-circuits the handler.
-      server.ext('onPostAuth', (request, h) => {
-        if (injectClientId && request.auth) {
-          request.auth.credentials = { clientId: injectClientId }
-        }
-        return h.continue
-      })
-    })
-
-    beforeEach(() => {
-      injectClientId = 'test-client-id'
-    })
-
-    afterEach(() => {
-      injectClientId = null
-    })
-
-    test('should include clientId in all metric dim sets for POST validation errors', async () => {
-      const response = await server.inject({
-        method: 'POST',
-        url: '/movements/receive',
-        payload: { yourUniqueReference: 'test' }
-      })
-
-      expect(response.statusCode).toBe(400)
-      const responseBody = JSON.parse(response.payload)
-
-      // Aggregate counts — single emission with endpointType + clientId
-      expect(metrics.metricsCounter).toHaveBeenCalledWith(
-        'validation.errors.count',
-        responseBody.validation.errors.length,
-        { endpointType: 'post', clientId: 'test-client-id' }
-      )
-      expect(metrics.metricsCounter).toHaveBeenCalledWith(
-        'validation.requests.with_errors',
-        1,
-        { endpointType: 'post', clientId: 'test-client-id' }
-      )
-
-      // Per-error breakdown with endpointType + clientId
-      const normalizeArrayIndices = (str) => str.replace(/\[\d+]/g, '[*]')
-      for (const error of responseBody.validation.errors) {
-        const errorReason = normalizeArrayIndices(error.message)
-        expect(metrics.metricsCounter).toHaveBeenCalledWith(
-          'validation.error.reason',
-          1,
-          { endpointType: 'post', errorReason, clientId: 'test-client-id' }
-        )
-        expect(metrics.metricsCounter).toHaveBeenCalledWith(
-          'validation.error.category',
-          1,
-          {
-            endpointType: 'post',
-            errorCategory: error.errorType,
-            clientId: 'test-client-id'
-          }
-        )
-      }
-
-      // Status code with endpointType + clientId
-      expect(metrics.metricsCounter).toHaveBeenCalledWith(
-        'errors.by_status_code',
-        1,
-        {
-          endpointType: 'post',
-          statusCode: '400',
-          clientId: 'test-client-id'
-        }
-      )
-
-      // Old un-clientId-scoped emissions no longer happen
-      expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
-        'validation.requests.with_errors',
-        1,
-        { endpointType: 'post' }
-      )
-    })
-
-    test('should include clientId for PUT validation errors', async () => {
-      const response = await server.inject({
-        method: 'PUT',
-        url: '/movements/test-tracking-id/receive',
-        payload: { yourUniqueReference: 'test' }
-      })
-
-      expect(response.statusCode).toBe(400)
-
-      expect(metrics.metricsCounter).toHaveBeenCalledWith(
-        'validation.requests.with_errors',
-        1,
-        { endpointType: 'put', clientId: 'test-client-id' }
-      )
-      expect(metrics.metricsCounter).toHaveBeenCalledWith(
-        'errors.by_status_code',
-        1,
-        { endpointType: 'put', statusCode: '400', clientId: 'test-client-id' }
-      )
-    })
-
-    test('should include clientId for non-400 errors', async () => {
-      const notFoundError = new Error('Movement not found')
-      notFoundError.name = 'NotFoundError'
-      httpClients.wasteMovement.put.mockRejectedValueOnce(notFoundError)
-
-      const response = await server.inject({
-        method: 'PUT',
-        url: '/movements/test-tracking-id/receive',
-        payload: createMovementRequest()
-      })
-
-      expect(response.statusCode).toBe(404)
-
-      expect(metrics.metricsCounter).toHaveBeenCalledWith(
-        'errors.by_status_code',
-        1,
-        { endpointType: 'put', statusCode: '404', clientId: 'test-client-id' }
-      )
-    })
-
-    test('should omit clientId from dim sets when clientId absent', async () => {
-      injectClientId = null
-
-      const response = await server.inject({
-        method: 'POST',
-        url: '/movements/receive',
-        payload: { yourUniqueReference: 'test' }
-      })
-
-      expect(response.statusCode).toBe(400)
-      expect(metrics.metricsCounter).not.toHaveBeenCalledWith(
-        expect.any(String),
-        expect.any(Number),
-        expect.objectContaining({ clientId: expect.anything() })
-      )
-    })
-  })
-
   describe('#handleErrors', () => {
     let request
 
@@ -1012,6 +563,51 @@ describe('Error Handler', () => {
         `${METRIC_NAMES.ERRORS_BY_STATUS_CODE} - ${HTTP_STATUS.INTERNAL_SERVER_ERROR}`
       )
       expect(infoLoggerSpy).toHaveBeenCalledTimes(1)
+    })
+
+    it('should normalize array indices in the logged error reason', async () => {
+      const infoLoggerSpy = jest.spyOn(request.logger, 'info')
+
+      request.response.output.statusCode = HTTP_STATUS.BAD_REQUEST
+      request.response.details = [
+        {
+          message: '"wasteItems[0].weight.metric" is required',
+          path: ['wasteItems', 0, 'weight', 'metric'],
+          type: 'any.required',
+          context: { label: 'wasteItems[0].weight.metric', key: 'metric' }
+        }
+      ]
+
+      await handleErrors(request, h)
+
+      expect(infoLoggerSpy).toHaveBeenCalledWith(
+        `${METRIC_NAMES.VALIDATION_ERROR_REASON} - "wasteItems[*].weight.metric" is required`
+      )
+    })
+
+    it('should log the endpoint type for PUT requests', async () => {
+      const infoLoggerSpy = jest.spyOn(request.logger, 'info')
+
+      request.method = 'PUT'
+      request.route.path = '/movements/{wasteTrackingId}/receive'
+      request.response.output.statusCode = HTTP_STATUS.BAD_REQUEST
+
+      await handleErrors(request, h)
+
+      expect(infoLoggerSpy).toHaveBeenCalledWith(
+        `${METRIC_NAMES.VALIDATION_REQUESTS_WITH_ERRORS} - put`
+      )
+    })
+
+    it('should not log for non-receipt-movement endpoints', async () => {
+      const infoLoggerSpy = jest.spyOn(request.logger, 'info')
+
+      request.route.path = '/health'
+      request.response.output.statusCode = HTTP_STATUS.BAD_REQUEST
+
+      await handleErrors(request, h)
+
+      expect(infoLoggerSpy).not.toHaveBeenCalled()
     })
   })
 })

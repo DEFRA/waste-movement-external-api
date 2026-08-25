@@ -1,7 +1,6 @@
 import { httpClients } from '../common/helpers/http-client.js'
 import { handleBackendResponse } from './handle-backend-response.js'
 import {
-  metricsCounter,
   logReceiptMetrics,
   logWarningMetrics,
   logDeveloperMetrics
@@ -56,23 +55,14 @@ export const handleUpdateReceiptMovement = async (request, h) => {
     }
 
     // Request passed validation (no validation errors) - log regardless of backend response
-    const withoutErrorsDims = { endpointType: 'put' }
-    if (clientId) {
-      withoutErrorsDims.clientId = clientId
-    }
-    await metricsCounter(
-      METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_ERRORS,
-      1,
-      withoutErrorsDims
-    )
     logger.info(`${METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_ERRORS} - put`)
 
-    // Only log metrics for successful responses
+    // Only log successful responses
     if (isSuccessStatusCode(response.statusCode)) {
-      await logReceiptMetrics('put', clientId)
-      await logWarningMetrics(warnings, 'put', clientId)
+      logReceiptMetrics('put')
+      logWarningMetrics(warnings)
       if (clientId) {
-        await logDeveloperMetrics(clientId)
+        logDeveloperMetrics()
       }
     }
 

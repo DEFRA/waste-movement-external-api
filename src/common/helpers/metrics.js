@@ -1,9 +1,3 @@
-import {
-  createMetricsLogger,
-  Unit,
-  StorageResolution
-} from 'aws-embedded-metrics'
-import { config } from '../../config.js'
 import { createLogger } from './logging/logger.js'
 import { normalizeArrayIndices } from './utils.js'
 import { METRIC_NAMES } from '@defra/waste-movement-utils'
@@ -11,121 +5,50 @@ import { METRIC_NAMES } from '@defra/waste-movement-utils'
 const logger = createLogger()
 
 /**
- * Logs a counter metric with optional dimensions
- * @param {string} metricName - Metric name (dot notation recommended)
- * @param {number} value - Metric value (default 1)
- * @param {Object} dimensions - Optional dimensions object
- */
-const metricsCounter = async (metricName, value = 1, dimensions = {}) => {
-  if (!config.get('isMetricsEnabled')) {
-    return
-  }
-
-  try {
-    const metricsLogger = createMetricsLogger()
-    if (Object.keys(dimensions).length > 0) {
-      metricsLogger.putDimensions(dimensions)
-    }
-    metricsLogger.putMetric(
-      metricName,
-      value,
-      Unit.Count,
-      StorageResolution.Standard
-    )
-    await metricsLogger.flush()
-  } catch (error) {
-    logger.error(error, error.message)
-  }
-}
-
-// Build dimensions object including clientId only when present.
-// Dashboards aggregate across clientId via SEARCH() wildcards.
-const withClientId = (dims, clientId) =>
-  clientId ? { ...dims, clientId } : dims
-
-/**
- * Logs receipt received metric.
+ * Logs receipt received.
  * @param {string} endpointType - The endpoint type ('post' or 'put')
- * @param {string} [clientId] - Optional clientId for per-vendor breakdown
  */
-const logReceiptMetrics = async (endpointType, clientId) => {
-  await metricsCounter(
-    METRIC_NAMES.RECEIPTS_RECEIVED,
-    1,
-    withClientId({ endpointType }, clientId)
-  )
+const logReceiptMetrics = (endpointType) => {
   logger.info(`${METRIC_NAMES.RECEIPTS_RECEIVED} - ${endpointType}`)
 }
 
 /**
- * Logs validation warning metrics.
+ * Logs validation warnings.
  * @param {Array} warnings - The validation warnings array
- * @param {string} endpointType - The endpoint type ('post' or 'put')
- * @param {string} [clientId] - Optional clientId for per-vendor breakdown
  */
-const logWarningMetrics = async (warnings, endpointType, clientId) => {
-  const baseDims = withClientId({ endpointType }, clientId)
-
-  if (warnings.length > 0) {
-    await metricsCounter(
-      METRIC_NAMES.VALIDATION_WARNINGS_COUNT,
-      warnings.length,
-      baseDims
-    )
-    await metricsCounter(
-      METRIC_NAMES.VALIDATION_REQUESTS_WITH_WARNINGS,
-      1,
-      baseDims
-    )
-    logger.info(METRIC_NAMES.VALIDATION_REQUESTS_WITH_WARNINGS)
-
-    for (const warning of warnings) {
-      const warningReason = normalizeArrayIndices(warning.message)
-      await metricsCounter(METRIC_NAMES.VALIDATION_WARNING_REASON, 1, {
-        ...baseDims,
-        warningReason
-      })
-      logger.info(
-        `${METRIC_NAMES.VALIDATION_WARNING_REASON} - ${warningReason}`
-      )
-    }
-  } else {
-    await metricsCounter(
-      METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_WARNINGS,
-      1,
-      baseDims
-    )
+const logWarningMetrics = (warnings) => {
+  if (warnings.length === 0) {
     logger.info(METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_WARNINGS)
+    return
+  }
+
+  logger.info(METRIC_NAMES.VALIDATION_REQUESTS_WITH_WARNINGS)
+
+  for (const warning of warnings) {
+    logger.info(
+      `${METRIC_NAMES.VALIDATION_WARNING_REASON} - ${normalizeArrayIndices(warning.message)}`
+    )
   }
 }
 
 /**
- * Logs developer activity metric. Emitted on successful receipt movements
+ * Logs developer activity. Emitted on successful receipt movements
  * only — represents developers actively transacting.
- * @param {string} clientId - The developer's client ID
  */
-const logDeveloperMetrics = async (clientId) => {
-  await metricsCounter(METRIC_NAMES.DEVELOPERS_ACTIVE, 1, { clientId })
+const logDeveloperMetrics = () => {
   logger.info(METRIC_NAMES.DEVELOPERS_ACTIVE)
 }
 
 /**
- * Logs attempted developer activity metric. Emitted on every authenticated
+ * Logs attempted developer activity. Emitted on every authenticated
  * receipt movement attempt regardless of outcome — represents developers
- * who have hit the API at all (canonical source for the "Active Client IDs"
- * panel).
- * @param {string} clientId - The developer's client ID
+ * who have hit the API at all.
  */
-const logAttemptedDeveloperMetrics = async (clientId) => {
+const logAttemptedDeveloperMetrics = () => {
   logger.info(METRIC_NAMES.DEVELOPERS_ATTEMPTED)
-  if (!clientId) {
-    return
-  }
-  await metricsCounter(METRIC_NAMES.DEVELOPERS_ATTEMPTED, 1, { clientId })
 }
 
 export {
-  metricsCounter,
   logReceiptMetrics,
   logWarningMetrics,
   logDeveloperMetrics,
