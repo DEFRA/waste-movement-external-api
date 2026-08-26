@@ -92,10 +92,10 @@ async function createServer() {
     secureContext,
     pulse,
     setCustomResponseHeaders,
+    addSubmittingOrganisationToRequest,
     errorHandler,
     requestMetrics,
-    clientContext,
-    addSubmittingOrganisationToRequest
+    clientContext
   ])
 
   return server
