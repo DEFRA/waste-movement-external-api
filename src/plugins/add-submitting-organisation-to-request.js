@@ -5,32 +5,38 @@ import { AsyncLocalStorage } from 'node:async_hooks'
 
 const asyncLocalStorage = new AsyncLocalStorage()
 
-/**
- * Return's the request's organisation id, if set else null.
- * @return {string|null}
- */
 export const getOrganisationId = () =>
   asyncLocalStorage.getStore()?.get('organisationId')
 
 /**
- * Wrap the request lifecycle in an asyncLocalStorage run call. This allows the
- * passed store to be available during the request lifecycle.
+ * Wrap the request cycle in an asyncLocalStorage run call. This allows the passed store to be available during the
+ * request lifecycle
  * @param { Request } request
+ * @param { '_lifecycle'|'_postCycle' } cycle
  * @param { Map<string, string> } store
  */
-function wrapLifecycle(request, store) {
-  const requestLifecycle = request._lifecycle.bind(request)
-  request._lifecycle = () => asyncLocalStorage.run(store, requestLifecycle)
+function wrapCycle(request, cycle, store) {
+  const requestCycle = request[cycle].bind(request)
+  request[cycle] = () => asyncLocalStorage.run(store, requestCycle)
 }
 
 export const addSubmittingOrganisationToRequest = {
   plugin: {
     name: 'addSubmittingOrganisationToRequest',
     register: async (server) => {
+      server.ext('onRequest', (request, h) => {
+        const store = new Map()
+        request.app.organisationIdStore = store
+        wrapCycle(request, '_lifecycle', store)
+        wrapCycle(request, '_postCycle', store)
+        return h.continue
+      })
+
       // Plugin needs to run between successful auth and validation
       server.ext('onPostAuth', async (request, h) => {
+        const store = request.app.organisationIdStore
+
         const apiCode = request.payload?.apiCode
-        const store = new Map()
 
         let wasteOrganisationResponse
 
@@ -44,6 +50,11 @@ export const addSubmittingOrganisationToRequest = {
             wasteOrganisationResponse.statusCode ===
             HTTP_STATUS.PAYMENT_REQUIRED
           ) {
+            store.set(
+              'organisationId',
+              wasteOrganisationResponse.defraCustomerOrganisationId
+            )
+
             throw Boom.paymentRequired(wasteOrganisationResponse.message)
           }
 
@@ -52,12 +63,10 @@ export const addSubmittingOrganisationToRequest = {
               defraCustomerOrganisationId:
                 wasteOrganisationResponse.defraCustomerOrganisationId
             }
-
             store.set(
               'organisationId',
               wasteOrganisationResponse.defraCustomerOrganisationId
             )
-            wrapLifecycle(request, store)
           }
 
           if (wasteOrganisationResponse?.metaData?.disableAfter) {
