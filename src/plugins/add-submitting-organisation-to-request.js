@@ -27,7 +27,6 @@ export const addSubmittingOrganisationToRequest = {
       server.ext('onRequest', (request, h) => {
         const store = new Map()
         request.app.organisationIdStore = store
-        // wrapLifecycle(request, store)
         wrapCycle(request, '_lifecycle', store)
         wrapCycle(request, '_postCycle', store)
         return h.continue
