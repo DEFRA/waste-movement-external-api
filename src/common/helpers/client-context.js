@@ -7,12 +7,6 @@ const asyncLocalStorage = new AsyncLocalStorage()
  */
 export const CLIENT_ID_HEADER = 'x-dwt-client-id'
 
-// /**
-//  * Returns the current request's OAuth client id, if set, else null.
-//  * @return {string|null}
-//  */
-// export const getClientId = () => clientIdStorage.getStore() ?? null
-
 export const getClientId = () =>
   asyncLocalStorage.getStore()?.get('clientId') ?? null
 
