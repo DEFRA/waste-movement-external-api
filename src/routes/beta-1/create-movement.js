@@ -7,15 +7,6 @@ import { handleBackendResponse } from '../../handlers/handle-backend-response.js
 import { createLogger } from '../../common/helpers/logging/logger.js'
 
 const logger = createLogger()
-
-const createMovementSchema = Joi.object({
-  apiCode: Joi.string()
-    .uuid()
-    .description('Unique identifier of the submitting organisation.')
-    .example('25b14080-5e77-4f91-9957-2482a0cb8775')
-    .required()
-})
-
 const versionPath = 'beta-1'
 
 const createMovement = {
@@ -24,9 +15,6 @@ const createMovement = {
   options: {
     tags: ['movements'],
     description: 'Endpoint to be used to create a waste collection',
-    validate: {
-      payload: createMovementSchema
-    },
     plugins: {
       'hapi-swagger': {
         responses: {

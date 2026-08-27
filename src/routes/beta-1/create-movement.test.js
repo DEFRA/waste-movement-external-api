@@ -2,7 +2,6 @@ import { jest } from '@jest/globals'
 import { httpClients } from '../../common/helpers/http-client.js'
 import { createMovement } from './create-movement.js'
 import { HTTP_STATUS } from '@defra/waste-movement-utils'
-import { config } from '../../config.js'
 
 jest.mock('../../common/helpers/http-client.js', () => ({
   httpClients: {
@@ -11,8 +10,6 @@ jest.mock('../../common/helpers/http-client.js', () => ({
     }
   }
 }))
-
-config.set('featureFlags.createMovement', true)
 
 describe('Create Movement Route', () => {
   beforeEach(() => {
