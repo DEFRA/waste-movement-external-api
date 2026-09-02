@@ -1,7 +1,7 @@
 import Boom from '@hapi/boom'
 
 /**
- * Detects the type of error and throws a relevent Boom error.
+ * Detects the type of error and throws a relevant Boom error.
  *
  * @param {Object} error - The error
  *
