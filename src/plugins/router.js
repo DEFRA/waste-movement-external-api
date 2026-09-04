@@ -13,7 +13,10 @@ import { getDisposalOrRecoveryCodes } from '../routes/reference-data/get-disposa
 import { getHazardousPropertyCodes } from '../routes/reference-data/get-hazardous-property-codes.js'
 import { getContainerTypes } from '../routes/reference-data/get-container-types.js'
 import { getPopNames } from '../routes/reference-data/get-pop-names.js'
+import { productionApprovalTests } from '../routes/production-approval-tests.js'
 import { config } from '../config.js'
+
+const environment = config.get('cdpEnvironment')
 
 const isApiVersionEnabled = (versionId) => {
   return config
@@ -38,6 +41,12 @@ const router = {
         getContainerTypes,
         getPopNames
       ]
+
+      const nonProdRoutes = [productionApprovalTests]
+
+      if (['local', 'dev', 'test', 'ext-test'].includes(environment)) {
+        routes.push(...nonProdRoutes)
+      }
 
       server.route(routes)
 
