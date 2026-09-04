@@ -1,4 +1,11 @@
 import { health } from '../routes/health.js'
+import { createMovement as createMovementBeta1 } from '../routes/beta-1/create-movement.js'
+import { createCollection as createCollectionBeta1 } from '../routes/beta-1/create-collection.js'
+import { createDelivery as createDeliveryBeta1 } from '../routes/beta-1/create-delivery.js'
+import {
+  createReceipt as createReceiptBeta1,
+  createUndeliveredReceipt as createUndeliveredReceiptBeta1
+} from '../routes/beta-1/create-receipt.js'
 import { createReceiptMovement } from '../routes/create-receipt-movement.js'
 import { updateReceiptMovement } from '../routes/update-receipt-movement.js'
 import { getEwcCodes } from '../routes/reference-data/get-ewc-codes.js'
@@ -6,12 +13,21 @@ import { getDisposalOrRecoveryCodes } from '../routes/reference-data/get-disposa
 import { getHazardousPropertyCodes } from '../routes/reference-data/get-hazardous-property-codes.js'
 import { getContainerTypes } from '../routes/reference-data/get-container-types.js'
 import { getPopNames } from '../routes/reference-data/get-pop-names.js'
+import { config } from '../config.js'
+
+const isApiVersionEnabled = (versionId) => {
+  return config
+    .get('featureFlags.apiVersionsEnabled')
+    .toString()
+    .replaceAll(' ', '')
+    .split(',')
+    .includes(versionId)
+}
 
 const router = {
   plugin: {
     name: 'router',
     register: async (server, _options) => {
-      // Register all routes
       const routes = [
         health,
         createReceiptMovement,
@@ -23,8 +39,48 @@ const router = {
         getPopNames
       ]
 
-      // Register routes directly
       server.route(routes)
+
+      const apiVersionsToSupport = [
+        {
+          id: 'beta-1',
+          routes: [
+            createMovementBeta1,
+            createCollectionBeta1,
+            createDeliveryBeta1,
+            createReceiptBeta1,
+            createUndeliveredReceiptBeta1
+          ]
+        }
+      ]
+
+      const versionedRouteGroups = apiVersionsToSupport.map((version) => {
+        return {
+          prefix: `/${version.id}`,
+          routes: version.routes,
+          enabled: isApiVersionEnabled(version.id)
+        }
+      })
+
+      await Promise.all(
+        versionedRouteGroups.map(
+          ({ prefix, routes: groupRoutes, enabled }) =>
+            enabled &&
+            server.register(
+              {
+                plugin: {
+                  name: `router-${prefix.replace('/', '')}`,
+                  register: (srv) => {
+                    srv.route(groupRoutes)
+                  }
+                }
+              },
+              {
+                routes: { prefix }
+              }
+            )
+        )
+      )
     }
   }
 }
