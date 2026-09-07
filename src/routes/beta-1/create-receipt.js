@@ -1,7 +1,6 @@
 import Joi from 'joi'
 import { HTTP_STATUS } from '@defra/waste-movement-utils'
 import { badRequestResponseSchema } from '../../schemas/bad-request-response-schema.js'
-import { versionPath } from './common.js'
 import { proxyWasteMovementBackend } from '../../handlers/proxyWasteMovementBackend.js'
 
 const createReceipt = {
@@ -32,12 +31,7 @@ const createReceipt = {
       }
     }
   },
-  handler: async (request, h) =>
-    await proxyWasteMovementBackend(
-      `/${versionPath}/deliveries/${request.params.deliveryId}/receipt`,
-      request.payload,
-      h
-    )
+  handler: proxyWasteMovementBackend
 }
 
 const createUndeliveredReceipt = {
@@ -69,12 +63,7 @@ const createUndeliveredReceipt = {
       }
     }
   },
-  handler: async (request, h) =>
-    await proxyWasteMovementBackend(
-      `/${versionPath}/receipts`,
-      request.payload,
-      h
-    )
+  handler: proxyWasteMovementBackend
 }
 
 export { createReceipt, createUndeliveredReceipt }

@@ -1,7 +1,6 @@
 import Joi from 'joi'
 import { HTTP_STATUS } from '@defra/waste-movement-utils'
 import { badRequestResponseSchema } from '../../schemas/bad-request-response-schema.js'
-import { versionPath } from './common.js'
 import { proxyWasteMovementBackend } from '../../handlers/proxyWasteMovementBackend.js'
 
 const createDelivery = {
@@ -36,12 +35,7 @@ const createDelivery = {
       }
     }
   },
-  handler: async (request, h) =>
-    await proxyWasteMovementBackend(
-      `/${versionPath}/deliveries`,
-      request.payload,
-      h
-    )
+  handler: proxyWasteMovementBackend
 }
 
 export { createDelivery }

@@ -4,9 +4,11 @@ import { createLogger } from '../common/helpers/logging/logger.js'
 
 const logger = createLogger()
 
-export const proxyWasteMovementBackend = async (url, payload, h) => {
+export const proxyWasteMovementBackend = async (request, h) => {
+  const { path, payload } = request
+
   try {
-    const backendResponse = await httpClients.wasteMovement.post(url, payload)
+    const backendResponse = await httpClients.wasteMovement.post(path, payload)
 
     return h
       .response(backendResponse?.result)
@@ -14,7 +16,7 @@ export const proxyWasteMovementBackend = async (url, payload, h) => {
       .message(backendResponse?.statusMessage)
   } catch (error) {
     logger.error(
-      { err: error, url, payload },
+      { err: error, path, payload },
       'Waste Movement Backend Service Error'
     )
     return h

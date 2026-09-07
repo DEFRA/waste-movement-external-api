@@ -17,7 +17,17 @@ describe('proxyWasteMovementBackend', () => {
   })
 
   const payload = { apiCode: 'apiCode' }
-  const backendPath = '/back/end/path'
+  const path = '/back/end/path'
+  const goodRequest = {
+    auth: {
+      credentials: {
+        clientId: 'test-client-id'
+      }
+    },
+    payload,
+    path,
+    params: {}
+  }
   const h = {
     response: jest.fn().mockReturnThis(),
     code: jest.fn().mockReturnThis(),
@@ -33,12 +43,9 @@ describe('proxyWasteMovementBackend', () => {
 
     httpClients.wasteMovement.post.mockResolvedValue(backendResponse)
 
-    await proxyWasteMovementBackend(backendPath, payload, h)
+    await proxyWasteMovementBackend(goodRequest, h)
 
-    expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
-      backendPath,
-      payload
-    )
+    expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(path, payload)
     expect(h.response).toHaveBeenCalledWith(backendResponse.result)
     expect(h.code).toHaveBeenCalledWith(backendResponse.statusCode)
     expect(h.message).toHaveBeenCalledWith(backendResponse.statusMessage)
@@ -47,7 +54,7 @@ describe('proxyWasteMovementBackend', () => {
   it('should return 500 when waste collection creation fails', async () => {
     httpClients.wasteMovement.post.mockRejectedValue(new Error('API Error'))
 
-    await proxyWasteMovementBackend(backendPath, payload, h)
+    await proxyWasteMovementBackend(goodRequest, h)
 
     expect(h.response).toHaveBeenCalledWith({
       error: 'Internal Server Error',

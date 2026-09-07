@@ -25,9 +25,9 @@ describe('Create Delivery Route', () => {
         clientId: 'test-client-id'
       }
     },
+    path: `/${versionPath}/deliveries`,
     payload: { apiCode, movementIds }
   }
-  const expectedPathVersion = versionPath
   const h = {
     response: jest.fn().mockReturnThis(),
     code: jest.fn().mockReturnThis(),
@@ -46,7 +46,7 @@ describe('Create Delivery Route', () => {
     await createDelivery.handler(goodRequest, h)
 
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
-      `/${expectedPathVersion}/deliveries`,
+      goodRequest.path,
       goodRequest.payload
     )
 

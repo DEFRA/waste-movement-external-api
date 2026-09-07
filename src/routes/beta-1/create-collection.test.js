@@ -18,6 +18,7 @@ describe('Create Collection Route', () => {
   })
 
   const apiCode = '25b14080-5e77-4f91-9957-2482a0cb8775'
+  const movementId = 'movementId'
   const goodRequest = {
     auth: {
       credentials: {
@@ -25,9 +26,9 @@ describe('Create Collection Route', () => {
       }
     },
     payload: { apiCode },
-    params: { movementId: 'movementId' }
+    path: `/${versionPath}/movements/${movementId}/collection`,
+    params: { movementId }
   }
-  const expectedPathVersion = versionPath
   const h = {
     response: jest.fn().mockReturnThis(),
     code: jest.fn().mockReturnThis(),
@@ -46,7 +47,7 @@ describe('Create Collection Route', () => {
     await createCollection.handler(goodRequest, h)
 
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
-      `/${expectedPathVersion}/movements/${goodRequest.params.movementId}/collection`,
+      goodRequest.path,
       goodRequest.payload
     )
     expect(h.response).toHaveBeenCalledWith(backendResponse.result)
