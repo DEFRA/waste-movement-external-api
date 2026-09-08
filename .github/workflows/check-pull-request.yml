@@ -101,7 +101,7 @@ jobs:
           AUTH_DISABLED: ${{ vars.AUTH_DISABLED }}
           COGNITO_CLIENT_ID: ${{ secrets.COGNITO_CLIENT_ID }}
           COGNITO_CLIENT_SECRET: ${{ secrets.COGNITO_CLIENT_SECRET }}
-          COGNITO_CLIENT_ID_2 ${{ secrets.COGNITO_CLIENT_ID_2 }}
+          COGNITO_CLIENT_ID_2: ${{ secrets.COGNITO_CLIENT_ID_2 }}
           COGNITO_CLIENT_SECRET_2: ${{ secrets.COGNITO_CLIENT_SECRET_2 }}
           COGNITO_OAUTH_BASE_URL: ${{ secrets.COGNITO_OAUTH_BASE_URL }}
           ENVIRONMENT: ${{ vars.ENVIRONMENT }}
