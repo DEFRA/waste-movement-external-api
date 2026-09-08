@@ -1,6 +1,3 @@
-import Joi from 'joi'
-import { HTTP_STATUS } from '@defra/waste-movement-utils'
-import { badRequestResponseSchema } from '../../schemas/bad-request-response-schema.js'
 import { proxyWasteMovementBackend } from '../../handlers/proxyWasteMovementBackend.js'
 
 const createReceipt = {
@@ -8,28 +5,7 @@ const createReceipt = {
   path: '/deliveries/{deliveryId}/receipt',
   options: {
     tags: ['deliveries'],
-    description: 'Endpoint to be used to create a waste receipt event',
-    plugins: {
-      'hapi-swagger': {
-        responses: {
-          [HTTP_STATUS.CREATED]: {
-            description: 'The waste receipt has been created'
-          },
-          [HTTP_STATUS.BAD_REQUEST]: {
-            description: 'Input was not in the correct format.',
-            schema: badRequestResponseSchema
-          },
-          [HTTP_STATUS.FORBIDDEN]: {
-            description:
-              'The client is not authorized to create waste receipts.',
-            schema: Joi.object({
-              error: Joi.string(),
-              message: Joi.string()
-            })
-          }
-        }
-      }
-    }
+    description: 'Endpoint to be used to create a waste receipt event'
   },
   handler: proxyWasteMovementBackend
 }
@@ -40,28 +16,7 @@ const createUndeliveredReceipt = {
   options: {
     tags: ['deliveries'],
     description:
-      'Endpoint to be used to create a waste receipt event with no deliveryId',
-    plugins: {
-      'hapi-swagger': {
-        responses: {
-          [HTTP_STATUS.CREATED]: {
-            description: 'The waste receipt has been created'
-          },
-          [HTTP_STATUS.BAD_REQUEST]: {
-            description: 'Input was not in the correct format.',
-            schema: badRequestResponseSchema
-          },
-          [HTTP_STATUS.FORBIDDEN]: {
-            description:
-              'The client is not authorized to create waste receipts.',
-            schema: Joi.object({
-              error: Joi.string(),
-              message: Joi.string()
-            })
-          }
-        }
-      }
-    }
+      'Endpoint to be used to create a waste receipt event with no deliveryId'
   },
   handler: proxyWasteMovementBackend
 }
