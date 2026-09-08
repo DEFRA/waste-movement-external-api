@@ -174,6 +174,14 @@ const config = convict({
       default: '',
       env: 'SERVICE_AUTH_PASSWORD'
     }
+  },
+  featureFlags: {
+    apiVersionsEnabled: {
+      doc: 'Comma seperated list of known versions of the api to enable',
+      format: String,
+      default: '',
+      env: 'API_VERSIONS_ENABLED'
+    }
   }
 })
 
