@@ -37,7 +37,7 @@ describe('proxyWasteMovementBackend', () => {
   it('should successfully call the waste movement backend with a valid payload', async () => {
     const backendResponse = {
       statusCode: HTTP_STATUS.CREATED,
-      result: { movementId: 'movementId' },
+      payload: { movementId: 'movementId' },
       statusMessage: 'Successful'
     }
 
@@ -46,9 +46,8 @@ describe('proxyWasteMovementBackend', () => {
     await proxyWasteMovementBackend(goodRequest, h)
 
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(path, payload)
-    expect(h.response).toHaveBeenCalledWith(backendResponse.result)
+    expect(h.response).toHaveBeenCalledWith(backendResponse.payload)
     expect(h.code).toHaveBeenCalledWith(backendResponse.statusCode)
-    expect(h.message).toHaveBeenCalledWith(backendResponse.statusMessage)
   })
 
   it('should return 500 when waste collection creation fails', async () => {

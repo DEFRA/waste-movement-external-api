@@ -37,8 +37,7 @@ describe('Create Delivery Route', () => {
   it('should correctly proxy the backend', async () => {
     const backendResponse = {
       statusCode: HTTP_STATUS.CREATED,
-      result: { deliveryId: 'deliveryId' },
-      statusMessage: 'Successfully created a waste movement'
+      payload: { deliveryId: 'deliveryId' }
     }
 
     httpClients.wasteMovement.post.mockResolvedValue(backendResponse)
@@ -50,9 +49,8 @@ describe('Create Delivery Route', () => {
       goodRequest.payload
     )
 
-    expect(h.response).toHaveBeenCalledWith(backendResponse.result)
+    expect(h.response).toHaveBeenCalledWith(backendResponse.payload)
     expect(h.code).toHaveBeenCalledWith(backendResponse.statusCode)
-    expect(h.message).toHaveBeenCalledWith(backendResponse.statusMessage)
   })
 
   it('should return 500 when backend errors', async () => {

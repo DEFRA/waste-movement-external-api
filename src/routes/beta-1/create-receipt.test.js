@@ -39,8 +39,7 @@ describe('Create Receipt with {deliveryId} Route', () => {
   it('should correctly proxy the backend', async () => {
     const backendResponse = {
       statusCode: HTTP_STATUS.CREATED,
-      result: {},
-      statusMessage: 'Successfully created a waste receipt'
+      payload: {}
     }
 
     httpClients.wasteMovement.post.mockResolvedValue(backendResponse)
@@ -52,9 +51,8 @@ describe('Create Receipt with {deliveryId} Route', () => {
       goodRequest.payload
     )
 
-    expect(h.response).toHaveBeenCalledWith(backendResponse.result)
+    expect(h.response).toHaveBeenCalledWith(backendResponse.payload)
     expect(h.code).toHaveBeenCalledWith(backendResponse.statusCode)
-    expect(h.message).toHaveBeenCalledWith(backendResponse.statusMessage)
   })
 
   it('should return 500 when the backend errors', async () => {
@@ -94,8 +92,7 @@ describe('Create Undelivered Receipt Route', () => {
   it('should correctly proxy the backend', async () => {
     const backendResponse = {
       statusCode: HTTP_STATUS.CREATED,
-      result: {},
-      statusMessage: 'Successfully created a waste receipt'
+      payload: {}
     }
 
     httpClients.wasteMovement.post.mockResolvedValue(backendResponse)
@@ -107,9 +104,8 @@ describe('Create Undelivered Receipt Route', () => {
       goodRequest.payload
     )
 
-    expect(h.response).toHaveBeenCalledWith(backendResponse.result)
+    expect(h.response).toHaveBeenCalledWith(backendResponse.payload)
     expect(h.code).toHaveBeenCalledWith(backendResponse.statusCode)
-    expect(h.message).toHaveBeenCalledWith(backendResponse.statusMessage)
   })
 
   it('should return 500 when the backend errors', async () => {

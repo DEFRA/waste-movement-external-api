@@ -11,9 +11,8 @@ export const proxyWasteMovementBackend = async (request, h) => {
     const backendResponse = await httpClients.wasteMovement.post(path, payload)
 
     return h
-      .response(backendResponse?.result)
+      .response(backendResponse?.payload)
       .code(backendResponse?.statusCode)
-      .message(backendResponse?.statusMessage)
   } catch (error) {
     logger.error(
       { err: error, path, payload },
