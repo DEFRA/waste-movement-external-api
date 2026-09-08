@@ -44,7 +44,9 @@ const router = {
 
       const nonProdRoutes = [productionApprovalTests]
 
-      if (['local', 'dev', 'test', 'ext-test'].includes(environment)) {
+      if (
+        ['local', 'dev', 'test', 'ext-test', 'perf-test'].includes(environment)
+      ) {
         routes.push(...nonProdRoutes)
       }
 
