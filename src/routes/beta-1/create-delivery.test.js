@@ -3,6 +3,7 @@ import { httpClients } from '../../common/helpers/http-client.js'
 import { createDelivery } from './create-delivery.js'
 import { HTTP_STATUS } from '@defra/waste-movement-utils'
 import { versionPath } from './common.js'
+import { badImplementation } from '@hapi/boom'
 
 jest.mock('../../common/helpers/http-client.js', () => ({
   httpClients: {
@@ -56,12 +57,8 @@ describe('Create Delivery Route', () => {
   it('should return 500 when backend errors', async () => {
     httpClients.wasteMovement.post.mockRejectedValue(new Error('API Error'))
 
-    await createDelivery.handler(goodRequest, h)
+    const returned = await createDelivery.handler(goodRequest, h)
 
-    expect(h.response).toHaveBeenCalledWith({
-      error: 'Internal Server Error',
-      message: 'Waste Movement Backend Service Error'
-    })
-    expect(h.code).toHaveBeenCalledWith(500)
+    expect(returned).toEqual(badImplementation('API Error'))
   })
 })
