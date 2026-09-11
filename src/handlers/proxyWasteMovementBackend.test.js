@@ -2,6 +2,7 @@ import { jest } from '@jest/globals'
 import { HTTP_STATUS } from '@defra/waste-movement-utils'
 import { httpClients } from '../common/helpers/http-client.js'
 import { proxyWasteMovementBackend } from './proxyWasteMovementBackend.js'
+import { badImplementation } from '@hapi/boom'
 
 jest.mock('../common/helpers/http-client.js', () => ({
   httpClients: {
@@ -53,12 +54,8 @@ describe('proxyWasteMovementBackend', () => {
   it('should return 500 when waste collection creation fails', async () => {
     httpClients.wasteMovement.post.mockRejectedValue(new Error('API Error'))
 
-    await proxyWasteMovementBackend(goodRequest, h)
+    const returned = await proxyWasteMovementBackend(goodRequest, h)
 
-    expect(h.response).toHaveBeenCalledWith({
-      error: 'Internal Server Error',
-      message: 'Waste Movement Backend Service Error'
-    })
-    expect(h.code).toHaveBeenCalledWith(500)
+    expect(returned).toEqual(badImplementation('API Error'))
   })
 })
