@@ -1,6 +1,7 @@
 import { HTTP_STATUS } from '@defra/waste-movement-utils'
 import { httpClients } from '../common/helpers/http-client.js'
 import { createLogger } from '../common/helpers/logging/logger.js'
+import { boomify } from '@hapi/boom'
 
 const logger = createLogger()
 
@@ -18,11 +19,9 @@ export const proxyWasteMovementBackend = async (request, h) => {
       { err: error, path, payload },
       'Waste Movement Backend Service Error'
     )
-    return h
-      .response({
-        error: 'Internal Server Error',
-        message: 'Waste Movement Backend Service Error'
-      })
-      .code(HTTP_STATUS.INTERNAL_SERVER_ERROR)
+    return boomify(error, {
+      statusCode: error.statusCode || HTTP_STATUS.INTERNAL_SERVER_ERROR,
+      override: false
+    })
   }
 }
