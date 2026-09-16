@@ -4,6 +4,7 @@ import { createLogger } from '../common/helpers/logging/logger.js'
 import { boomify } from '@hapi/boom'
 
 const logger = createLogger()
+const headersToPassThrough = ['Content-Type', 'x-request-id']
 
 export const proxyWasteMovementBackend = async (request, h) => {
   const { path, payload } = request
@@ -11,9 +12,19 @@ export const proxyWasteMovementBackend = async (request, h) => {
   try {
     const backendResponse = await httpClients.wasteMovement.post(path, payload)
 
-    return h
-      .response(backendResponse?.payload)
-      .code(backendResponse?.statusCode)
+    const res = h.response(backendResponse?.payload)
+
+    res.code(backendResponse?.statusCode)
+
+    for (const [key, value] of Object.entries(backendResponse?.headers || {})) {
+      headersToPassThrough.forEach((allowedKey) => {
+        if (allowedKey.toLowerCase() === key.toLowerCase()) {
+          res.header(key, value)
+        }
+      })
+    }
+
+    return res
   } catch (error) {
     logger.error(
       { err: error, path, payload },
