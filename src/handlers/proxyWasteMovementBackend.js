@@ -16,7 +16,7 @@ export const proxyWasteMovementBackend = async (request, h) => {
 
     res.code(backendResponse?.statusCode)
 
-    for (const [key, value] of Object.entries(backendResponse?.headers || [])) {
+    for (const [key, value] of Object.entries(backendResponse?.headers || {})) {
       headersToPassThrough.forEach((allowedKey) => {
         if (allowedKey.toLowerCase() === key.toLowerCase()) {
           res.header(key, value)
