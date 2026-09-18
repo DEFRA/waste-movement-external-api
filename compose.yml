@@ -39,6 +39,7 @@ services:
       MONGO_READ_PREFERENCE: primary
       ACCESS_CRED_WASTE_MOVEMENT_EXTERNAL_API: ${ACCESS_CRED_WASTE_MOVEMENT_EXTERNAL_API}
       WASTE_TRACKING_SERVICE_URL: http://waste-tracking-id-backend:3001
+      DWT_CLIENT_SYNC_SERVICE_URL: http://dwt-client-sync:3001
       SERVICE_AUTH_PASSWORD_WASTE_MOVEMENT_BACKEND: ${SERVICE_AUTH_PASSWORD_WASTE_MOVEMENT_BACKEND}
       ACCESS_CRED_WASTE_ORGANISATION_BACKEND: ${ACCESS_CRED_WASTE_ORGANISATION_BACKEND}
       ACCESS_CRED_QA_NON_PROD: ${ACCESS_CRED_QA_NON_PROD}
@@ -86,6 +87,22 @@ services:
       S3_ENDPOINT: http://localstack:4566
       SQS_ENDPOINT: http://localstack:4566
       AWS_S3_FORCE_PATH_STYLE: true
+    networks:
+      - cdp-tenant
+
+  dwt-client-sync:
+    image: defradigital/dwt-client-sync:${DWT_CLIENT_SYNC_VERSION:-latest}
+    ports:
+      - '3005:3001'
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      PORT: 3001
+      NODE_ENV: development
+      ENVIRONMENT: local
+      MONGO_URI: mongodb://mongodb:27017/?replicaSet=rs0&directConnection=true
+      ACCESS_CRED_WASTE_MOVEMENT_BACKEND: ${ACCESS_CRED_WASTE_MOVEMENT_BACKEND}
     networks:
       - cdp-tenant
 
