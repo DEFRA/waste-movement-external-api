@@ -94,7 +94,12 @@ async function createServer() {
     pulse,
     setCustomResponseHeaders,
     addSubmittingOrganisationToRequest,
-    formatErrorToRFC9457Response,
+    {
+      plugin: formatErrorToRFC9457Response,
+      options: {
+        shouldFormat: (request) => request.path.startsWith('/beta-')
+      }
+    },
     errorHandler,
     requestMetrics,
     clientContext
