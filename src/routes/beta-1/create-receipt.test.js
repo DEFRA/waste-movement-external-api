@@ -28,7 +28,9 @@ describe('Create Receipt with {deliveryId} Route', () => {
     },
     path: `/${versionPath}/deliveries/${deliveryId}/receipt`,
     payload: { apiCode },
-    params: { deliveryId }
+    params: { deliveryId },
+    method: 'post',
+    headers: {}
   }
   const expectedPathVersion = versionPath
   const h = {
@@ -49,7 +51,8 @@ describe('Create Receipt with {deliveryId} Route', () => {
 
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
       `/${expectedPathVersion}/deliveries/${goodRequest.params.deliveryId}/receipt`,
-      goodRequest.payload
+      goodRequest.payload,
+      {}
     )
 
     expect(h.response).toHaveBeenCalledWith(backendResponse.payload)
@@ -78,7 +81,9 @@ describe('Create Undelivered Receipt Route', () => {
       }
     },
     path: `/{$versionPath}/receipts`,
-    payload: { apiCode, reasonForNoDeliveryId: 'It just appeared' }
+    payload: { apiCode, reasonForNoDeliveryId: 'It just appeared' },
+    method: 'post',
+    headers: {}
   }
   const h = {
     response: jest.fn().mockReturnThis(),
@@ -98,7 +103,8 @@ describe('Create Undelivered Receipt Route', () => {
 
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
       goodRequest.path,
-      goodRequest.payload
+      goodRequest.payload,
+      {}
     )
 
     expect(h.response).toHaveBeenCalledWith(backendResponse.payload)

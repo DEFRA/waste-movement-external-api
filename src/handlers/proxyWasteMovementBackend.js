@@ -5,12 +5,27 @@ import { boomify } from '@hapi/boom'
 
 const logger = createLogger()
 const headersToPassThrough = ['Content-Type', 'x-request-id']
+// Inbound headers the caller may set that the backend also needs - e.g. the
+// idempotency key on POST /deliveries/reserve (Option A, D-028).
+const inboundHeadersToForward = ['idempotency-key']
 
 export const proxyWasteMovementBackend = async (request, h) => {
-  const { path, payload } = request
+  const { path, payload, method } = request
+
+  const forwardedHeaders = inboundHeadersToForward.reduce((headers, key) => {
+    if (request.headers[key]) headers[key] = request.headers[key]
+    return headers
+  }, {})
 
   try {
-    const backendResponse = await httpClients.wasteMovement.post(path, payload)
+    const backendResponse =
+      method === 'get'
+        ? await httpClients.wasteMovement.get(path, forwardedHeaders)
+        : await httpClients.wasteMovement[method](
+            path,
+            payload,
+            forwardedHeaders
+          )
 
     const res = h.response(backendResponse?.payload)
 

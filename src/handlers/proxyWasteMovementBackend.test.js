@@ -7,7 +7,8 @@ import { badImplementation } from '@hapi/boom'
 jest.mock('../common/helpers/http-client.js', () => ({
   httpClients: {
     wasteMovement: {
-      post: jest.fn()
+      post: jest.fn(),
+      get: jest.fn()
     }
   }
 }))
@@ -27,6 +28,8 @@ describe('proxyWasteMovementBackend', () => {
     },
     payload,
     path,
+    method: 'post',
+    headers: {},
     params: {}
   }
   const h = {
@@ -47,9 +50,50 @@ describe('proxyWasteMovementBackend', () => {
 
     await proxyWasteMovementBackend(goodRequest, h)
 
-    expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(path, payload)
+    expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
+      path,
+      payload,
+      {}
+    )
     expect(h.response).toHaveBeenCalledWith(backendResponse.payload)
     expect(h.code).toHaveBeenCalledWith(backendResponse.statusCode)
+  })
+
+  it('should call the backend with GET when proxying a GET request', async () => {
+    const backendResponse = {
+      statusCode: HTTP_STATUS.OK,
+      payload: { known: true, state: 'reserved', acceptable: true }
+    }
+
+    httpClients.wasteMovement.get.mockResolvedValue(backendResponse)
+
+    await proxyWasteMovementBackend({ ...goodRequest, method: 'get' }, h)
+
+    expect(httpClients.wasteMovement.get).toHaveBeenCalledWith(path, {})
+    expect(httpClients.wasteMovement.post).not.toHaveBeenCalled()
+    expect(h.response).toHaveBeenCalledWith(backendResponse.payload)
+    expect(h.code).toHaveBeenCalledWith(backendResponse.statusCode)
+  })
+
+  it('should forward the Idempotency-Key header to the backend', async () => {
+    const backendResponse = {
+      statusCode: HTTP_STATUS.CREATED,
+      payload: { reservations: [] }
+    }
+
+    httpClients.wasteMovement.post.mockResolvedValue(backendResponse)
+
+    await proxyWasteMovementBackend(
+      {
+        ...goodRequest,
+        headers: { 'idempotency-key': 'abc-123' }
+      },
+      h
+    )
+
+    expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(path, payload, {
+      'idempotency-key': 'abc-123'
+    })
   })
 
   it('should successfully manage headers to proxy', async () => {
@@ -68,7 +112,11 @@ describe('proxyWasteMovementBackend', () => {
 
     await proxyWasteMovementBackend(goodRequest, h)
 
-    expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(path, payload)
+    expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
+      path,
+      payload,
+      {}
+    )
     expect(h.response).toHaveBeenCalledWith(backendResponse.payload)
     expect(h.code).toHaveBeenCalledWith(backendResponse.statusCode)
     expect(h.header).toHaveBeenCalledWith(

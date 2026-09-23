@@ -6,6 +6,8 @@ import {
   createReceipt as createReceiptBeta1,
   createUndeliveredReceipt as createUndeliveredReceiptBeta1
 } from '../routes/beta-1/create-receipt.js'
+import { reserveDelivery as reserveDeliveryBeta1 } from '../routes/beta-1/reserve-delivery.js'
+import { deliveryValidity as deliveryValidityBeta1 } from '../routes/beta-1/delivery-validity.js'
 import { createReceiptMovement } from '../routes/create-receipt-movement.js'
 import { updateReceiptMovement } from '../routes/update-receipt-movement.js'
 import { getEwcCodes } from '../routes/reference-data/get-ewc-codes.js'
@@ -60,7 +62,9 @@ const router = {
             createCollectionBeta1,
             createDeliveryBeta1,
             createReceiptBeta1,
-            createUndeliveredReceiptBeta1
+            createUndeliveredReceiptBeta1,
+            reserveDeliveryBeta1,
+            deliveryValidityBeta1
           ]
         }
       ]

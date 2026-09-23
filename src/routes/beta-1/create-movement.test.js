@@ -26,7 +26,9 @@ describe('Create Movement Route', () => {
       }
     },
     path: `/${versionPath}/movements`,
-    payload: { apiCode }
+    payload: { apiCode },
+    method: 'post',
+    headers: {}
   }
   const h = {
     response: jest.fn().mockReturnThis(),
@@ -46,7 +48,8 @@ describe('Create Movement Route', () => {
 
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
       goodRequest.path,
-      goodRequest.payload
+      goodRequest.payload,
+      {}
     )
 
     expect(h.response).toHaveBeenCalledWith(backendResponse.payload)

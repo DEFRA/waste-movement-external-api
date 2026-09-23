@@ -28,7 +28,9 @@ describe('Create Collection Route', () => {
     },
     payload: { apiCode },
     path: `/${versionPath}/movements/${movementId}/collection`,
-    params: { movementId }
+    params: { movementId },
+    method: 'post',
+    headers: {}
   }
   const h = {
     response: jest.fn().mockReturnThis(),
@@ -48,7 +50,8 @@ describe('Create Collection Route', () => {
 
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
       goodRequest.path,
-      goodRequest.payload
+      goodRequest.payload,
+      {}
     )
     expect(h.response).toHaveBeenCalledWith(backendResponse.payload)
     expect(h.code).toHaveBeenCalledWith(backendResponse.statusCode)
