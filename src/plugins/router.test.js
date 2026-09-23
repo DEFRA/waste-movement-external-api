@@ -7,6 +7,7 @@ import {
   createReceipt as createReceiptBeta1,
   createUndeliveredReceipt as createUndeliveredReceiptBeta1
 } from '../routes/beta-1/create-receipt.js'
+import { createMovement as createMovementBeta2 } from '../routes/beta-2/create-movement.js'
 import { createReceiptMovement } from '../routes/create-receipt-movement.js'
 import { updateReceiptMovement } from '../routes/update-receipt-movement.js'
 import { getEwcCodes } from '../routes/reference-data/get-ewc-codes.js'
@@ -43,6 +44,9 @@ jest.mock('../routes/beta-1/create-receipt.js', () => ({
     method: 'POST',
     path: '/deliveries/{deliveryId}/receipt'
   }
+}))
+jest.mock('../routes/beta-2/create-movement.js', () => ({
+  createMovement: { method: 'POST', path: '/movements' }
 }))
 jest.mock('../routes/create-receipt-movement.js', () => ({
   createReceiptMovement: { method: 'POST', path: '/receipt-movements' }
@@ -164,6 +168,42 @@ describe('router plugin', () => {
         createReceiptBeta1,
         createUndeliveredReceiptBeta1
       ])
+    })
+
+    it('registers a versioned sub-plugin with the correct name and prefix for beta-2', async () => {
+      config.get.mockReturnValue('beta-2')
+      const { server, registeredPlugins } = createMockServer()
+
+      await router.plugin.register(server, {})
+
+      expect(server.register).toHaveBeenCalledTimes(1)
+
+      const [{ registration, options }] = registeredPlugins
+      expect(registration.plugin.name).toBe('router-beta-2')
+      expect(options).toEqual({ routes: { prefix: '/beta-2' } })
+    })
+
+    it('registers the beta-2 route(s) on the sub-server when the versioned plugin registers', async () => {
+      config.get.mockReturnValue('beta-2')
+      const { server, subServers } = createMockServer()
+
+      await router.plugin.register(server, {})
+
+      expect(subServers).toHaveLength(1)
+      expect(subServers[0].route).toHaveBeenCalledTimes(1)
+      expect(subServers[0].route).toHaveBeenCalledWith([createMovementBeta2])
+    })
+
+    it('registers both versioned sub-plugins when both flags are enabled', async () => {
+      config.get.mockReturnValue('beta-1,beta-2')
+      const { server, registeredPlugins } = createMockServer()
+
+      await router.plugin.register(server, {})
+
+      expect(server.register).toHaveBeenCalledTimes(2)
+      expect(
+        registeredPlugins.map(({ registration }) => registration.plugin.name)
+      ).toEqual(['router-beta-1', 'router-beta-2'])
     })
   })
 
