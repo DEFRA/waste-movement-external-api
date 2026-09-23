@@ -6,6 +6,7 @@ import {
   createReceipt as createReceiptBeta1,
   createUndeliveredReceipt as createUndeliveredReceiptBeta1
 } from '../routes/beta-1/create-receipt.js'
+import { createMovement as createMovementBeta2 } from '../routes/beta-2/create-movement.js'
 import { createReceiptMovement } from '../routes/create-receipt-movement.js'
 import { updateReceiptMovement } from '../routes/update-receipt-movement.js'
 import { getEwcCodes } from '../routes/reference-data/get-ewc-codes.js'
@@ -62,6 +63,10 @@ const router = {
             createReceiptBeta1,
             createUndeliveredReceiptBeta1
           ]
+        },
+        {
+          id: 'beta-2',
+          routes: [createMovementBeta2]
         }
       ]
 
