@@ -13,15 +13,19 @@ const headersToPassThrough = ['Content-Type', 'x-request-id']
  */
 export const ORGANISATION_ID_HEADER = 'x-dwt-organisation-id'
 
+const API_CODE_VISIBLE_CHARS = 4
+const API_CODE_MASK = '****'
+
 /**
- * Masks an API code for logging, keeping only its last 4 characters.
+ * Masks an API code for logging, keeping only its last
+ * API_CODE_VISIBLE_CHARS characters.
  * @param {string} apiCode
  * @returns {string}
  */
 export const maskApiCode = (apiCode) =>
-  typeof apiCode === 'string' && apiCode.length > 4
-    ? `****${apiCode.slice(-4)}`
-    : '****'
+  typeof apiCode === 'string' && apiCode.length > API_CODE_VISIBLE_CHARS
+    ? `${API_CODE_MASK}${apiCode.slice(-API_CODE_VISIBLE_CHARS)}`
+    : API_CODE_MASK
 
 const logBetaRequest = (request, organisationId, statusCode) => {
   const clientId = request.auth?.credentials?.clientId
