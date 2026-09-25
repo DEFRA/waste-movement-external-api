@@ -20,6 +20,26 @@ function wrapCycle(request, cycle, store) {
   request[cycle] = () => asyncLocalStorage.run(store, requestCycle)
 }
 
+/**
+ * Builds the submitting organisation recorded against the movement. The name
+ * and isLocalAuthority flag are omitted until the waste organisation response
+ * carries them, so movements created in the meantime keep the id on its own.
+ * @param { { defraCustomerOrganisationId: string, name?: string, isLocalAuthority?: boolean } } wasteOrganisation
+ */
+function buildSubmittingOrganisation({
+  defraCustomerOrganisationId,
+  name,
+  isLocalAuthority
+}) {
+  return {
+    defraCustomerOrganisationId,
+    ...(name ? { defraCustomerOrganisationName: name } : {}),
+    ...(typeof isLocalAuthority === 'boolean'
+      ? { defraCustomerOrganisationIsLocalAuthority: isLocalAuthority }
+      : {})
+  }
+}
+
 export const addSubmittingOrganisationToRequest = {
   plugin: {
     name: 'addSubmittingOrganisationToRequest',
@@ -59,10 +79,9 @@ export const addSubmittingOrganisationToRequest = {
           }
 
           if (wasteOrganisationResponse?.defraCustomerOrganisationId) {
-            request.submittingOrganisation = {
-              defraCustomerOrganisationId:
-                wasteOrganisationResponse.defraCustomerOrganisationId
-            }
+            request.submittingOrganisation = buildSubmittingOrganisation(
+              wasteOrganisationResponse
+            )
             store.set(
               'organisationId',
               wasteOrganisationResponse.defraCustomerOrganisationId

@@ -214,4 +214,29 @@ describe('addSubmittingOrganisationToRequest', () => {
       statusCode: HTTP_STATUS.PAYMENT_REQUIRED
     })
   })
+
+  it.each([true, false])(
+    'should set the organisation name and isLocalAuthority flag on submittingOrganisation when the waste organisation response provides them (isLocalAuthority: %s)',
+    async (isLocalAuthority) => {
+      httpClients.wasteOrganisation.get.mockResolvedValue({
+        payload: {
+          ...submittingOrganisation,
+          name: 'Acme Waste Ltd',
+          isLocalAuthority
+        }
+      })
+
+      const { request } = await server.inject({
+        method: 'POST',
+        url: '/movements/receive',
+        payload: createMovementRequest()
+      })
+
+      expect(request).toHaveProperty('submittingOrganisation', {
+        ...submittingOrganisation,
+        defraCustomerOrganisationName: 'Acme Waste Ltd',
+        defraCustomerOrganisationIsLocalAuthority: isLocalAuthority
+      })
+    }
+  )
 })
