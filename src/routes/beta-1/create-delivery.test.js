@@ -47,7 +47,8 @@ describe('Create Delivery Route', () => {
 
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
       goodRequest.path,
-      goodRequest.payload
+      goodRequest.payload,
+      {}
     )
 
     expect(h.response).toHaveBeenCalledWith(backendResponse.payload)
