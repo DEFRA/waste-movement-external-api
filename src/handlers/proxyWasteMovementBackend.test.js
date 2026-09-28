@@ -169,6 +169,35 @@ describe('proxyWasteMovementBackend through the server', () => {
       expect(httpClients.wasteMovement.post).not.toHaveBeenCalled()
     }
   )
+
+  // Only a 404 means an unknown or disabled API code; any other failure is
+  // ours, so it must not reach the backend and come back as an invalid code.
+  it.each([
+    ['a 401', { statusCode: HTTP_STATUS.UNAUTHORIZED }],
+    ['a 500', { statusCode: HTTP_STATUS.INTERNAL_SERVER_ERROR }],
+    ['a 503', { statusCode: HTTP_STATUS.SERVICE_UNAVAILABLE }],
+    ['a response without an organisation', {}]
+  ])(
+    'returns 502 without calling the backend when the lookup returns %s',
+    async (_description, lookupPayload) => {
+      httpClients.wasteOrganisation.get.mockResolvedValue({
+        payload: lookupPayload
+      })
+
+      const { statusCode, result } = await server.inject({
+        method: 'POST',
+        url: '/beta-1/movements',
+        payload: { apiCode }
+      })
+
+      expect(statusCode).toEqual(HTTP_STATUS.BAD_GATEWAY)
+      expect(result).toMatchObject({
+        title: 'Bad Gateway',
+        detail: 'Unable to verify the API Code'
+      })
+      expect(httpClients.wasteMovement.post).not.toHaveBeenCalled()
+    }
+  )
 })
 
 describe('proxyWasteMovementBackend', () => {
