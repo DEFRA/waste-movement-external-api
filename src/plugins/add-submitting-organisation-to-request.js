@@ -20,6 +20,10 @@ function wrapCycle(request, cycle, store) {
   request[cycle] = () => asyncLocalStorage.run(store, requestCycle)
 }
 
+// Beta routes rely only on this lookup for the organisation. RoW routes still
+// fall back to ORG_API_CODES in the backend, so they keep the old behaviour.
+const isBetaRoute = (request) => request.path.startsWith('/beta-')
+
 export const addSubmittingOrganisationToRequest = {
   plugin: {
     name: 'addSubmittingOrganisationToRequest',
@@ -67,6 +71,31 @@ export const addSubmittingOrganisationToRequest = {
               'organisationId',
               wasteOrganisationResponse.defraCustomerOrganisationId
             )
+          } else if (
+            isBetaRoute(request) &&
+            wasteOrganisationResponse?.statusCode !== HTTP_STATUS.NOT_FOUND
+          ) {
+            // Only a 404 means the API code is unknown or disabled. Anything
+            // else (401, 5xx, a 200 without an organisation) is a failure on
+            // our side, so fail fast rather than let the backend reject the
+            // request as an invalid API code.
+            const lookupStatus = wasteOrganisationResponse?.statusCode
+            // CDP only indexes allowlisted ECS fields, and only as nested
+            // objects.
+            request.logger.error(
+              {
+                event: {
+                  action: 'organisation-lookup-failed',
+                  reason: lookupStatus
+                    ? `waste-organisation-backend returned ${lookupStatus}`
+                    : 'waste-organisation-backend returned no organisation'
+                },
+                url: { path: request.path }
+              },
+              'Organisation lookup failed'
+            )
+
+            throw Boom.badGateway('Unable to verify the API Code')
           }
 
           if (wasteOrganisationResponse?.metaData?.disableAfter) {
