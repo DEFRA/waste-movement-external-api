@@ -49,7 +49,8 @@ describe('Create Receipt with {deliveryId} Route', () => {
 
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
       `/${expectedPathVersion}/deliveries/${goodRequest.params.deliveryId}/receipt`,
-      goodRequest.payload
+      goodRequest.payload,
+      {}
     )
 
     expect(h.response).toHaveBeenCalledWith(backendResponse.payload)
@@ -98,7 +99,8 @@ describe('Create Undelivered Receipt Route', () => {
 
     expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
       goodRequest.path,
-      goodRequest.payload
+      goodRequest.payload,
+      {}
     )
 
     expect(h.response).toHaveBeenCalledWith(backendResponse.payload)
