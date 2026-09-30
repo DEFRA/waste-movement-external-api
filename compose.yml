@@ -17,6 +17,8 @@ services:
       WASTE_MOVEMENT_SERVICE_URL: http://waste-movement-backend:3001
       WASTE_ORGANISATION_SERVICE_URL: http://waste-organisation-backend:3001
       SERVICE_AUTH_PASSWORD: ${SERVICE_AUTH_PASSWORD}
+      # Local and CI only; each CDP environment sets its own list
+      API_VERSIONS_ENABLED: ${API_VERSIONS_ENABLED:-beta-1,beta-2}
     networks:
       - cdp-tenant
     volumes:
