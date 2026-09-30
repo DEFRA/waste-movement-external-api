@@ -5,7 +5,7 @@ export default {
     },
     autoStart: false,
     instance: {
-      dbName: 'waste-movement-backend'
+      dbName: 'waste-movement-external-api'
     }
   },
   mongoURLEnvName: 'MONGO_URI',

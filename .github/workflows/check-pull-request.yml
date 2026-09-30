@@ -95,6 +95,7 @@ jobs:
           WASTE_MOVEMENT_EXTERNAL_API_BASE_URL: http://waste-tracking-external-api:3001
           WASTE_MOVEMENT_BACKEND_API_BASE_URL: http://waste-movement-backend:3001
           WASTE_ORGANISATION_BACKEND_API_BASE_URL: http://waste-organisation-backend:3001
+          DWT_CLIENT_SYNC_SERVICE_URL: http://dwt-client-sync:3001
           HTTP_PROXY: http://localhost:8080
           PROXY_MODE: ${{ vars.PROXY_MODE }}
           ZAP_API_KEY: ${{ secrets.ZAP_API_KEY }}
