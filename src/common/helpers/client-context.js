@@ -1,4 +1,5 @@
 import { AsyncLocalStorage } from 'node:async_hooks'
+import { isBetaRoute } from './beta-route.js'
 
 const asyncLocalStorage = new AsyncLocalStorage()
 
@@ -28,7 +29,7 @@ export function withClientId(headerName, headers = {}) {
  * Wrap the request cycle in an asyncLocalStorage run call. This allows the passed store to be available during the
  * request lifecycle
  * @param { Request } request
- * @param { '_lifecycle'|'_postCycle' } cycle
+ * @param { '_lifecycle'|'_postCycle'|'_finalize' } cycle
  * @param { Map<string, string> } store
  */
 function wrapCycle(request, cycle, store) {
@@ -51,6 +52,12 @@ export const clientContext = {
         request.app.clientIdStore = store
         wrapCycle(request, '_lifecycle', store)
         wrapCycle(request, '_postCycle', store)
+        // hapi-pino writes "request completed" from the response event, which
+        // hapi emits in _finalize() after _postCycle, so beta routes also wrap
+        // it to get tenant.id on that line. Other routes keep their log lines.
+        if (isBetaRoute(request)) {
+          wrapCycle(request, '_finalize', store)
+        }
         return h.continue
       })
       server.ext('onCredentials', (request, h) => {
