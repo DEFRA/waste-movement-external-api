@@ -8,12 +8,10 @@ const asyncLocalStorage = new AsyncLocalStorage()
  * Header used to forward the caller's OAuth client id to the backend service.
  */
 export const CLIENT_ID_HEADER = 'x-dwt-client-id'
-const { serviceName, clientNameCacheDuration } = config.getProperties()
 
 // Cache of clientId -> { clientName, fetchedAt } so we don't hit the
 // backend on every single authenticated request.
 const clientNameCache = new Map()
-const CACHE_TTL_MS = clientNameCacheDuration
 
 export const getClientId = () =>
   asyncLocalStorage.getStore()?.get('clientId') ?? null
@@ -47,9 +45,23 @@ function wrapCycle(request, cycle, store) {
 }
 
 /**
- * Stores the authenticated caller's client id in async local storage for the
- * lifetime of the request, so outbound calls to the backend can forward it as a
- * header automatically (see http-client.js). Mirrors the trace-id handling in
+ * Stores authenticated caller details in request-scoped storage for the
+ * lifetime of the request.
+ *
+ * On request, a store is created and attached to the request. The store is
+ * propagated through the Hapi lifecycle so client details can be accessed
+ * from the request context and by outbound HTTP calls (see http-client.js).
+ *
+ * Once authentication has completed, the authenticated client id is stored
+ * in the request context. The client id is then used to retrieve the
+ * corresponding client details from the software provider details service.
+ * Client names are cached for the configured duration to avoid making a
+ * backend request for every request from the same client.
+ *
+ * Errors retrieving client details are logged but do not prevent the
+ * request from continuing.
+ *
+ * The request-scoped context handling mirrors the trace-id handling in
  * @defra/hapi-tracing.
  */
 export const clientContext = {
@@ -76,13 +88,18 @@ export const clientContext = {
         return h.continue
       })
       server.ext('onPostAuth', async (request, h) => {
+        const serviceName = config.get('serviceName')
+        const clientNameCacheDuration = config.get('clientNameCacheDuration')
         const store = request.app.clientDetailsStore
         const clientId = request.auth?.credentials?.clientId
         if (clientId) {
           try {
             // Serve from cache if we fetched this client's details recently
             const cached = clientNameCache.get(clientId)
-            if (cached && Date.now() - cached.fetchedAt < CACHE_TTL_MS) {
+            if (
+              cached &&
+              Date.now() - cached.fetchedAt < clientNameCacheDuration
+            ) {
               store.set('clientName', cached.clientName)
             } else {
               const details = await httpClients.softwareProviderDetails
