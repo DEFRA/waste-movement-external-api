@@ -211,7 +211,8 @@ const overrideConfig = {
   services: {
     wasteTracking: `https://waste-tracking-id-backend.${config.get('cdpEnvironment')}.cdp-int.defra.cloud`,
     wasteMovement: `https://waste-movement-backend.${config.get('cdpEnvironment')}.cdp-int.defra.cloud`,
-    wasteOrganisation: `https://waste-organisation-backend.${config.get('cdpEnvironment')}.cdp-int.defra.cloud`
+    wasteOrganisation: `https://waste-organisation-backend.${config.get('cdpEnvironment')}.cdp-int.defra.cloud`,
+    softwareProviderDetails: `https://dwt-client-sync.${config.get('cdpEnvironment')}.cdp-int.defra.cloud`
   },
   jwt: {
     jwksUri: `https://cognito-idp.eu-west-2.amazonaws.com/${config.get('jwt.cognitoUserPoolId')}/.well-known/jwks.json`,
