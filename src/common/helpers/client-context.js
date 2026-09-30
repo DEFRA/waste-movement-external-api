@@ -99,40 +99,43 @@ export const clientContext = {
         const clientNameCacheDuration = config.get('clientNameCacheDuration')
         const store = request.app.clientDetailsStore
         const clientId = request.auth?.credentials?.clientId
-        if (clientId) {
-          try {
-            // Serve from cache if we fetched this client's details recently
-            const cached = clientNameCache.get(clientId)
-            if (
-              cached &&
-              Date.now() - cached.fetchedAt < clientNameCacheDuration
-            ) {
-              store.set('clientName', cached.clientName)
+
+        if (!clientId) {
+          return h.continue
+        }
+
+        try {
+          // Serve from cache if we fetched this client's details recently
+          const cached = clientNameCache.get(clientId)
+          if (
+            cached &&
+            Date.now() - cached.fetchedAt < clientNameCacheDuration
+          ) {
+            store.set('clientName', cached.clientName)
+          } else {
+            const details = await httpClients.softwareProviderDetails
+              .get(`/clients/${serviceName}/${clientId}`)
+              .then(({ payload }) => payload)
+
+            if (!details?.clientName) {
+              request.logger.error(
+                `No clientName in response for clientId ${clientId}`
+              )
             } else {
-              const details = await httpClients.softwareProviderDetails
-                .get(`/clients/${serviceName}/${clientId}`)
-                .then(({ payload }) => payload)
+              store.set('clientName', details.clientName)
 
-              if (!details?.clientName) {
-                request.logger.error(
-                  `No clientName in response for clientId ${clientId}`
-                )
-              } else {
-                store.set('clientName', details.clientName)
-
-                // Populate the cache.
-                clientNameCache.set(clientId, {
-                  clientName: details.clientName,
-                  fetchedAt: Date.now()
-                })
-              }
+              // Populate the cache.
+              clientNameCache.set(clientId, {
+                clientName: details.clientName,
+                fetchedAt: Date.now()
+              })
             }
-          } catch (err) {
-            // Log the error but don't throw, as we don't want to block the request if the backend is down or returns an error
-            request.logger.error(
-              `Error fetching client details for clientId ${clientId}: ${err.message}`
-            )
           }
+        } catch (err) {
+          // Log the error but don't throw, as we don't want to block the request if the backend is down or returns an error
+          request.logger.error(
+            `Error fetching client details for clientId ${clientId}: ${err.message}`
+          )
         }
         return h.continue
       })
