@@ -1,0 +1,41 @@
+[
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/tenants/services/waste-movement-external-api/user-pool/fetch-details"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": ["application/json"]
+      },
+      "body": {
+        "cognito_user_pool_id": "eu-west-2_EXAMPLE01",
+        "request_id": "7ac6090a4a02401d9ed283f651e2074c",
+        "tenant_service_name": "my-example-service",
+        "client_details": [
+          {
+            "client_name": "Acme Waste Software",
+            "client_id": "1a2b3c4d5e6f7g8h9i0j"
+          },
+          {
+            "client_name": "Beta Tracking Ltd",
+            "client_id": "9z8y7x6w5v4u3t2s1r0q"
+          },
+          {
+            "client_name": "waste-movement-external-api-test-client-1",
+            "client_id": "2f130pbr1bnv7keoa8li3tinv8"
+          },
+          {
+            "client_name": "waste-movement-external-api-test-client-2",
+            "client_id": "1tspaa2pb2cs1t1skbdi5fap8e"
+          },
+          {
+            "client_name": "waste-movement-external-api-test-client-3",
+            "client_id": "7g31h2mmo7b4ncjav6icb4ekfm"
+          }
+        ]
+      }
+    }
+  }
+]
