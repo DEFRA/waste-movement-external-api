@@ -101,8 +101,10 @@ jobs:
           ZAP_API_KEY: ${{ secrets.ZAP_API_KEY }}
           AUTH_DISABLED: ${{ vars.AUTH_DISABLED }}
           COGNITO_CLIENT_ID: ${{ secrets.COGNITO_CLIENT_ID }}
+          COGNITO_CLIENT_NAME: ${{ secrets.COGNITO_CLIENT_NAME }}
           COGNITO_CLIENT_SECRET: ${{ secrets.COGNITO_CLIENT_SECRET }}
           COGNITO_CLIENT_ID_2: ${{ secrets.COGNITO_CLIENT_ID_2 }}
+          COGNITO_CLIENT_NAME_2: ${{ secrets.COGNITO_CLIENT_NAME_2 }}
           COGNITO_CLIENT_SECRET_2: ${{ secrets.COGNITO_CLIENT_SECRET_2 }}
           COGNITO_OAUTH_BASE_URL: ${{ secrets.COGNITO_OAUTH_BASE_URL }}
           ENVIRONMENT: ${{ vars.ENVIRONMENT }}
