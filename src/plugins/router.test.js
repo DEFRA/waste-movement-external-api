@@ -8,6 +8,12 @@ import {
   createUndeliveredReceipt as createUndeliveredReceiptBeta1
 } from '../routes/beta-1/create-receipt.js'
 import { createMovement as createMovementBeta2 } from '../routes/beta-2/create-movement.js'
+import { createCollection as createCollectionBeta2 } from '../routes/beta-2/create-collection.js'
+import { createDelivery as createDeliveryBeta2 } from '../routes/beta-2/create-delivery.js'
+import {
+  createReceipt as createReceiptBeta2,
+  createUndeliveredReceipt as createUndeliveredReceiptBeta2
+} from '../routes/beta-2/create-receipt.js'
 import { createReceiptMovement } from '../routes/create-receipt-movement.js'
 import { updateReceiptMovement } from '../routes/update-receipt-movement.js'
 import { getEwcCodes } from '../routes/reference-data/get-ewc-codes.js'
@@ -47,6 +53,28 @@ jest.mock('../routes/beta-1/create-receipt.js', () => ({
 }))
 jest.mock('../routes/beta-2/create-movement.js', () => ({
   createMovement: { method: 'POST', path: '/movements' }
+}))
+jest.mock('../routes/beta-2/create-collection.js', () => ({
+  createCollection: {
+    method: 'POST',
+    path: '/movements/{movementId}/collection'
+  }
+}))
+jest.mock('../routes/beta-2/create-delivery.js', () => ({
+  createDelivery: {
+    method: 'POST',
+    path: '/deliveries'
+  }
+}))
+jest.mock('../routes/beta-2/create-receipt.js', () => ({
+  createUndeliveredReceipt: {
+    method: 'POST',
+    path: '/receipts'
+  },
+  createReceipt: {
+    method: 'POST',
+    path: '/deliveries/{deliveryId}/receipt'
+  }
 }))
 jest.mock('../routes/create-receipt-movement.js', () => ({
   createReceiptMovement: { method: 'POST', path: '/receipt-movements' }
@@ -191,7 +219,13 @@ describe('router plugin', () => {
 
       expect(subServers).toHaveLength(1)
       expect(subServers[0].route).toHaveBeenCalledTimes(1)
-      expect(subServers[0].route).toHaveBeenCalledWith([createMovementBeta2])
+      expect(subServers[0].route).toHaveBeenCalledWith([
+        createMovementBeta2,
+        createCollectionBeta2,
+        createDeliveryBeta2,
+        createReceiptBeta2,
+        createUndeliveredReceiptBeta2
+      ])
     })
 
     it('registers both versioned sub-plugins when both flags are enabled', async () => {
