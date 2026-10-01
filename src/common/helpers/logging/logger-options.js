@@ -29,24 +29,24 @@ export const loggerOptions = {
   ...formatters[logConfig.format],
   nesting: true,
   mixin() {
-    const mixinValues = {}
     const traceId = getTraceId()
     const organisationId = getOrganisationId()
     const clientId = getClientId()
     const clientName = getClientName()
 
-    if (traceId) {
-      mixinValues.trace = { id: traceId }
+    return {
+      ...(traceId && {
+        trace: { id: traceId }
+      }),
+      ...(organisationId && {
+        event: { reference: organisationId }
+      }),
+      ...((clientId || clientName) && {
+        tenant: {
+          ...(clientId && { id: clientId }),
+          ...(clientName && { message: clientName })
+        }
+      })
     }
-    if (organisationId) {
-      mixinValues.event = { reference: organisationId }
-    }
-    if (clientId) {
-      mixinValues.tenant = { id: clientId }
-    }
-    if (clientName) {
-      mixinValues.tenant = { message: clientName }
-    }
-    return mixinValues
   }
 }

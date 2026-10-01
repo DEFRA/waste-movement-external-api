@@ -28,17 +28,17 @@ mongosh --quiet --eval "
   db.clients.insertMany([
   {
     clientName: 'Test Client 1',
-    clientId: '7g31h2mmo7b4ncjav6icb4ekfm',
+    clientId: '1234567890abcdef1234567890',
     tenantServiceName: 'waste-movement-external-api'
   },
   {
     clientName: 'Test Client 2',
-    clientId: '1tspaa2pb2cs1t1skbdi5fap8e',
+    clientId: '0987654321fedcba0987654321',
     tenantServiceName: 'waste-movement-external-api'
   },
   {
     clientName: 'Test Client 3',
-    clientId: '2f130pbr1bnv7keoa8li3tinv8',
+    clientId: 'abcdefghijklmnopqrstuvwxyz',
     tenantServiceName: 'waste-movement-external-api'
   }
   ]);
