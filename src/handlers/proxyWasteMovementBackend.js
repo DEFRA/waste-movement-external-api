@@ -28,12 +28,12 @@ export const maskApiCode = (apiCode) =>
     : API_CODE_MASK
 
 const logBetaRequest = (request, organisationId, statusCode) => {
-  const clientId = request.auth?.credentials?.clientId
   // CDP's log pipeline only indexes its allowlisted ECS fields
   // (cdp-documentation how-to/logging.md) and drops flattened keys where
-  // nested are expected, so these must stay nested objects.
+  // nested are expected, so these must stay nested objects. tenant (client
+  // id and name) comes from the logger mixin; setting it here would replace
+  // the mixin's tenant and drop the client name.
   const fields = {
-    tenant: clientId ? { id: clientId } : undefined,
     url: { path: request.path },
     http: {
       request: { method: request.method?.toUpperCase() },

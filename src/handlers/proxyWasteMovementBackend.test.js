@@ -375,7 +375,6 @@ describe('proxyWasteMovementBackend', () => {
       expect(logger.info).toHaveBeenCalledTimes(1)
       expect(logger.info).toHaveBeenCalledWith(
         {
-          tenant: { id: 'test-client-id' },
           event: { action: 'beta-request-proxied', reference: organisationId },
           url: { path },
           http: {
@@ -400,7 +399,6 @@ describe('proxyWasteMovementBackend', () => {
       expect(logger.warn).toHaveBeenCalledTimes(1)
       expect(logger.warn).toHaveBeenCalledWith(
         {
-          tenant: { id: 'test-client-id' },
           event: {
             action: 'beta-request-proxied',
             reason: 'No organisation resolved for API code ****8775'
