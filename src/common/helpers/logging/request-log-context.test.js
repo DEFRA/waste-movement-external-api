@@ -56,7 +56,12 @@ jest.mock('../http-client.js', () => ({
   httpClients: {
     wasteOrganisation: { get: jest.fn() },
     wasteMovement: { post: jest.fn() },
-    wasteTracking: { get: jest.fn() }
+    wasteTracking: { get: jest.fn() },
+    softwareProviderDetails: {
+      get: jest
+        .fn()
+        .mockResolvedValue({ payload: { clientName: 'Test Software Ltd' } })
+    }
   }
 }))
 
@@ -78,6 +83,8 @@ jest.mock('../../../plugins/jwt-auth.js', () => ({
 }))
 
 const mockClientId = 'test-client-id'
+// tenant as the logger mixin writes it: client id and, once looked up, name
+const expectedTenant = { id: mockClientId, message: 'Test Software Ltd' }
 const organisationId = 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
 const apiCode = '25b14080-5e77-4f91-9957-2482a0cb8775'
 
@@ -140,7 +147,7 @@ describe('request log context', () => {
 
         expect(statusCode).toEqual(HTTP_STATUS.CREATED)
         const { raw, line } = requestCompletedLine('post', url)
-        expect(line.tenant).toEqual({ id: mockClientId })
+        expect(line.tenant).toEqual(expectedTenant)
         expect(line.event).toEqual({ reference: organisationId })
         expect(keyCount(raw, 'tenant')).toEqual(1)
         expect(keyCount(raw, 'event')).toEqual(1)
@@ -164,7 +171,7 @@ describe('request log context', () => {
 
       expect(statusCode).toEqual(HTTP_STATUS.BAD_REQUEST)
       const { raw, line } = requestCompletedLine('post', '/beta-1/movements')
-      expect(line.tenant).toEqual({ id: mockClientId })
+      expect(line.tenant).toEqual(expectedTenant)
       expect(line.event).toEqual({ reference: organisationId })
       expect(keyCount(raw, 'tenant')).toEqual(1)
       expect(keyCount(raw, 'event')).toEqual(1)
@@ -186,7 +193,7 @@ describe('request log context', () => {
       })
 
       const { raw, line } = requestCompletedLine('post', '/beta-1/movements')
-      expect(line.tenant).toEqual({ id: mockClientId })
+      expect(line.tenant).toEqual(expectedTenant)
       expect(line).not.toHaveProperty('event')
       expect(keyCount(raw, 'tenant')).toEqual(1)
     })
@@ -207,6 +214,8 @@ describe('request log context', () => {
 
       expect(statusCode).toEqual(HTTP_STATUS.PAYMENT_REQUIRED)
       const { raw, line } = requestCompletedLine('post', '/beta-1/movements')
+      // No client name: the organisation lookup rejects the request at
+      // onPostAuth before client-context looks the name up
       expect(line.tenant).toEqual({ id: mockClientId })
       expect(line).not.toHaveProperty('event')
       expect(keyCount(raw, 'tenant')).toEqual(1)
@@ -239,6 +248,11 @@ describe('request log context', () => {
         expect(keyCount(raw, 'tenant')).toBeLessThanOrEqual(1)
         expect(keyCount(raw, 'event')).toBeLessThanOrEqual(1)
       }
+
+      const proxied = mockLogLines
+        .map((raw) => JSON.parse(raw))
+        .find((line) => line.message === 'Beta request proxied')
+      expect(proxied.tenant).toEqual(expectedTenant)
     })
   })
 
@@ -263,6 +277,36 @@ describe('request log context', () => {
       const { line } = requestCompletedLine('post', '/movements/receive')
       expect(line).not.toHaveProperty('tenant')
       expect(line).not.toHaveProperty('event')
+    })
+
+    it('keeps tenant.id alongside the client name on lines written during the request', async () => {
+      httpClients.wasteOrganisation.get.mockResolvedValue({
+        payload: { defraCustomerOrganisationId: organisationId }
+      })
+      httpClients.wasteTracking.get.mockResolvedValue({
+        payload: { wasteTrackingId: '2578ZCY8' }
+      })
+      httpClients.wasteMovement.post.mockResolvedValue({
+        statusCode: HTTP_STATUS.CREATED
+      })
+
+      await server.inject({
+        method: 'POST',
+        url: '/movements/receive',
+        payload: createMovementRequest({ apiCode })
+      })
+
+      const lines = mockLogLines.map((raw) => JSON.parse(raw))
+      // Metric lines rely on the mixin
+      const received = lines.find((l) =>
+        l.message?.startsWith('receipts.received')
+      )
+      expect(received.tenant).toEqual(expectedTenant)
+      // request-metrics sets tenant explicitly: unchanged, id only
+      const attempted = lines.find(
+        (l) => l.message === 'Receipt movement attempted'
+      )
+      expect(attempted.tenant).toEqual({ id: mockClientId })
     })
   })
 })
