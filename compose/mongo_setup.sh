@@ -27,18 +27,18 @@ mongosh --quiet --eval "
   const db = db.getSiblingDB('dwt-client-sync');
   db.clients.insertMany([
   {
-    clientName: 'Test Client 1',
-    clientId: '7g31h2mmo7b4ncjav6icb4ekfm',
+    clientName: 'waste-movement-external-api-test-client-1',
+    clientId: '2f130pbr1bnv7keoa8li3tinv8',
     tenantServiceName: 'waste-movement-external-api'
   },
   {
-    clientName: 'Test Client 2',
+    clientName: 'waste-movement-external-api-test-client-2',
     clientId: '1tspaa2pb2cs1t1skbdi5fap8e',
     tenantServiceName: 'waste-movement-external-api'
   },
   {
-    clientName: 'Test Client 3',
-    clientId: '2f130pbr1bnv7keoa8li3tinv8',
+    clientName: 'waste-movement-external-api-test-client-3',
+    clientId: '7g31h2mmo7b4ncjav6icb4ekfm',
     tenantServiceName: 'waste-movement-external-api'
   }
   ]);

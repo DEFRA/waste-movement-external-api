@@ -92,6 +92,19 @@ services:
     networks:
       - cdp-tenant
 
+  mockserver:
+    image: mockserver/mockserver:8.0.0
+    ports:
+      - 1080:1080
+    environment:
+      - MOCKSERVER_MAX_EXPECTATIONS=100
+      - MOCKSERVER_MAX_HEADER_SIZE=8192
+      - MOCKSERVER_INITIALIZATION_JSON_PATH=/config/mockInitializer.json
+    volumes:
+      - ./compose/mockInitializer.json:/config/mockInitializer.json
+    networks:
+      - cdp-tenant
+
   dwt-client-sync:
     image: defradigital/dwt-client-sync:${DWT_CLIENT_SYNC_VERSION:-latest}
     ports:
@@ -99,10 +112,13 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
+    env_file:
+      - 'compose/aws.env'
     environment:
       PORT: 3001
       NODE_ENV: development
       ENVIRONMENT: local
+      CDP_BASE_API_URL: mockserver:1080
       MONGO_URI: mongodb://mongodb:27017/?replicaSet=rs0&directConnection=true
       ACCESS_CRED_WASTE_MOVEMENT_EXTERNAL_API: ${ACCESS_CRED_WASTE_MOVEMENT_EXTERNAL_API}
     networks:
