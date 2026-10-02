@@ -116,7 +116,7 @@ curl -X POST http://localhost:3001/movements/receive \
 
 ### Local Development
 
-JWT authentication is **disabled by default** in local environments. You can test endpoints without tokens.
+JWT authentication is **now required** in local environments as the JWT contains the `client_id`, which necessary for the service to function.
 
 For detailed JWT authentication testing instructions, see [JWT_AUTHENTICATION_TESTING.md](./JWT_AUTHENTICATION_TESTING.md).
 
