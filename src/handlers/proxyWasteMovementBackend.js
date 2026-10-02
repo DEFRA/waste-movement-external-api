@@ -1,6 +1,7 @@
 import { HTTP_STATUS } from '@defra/waste-movement-utils'
 import { httpClients } from '../common/helpers/http-client.js'
 import { createLogger } from '../common/helpers/logging/logger.js'
+import { getClientName } from '../common/helpers/client-context.js'
 import { boomify } from '@hapi/boom'
 
 const logger = createLogger()
@@ -12,6 +13,14 @@ const headersToPassThrough = ['Content-Type', 'x-request-id']
  * proxy: inbound client headers are never forwarded.
  */
 export const ORGANISATION_ID_HEADER = 'x-dwt-organisation-id'
+
+/**
+ * Header used to forward the caller's client name (looked up by
+ * client-context) so the backend can log it with tenant.id. URI-encoded,
+ * as header values must be ASCII. Like the organisation header, only this
+ * proxy sets it, so it is only ever sent on beta routes.
+ */
+export const CLIENT_NAME_HEADER = 'x-dwt-client-name'
 
 const API_CODE_VISIBLE_CHARS = 4
 const API_CODE_MASK = '****'
@@ -69,9 +78,11 @@ export const proxyWasteMovementBackend = async (request, h) => {
   const { path, payload } = request
   const organisationId =
     request.submittingOrganisation?.defraCustomerOrganisationId
-  const headers = organisationId
-    ? { [ORGANISATION_ID_HEADER]: organisationId }
-    : {}
+  const clientName = getClientName()
+  const headers = {
+    ...(organisationId && { [ORGANISATION_ID_HEADER]: organisationId }),
+    ...(clientName && { [CLIENT_NAME_HEADER]: encodeURIComponent(clientName) })
+  }
 
   try {
     const backendResponse = await httpClients.wasteMovement.post(

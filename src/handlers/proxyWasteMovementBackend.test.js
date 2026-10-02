@@ -4,7 +4,9 @@ import { httpClients } from '../common/helpers/http-client.js'
 import { createLogger } from '../common/helpers/logging/logger.js'
 import { config } from '../config.js'
 import { createServer } from '../server.js'
+import * as clientContext from '../common/helpers/client-context.js'
 import {
+  CLIENT_NAME_HEADER,
   ORGANISATION_ID_HEADER,
   maskApiCode,
   proxyWasteMovementBackend
@@ -317,6 +319,33 @@ describe('proxyWasteMovementBackend', () => {
         path,
         payload,
         { [ORGANISATION_ID_HEADER]: organisationId }
+      )
+    })
+
+    it('forwards the client name, URI-encoded, when it is known', async () => {
+      jest.spyOn(clientContext, 'getClientName').mockReturnValue('Débora & Co')
+
+      await proxyWasteMovementBackend(requestWithOrganisation, h)
+
+      expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
+        path,
+        payload,
+        {
+          [ORGANISATION_ID_HEADER]: organisationId,
+          [CLIENT_NAME_HEADER]: 'D%C3%A9bora%20%26%20Co'
+        }
+      )
+    })
+
+    it('forwards the client name even when no organisation was resolved', async () => {
+      jest.spyOn(clientContext, 'getClientName').mockReturnValue('Acme Ltd')
+
+      await proxyWasteMovementBackend(goodRequest, h)
+
+      expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
+        path,
+        payload,
+        { [CLIENT_NAME_HEADER]: 'Acme%20Ltd' }
       )
     })
 
