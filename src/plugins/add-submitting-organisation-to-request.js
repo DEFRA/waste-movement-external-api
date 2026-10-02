@@ -2,6 +2,7 @@ import Boom from '@hapi/boom'
 import { httpClients } from '../common/helpers/http-client.js'
 import { HTTP_STATUS } from '@defra/waste-movement-utils'
 import { AsyncLocalStorage } from 'node:async_hooks'
+import { isBetaRoute } from '../common/helpers/beta-route.js'
 
 const asyncLocalStorage = new AsyncLocalStorage()
 
@@ -12,17 +13,13 @@ export const getOrganisationId = () =>
  * Wrap the request cycle in an asyncLocalStorage run call. This allows the passed store to be available during the
  * request lifecycle
  * @param { Request } request
- * @param { '_lifecycle'|'_postCycle' } cycle
+ * @param { '_lifecycle'|'_postCycle'|'_finalize' } cycle
  * @param { Map<string, string> } store
  */
 function wrapCycle(request, cycle, store) {
   const requestCycle = request[cycle].bind(request)
   request[cycle] = () => asyncLocalStorage.run(store, requestCycle)
 }
-
-// Beta routes rely only on this lookup for the organisation. RoW routes still
-// fall back to ORG_API_CODES in the backend, so they keep the old behaviour.
-const isBetaRoute = (request) => request.path.startsWith('/beta-')
 
 export const addSubmittingOrganisationToRequest = {
   plugin: {
@@ -33,6 +30,13 @@ export const addSubmittingOrganisationToRequest = {
         request.app.organisationIdStore = store
         wrapCycle(request, '_lifecycle', store)
         wrapCycle(request, '_postCycle', store)
+        // hapi-pino writes "request completed" from the response event, which
+        // hapi emits in _finalize() after _postCycle, so beta routes also wrap
+        // it to get event.reference on that line. Other routes keep their log
+        // lines.
+        if (isBetaRoute(request)) {
+          wrapCycle(request, '_finalize', store)
+        }
         return h.continue
       })
 
@@ -72,6 +76,9 @@ export const addSubmittingOrganisationToRequest = {
               wasteOrganisationResponse.defraCustomerOrganisationId
             )
           } else if (
+            // Beta routes rely only on this lookup for the organisation. RoW
+            // routes still fall back to ORG_API_CODES in the backend, so they
+            // keep the old behaviour.
             isBetaRoute(request) &&
             wasteOrganisationResponse?.statusCode !== HTTP_STATUS.NOT_FOUND
           ) {

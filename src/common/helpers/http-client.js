@@ -165,6 +165,9 @@ const httpClients = {
   wasteMovement: createServiceClient(config.get('services.wasteMovement')),
   wasteOrganisation: createServiceClient(
     config.get('services.wasteOrganisation')
+  ),
+  softwareProviderDetails: createServiceClient(
+    config.get('services.softwareProviderDetails')
   )
 }
 
