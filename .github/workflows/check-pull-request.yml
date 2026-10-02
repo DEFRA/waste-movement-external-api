@@ -100,13 +100,14 @@ jobs:
           PROXY_MODE: ${{ vars.PROXY_MODE }}
           ZAP_API_KEY: ${{ secrets.ZAP_API_KEY }}
           AUTH_DISABLED: ${{ vars.AUTH_DISABLED }}
-          COGNITO_CLIENT_ID: ${{ secrets.COGNITO_CLIENT_ID }}
-          COGNITO_CLIENT_NAME: ${{ secrets.COGNITO_CLIENT_NAME }}
-          COGNITO_CLIENT_SECRET: ${{ secrets.COGNITO_CLIENT_SECRET }}
-          COGNITO_CLIENT_ID_2: ${{ secrets.COGNITO_CLIENT_ID_2 }}
-          COGNITO_CLIENT_NAME_2: ${{ secrets.COGNITO_CLIENT_NAME_2 }}
-          COGNITO_CLIENT_SECRET_2: ${{ secrets.COGNITO_CLIENT_SECRET_2 }}
-          COGNITO_OAUTH_BASE_URL: ${{ secrets.COGNITO_OAUTH_BASE_URL }}
+          # The Floci user pool in compose.yml; these are the seeded local test clients
+          COGNITO_CLIENT_ID: '1234567890abcdef1234567890'
+          COGNITO_CLIENT_NAME: 'Test Client 1'
+          COGNITO_CLIENT_SECRET: local
+          COGNITO_CLIENT_ID_2: '0987654321fedcba0987654321'
+          COGNITO_CLIENT_NAME_2: 'Test Client 2'
+          COGNITO_CLIENT_SECRET_2: local
+          COGNITO_OAUTH_BASE_URL: http://localhost:3006/cognito-idp
           ENVIRONMENT: ${{ vars.ENVIRONMENT }}
           API_LOGGING: true
           JIRA_BASE_URL: https://eaflood.atlassian.net/browse
