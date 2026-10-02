@@ -307,6 +307,11 @@ describe('request log context', () => {
         (l) => l.message === 'Receipt movement attempted'
       )
       expect(attempted.tenant).toEqual({ id: mockClientId })
+      // Only the beta proxy forwards the client name to the backend
+      expect(httpClients.wasteMovement.post).toHaveBeenCalled()
+      expect(
+        JSON.stringify(httpClients.wasteMovement.post.mock.calls)
+      ).not.toContain('x-dwt-client-name')
     })
   })
 })
