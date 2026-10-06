@@ -95,8 +95,10 @@ describe('handleUpdateReceiptMovement', () => {
     }
   }
 
+  let mockRequest
   beforeEach(() => {
     jest.clearAllMocks()
+    mockRequest = createMockRequest()
   })
 
   it('should successfully update a receipt movement with warnings and with submittingOrganisation', async () => {
@@ -105,7 +107,7 @@ describe('handleUpdateReceiptMovement', () => {
     })
 
     const infoLoggerSpy = jest.spyOn(logger.createLogger(), 'info')
-    const mockRequest = createMockRequest()
+
     await handleUpdateReceiptMovement(mockRequest, mockH)
 
     const { apiCode, ...payloadWithoutApiCode } = mockRequest.payload
@@ -141,7 +143,6 @@ describe('handleUpdateReceiptMovement', () => {
   })
 
   it('should successfully update a receipt movement without warnings and with submittingOrganisation', async () => {
-    const mockRequest = createMockRequest()
     // Create a complete payload with all required fields to avoid warnings
     const completePayload = {
       ...mockRequest.payload,
@@ -203,14 +204,12 @@ describe('handleUpdateReceiptMovement', () => {
     const notFoundError = new Error('Not Found')
     notFoundError.name = 'NotFoundError'
     httpClients.wasteMovement.put.mockRejectedValueOnce(notFoundError)
-    const mockRequest = createMockRequest()
     await expect(
       handleUpdateReceiptMovement(mockRequest, mockH)
     ).rejects.toThrow(Boom.notFound('Movement not found'))
   })
 
   it('should handle bad request error', async () => {
-    const mockRequest = createMockRequest()
     const badRequestError = new Error('Invalid input')
     httpClients.wasteMovement.put.mockRejectedValueOnce(badRequestError)
 
@@ -247,7 +246,6 @@ describe('handleUpdateReceiptMovement', () => {
   })
 
   it('should log without_errors but not warning or receipt metrics when backend returns non-success status', async () => {
-    const mockRequest = createMockRequest()
     httpClients.wasteMovement.put.mockResolvedValueOnce({
       statusCode: 400,
       payload: { error: 'Bad Request' }
@@ -268,7 +266,6 @@ describe('handleUpdateReceiptMovement', () => {
     )
   })
   it('should add softwareProvider with client id and name when both are provided', async () => {
-    const mockRequest = createMockRequest()
     getClientId.mockReturnValue('test-client-id')
     getClientName.mockReturnValue('Test Client')
 
@@ -288,7 +285,6 @@ describe('handleUpdateReceiptMovement', () => {
   })
 
   it('should not add softwareProvider when client id and name are not provided', async () => {
-    const mockRequest = createMockRequest()
     getClientId.mockReturnValue(null)
     getClientName.mockReturnValue('')
 
@@ -305,7 +301,6 @@ describe('handleUpdateReceiptMovement', () => {
   })
 
   it('should only add softwareProvider properties that have a value', async () => {
-    const mockRequest = createMockRequest()
     getClientId.mockReturnValue('test-client-id')
     getClientName.mockReturnValue(null)
 
