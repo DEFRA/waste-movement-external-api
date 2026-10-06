@@ -108,7 +108,7 @@ jobs:
           COGNITO_CLIENT_ID_2: '0987654321fedcba0987654321'
           COGNITO_CLIENT_NAME_2: 'Test Client 2'
           COGNITO_CLIENT_SECRET_2: local
-          COGNITO_OAUTH_BASE_URL: http://localhost:3006/cognito-idp
+          COGNITO_OAUTH_BASE_URL: http://floci:4566/cognito-idp
           ENVIRONMENT: ${{ vars.ENVIRONMENT }}
           API_LOGGING: true
           JIRA_BASE_URL: https://eaflood.atlassian.net/browse
