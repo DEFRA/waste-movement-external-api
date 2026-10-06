@@ -3,6 +3,7 @@ import { httpClients } from '../common/helpers/http-client.js'
 import { HTTP_STATUS } from '@defra/waste-movement-utils'
 import { AsyncLocalStorage } from 'node:async_hooks'
 import { isBetaRoute } from '../common/helpers/beta-route.js'
+import { getApiCode } from '../common/helpers/api-code.js'
 
 const asyncLocalStorage = new AsyncLocalStorage()
 
@@ -44,7 +45,7 @@ export const addSubmittingOrganisationToRequest = {
       server.ext('onPostAuth', async (request, h) => {
         const store = request.app.organisationIdStore
 
-        const apiCode = request.payload?.apiCode
+        const apiCode = getApiCode(request)
 
         let wasteOrganisationResponse
 

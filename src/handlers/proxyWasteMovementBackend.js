@@ -2,6 +2,7 @@ import { HTTP_STATUS } from '@defra/waste-movement-utils'
 import { httpClients } from '../common/helpers/http-client.js'
 import { createLogger } from '../common/helpers/logging/logger.js'
 import { getClientName } from '../common/helpers/client-context.js'
+import { getApiCode } from '../common/helpers/api-code.js'
 import { boomify } from '@hapi/boom'
 
 const logger = createLogger()
@@ -67,7 +68,7 @@ const logBetaRequest = (request, organisationId, statusCode) => {
       ...fields,
       event: {
         action: 'beta-request-proxied',
-        reason: `No organisation resolved for API code ${maskApiCode(request.payload?.apiCode)}`
+        reason: `No organisation resolved for API code ${maskApiCode(getApiCode(request))}`
       }
     },
     'Beta request proxied'
@@ -110,7 +111,7 @@ export const proxyWasteMovementBackend = async (request, h) => {
     const statusCode = error.statusCode || HTTP_STATUS.INTERNAL_SERVER_ERROR
 
     logger.error(
-      { err: error, path, apiCode: maskApiCode(payload?.apiCode) },
+      { err: error, path, apiCode: maskApiCode(getApiCode(request)) },
       'Waste Movement Backend Service Error'
     )
     logBetaRequest(request, organisationId, statusCode)
