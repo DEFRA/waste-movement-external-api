@@ -30,9 +30,14 @@ export const handleCreateReceiptMovement = async (request, h) => {
       delete requestData.movement.apiCode
     }
 
-    requestData.movement.softwareProvider = {
-      id: getClientId(),
-      name: getClientName()
+    const payloadClientId = getClientId()
+    const clientName = getClientName()
+
+    if (payloadClientId || clientName) {
+      requestData.movement.softwareProvider = {
+        ...(payloadClientId && { id: payloadClientId }),
+        ...(clientName && { name: clientName })
+      }
     }
 
     let response = await httpClients.wasteMovement.post(
