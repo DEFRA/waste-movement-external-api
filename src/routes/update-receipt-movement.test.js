@@ -6,6 +6,7 @@ import Boom from '@hapi/boom'
 import * as metrics from '../common/helpers/metrics.js'
 import * as logger from '../common/helpers/logging/logger.js'
 import { METRIC_NAMES } from '@defra/waste-movement-utils'
+import { getClientId, getClientName } from '../common/helpers/client-context.js'
 
 jest.mock('../common/helpers/http-client.js', () => ({
   httpClients: {
@@ -20,6 +21,11 @@ jest.mock('../common/helpers/http-client.js', () => ({
       })
     }
   }
+}))
+
+jest.mock('../common/helpers/client-context.js', () => ({
+  getClientId: jest.fn(),
+  getClientName: jest.fn()
 }))
 
 jest.mock('../common/helpers/metrics.js', () => ({
@@ -56,7 +62,7 @@ describe('handleUpdateReceiptMovement', () => {
     defraCustomerOrganisationId: 'd829f66d-857f-401d-b5e9-5061b7dbb29d'
   }
 
-  const mockRequest = {
+  const createMockRequest = (overrides = {}) => ({
     auth: {
       credentials: {
         clientId: 'test-client-id'
@@ -66,8 +72,9 @@ describe('handleUpdateReceiptMovement', () => {
       wasteTrackingId: '123e4567-e89b-12d3-a456-426614174000'
     },
     payload: createMovementRequest(),
-    submittingOrganisation
-  }
+    submittingOrganisation,
+    ...overrides
+  })
 
   const mockH = {
     response: jest.fn().mockReturnThis(),
@@ -98,7 +105,7 @@ describe('handleUpdateReceiptMovement', () => {
     })
 
     const infoLoggerSpy = jest.spyOn(logger.createLogger(), 'info')
-
+    const mockRequest = createMockRequest()
     await handleUpdateReceiptMovement(mockRequest, mockH)
 
     const { apiCode, ...payloadWithoutApiCode } = mockRequest.payload
@@ -134,6 +141,7 @@ describe('handleUpdateReceiptMovement', () => {
   })
 
   it('should successfully update a receipt movement without warnings and with submittingOrganisation', async () => {
+    const mockRequest = createMockRequest()
     // Create a complete payload with all required fields to avoid warnings
     const completePayload = {
       ...mockRequest.payload,
@@ -195,13 +203,14 @@ describe('handleUpdateReceiptMovement', () => {
     const notFoundError = new Error('Not Found')
     notFoundError.name = 'NotFoundError'
     httpClients.wasteMovement.put.mockRejectedValueOnce(notFoundError)
-
+    const mockRequest = createMockRequest()
     await expect(
       handleUpdateReceiptMovement(mockRequest, mockH)
     ).rejects.toThrow(Boom.notFound('Movement not found'))
   })
 
   it('should handle bad request error', async () => {
+    const mockRequest = createMockRequest()
     const badRequestError = new Error('Invalid input')
     httpClients.wasteMovement.put.mockRejectedValueOnce(badRequestError)
 
@@ -238,6 +247,7 @@ describe('handleUpdateReceiptMovement', () => {
   })
 
   it('should log without_errors but not warning or receipt metrics when backend returns non-success status', async () => {
+    const mockRequest = createMockRequest()
     httpClients.wasteMovement.put.mockResolvedValueOnce({
       statusCode: 400,
       payload: { error: 'Bad Request' }
@@ -256,5 +266,61 @@ describe('handleUpdateReceiptMovement', () => {
     expect(infoLoggerSpy).toHaveBeenCalledWith(
       `${METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_ERRORS} - put`
     )
+  })
+  it('should add softwareProvider with client id and name when both are provided', async () => {
+    const mockRequest = createMockRequest()
+    getClientId.mockReturnValue('test-client-id')
+    getClientName.mockReturnValue('Test Client')
+
+    httpClients.wasteMovement.put.mockResolvedValueOnce({
+      statusCode: 200
+    })
+
+    await handleUpdateReceiptMovement(mockRequest, mockH)
+
+    const forwardedMovement =
+      httpClients.wasteMovement.put.mock.calls[0][1].movement
+
+    expect(forwardedMovement.softwareProvider).toEqual({
+      id: 'test-client-id',
+      name: 'Test Client'
+    })
+  })
+
+  it('should not add softwareProvider when client id and name are not provided', async () => {
+    const mockRequest = createMockRequest()
+    getClientId.mockReturnValue(null)
+    getClientName.mockReturnValue('')
+
+    httpClients.wasteMovement.put.mockResolvedValueOnce({
+      statusCode: 200
+    })
+
+    await handleUpdateReceiptMovement(mockRequest, mockH)
+
+    const forwardedMovement =
+      httpClients.wasteMovement.put.mock.calls[0][1].movement
+
+    expect(forwardedMovement).not.toHaveProperty('softwareProvider')
+  })
+
+  it('should only add softwareProvider properties that have a value', async () => {
+    const mockRequest = createMockRequest()
+    getClientId.mockReturnValue('test-client-id')
+    getClientName.mockReturnValue(null)
+
+    httpClients.wasteMovement.put.mockResolvedValueOnce({
+      statusCode: 200
+    })
+
+    await handleUpdateReceiptMovement(mockRequest, mockH)
+
+    const forwardedMovement =
+      httpClients.wasteMovement.put.mock.calls[0][1].movement
+
+    expect(forwardedMovement.softwareProvider).toEqual({
+      id: 'test-client-id'
+    })
+    expect(forwardedMovement.softwareProvider).not.toHaveProperty('name')
   })
 })
