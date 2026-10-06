@@ -13,6 +13,7 @@ import {
   logDeveloperMetrics
 } from '../common/helpers/metrics.js'
 import { handleErrorResponse } from '../common/helpers/handle-error-response.js'
+import { getClientId, getClientName } from '../common/helpers/client-context.js'
 
 const logger = createLogger()
 
@@ -27,6 +28,16 @@ export const handleCreateReceiptMovement = async (request, h) => {
       requestData.movement.submittingOrganisation =
         request.submittingOrganisation
       delete requestData.movement.apiCode
+    }
+
+    const payloadClientId = getClientId()
+    const clientName = getClientName()
+
+    if (payloadClientId || clientName) {
+      requestData.movement.softwareProvider = {
+        ...(payloadClientId && { id: payloadClientId }),
+        ...(clientName && { name: clientName })
+      }
     }
 
     let response = await httpClients.wasteMovement.post(
