@@ -1,7 +1,6 @@
 /**
- * Header carrying the caller's apiCode on beta-2 routes (D-046 in
- * digital-waste-tracking-api-docs). RoW and beta-1 routes still carry it in
- * the request body.
+ * Header carrying the caller's apiCode on beta-2 routes. RoW and beta-1
+ * routes still carry it in the request body.
  */
 export const API_CODE_HEADER = 'x-api-code'
 

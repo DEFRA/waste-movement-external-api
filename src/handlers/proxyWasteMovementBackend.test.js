@@ -80,7 +80,7 @@ describe('proxyWasteMovementBackend through the server', () => {
     ['/beta-1/deliveries', { apiCode, movementIds: ['26S8EYDJ'] }],
     ['/beta-1/deliveries/25KMT4Z9/receipt', { apiCode }],
     ['/beta-1/receipts', { apiCode, reason: 'No delivery' }],
-    // beta-2 reads the x-api-code header (D-046) but still falls back to
+    // beta-2 reads the x-api-code header but still falls back to
     // the body while clients move over
     [
       '/beta-2/movements',
