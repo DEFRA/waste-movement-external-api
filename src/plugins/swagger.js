@@ -20,6 +20,10 @@ const swaggerOptions = {
     {
       name: 'movements',
       description: 'Waste movement operations'
+    },
+    {
+      name: 'production-approval-tests',
+      description: 'Production approval test operations'
     }
   ],
   debug: true,
@@ -32,7 +36,8 @@ const swaggerOptions = {
   pathPrefixSize: 2,
   basePath: '/',
   pathReplacements: [],
-  routeTag: 'movements'
+  routeTag: (tags) =>
+    tags.includes('movements') || tags.includes('production-approval-tests')
 }
 
 export const swagger = {
