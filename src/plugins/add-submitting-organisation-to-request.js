@@ -3,7 +3,12 @@ import { httpClients } from '../common/helpers/http-client.js'
 import { HTTP_STATUS } from '@defra/waste-movement-utils'
 import { AsyncLocalStorage } from 'node:async_hooks'
 import { isBetaRoute } from '../common/helpers/beta-route.js'
-import { getApiCode } from '../common/helpers/api-code.js'
+import {
+  API_CODE_INVALID_MESSAGE,
+  API_CODE_MISSING_MESSAGE,
+  getApiCode,
+  usesApiCodeHeader
+} from '../common/helpers/api-code.js'
 
 const asyncLocalStorage = new AsyncLocalStorage()
 
@@ -47,9 +52,15 @@ export const addSubmittingOrganisationToRequest = {
 
         const apiCode = getApiCode(request)
 
+        // Where the apiCode is a header credential, a missing one is an
+        // authentication failure. Elsewhere it's a body field, so a missing
+        // one is left to the backend's validation.
+        if (!apiCode && usesApiCodeHeader(request)) {
+          throw Boom.unauthorized(API_CODE_MISSING_MESSAGE)
+        }
+
         let wasteOrganisationResponse
 
-        // Don't need to handle a missing API Code as this is handled by the validation
         if (apiCode) {
           wasteOrganisationResponse = await httpClients.wasteOrganisation
             .get(`/organisation/${apiCode}`)
@@ -65,6 +76,15 @@ export const addSubmittingOrganisationToRequest = {
             )
 
             throw Boom.paymentRequired(wasteOrganisationResponse.message)
+          }
+
+          // waste-organisation-backend answers 404 for both unknown and
+          // disabled codes, so the response doesn't reveal which codes exist.
+          if (
+            usesApiCodeHeader(request) &&
+            wasteOrganisationResponse?.statusCode === HTTP_STATUS.NOT_FOUND
+          ) {
+            throw Boom.unauthorized(API_CODE_INVALID_MESSAGE)
           }
 
           if (wasteOrganisationResponse?.defraCustomerOrganisationId) {
