@@ -4,7 +4,18 @@
  */
 export const API_CODE_HEADER = 'x-api-code'
 
-const usesApiCodeHeader = (request) => request.path.startsWith('/beta-2/')
+export const API_CODE_MISSING_MESSAGE = 'The x-api-code header is required'
+export const API_CODE_INVALID_MESSAGE =
+  'The x-api-code header does not contain a valid API code'
+
+/**
+ * Whether the route takes the apiCode as a credential in the x-api-code
+ * header (beta-2), rather than as a body field.
+ * @param {Object} request - Hapi request
+ * @returns {boolean}
+ */
+export const usesApiCodeHeader = (request) =>
+  request.path.startsWith('/beta-2/')
 
 /**
  * Returns the caller's apiCode: the x-api-code header on beta-2 routes, the

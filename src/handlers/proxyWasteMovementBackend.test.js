@@ -140,6 +140,46 @@ describe('proxyWasteMovementBackend through the server', () => {
     )
   })
 
+  it('POST /beta-2/movements returns 401 without calling the backend when the x-api-code header is missing', async () => {
+    const { statusCode, result } = await server.inject({
+      method: 'POST',
+      url: '/beta-2/movements',
+      payload: { producer: { wasteSource: 'Household' } }
+    })
+
+    expect(statusCode).toEqual(HTTP_STATUS.UNAUTHORIZED)
+    expect(result).toMatchObject({
+      title: 'Unauthorized',
+      detail: 'The x-api-code header is required'
+    })
+    expect(httpClients.wasteOrganisation.get).not.toHaveBeenCalled()
+    expect(httpClients.wasteMovement.post).not.toHaveBeenCalled()
+  })
+
+  // waste-organisation-backend answers 404 for both unknown and disabled codes
+  it.each(['an unknown', 'a disabled'])(
+    'POST /beta-2/movements returns 401 without calling the backend for %s API code',
+    async () => {
+      httpClients.wasteOrganisation.get.mockResolvedValue({
+        payload: { statusCode: HTTP_STATUS.NOT_FOUND }
+      })
+
+      const { statusCode, result } = await server.inject({
+        method: 'POST',
+        url: '/beta-2/movements',
+        payload: { producer: { wasteSource: 'Household' } },
+        headers: { [API_CODE_HEADER]: apiCode }
+      })
+
+      expect(statusCode).toEqual(HTTP_STATUS.UNAUTHORIZED)
+      expect(result).toMatchObject({
+        title: 'Unauthorized',
+        detail: 'The x-api-code header does not contain a valid API code'
+      })
+      expect(httpClients.wasteMovement.post).not.toHaveBeenCalled()
+    }
+  )
+
   it('ignores the x-api-code header on beta-1 routes', async () => {
     await server.inject({
       method: 'POST',
