@@ -5,6 +5,7 @@ import { createLogger } from '../common/helpers/logging/logger.js'
 import { config } from '../config.js'
 import { createServer } from '../server.js'
 import * as clientContext from '../common/helpers/client-context.js'
+import { API_CODE_HEADER } from '../common/helpers/api-code.js'
 import {
   CLIENT_NAME_HEADER,
   ORGANISATION_ID_HEADER,
@@ -79,6 +80,8 @@ describe('proxyWasteMovementBackend through the server', () => {
     ['/beta-1/deliveries', { apiCode, movementIds: ['26S8EYDJ'] }],
     ['/beta-1/deliveries/25KMT4Z9/receipt', { apiCode }],
     ['/beta-1/receipts', { apiCode, reason: 'No delivery' }],
+    // beta-2 reads the x-api-code header but still falls back to
+    // the body while clients move over
     [
       '/beta-2/movements',
       { apiCode, producer: { wasteSource: 'Household', councilMovement: true } }
@@ -109,6 +112,49 @@ describe('proxyWasteMovementBackend through the server', () => {
       )
     }
   )
+
+  it('POST /beta-2/movements forwards the organisation for an API code in the x-api-code header', async () => {
+    httpClients.wasteOrganisation.get.mockResolvedValue({
+      payload: { defraCustomerOrganisationId: organisationId }
+    })
+    const payload = {
+      producer: { wasteSource: 'Household', councilMovement: true }
+    }
+
+    const { statusCode } = await server.inject({
+      method: 'POST',
+      url: '/beta-2/movements',
+      payload,
+      headers: { [API_CODE_HEADER]: apiCode }
+    })
+
+    expect(statusCode).toEqual(HTTP_STATUS.CREATED)
+    expect(httpClients.wasteOrganisation.get).toHaveBeenCalledWith(
+      `/organisation/${apiCode}`
+    )
+    // The raw apiCode header is never forwarded, only the organisation
+    expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
+      '/beta-2/movements',
+      payload,
+      { [ORGANISATION_ID_HEADER]: organisationId }
+    )
+  })
+
+  it('ignores the x-api-code header on beta-1 routes', async () => {
+    await server.inject({
+      method: 'POST',
+      url: '/beta-1/movements',
+      payload: {},
+      headers: { [API_CODE_HEADER]: apiCode }
+    })
+
+    expect(httpClients.wasteOrganisation.get).not.toHaveBeenCalled()
+    expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
+      '/beta-1/movements',
+      {},
+      {}
+    )
+  })
 
   // waste-organisation-backend answers 404 for both unknown and disabled codes
   it.each(['unknown', 'disabled'])(
@@ -438,6 +484,34 @@ describe('proxyWasteMovementBackend', () => {
             response: { status_code: HTTP_STATUS.BAD_REQUEST }
           }
         },
+        'Beta request proxied'
+      )
+      expect(JSON.stringify(logger.warn.mock.calls)).not.toContain(apiCode)
+    })
+
+    it('masks an API code sent in the x-api-code header on beta-2', async () => {
+      httpClients.wasteMovement.post.mockResolvedValue({
+        statusCode: HTTP_STATUS.BAD_REQUEST,
+        payload: {}
+      })
+
+      await proxyWasteMovementBackend(
+        {
+          ...goodRequest,
+          path: '/beta-2/movements',
+          payload: {},
+          headers: { [API_CODE_HEADER]: apiCode }
+        },
+        h
+      )
+
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.objectContaining({
+          event: {
+            action: 'beta-request-proxied',
+            reason: 'No organisation resolved for API code ****8775'
+          }
+        }),
         'Beta request proxied'
       )
       expect(JSON.stringify(logger.warn.mock.calls)).not.toContain(apiCode)
