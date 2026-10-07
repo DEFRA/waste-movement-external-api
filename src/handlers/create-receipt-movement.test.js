@@ -6,7 +6,7 @@ import * as metrics from '../common/helpers/metrics.js'
 import Boom from '@hapi/boom'
 import * as logger from '../common/helpers/logging/logger.js'
 import { METRIC_NAMES } from '@defra/waste-movement-utils'
-
+import { getClientId, getClientName } from '../common/helpers/client-context.js'
 // Mock the httpClients
 jest.mock('../common/helpers/http-client.js', () => ({
   httpClients: {
@@ -17,6 +17,11 @@ jest.mock('../common/helpers/http-client.js', () => ({
       post: jest.fn()
     }
   }
+}))
+
+jest.mock('../common/helpers/client-context.js', () => ({
+  getClientId: jest.fn(),
+  getClientName: jest.fn()
 }))
 
 // Mock metrics
@@ -276,6 +281,43 @@ describe('Create Receipt Movement Handler', () => {
 
     expect(infoLoggerSpy).toHaveBeenCalledWith(
       `${METRIC_NAMES.VALIDATION_REQUESTS_WITHOUT_ERRORS} - post`
+    )
+  })
+  it('should use the client context client id and name for softwareProvider', async () => {
+    httpClients.wasteMovement.post.mockResolvedValue({
+      statusCode: 200
+    })
+    getClientId.mockReturnValue('client-123')
+    getClientName.mockReturnValue('Test Client')
+
+    const h = {
+      response: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis()
+    }
+
+    await handleCreateReceiptMovement(
+      {
+        payload: validPayload,
+        auth: {
+          credentials: {
+            clientId: 'auth-client-id'
+          }
+        },
+        submittingOrganisation
+      },
+      h
+    )
+
+    expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
+      `/movements/${mockWasteTrackingId}/receive`,
+      expect.objectContaining({
+        movement: expect.objectContaining({
+          softwareProvider: {
+            id: 'client-123',
+            name: 'Test Client'
+          }
+        })
+      })
     )
   })
 })
