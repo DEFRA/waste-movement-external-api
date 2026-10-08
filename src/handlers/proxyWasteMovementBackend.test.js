@@ -79,13 +79,7 @@ describe('proxyWasteMovementBackend through the server', () => {
     ['/beta-1/movements/26S8EYDJ/collection', { apiCode }],
     ['/beta-1/deliveries', { apiCode, movementIds: ['26S8EYDJ'] }],
     ['/beta-1/deliveries/25KMT4Z9/receipt', { apiCode }],
-    ['/beta-1/receipts', { apiCode, reason: 'No delivery' }],
-    // beta-2 reads the x-api-code header but still falls back to
-    // the body while clients move over
-    [
-      '/beta-2/movements',
-      { apiCode, producer: { wasteSource: 'Household', councilMovement: true } }
-    ]
+    ['/beta-1/receipts', { apiCode, reason: 'No delivery' }]
   ]
 
   it.each(betaRoutes)(
@@ -145,6 +139,22 @@ describe('proxyWasteMovementBackend through the server', () => {
       method: 'POST',
       url: '/beta-2/movements',
       payload: { producer: { wasteSource: 'Household' } }
+    })
+
+    expect(statusCode).toEqual(HTTP_STATUS.UNAUTHORIZED)
+    expect(result).toMatchObject({
+      title: 'Unauthorized',
+      detail: 'The x-api-code header is required'
+    })
+    expect(httpClients.wasteOrganisation.get).not.toHaveBeenCalled()
+    expect(httpClients.wasteMovement.post).not.toHaveBeenCalled()
+  })
+
+  it('POST /beta-2/movements returns 401 without calling the backend when apiCode is only in the body', async () => {
+    const { statusCode, result } = await server.inject({
+      method: 'POST',
+      url: '/beta-2/movements',
+      payload: { apiCode, producer: { wasteSource: 'Household' } }
     })
 
     expect(statusCode).toEqual(HTTP_STATUS.UNAUTHORIZED)
@@ -237,9 +247,12 @@ describe('proxyWasteMovementBackend through the server', () => {
     )
   })
 
-  it.each(['/beta-1/movements', '/beta-2/movements'])(
+  it.each([
+    ['/beta-1/movements', { payload: { apiCode } }],
+    ['/beta-2/movements', { headers: { [API_CODE_HEADER]: apiCode } }]
+  ])(
     'POST %s returns 402 for an unpaid organisation without calling the backend',
-    async (url) => {
+    async (url, apiCodeLocation) => {
       httpClients.wasteOrganisation.get.mockResolvedValue({
         payload: {
           statusCode: HTTP_STATUS.PAYMENT_REQUIRED,
@@ -250,7 +263,7 @@ describe('proxyWasteMovementBackend through the server', () => {
       const { statusCode } = await server.inject({
         method: 'POST',
         url,
-        payload: { apiCode }
+        ...apiCodeLocation
       })
 
       expect(statusCode).toEqual(HTTP_STATUS.PAYMENT_REQUIRED)

@@ -14,14 +14,14 @@ describe('getApiCode', () => {
     ).toEqual(headerApiCode)
   })
 
-  it('falls back to the body on beta-2 routes without the header', () => {
+  it('does not read apiCode from the body on beta-2 routes', () => {
     expect(
       getApiCode({
         path: '/beta-2/movements',
         headers: {},
         payload: { apiCode: bodyApiCode }
       })
-    ).toEqual(bodyApiCode)
+    ).toBeUndefined()
   })
 
   it.each(['/beta-1/movements', '/movements/receive'])(
