@@ -19,19 +19,12 @@ export const usesApiCodeHeader = (request) =>
 
 /**
  * Returns the caller's apiCode: the x-api-code header on beta-2 routes, the
- * request body everywhere else. Until the backend stops accepting apiCode in
- * beta-2 bodies, beta-2 also falls back to the body so existing clients keep
- * working while they move to the header.
+ * request body everywhere else. beta-2 never reads the body, so a client that
+ * still sends apiCode there gets a 401 for the missing header.
  * @param {Object} request - Hapi request (header names are lower-cased)
  * @returns {string|undefined}
  */
-export const getApiCode = (request) => {
-  if (usesApiCodeHeader(request)) {
-    const apiCode = request.headers?.[API_CODE_HEADER]
-    if (apiCode) {
-      return apiCode
-    }
-  }
-
-  return request.payload?.apiCode
-}
+export const getApiCode = (request) =>
+  usesApiCodeHeader(request)
+    ? request.headers?.[API_CODE_HEADER]
+    : request.payload?.apiCode

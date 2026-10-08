@@ -3,6 +3,7 @@ import { httpClients } from '../http-client.js'
 import { config } from '../../../config.js'
 import { createServer } from '../../../server.js'
 import { createMovementRequest } from '../../../test/utils/createMovementRequest.js'
+import { API_CODE_HEADER } from '../api-code.js'
 
 // Every JSON line written by the request logger (hapi-pino) and by
 // createLogger(), exactly as CDP would receive it.
@@ -119,18 +120,20 @@ describe('request log context', () => {
 
   describe('beta routes', () => {
     it.each([
-      ['beta-1', '/beta-1/movements', { apiCode }],
+      ['beta-1', '/beta-1/movements', { payload: { apiCode } }],
       [
         'beta-2',
         '/beta-2/movements',
         {
-          apiCode,
-          producer: { wasteSource: 'Household', councilMovement: true }
+          payload: {
+            producer: { wasteSource: 'Household', councilMovement: true }
+          },
+          headers: { [API_CODE_HEADER]: apiCode }
         }
       ]
     ])(
       'adds tenant.id and event.reference to "request completed" for a successful %s request',
-      async (_version, url, payload) => {
+      async (_version, url, request) => {
         httpClients.wasteOrganisation.get.mockResolvedValue({
           payload: { defraCustomerOrganisationId: organisationId }
         })
@@ -142,7 +145,7 @@ describe('request log context', () => {
         const { statusCode } = await server.inject({
           method: 'POST',
           url,
-          payload
+          ...request
         })
 
         expect(statusCode).toEqual(HTTP_STATUS.CREATED)
