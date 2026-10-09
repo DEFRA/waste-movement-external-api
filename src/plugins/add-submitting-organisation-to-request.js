@@ -15,6 +15,9 @@ const asyncLocalStorage = new AsyncLocalStorage()
 export const getOrganisationId = () =>
   asyncLocalStorage.getStore()?.get('organisationId')
 
+export const getOrganisationName = () =>
+  asyncLocalStorage.getStore()?.get('organisationName')
+
 /**
  * Wrap the request cycle in an asyncLocalStorage run call. This allows the passed store to be available during the
  * request lifecycle
@@ -115,6 +118,9 @@ export const addSubmittingOrganisationToRequest = {
               'organisationId',
               wasteOrganisationResponse.defraCustomerOrganisationId
             )
+            if (wasteOrganisationResponse.name) {
+              store.set('organisationName', wasteOrganisationResponse.name)
+            }
           } else if (
             // Beta routes rely only on this lookup for the organisation. RoW
             // routes still fall back to ORG_API_CODES in the backend, so they
