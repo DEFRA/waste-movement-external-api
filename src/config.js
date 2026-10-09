@@ -62,7 +62,13 @@ const config = convict({
   serviceName: {
     doc: 'Api Service Name',
     format: String,
-    default: 'waste-movement-backend'
+    default: 'waste-movement-external-api'
+  },
+  clientNameCacheDuration: {
+    doc: 'Duration in milliseconds to cache client names',
+    format: Number,
+    default: 900000, // 15 minutes
+    env: 'CLIENT_NAME_CACHE_DURATION'
   },
   cdpEnvironment: {
     doc: 'The CDP environment the app is running in. With the addition of "local" for local development',
@@ -102,7 +108,12 @@ const config = convict({
       doc: 'Log paths to redact',
       format: Array,
       default: isProduction
-        ? ['req.headers.authorization', 'req.headers.cookie', 'res.headers']
+        ? [
+            'req.headers.authorization',
+            'req.headers.cookie',
+            'req.headers["x-api-code"]',
+            'res.headers'
+          ]
         : ['req', 'res', 'responseTime']
     }
   },
@@ -159,6 +170,13 @@ const config = convict({
       format: String,
       default: 'https://waste-organisation-backend.dev.cdp-int.defra.cloud',
       env: 'WASTE_ORGANISATION_SERVICE_URL'
+    },
+    softwareProviderDetails: {
+      doc: 'Software Provider Details Service URL',
+      format: String,
+      default:
+        'https://software-provider-details-backend.dev.cdp-int.defra.cloud',
+      env: 'DWT_CLIENT_SYNC_SERVICE_URL'
     }
   },
   serviceAuth: {
@@ -198,7 +216,8 @@ const overrideConfig = {
   services: {
     wasteTracking: `https://waste-tracking-id-backend.${config.get('cdpEnvironment')}.cdp-int.defra.cloud`,
     wasteMovement: `https://waste-movement-backend.${config.get('cdpEnvironment')}.cdp-int.defra.cloud`,
-    wasteOrganisation: `https://waste-organisation-backend.${config.get('cdpEnvironment')}.cdp-int.defra.cloud`
+    wasteOrganisation: `https://waste-organisation-backend.${config.get('cdpEnvironment')}.cdp-int.defra.cloud`,
+    softwareProviderDetails: `https://dwt-client-sync.${config.get('cdpEnvironment')}.cdp-int.defra.cloud`
   },
   jwt: {
     jwksUri: `https://cognito-idp.eu-west-2.amazonaws.com/${config.get('jwt.cognitoUserPoolId')}/.well-known/jwks.json`,

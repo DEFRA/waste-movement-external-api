@@ -38,6 +38,7 @@ jest.mock('@hapi/hapi', () => ({
     expect(options.routes.cors).toBeDefined()
     expect(options.routes.cors.origin).toEqual(['*'])
     expect(options.routes.cors.credentials).toBe(true)
+    expect(options.routes.cors.additionalHeaders).toContain('x-api-code')
     return mockServer
   })
 }))

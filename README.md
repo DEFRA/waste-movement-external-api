@@ -116,7 +116,19 @@ curl -X POST http://localhost:3001/movements/receive \
 
 ### Local Development
 
-JWT authentication is **disabled by default** in local environments. You can test endpoints without tokens.
+JWT authentication is **now required** in local environments as the JWT contains the `client_id`, which necessary for the service to function.
+
+The Docker Compose stack doesn't use the real Cognito user pool. A local Cognito user pool, emulated by [Floci](https://floci.io) and created by [compose/floci/start.d/create-cognito-user-pool.sh](./compose/floci/start.d/create-cognito-user-pool.sh), issues tokens for the seeded test clients, and the API container trusts only those tokens:
+
+```bash
+TOKEN=$(curl -s -X POST http://localhost:3006/cognito-idp/oauth2/token \
+  -u '1234567890abcdef1234567890:local' \
+  -d grant_type=client_credentials | jq -r .access_token)
+
+curl http://localhost:3001/auth/test -H "Authorization: Bearer $TOKEN"
+```
+
+To run the UAT pack against the stack, set `COGNITO_OAUTH_BASE_URL=http://localhost:3006/cognito-idp`, with `COGNITO_CLIENT_ID` set to one of the client ids in that script and `COGNITO_CLIENT_SECRET=local`.
 
 For detailed JWT authentication testing instructions, see [JWT_AUTHENTICATION_TESTING.md](./JWT_AUTHENTICATION_TESTING.md).
 

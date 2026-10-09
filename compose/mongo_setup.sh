@@ -22,5 +22,27 @@ mongosh --quiet --eval "
   }
 "
 
+# Insert test client data
+mongosh --quiet --eval "
+  const db = db.getSiblingDB('dwt-client-sync');
+  db.clients.insertMany([
+  {
+    clientName: 'Test Client 1',
+    clientId: '1234567890abcdef1234567890',
+    tenantServiceName: 'waste-movement-external-api'
+  },
+  {
+    clientName: 'Test Client 2',
+    clientId: '0987654321fedcba0987654321',
+    tenantServiceName: 'waste-movement-external-api'
+  },
+  {
+    clientName: 'Test Client 3',
+    clientId: 'abcdefghijklmnopqrstuvwxyz',
+    tenantServiceName: 'waste-movement-external-api'
+  }
+  ]);
+"
+
 # Keep the script running
 wait $MONGO_PID

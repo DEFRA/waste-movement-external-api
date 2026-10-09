@@ -78,7 +78,7 @@ describe('Create Undelivered Receipt Route', () => {
         clientId: 'test-client-id'
       }
     },
-    path: `/{$versionPath}/receipts`,
+    path: `/${versionPath}/receipts`,
     payload: { apiCode, reasonForNoDeliveryId: 'It just appeared' }
   }
   const h = {

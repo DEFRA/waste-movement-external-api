@@ -8,15 +8,23 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
+      floci:
+        condition: service_healthy
     environment:
       PORT: 3001
       NODE_ENV: development
       ENVIRONMENT: local
       MONGO_URI: mongodb://mongodb:27017/?replicaSet=rs0&directConnection=true
+      # Trust tokens from the Floci user pool instead of the dev Cognito one
+      JWT_COGNITO_USER_POOL_ID: eu-west-2_LOCAL
+      JWT_JWKS_URI: http://floci:4566/eu-west-2_LOCAL/.well-known/jwks.json
       WASTE_TRACKING_SERVICE_URL: http://waste-tracking-id-backend:3001
       WASTE_MOVEMENT_SERVICE_URL: http://waste-movement-backend:3001
       WASTE_ORGANISATION_SERVICE_URL: http://waste-organisation-backend:3001
+      DWT_CLIENT_SYNC_SERVICE_URL: http://dwt-client-sync:3001
       SERVICE_AUTH_PASSWORD: ${SERVICE_AUTH_PASSWORD}
+      # Local and CI only; each CDP environment sets its own list
+      API_VERSIONS_ENABLED: ${API_VERSIONS_ENABLED:-beta-1,beta-2}
     networks:
       - cdp-tenant
     volumes:
@@ -89,6 +97,73 @@ services:
     networks:
       - cdp-tenant
 
+  # Local Cognito user pool for the external API, created by
+  # compose/floci/start.d/create-cognito-user-pool.sh. Point the UAT pack's
+  # COGNITO_OAUTH_BASE_URL at http://localhost:3006/cognito-idp
+  floci:
+    image: floci/floci:2.1.0-compat
+    ports:
+      - '3006:4566'
+    environment:
+      FLOCI_DEFAULT_REGION: eu-west-2
+      AWS_DEFAULT_REGION: eu-west-2
+      # Floci builds the token issuer from this, so tokens carry the
+      # https://cognito-idp.eu-west-2.amazonaws.com/<pool> issuer the API checks
+      FLOCI_BASE_URL: https://cognito-idp.eu-west-2.amazonaws.com
+      # Keep the pool and its signing key across restarts: the API caches the JWKS
+      FLOCI_STORAGE_MODE: persistent
+      FLOCI_STORAGE_PERSISTENT_PATH: /app/data
+    volumes:
+      # Floci runs these scripts once it has started
+      - ./compose/floci/start.d:/etc/floci/init/start.d:ro,Z
+      - floci-data:/app/data
+    healthcheck:
+      # The pool's JWKS only exists once the start hook has created it
+      test:
+        [
+          'CMD',
+          'curl',
+          '-fs',
+          'http://localhost:4566/eu-west-2_LOCAL/.well-known/jwks.json'
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - cdp-tenant
+
+  mockserver:
+    image: mockserver/mockserver:8.0.0
+    ports:
+      - 1080:1080
+    environment:
+      - MOCKSERVER_MAX_EXPECTATIONS=100
+      - MOCKSERVER_MAX_HEADER_SIZE=8192
+      - MOCKSERVER_INITIALIZATION_JSON_PATH=/config/mockInitializer.json
+    volumes:
+      - ./compose/mockInitializer.json:/config/mockInitializer.json
+    networks:
+      - cdp-tenant
+
+  dwt-client-sync:
+    image: defradigital/dwt-client-sync:${DWT_CLIENT_SYNC_VERSION:-latest}
+    ports:
+      - '3005:3001'
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    env_file:
+      - 'compose/aws.env'
+    environment:
+      PORT: 3001
+      NODE_ENV: development
+      ENVIRONMENT: local
+      CDP_BASE_API_URL: mockserver:1080
+      MONGO_URI: mongodb://mongodb:27017/?replicaSet=rs0&directConnection=true
+      ACCESS_CRED_WASTE_MOVEMENT_EXTERNAL_API: ${ACCESS_CRED_WASTE_MOVEMENT_EXTERNAL_API}
+    networks:
+      - cdp-tenant
+
   mongodb:
     image: mongo:6.0.13
     entrypoint: ['bash', '/compose/mongo_setup.sh']
@@ -143,6 +218,7 @@ services:
 
 volumes:
   mongodb-data:
+  floci-data:
 
 networks:
   cdp-tenant:

@@ -9,7 +9,21 @@ This document provides instructions on how to test the JWT authentication implem
 
 ## JWT Token Generation
 
-For testing purposes, you can generate a JWT token with the required `client_id` claim using the instructions provided in the CDP Portal:
+### Local Docker Compose stack
+
+The stack trusts only tokens from its local Floci user pool, not the real Cognito one. Get a token for one of the seeded test clients (see `compose/floci/start.d/create-cognito-user-pool.sh`):
+
+```bash
+curl -X POST http://localhost:3006/cognito-idp/oauth2/token \
+  -u '1234567890abcdef1234567890:local' \
+  -d grant_type=client_credentials
+```
+
+Use the `access_token` from the response as `YOUR_JWT_TOKEN` below. Tokens expire after an hour.
+
+### CDP environments
+
+For deployed environments, generate a JWT token with the required `client_id` claim using the instructions provided in the CDP Portal:
 
 https://portal.cdp-int.defra.cloud/documentation/how-to/apis.md#what-are-the-login-urls-for-my-api-
 

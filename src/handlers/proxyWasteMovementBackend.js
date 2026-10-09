@@ -1,16 +1,98 @@
 import { HTTP_STATUS } from '@defra/waste-movement-utils'
 import { httpClients } from '../common/helpers/http-client.js'
 import { createLogger } from '../common/helpers/logging/logger.js'
+import { getClientName } from '../common/helpers/client-context.js'
+import { getApiCode } from '../common/helpers/api-code.js'
 import { boomify } from '@hapi/boom'
 
 const logger = createLogger()
 const headersToPassThrough = ['Content-Type', 'x-request-id']
 
+/**
+ * Header used to forward the organisation resolved for the apiCode by
+ * waste-organisation-backend to the backend service. It is only set by this
+ * proxy: inbound client headers are never forwarded.
+ */
+export const ORGANISATION_ID_HEADER = 'x-dwt-organisation-id'
+
+/**
+ * Header used to forward the caller's client name (looked up by
+ * client-context) so the backend can log it with tenant.id. URI-encoded,
+ * as header values must be ASCII. Like the organisation header, only this
+ * proxy sets it, so it is only ever sent on beta routes.
+ */
+export const CLIENT_NAME_HEADER = 'x-dwt-client-name'
+
+const API_CODE_VISIBLE_CHARS = 4
+const API_CODE_MASK = '****'
+
+/**
+ * Masks an API code for logging, keeping only its last
+ * API_CODE_VISIBLE_CHARS characters.
+ * @param {string} apiCode
+ * @returns {string}
+ */
+export const maskApiCode = (apiCode) =>
+  typeof apiCode === 'string' && apiCode.length > API_CODE_VISIBLE_CHARS
+    ? `${API_CODE_MASK}${apiCode.slice(-API_CODE_VISIBLE_CHARS)}`
+    : API_CODE_MASK
+
+const logBetaRequest = (request, organisationId, statusCode) => {
+  // CDP's log pipeline only indexes its allowlisted ECS fields
+  // (cdp-documentation how-to/logging.md) and drops flattened keys where
+  // nested are expected, so these must stay nested objects. tenant (client
+  // id and name) comes from the logger mixin; setting it here would replace
+  // the mixin's tenant and drop the client name.
+  const fields = {
+    url: { path: request.path },
+    http: {
+      request: { method: request.method?.toUpperCase() },
+      response: { status_code: statusCode }
+    }
+  }
+
+  if (organisationId) {
+    logger.info(
+      {
+        ...fields,
+        event: { action: 'beta-request-proxied', reference: organisationId }
+      },
+      'Beta request proxied'
+    )
+    return
+  }
+
+  // waste-organisation-backend returned 404: the API code is unknown or disabled
+  logger.warn(
+    {
+      ...fields,
+      event: {
+        action: 'beta-request-proxied',
+        reason: `No organisation resolved for API code ${maskApiCode(getApiCode(request))}`
+      }
+    },
+    'Beta request proxied'
+  )
+}
+
 export const proxyWasteMovementBackend = async (request, h) => {
   const { path, payload } = request
+  const organisationId =
+    request.submittingOrganisation?.defraCustomerOrganisationId
+  const clientName = getClientName()
+  const headers = {
+    ...(organisationId && { [ORGANISATION_ID_HEADER]: organisationId }),
+    ...(clientName && { [CLIENT_NAME_HEADER]: encodeURIComponent(clientName) })
+  }
 
   try {
-    const backendResponse = await httpClients.wasteMovement.post(path, payload)
+    const backendResponse = await httpClients.wasteMovement.post(
+      path,
+      payload,
+      headers
+    )
+
+    logBetaRequest(request, organisationId, backendResponse?.statusCode)
 
     const res = h.response(backendResponse?.payload)
 
@@ -26,12 +108,16 @@ export const proxyWasteMovementBackend = async (request, h) => {
 
     return res
   } catch (error) {
+    const statusCode = error.statusCode || HTTP_STATUS.INTERNAL_SERVER_ERROR
+
     logger.error(
-      { err: error, path, payload },
+      { err: error, path, apiCode: maskApiCode(getApiCode(request)) },
       'Waste Movement Backend Service Error'
     )
+    logBetaRequest(request, organisationId, statusCode)
+
     return boomify(error, {
-      statusCode: error.statusCode || HTTP_STATUS.INTERNAL_SERVER_ERROR,
+      statusCode,
       override: false
     })
   }

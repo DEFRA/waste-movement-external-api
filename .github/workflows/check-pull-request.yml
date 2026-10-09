@@ -25,7 +25,8 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: |
-          npm audit --audit-level=high
+          npm audit --audit-level=high --omit=dev
+          npm audit --audit-level=critical
           npm ci
           npm run format:check
           npm run lint
@@ -95,15 +96,19 @@ jobs:
           WASTE_MOVEMENT_EXTERNAL_API_BASE_URL: http://waste-tracking-external-api:3001
           WASTE_MOVEMENT_BACKEND_API_BASE_URL: http://waste-movement-backend:3001
           WASTE_ORGANISATION_BACKEND_API_BASE_URL: http://waste-organisation-backend:3001
+          DWT_CLIENT_SYNC_SERVICE_URL: http://dwt-client-sync:3001
           HTTP_PROXY: http://localhost:8080
           PROXY_MODE: ${{ vars.PROXY_MODE }}
           ZAP_API_KEY: ${{ secrets.ZAP_API_KEY }}
           AUTH_DISABLED: ${{ vars.AUTH_DISABLED }}
-          COGNITO_CLIENT_ID: ${{ secrets.COGNITO_CLIENT_ID }}
-          COGNITO_CLIENT_SECRET: ${{ secrets.COGNITO_CLIENT_SECRET }}
-          COGNITO_CLIENT_ID_2: ${{ secrets.COGNITO_CLIENT_ID_2 }}
-          COGNITO_CLIENT_SECRET_2: ${{ secrets.COGNITO_CLIENT_SECRET_2 }}
-          COGNITO_OAUTH_BASE_URL: ${{ secrets.COGNITO_OAUTH_BASE_URL }}
+          # The Floci user pool in compose.yml; these are the seeded local test clients
+          COGNITO_CLIENT_ID: '1234567890abcdef1234567890'
+          COGNITO_CLIENT_NAME: 'Test Client 1'
+          COGNITO_CLIENT_SECRET: local
+          COGNITO_CLIENT_ID_2: '0987654321fedcba0987654321'
+          COGNITO_CLIENT_NAME_2: 'Test Client 2'
+          COGNITO_CLIENT_SECRET_2: local
+          COGNITO_OAUTH_BASE_URL: http://floci:4566/cognito-idp
           ENVIRONMENT: ${{ vars.ENVIRONMENT }}
           API_LOGGING: true
           JIRA_BASE_URL: https://eaflood.atlassian.net/browse

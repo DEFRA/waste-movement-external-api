@@ -134,6 +134,27 @@ describe('addSubmittingOrganisationToRequest', () => {
     expect(request).not.toHaveProperty('serviceChargeExpiryDate')
   })
 
+  // Beta routes fail fast with a 502 instead (see proxyWasteMovementBackend
+  // tests); RoW keeps its ORG_API_CODES fallback in the backend.
+  it('should still call the backend without submittingOrganisation on RoW routes when Waste Organisation Backend returns a 500 error', async () => {
+    httpClients.wasteOrganisation.get.mockResolvedValue({
+      payload: {
+        statusCode: HTTP_STATUS.INTERNAL_SERVER_ERROR
+      }
+    })
+    httpClients.wasteMovement.post.mockClear()
+
+    const { request, statusCode } = await server.inject({
+      method: 'POST',
+      url: '/movements/receive',
+      payload: createMovementRequest()
+    })
+
+    expect(statusCode).not.toEqual(HTTP_STATUS.BAD_GATEWAY)
+    expect(request).not.toHaveProperty('submittingOrganisation')
+    expect(httpClients.wasteMovement.post).toHaveBeenCalled()
+  })
+
   it('should not set submittingOrganisation or serviceChargeExpiryDate on the request when Waste Organisation Backend returns a 402 error', async () => {
     httpClients.wasteOrganisation.get.mockResolvedValue({
       payload: {
