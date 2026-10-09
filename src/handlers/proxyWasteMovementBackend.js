@@ -37,7 +37,9 @@ export const maskApiCode = (apiCode) =>
     ? `${API_CODE_MASK}${apiCode.slice(-API_CODE_VISIBLE_CHARS)}`
     : API_CODE_MASK
 
-const logBetaRequest = (request, organisationId, statusCode) => {
+const logBetaRequest = (request, submittingOrganisation, statusCode) => {
+  const organisationId = submittingOrganisation?.defraCustomerOrganisationId
+  const organisationName = submittingOrganisation?.defraCustomerOrganisationName
   // CDP's log pipeline only indexes its allowlisted ECS fields
   // (cdp-documentation how-to/logging.md) and drops flattened keys where
   // nested are expected, so these must stay nested objects. tenant (client
@@ -55,7 +57,11 @@ const logBetaRequest = (request, organisationId, statusCode) => {
     logger.info(
       {
         ...fields,
-        event: { action: 'beta-request-proxied', reference: organisationId }
+        event: {
+          action: 'beta-request-proxied',
+          reference: organisationId,
+          ...(organisationName && { reason: organisationName })
+        }
       },
       'Beta request proxied'
     )
@@ -92,7 +98,11 @@ export const proxyWasteMovementBackend = async (request, h) => {
       headers
     )
 
-    logBetaRequest(request, organisationId, backendResponse?.statusCode)
+    logBetaRequest(
+      request,
+      request.submittingOrganisation,
+      backendResponse?.statusCode
+    )
 
     const res = h.response(backendResponse?.payload)
 
@@ -114,7 +124,7 @@ export const proxyWasteMovementBackend = async (request, h) => {
       { err: error, path, apiCode: maskApiCode(getApiCode(request)) },
       'Waste Movement Backend Service Error'
     )
-    logBetaRequest(request, organisationId, statusCode)
+    logBetaRequest(request, request.submittingOrganisation, statusCode)
 
     return boomify(error, {
       statusCode,

@@ -2,7 +2,10 @@ import { ecsFormat } from '@elastic/ecs-pino-format'
 import { config } from '../../../config.js'
 import { getTraceId } from '@defra/hapi-tracing'
 import { getClientId, getClientName } from '../client-context.js'
-import { getOrganisationId } from '../../../plugins/add-submitting-organisation-to-request.js'
+import {
+  getOrganisationId,
+  getOrganisationName
+} from '../../../plugins/add-submitting-organisation-to-request.js'
 
 const logConfig = config.get('log')
 const serviceName = config.get('serviceName')
@@ -31,6 +34,7 @@ export const loggerOptions = {
   mixin() {
     const traceId = getTraceId()
     const organisationId = getOrganisationId()
+    const organisationName = getOrganisationName()
     const clientId = getClientId()
     const clientName = getClientName()
 
@@ -39,7 +43,10 @@ export const loggerOptions = {
         trace: { id: traceId }
       }),
       ...(organisationId && {
-        event: { reference: organisationId }
+        event: {
+          reference: organisationId,
+          ...(organisationName && { reason: organisationName })
+        }
       }),
       ...((clientId || clientName) && {
         tenant: {

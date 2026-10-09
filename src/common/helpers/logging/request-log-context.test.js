@@ -180,6 +180,33 @@ describe('request log context', () => {
       expect(keyCount(raw, 'event')).toEqual(1)
     })
 
+    it('adds the organisation name as event.reason to "request completed" when the lookup returns it', async () => {
+      httpClients.wasteOrganisation.get.mockResolvedValue({
+        payload: {
+          defraCustomerOrganisationId: organisationId,
+          name: 'Acme Waste Ltd'
+        }
+      })
+      httpClients.wasteMovement.post.mockResolvedValue({
+        statusCode: HTTP_STATUS.CREATED,
+        payload: { data: { movementId: '26S8EYDJ' } }
+      })
+
+      const { statusCode } = await server.inject({
+        method: 'POST',
+        url: '/beta-1/movements',
+        payload: { apiCode }
+      })
+
+      expect(statusCode).toEqual(HTTP_STATUS.CREATED)
+      const { raw, line } = requestCompletedLine('post', '/beta-1/movements')
+      expect(line.event).toEqual({
+        reference: organisationId,
+        reason: 'Acme Waste Ltd'
+      })
+      expect(keyCount(raw, 'event')).toEqual(1)
+    })
+
     it('adds tenant.id but no event.reference to "request completed" for an unknown or disabled API code', async () => {
       httpClients.wasteOrganisation.get.mockResolvedValue({
         payload: { statusCode: HTTP_STATUS.NOT_FOUND }
