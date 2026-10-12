@@ -515,6 +515,35 @@ describe('proxyWasteMovementBackend', () => {
       expect(logger.warn).not.toHaveBeenCalled()
     })
 
+    it('logs the organisation name in event.reason when the lookup returned it', async () => {
+      httpClients.wasteMovement.post.mockResolvedValue({
+        statusCode: HTTP_STATUS.CREATED,
+        payload: {}
+      })
+
+      await proxyWasteMovementBackend(
+        {
+          ...goodRequest,
+          submittingOrganisation: {
+            defraCustomerOrganisationId: organisationId,
+            defraCustomerOrganisationName: 'Acme Waste Ltd'
+          }
+        },
+        h
+      )
+
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.objectContaining({
+          event: {
+            action: 'beta-request-proxied',
+            reference: organisationId,
+            reason: 'Acme Waste Ltd'
+          }
+        }),
+        'Beta request proxied'
+      )
+    })
+
     it('logs one warn line with a masked API code when the lookup returned 404', async () => {
       httpClients.wasteMovement.post.mockResolvedValue({
         statusCode: HTTP_STATUS.BAD_REQUEST,

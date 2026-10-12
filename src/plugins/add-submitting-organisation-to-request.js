@@ -15,6 +15,9 @@ const asyncLocalStorage = new AsyncLocalStorage()
 export const getOrganisationId = () =>
   asyncLocalStorage.getStore()?.get('organisationId')
 
+export const getOrganisationName = () =>
+  asyncLocalStorage.getStore()?.get('organisationName')
+
 /**
  * Wrap the request cycle in an asyncLocalStorage run call. This allows the passed store to be available during the
  * request lifecycle
@@ -25,6 +28,26 @@ export const getOrganisationId = () =>
 function wrapCycle(request, cycle, store) {
   const requestCycle = request[cycle].bind(request)
   request[cycle] = () => asyncLocalStorage.run(store, requestCycle)
+}
+
+/**
+ * Builds the submitting organisation recorded against the movement. The name
+ * and isLocalAuthority flag are omitted until the waste organisation response
+ * carries them, so movements created in the meantime keep the id on its own.
+ * @param { { defraCustomerOrganisationId: string, name?: string, isLocalAuthority?: boolean } } wasteOrganisation
+ */
+function buildSubmittingOrganisation({
+  defraCustomerOrganisationId,
+  name,
+  isLocalAuthority
+}) {
+  return {
+    defraCustomerOrganisationId,
+    ...(name ? { defraCustomerOrganisationName: name } : {}),
+    ...(typeof isLocalAuthority === 'boolean'
+      ? { defraCustomerOrganisationIsLocalAuthority: isLocalAuthority }
+      : {})
+  }
 }
 
 export const addSubmittingOrganisationToRequest = {
@@ -88,14 +111,16 @@ export const addSubmittingOrganisationToRequest = {
           }
 
           if (wasteOrganisationResponse?.defraCustomerOrganisationId) {
-            request.submittingOrganisation = {
-              defraCustomerOrganisationId:
-                wasteOrganisationResponse.defraCustomerOrganisationId
-            }
+            request.submittingOrganisation = buildSubmittingOrganisation(
+              wasteOrganisationResponse
+            )
             store.set(
               'organisationId',
               wasteOrganisationResponse.defraCustomerOrganisationId
             )
+            if (wasteOrganisationResponse.name) {
+              store.set('organisationName', wasteOrganisationResponse.name)
+            }
           } else if (
             // Beta routes rely only on this lookup for the organisation. RoW
             // routes still fall back to ORG_API_CODES in the backend, so they
