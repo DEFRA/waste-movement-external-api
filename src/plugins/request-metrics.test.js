@@ -14,7 +14,8 @@ const submittingOrganisationStub = {
     register: async (server) => {
       server.ext('onPostAuth', (request, h) => {
         request.submittingOrganisation = {
-          defraCustomerOrganisationId: 'test-org-id'
+          defraCustomerOrganisationId: 'test-org-id',
+          defraCustomerOrganisationName: 'Test Org Ltd'
         }
         return h.continue
       })
@@ -116,7 +117,7 @@ describe('requestMetrics plugin', () => {
     expect(metrics.logAttemptedDeveloperMetrics).not.toHaveBeenCalled()
   })
 
-  it('logs tenant and event reference ids for receipt movement attempts', async () => {
+  it('logs tenant and event reference ids and the organisation name for receipt movement attempts', async () => {
     const server = await buildServer({
       withAuth: true,
       withSubmittingOrganisation: true
@@ -134,6 +135,7 @@ describe('requestMetrics plugin', () => {
         tenant: { id: 'test-client-id' },
         event: {
           reference: 'test-org-id',
+          reason: 'Test Org Ltd',
           action: 'receipt-movement-attempted'
         }
       },
