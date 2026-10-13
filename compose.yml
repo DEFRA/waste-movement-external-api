@@ -174,7 +174,6 @@ services:
     volumes:
       - mongodb-data:/data/db
       - ./compose/mongo_setup.sh:/compose/mongo_setup.sh:Z
-    restart: always
     healthcheck:
       test: mongosh --quiet --eval "try { var status = rs.status(); if (status.members[0].stateStr === 'PRIMARY') { quit(0); } else { quit(1); } } catch(e) { quit(1); }"
       interval: 5s
