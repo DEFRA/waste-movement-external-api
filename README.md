@@ -76,6 +76,8 @@ Start the full local environment (includes LocalStack and MongoDB):
 docker compose up --build -d
 ```
 
+The stack is defined once in digital-waste-tracking-uat ([shared-compose/](https://github.com/DEFRA/digital-waste-tracking-uat/tree/main/shared-compose)) and shared with the other service repos. `compose.yml` includes it and `compose.override-shared.yml` builds this API from your checkout. Its credentials are made-up local-only values, so no `.env` is needed; see `.env.example` for the optional overrides.
+
 The API will be available at `http://localhost:3001`
 
 ### 3. Development Without Docker
@@ -118,7 +120,7 @@ curl -X POST http://localhost:3001/movements/receive \
 
 JWT authentication is **now required** in local environments as the JWT contains the `client_id`, which necessary for the service to function.
 
-The Docker Compose stack doesn't use the real Cognito user pool. A local Cognito user pool, emulated by [Floci](https://floci.io) and created by [compose/floci/start.d/create-cognito-user-pool.sh](./compose/floci/start.d/create-cognito-user-pool.sh), issues tokens for the seeded test clients, and the API container trusts only those tokens:
+The Docker Compose stack doesn't use the real Cognito user pool. A local Cognito user pool, emulated by [Floci](https://floci.io) and created by [shared-compose/floci/start.d/create-cognito-user-pool.sh](https://github.com/DEFRA/digital-waste-tracking-uat/blob/main/shared-compose/floci/start.d/create-cognito-user-pool.sh) in digital-waste-tracking-uat, issues tokens for the seeded test clients, and the API container trusts only those tokens:
 
 ```bash
 TOKEN=$(curl -s -X POST http://localhost:3006/cognito-idp/oauth2/token \
