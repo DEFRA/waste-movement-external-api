@@ -1,6 +1,4 @@
 import Hapi from '@hapi/hapi'
-import Inert from '@hapi/inert'
-import Vision from '@hapi/vision'
 
 import { config } from './config.js'
 import { router } from './plugins/router.js'
@@ -10,7 +8,6 @@ import { pulse } from './common/helpers/pulse.js'
 import { requestTracing } from './common/helpers/request-tracing.js'
 import { setupProxy } from './common/helpers/proxy/setup-proxy.js'
 import { getServerOptions } from './common/helpers/server-options.js'
-import { swagger } from './plugins/swagger.js'
 import { errorHandler } from './plugins/error-handler.js'
 import { jwtAuth } from './plugins/jwt-auth.js'
 import { requestMetrics } from './plugins/request-metrics.js'
@@ -23,19 +20,6 @@ import { isBetaRoute } from './common/helpers/beta-route.js'
 async function createServer() {
   setupProxy()
   const server = Hapi.server(getServerOptions())
-
-  // Register Vision and Inert first as they are required by Swagger
-  await server.register([
-    {
-      plugin: Inert
-    },
-    {
-      plugin: Vision
-    }
-  ])
-
-  // Register Swagger before routes
-  await server.register(swagger)
 
   // Register JWT authentication before routes. It is always registered so the
   // client id can be extracted from the JWT and forwarded to the backend,
