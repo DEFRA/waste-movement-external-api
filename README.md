@@ -37,7 +37,7 @@ This service integrates with DEFRA's waste tracking infrastructure to generate u
 
 - JWT-based authentication via AWS Cognito
 - Comprehensive request validation using Joi schemas
-- OpenAPI/Swagger documentation available at `/documentation`
+- Swagger 2.0 spec of the receipt movement routes in [`src/schemas/openapi.json`](src/schemas/openapi.json)
 - MongoDB-backed persistence with distributed locking
 - Full test coverage with Jest
 
@@ -50,7 +50,7 @@ This service integrates with DEFRA's waste tracking infrastructure to generate u
 - **Validation**: Joi
 - **Testing**: Jest
 - **Logging**: Pino with ECS format
-- **API Docs**: Swagger/OpenAPI (hapi-swagger)
+- **API Docs**: Swagger 2.0 (hand-maintained `openapi.json`)
 
 ## Prerequisites
 
@@ -98,8 +98,6 @@ Check the health endpoint:
 curl http://localhost:3001/health
 ```
 
-Access Swagger documentation at: `http://localhost:3001/documentation`
-
 ## Authentication
 
 ### JWT Authentication (Production)
@@ -142,7 +140,19 @@ The API provides endpoints for:
 - **Reference Data**: Retrieve EWC codes, disposal/recovery codes, hazardous property codes, container types, and POP names
 - **Utilities**: Health checks and authentication testing
 
-For complete API documentation including request/response schemas and examples, see the interactive Swagger documentation at `http://localhost:3001/documentation` when running locally.
+The receipt movement and production approval test routes are described by
+[`src/schemas/openapi.json`](src/schemas/openapi.json): a Swagger 2.0 snapshot of what
+`hapi-swagger` served before it was removed. Nothing generates it any more, so a change to one
+of those routes' Joi schemas or responses needs a matching hand edit there.
+`src/schemas/openapi.test.js` catches the request side drifting: it compares the spec with each
+route's Joi `describe()` (routes, parameters, property names, types, unconditional `required`,
+enums and array limits) and names every field path that differs. The request bodies come from
+`@defra/waste-movement-utils`, so bumping it can fail this test with no local schema change.
+Patterns, descriptions, examples and responses aren't checked. The reference data routes were
+never in the spec.
+
+The public developer documentation for integrators is maintained separately, in
+[`DEFRA/waste-tracking-service`](https://github.com/DEFRA/waste-tracking-service).
 
 ## Development
 
@@ -270,7 +280,7 @@ SonarCloud integration provides code quality and test coverage analysis.
 ## Additional Resources
 
 - [JWT Authentication Testing Guide](./JWT_AUTHENTICATION_TESTING.md)
-- [API Documentation (Swagger)](http://localhost:3001/documentation) - when running locally
+- [API spec (Swagger 2.0)](src/schemas/openapi.json)
 - [SonarCloud Project](https://sonarcloud.io/project/overview?id=DEFRA_waste-movement-external-api)
 
 ## Updating Dependencies
