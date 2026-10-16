@@ -198,7 +198,7 @@ const config = convict({
       doc: 'Base URI used to build RFC 9457 problem type URIs, pointing at the API problem documentation',
       format: String,
       default:
-        'https://defra.github.io/digital-waste-tracking-api-docs/preview/problems/',
+        'https://defra.github.io/digital-waste-tracking-api-site/preview/problems/',
       env: 'PROBLEM_DETAILS_TYPE_BASE'
     }
   },
