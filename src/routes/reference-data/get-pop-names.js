@@ -1,4 +1,3 @@
-import { HTTP_STATUS } from '@defra/waste-movement-utils'
 import { handleGetPopNames } from '../../handlers/reference-data/get-pop-names.js'
 
 const getPopNames = {
@@ -7,16 +6,7 @@ const getPopNames = {
   options: {
     tags: ['reference-data'],
     description:
-      'Endpoint to be used to get a list of POP (Persistent Organic Pollutant) names.',
-    plugins: {
-      'hapi-swagger': {
-        responses: {
-          [HTTP_STATUS.OK]: {
-            description: 'The list of POP names has been returned.'
-          }
-        }
-      }
-    }
+      'Endpoint to be used to get a list of POP (Persistent Organic Pollutant) names.'
   },
   handler: handleGetPopNames
 }
