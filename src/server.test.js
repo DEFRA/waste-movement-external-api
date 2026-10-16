@@ -15,7 +15,7 @@ describe('Server', () => {
   describe('RFC 9457 error formatting', () => {
     it('formats errors on beta paths as problem details with the docs type base', async () => {
       const expectedTypeBase =
-        'https://defra.github.io/digital-waste-tracking-api-docs/preview/problems/'
+        'https://defra.github.io/digital-waste-tracking-api-site/preview/problems/'
       const { statusCode, headers, payload } = await server.inject({
         method: 'GET',
         url: '/beta-2/does-not-exist'
