@@ -11,7 +11,7 @@ This document provides instructions on how to test the JWT authentication implem
 
 ### Local Docker Compose stack
 
-The stack trusts only tokens from its local Floci user pool, not the real Cognito one. Get a token for one of the seeded test clients (see `compose/floci/start.d/create-cognito-user-pool.sh`):
+The stack trusts only tokens from its local Floci user pool, not the real Cognito one. Get a token for one of the seeded test clients (see [shared-compose/floci/start.d/create-cognito-user-pool.sh](https://github.com/DEFRA/digital-waste-tracking-uat/blob/main/shared-compose/floci/start.d/create-cognito-user-pool.sh) in digital-waste-tracking-uat):
 
 ```bash
 curl -X POST http://localhost:3006/cognito-idp/oauth2/token \

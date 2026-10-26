@@ -37,7 +37,7 @@ This service integrates with DEFRA's waste tracking infrastructure to generate u
 
 - JWT-based authentication via AWS Cognito
 - Comprehensive request validation using Joi schemas
-- OpenAPI/Swagger documentation available at `/documentation`
+- Swagger 2.0 spec of the receipt movement routes in [`src/schemas/openapi.json`](src/schemas/openapi.json)
 - MongoDB-backed persistence with distributed locking
 - Full test coverage with Jest
 
@@ -50,7 +50,7 @@ This service integrates with DEFRA's waste tracking infrastructure to generate u
 - **Validation**: Joi
 - **Testing**: Jest
 - **Logging**: Pino with ECS format
-- **API Docs**: Swagger/OpenAPI (hapi-swagger)
+- **API Docs**: Swagger 2.0 (hand-maintained `openapi.json`)
 
 ## Prerequisites
 
@@ -76,6 +76,8 @@ Start the full local environment (includes LocalStack and MongoDB):
 docker compose up --build -d
 ```
 
+The stack is defined once in digital-waste-tracking-uat ([shared-compose/](https://github.com/DEFRA/digital-waste-tracking-uat/tree/main/shared-compose)) and shared with the other service repos. `compose.yml` includes it and `compose.override-shared.yml` builds this API from your checkout. Its credentials are made-up local-only values, so no `.env` is needed; see `.env.example` for the optional overrides.
+
 The API will be available at `http://localhost:3001`
 
 ### 3. Development Without Docker
@@ -95,8 +97,6 @@ Check the health endpoint:
 ```bash
 curl http://localhost:3001/health
 ```
-
-Access Swagger documentation at: `http://localhost:3001/documentation`
 
 ## Authentication
 
@@ -118,7 +118,7 @@ curl -X POST http://localhost:3001/movements/receive \
 
 JWT authentication is **now required** in local environments as the JWT contains the `client_id`, which necessary for the service to function.
 
-The Docker Compose stack doesn't use the real Cognito user pool. A local Cognito user pool, emulated by [Floci](https://floci.io) and created by [compose/floci/start.d/create-cognito-user-pool.sh](./compose/floci/start.d/create-cognito-user-pool.sh), issues tokens for the seeded test clients, and the API container trusts only those tokens:
+The Docker Compose stack doesn't use the real Cognito user pool. A local Cognito user pool, emulated by [Floci](https://floci.io) and created by [shared-compose/floci/start.d/create-cognito-user-pool.sh](https://github.com/DEFRA/digital-waste-tracking-uat/blob/main/shared-compose/floci/start.d/create-cognito-user-pool.sh) in digital-waste-tracking-uat, issues tokens for the seeded test clients, and the API container trusts only those tokens:
 
 ```bash
 TOKEN=$(curl -s -X POST http://localhost:3006/cognito-idp/oauth2/token \
@@ -140,7 +140,19 @@ The API provides endpoints for:
 - **Reference Data**: Retrieve EWC codes, disposal/recovery codes, hazardous property codes, container types, and POP names
 - **Utilities**: Health checks and authentication testing
 
-For complete API documentation including request/response schemas and examples, see the interactive Swagger documentation at `http://localhost:3001/documentation` when running locally.
+The receipt movement and production approval test routes are described by
+[`src/schemas/openapi.json`](src/schemas/openapi.json): a Swagger 2.0 snapshot of what
+`hapi-swagger` served before it was removed. Nothing generates it any more, so a change to one
+of those routes' Joi schemas or responses needs a matching hand edit there.
+`src/schemas/openapi.test.js` catches the request side drifting: it compares the spec with each
+route's Joi `describe()` (routes, parameters, property names, types, unconditional `required`,
+enums and array limits) and names every field path that differs. The request bodies come from
+`@defra/waste-movement-utils`, so bumping it can fail this test with no local schema change.
+Patterns, descriptions, examples and responses aren't checked. The reference data routes were
+never in the spec.
+
+The public developer documentation for integrators is maintained separately, in
+[`DEFRA/waste-tracking-service`](https://github.com/DEFRA/waste-tracking-service).
 
 ## Development
 
@@ -268,7 +280,7 @@ SonarCloud integration provides code quality and test coverage analysis.
 ## Additional Resources
 
 - [JWT Authentication Testing Guide](./JWT_AUTHENTICATION_TESTING.md)
-- [API Documentation (Swagger)](http://localhost:3001/documentation) - when running locally
+- [API spec (Swagger 2.0)](src/schemas/openapi.json)
 - [SonarCloud Project](https://sonarcloud.io/project/overview?id=DEFRA_waste-movement-external-api)
 
 ## Updating Dependencies

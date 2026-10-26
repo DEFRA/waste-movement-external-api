@@ -48,13 +48,6 @@ describe('updateReceiptMovement route', () => {
     expect(validate.params).toBeDefined()
     expect(validate.payload).toBeDefined()
   })
-
-  it('should have correct swagger documentation', () => {
-    const { responses } = updateReceiptMovement.options.plugins['hapi-swagger']
-    expect(responses['200']).toBeDefined()
-    expect(responses['400']).toBeDefined()
-    expect(responses['404']).toBeDefined()
-  })
 })
 
 describe('handleUpdateReceiptMovement', () => {
