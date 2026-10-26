@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "type": "module",
   "engines": {
-    "node": ">=22"
+    "node": "22.23.4",
+    "npm": ">=12"
   },
   "scripts": {
     "docker:dev": "NODE_ENV=development npm run server:watch",
