@@ -9,6 +9,7 @@ import { API_CODE_HEADER } from '../common/helpers/api-code.js'
 import {
   CLIENT_NAME_HEADER,
   ORGANISATION_ID_HEADER,
+  ORGANISATION_NAME_HEADER,
   maskApiCode,
   proxyWasteMovementBackend
 } from './proxyWasteMovementBackend.js'
@@ -433,6 +434,44 @@ describe('proxyWasteMovementBackend', () => {
           [ORGANISATION_ID_HEADER]: organisationId,
           [CLIENT_NAME_HEADER]: 'D%C3%A9bora%20%26%20Co'
         }
+      )
+    })
+
+    it('forwards the organisation name, URI-encoded, when the lookup returned it', async () => {
+      await proxyWasteMovementBackend(
+        {
+          ...goodRequest,
+          submittingOrganisation: {
+            defraCustomerOrganisationId: organisationId,
+            defraCustomerOrganisationName: 'Débora & Co Waste'
+          }
+        },
+        h
+      )
+
+      expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
+        path,
+        payload,
+        {
+          [ORGANISATION_ID_HEADER]: organisationId,
+          [ORGANISATION_NAME_HEADER]: 'D%C3%A9bora%20%26%20Co%20Waste'
+        }
+      )
+    })
+
+    it('ignores an organisation name header sent by the client', async () => {
+      await proxyWasteMovementBackend(
+        {
+          ...requestWithOrganisation,
+          headers: { [ORGANISATION_NAME_HEADER]: 'Client Supplied Ltd' }
+        },
+        h
+      )
+
+      expect(httpClients.wasteMovement.post).toHaveBeenCalledWith(
+        path,
+        payload,
+        { [ORGANISATION_ID_HEADER]: organisationId }
       )
     })
 
