@@ -23,6 +23,13 @@ export const ORGANISATION_ID_HEADER = 'x-dwt-organisation-id'
  */
 export const CLIENT_NAME_HEADER = 'x-dwt-client-name'
 
+/**
+ * Header used to forward the name of the organisation resolved for the
+ * apiCode, so the backend can log it with its id. URI-encoded, like the
+ * client name.
+ */
+export const ORGANISATION_NAME_HEADER = 'x-dwt-organisation-name'
+
 const API_CODE_VISIBLE_CHARS = 4
 const API_CODE_MASK = '****'
 
@@ -85,9 +92,15 @@ export const proxyWasteMovementBackend = async (request, h) => {
   const { path, payload } = request
   const organisationId =
     request.submittingOrganisation?.defraCustomerOrganisationId
+  const organisationName =
+    request.submittingOrganisation?.defraCustomerOrganisationName
   const clientName = getClientName()
   const headers = {
     ...(organisationId && { [ORGANISATION_ID_HEADER]: organisationId }),
+    ...(organisationId &&
+      organisationName && {
+        [ORGANISATION_NAME_HEADER]: encodeURIComponent(organisationName)
+      }),
     ...(clientName && { [CLIENT_NAME_HEADER]: encodeURIComponent(clientName) })
   }
 
