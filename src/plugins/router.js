@@ -1,18 +1,4 @@
 import { health } from '../routes/health.js'
-import { createMovement as createMovementBeta1 } from '../routes/beta-1/create-movement.js'
-import { createCollection as createCollectionBeta1 } from '../routes/beta-1/create-collection.js'
-import { createDelivery as createDeliveryBeta1 } from '../routes/beta-1/create-delivery.js'
-import {
-  createReceipt as createReceiptBeta1,
-  createUndeliveredReceipt as createUndeliveredReceiptBeta1
-} from '../routes/beta-1/create-receipt.js'
-import { createMovement as createMovementBeta2 } from '../routes/beta-2/create-movement.js'
-import { createCollection as createCollectionBeta2 } from '../routes/beta-2/create-collection.js'
-import { createDelivery as createDeliveryBeta2 } from '../routes/beta-2/create-delivery.js'
-import {
-  createReceipt as createReceiptBeta2,
-  createUndeliveredReceipt as createUndeliveredReceiptBeta2
-} from '../routes/beta-2/create-receipt.js'
 import { createReceiptMovement } from '../routes/create-receipt-movement.js'
 import { updateReceiptMovement } from '../routes/update-receipt-movement.js'
 import { getEwcCodes } from '../routes/reference-data/get-ewc-codes.js'
@@ -22,6 +8,7 @@ import { getContainerTypes } from '../routes/reference-data/get-container-types.
 import { getPopNames } from '../routes/reference-data/get-pop-names.js'
 import { productionApprovalTests } from '../routes/production-approval-tests.js'
 import { config } from '../config.js'
+import { apiVersions } from '../common/helpers/api-versions.js'
 
 const environment = config.get('cdpEnvironment')
 
@@ -59,30 +46,7 @@ const router = {
 
       server.route(routes)
 
-      const apiVersionsToSupport = [
-        {
-          id: 'beta-1',
-          routes: [
-            createMovementBeta1,
-            createCollectionBeta1,
-            createDeliveryBeta1,
-            createReceiptBeta1,
-            createUndeliveredReceiptBeta1
-          ]
-        },
-        {
-          id: 'beta-2',
-          routes: [
-            createMovementBeta2,
-            createCollectionBeta2,
-            createDeliveryBeta2,
-            createReceiptBeta2,
-            createUndeliveredReceiptBeta2
-          ]
-        }
-      ]
-
-      const versionedRouteGroups = apiVersionsToSupport.map((version) => {
+      const versionedRouteGroups = apiVersions.map((version) => {
         return {
           prefix: `/${version.id}`,
           routes: version.routes,

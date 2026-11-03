@@ -36,7 +36,8 @@ const getServerOptions = () => ({
         'authorization',
         'content-type',
         'x-requested-with',
-        'x-api-key'
+        'x-api-key',
+        'deprecation'
       ],
       credentials: true
     }
