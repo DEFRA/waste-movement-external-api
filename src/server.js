@@ -14,6 +14,7 @@ import { requestMetrics } from './plugins/request-metrics.js'
 import { clientContext } from './common/helpers/client-context.js'
 import { addSubmittingOrganisationToRequest } from './plugins/add-submitting-organisation-to-request.js'
 import { setCustomResponseHeaders } from './plugins/set-custom-response-headers.js'
+import { deprecationHeader } from './plugins/deprecation-header.js'
 import { formatErrorToRFC9457Response } from '@defra/waste-movement-utils'
 import { isBetaRoute } from './common/helpers/beta-route.js'
 
@@ -36,6 +37,7 @@ async function createServer() {
     secureContext,
     pulse,
     setCustomResponseHeaders,
+    deprecationHeader,
     addSubmittingOrganisationToRequest,
     {
       plugin: formatErrorToRFC9457Response,
