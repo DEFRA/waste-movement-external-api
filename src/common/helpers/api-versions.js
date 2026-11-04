@@ -21,9 +21,7 @@ import {
 export const apiVersions = [
   {
     id: 'beta-1',
-    // Not deprecated yet: set to true once beta-2 is released, to start
-    // sending `Deprecation: true` on every beta-1 response
-    deprecated: false,
+    deprecated: true,
     routes: [
       createMovementBeta1,
       createCollectionBeta1,

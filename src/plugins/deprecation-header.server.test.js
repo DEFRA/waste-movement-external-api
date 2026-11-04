@@ -1,16 +1,10 @@
 import { createServer } from '../server.js'
 import { config } from '../config.js'
-import { apiVersions } from '../common/helpers/api-versions.js'
-
-const beta1 = apiVersions.find(({ id }) => id === 'beta-1')
 
 describe('deprecationHeader on the app server', () => {
   let server
-  let beta1Deprecated
 
   beforeAll(async () => {
-    beta1Deprecated = beta1.deprecated
-    beta1.deprecated = true
     config.set('featureFlags.apiVersionsEnabled', 'beta-1,beta-2')
     server = await createServer()
   })
@@ -18,7 +12,6 @@ describe('deprecationHeader on the app server', () => {
   afterAll(async () => {
     await server.stop()
     config.set('featureFlags.apiVersionsEnabled', '')
-    beta1.deprecated = beta1Deprecated
   })
 
   it('sets Deprecation on a beta-1 request rejected for having no token', async () => {
