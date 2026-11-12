@@ -193,6 +193,22 @@ describe('handleUpdateReceiptMovement', () => {
     )
   })
 
+  it('should log a receiver authorisation number of EAS/P with six digits', async () => {
+    mockRequest.payload.receiver.authorisationNumber = 'EAS/P/123456'
+
+    httpClients.wasteMovement.put.mockResolvedValueOnce({
+      statusCode: 200
+    })
+
+    const infoLoggerSpy = jest.spyOn(logger.createLogger(), 'info')
+
+    await handleUpdateReceiptMovement(mockRequest, mockH)
+
+    expect(infoLoggerSpy).toHaveBeenCalledWith(
+      `${METRIC_NAMES.RECEIVER_AUTHORISATION_NUMBER_SIX_DIGIT_EAS} - EAS/P/123456 (wasteTrackingId: "${mockRequest.params.wasteTrackingId}")`
+    )
+  })
+
   it('should handle not found error', async () => {
     const notFoundError = new Error('Not Found')
     notFoundError.name = 'NotFoundError'

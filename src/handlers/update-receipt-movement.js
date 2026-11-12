@@ -7,7 +7,8 @@ import {
 } from '../common/helpers/metrics.js'
 import {
   METRIC_NAMES,
-  generateAllValidationWarnings
+  generateAllValidationWarnings,
+  logSixDigitEasAuthorisationNumber
 } from '@defra/waste-movement-utils'
 import { isSuccessStatusCode } from '../common/helpers/utils.js'
 import { createLogger } from '../common/helpers/logging/logger.js'
@@ -51,6 +52,12 @@ export const handleUpdateReceiptMovement = async (request, h) => {
 
     // Generate validation warnings
     const warnings = generateAllValidationWarnings(
+      requestData.movement,
+      wasteTrackingId,
+      logger
+    )
+
+    logSixDigitEasAuthorisationNumber(
       requestData.movement,
       wasteTrackingId,
       logger

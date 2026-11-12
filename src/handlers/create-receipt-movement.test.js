@@ -197,6 +197,68 @@ describe('Create Receipt Movement Handler', () => {
     )
   })
 
+  it('should log a receiver authorisation number of EAS/P with six digits', async () => {
+    httpClients.wasteMovement.post.mockResolvedValue({
+      statusCode: 200
+    })
+
+    const infoLoggerSpy = jest.spyOn(logger.createLogger(), 'info')
+
+    const h = {
+      response: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis()
+    }
+
+    await handleCreateReceiptMovement(
+      {
+        ...request,
+        payload: {
+          ...validPayload,
+          receiver: {
+            siteName: 'Test Receiver',
+            authorisationNumber: 'EAS/P/123456'
+          }
+        }
+      },
+      h
+    )
+
+    expect(infoLoggerSpy).toHaveBeenCalledWith(
+      `${METRIC_NAMES.RECEIVER_AUTHORISATION_NUMBER_SIX_DIGIT_EAS} - EAS/P/123456 (wasteTrackingId: "${mockWasteTrackingId}")`
+    )
+  })
+
+  it('should not log a receiver authorisation number of EAS/P with seven digits', async () => {
+    httpClients.wasteMovement.post.mockResolvedValue({
+      statusCode: 200
+    })
+
+    const infoLoggerSpy = jest.spyOn(logger.createLogger(), 'info')
+
+    const h = {
+      response: jest.fn().mockReturnThis(),
+      code: jest.fn().mockReturnThis()
+    }
+
+    await handleCreateReceiptMovement(
+      {
+        ...request,
+        payload: {
+          ...validPayload,
+          receiver: {
+            siteName: 'Test Receiver',
+            authorisationNumber: 'EAS/P/1172829'
+          }
+        }
+      },
+      h
+    )
+
+    expect(infoLoggerSpy).not.toHaveBeenCalledWith(
+      expect.stringContaining('EAS/P/1172829')
+    )
+  })
+
   it('should throw a 500 error when waste movement creation fails', async () => {
     // Mock waste movement creation failure
     httpClients.wasteMovement.post.mockRejectedValue(new Error('API Error'))

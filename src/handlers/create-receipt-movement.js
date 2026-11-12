@@ -2,7 +2,8 @@ import { httpClients } from '../common/helpers/http-client.js'
 import {
   HTTP_STATUS,
   METRIC_NAMES,
-  generateAllValidationWarnings
+  generateAllValidationWarnings,
+  logSixDigitEasAuthorisationNumber
 } from '@defra/waste-movement-utils'
 import { handleBackendResponse } from './handle-backend-response.js'
 import { createLogger } from '../common/helpers/logging/logger.js'
@@ -51,6 +52,8 @@ export const handleCreateReceiptMovement = async (request, h) => {
       wasteTrackingId,
       logger
     )
+
+    logSixDigitEasAuthorisationNumber(request.payload, wasteTrackingId, logger)
 
     const responseData = {
       wasteTrackingId
