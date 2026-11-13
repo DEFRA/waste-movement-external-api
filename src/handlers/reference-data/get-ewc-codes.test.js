@@ -61,10 +61,25 @@ describe('GET EWC Codes', () => {
       })
     })
 
+    it('should map a code the EU added from 9 December 2026, with a blank entry type', () => {
+      const ewcCodesResponse = mapGetEwcCodesResponse()
+
+      expect(
+        ewcCodesResponse.find(({ code }) => code === '160607')
+      ).toStrictEqual({
+        code: '160607',
+        isHazardous: true,
+        entryTypeDesc: '',
+        chapter: 'Wastes not otherwise specified in the list',
+        subChapter: 'Wastes from the manufacture, supply and use of batteries',
+        description: 'Waste lithium-based batteries'
+      })
+    })
+
     it('should return the correct number of codes in total', () => {
       const ewcCodesResponse = mapGetEwcCodesResponse()
 
-      expect(ewcCodesResponse.length).toBe(842)
+      expect(ewcCodesResponse.length).toBe(884)
     })
 
     it('should return the correct number of hazardous codes', () => {
@@ -73,7 +88,7 @@ describe('GET EWC Codes', () => {
         ({ isHazardous }) => isHazardous
       )
 
-      expect(hazardousEwcCodes.length).toBe(408)
+      expect(hazardousEwcCodes.length).toBe(436)
     })
 
     it('should return the correct number of non-hazardous codes', () => {
@@ -82,7 +97,7 @@ describe('GET EWC Codes', () => {
         ({ isHazardous }) => !isHazardous
       )
 
-      expect(nonHazardousEwcCodes.length).toBe(434)
+      expect(nonHazardousEwcCodes.length).toBe(448)
     })
   })
 })
