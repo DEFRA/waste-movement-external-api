@@ -501,7 +501,13 @@
                     },
                     "reasonForNoRegistrationNumber": {
                       "type": "string",
-                      "enum": ["ON_SITE", "HOUSEHOLD", "ONE_OFF", "MARINE"]
+                      "enum": [
+                        "ON_SITE",
+                        "HOUSEHOLD",
+                        "ONE_OFF",
+                        "MARINE",
+                        "FIXED_CONVEYANCE"
+                      ]
                     },
                     "organisationName": {
                       "type": "string"
@@ -1092,7 +1098,13 @@
                     },
                     "reasonForNoRegistrationNumber": {
                       "type": "string",
-                      "enum": ["ON_SITE", "HOUSEHOLD", "ONE_OFF", "MARINE"]
+                      "enum": [
+                        "ON_SITE",
+                        "HOUSEHOLD",
+                        "ONE_OFF",
+                        "MARINE",
+                        "FIXED_CONVEYANCE"
+                      ]
                     },
                     "organisationName": {
                       "type": "string"
