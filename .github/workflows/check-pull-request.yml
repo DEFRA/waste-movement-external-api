@@ -47,8 +47,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  # Runs this repo's integration tests against the shared stack (see compose.yml)
+  # Runs the UAT integration tests against the shared stack (see compose.yml)
   integration-tests:
     name: Run Integration Tests
     needs: pr-validator
     uses: DEFRA/digital-waste-tracking-uat/.github/workflows/integration-tests.yml@main
+    with:
+      test-script: test:integration
